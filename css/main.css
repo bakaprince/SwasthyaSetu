@@ -13,6 +13,8 @@
 @import 'components/login-form.css';
 @import 'components/health-alerts.css';
 @import 'components/features.css';
+@import 'components/modal.css';
+
 
 /* Note: Tailwind CSS is loaded via CDN in the HTML file */
 /* For production, consider using a build process with PostCSS */

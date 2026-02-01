@@ -19,6 +19,43 @@ class Navigation {
         window.addEventListener('authStateChanged', () => {
             this.updateAuthLinks();
         });
+
+        // Initialize Emergency Modal
+        this.initEmergencyModal();
+    }
+
+    initEmergencyModal() {
+        const emergencyBtn = document.getElementById('emergency-btn');
+        const modal = document.getElementById('emergency-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+
+        if (emergencyBtn && modal) {
+            emergencyBtn.addEventListener('click', () => {
+                modal.classList.remove('hidden');
+            });
+
+            const closeModal = () => {
+                modal.classList.add('hidden');
+            };
+
+            if (closeModalBtn) {
+                closeModalBtn.addEventListener('click', closeModal);
+            }
+
+            // Close when clicking outside
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // Close on Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                    closeModal();
+                }
+            });
+        }
     }
 
     updateAuthLinks() {
