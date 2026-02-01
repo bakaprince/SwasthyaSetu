@@ -345,8 +345,17 @@ const APIService = {
      */
     async getRealHospitalsFromOSM(location) {
         const { latitude, longitude } = location;
-        // Search for hospitals near the location
-        const url = `https://nominatim.openstreetmap.org/search?format=json&q=hospital&limit=15&lat=${latitude}&lon=${longitude}`;
+
+        // Define a bounding box for strict local search (approx 20km radius)
+        // 1 degree lat is approx 111km, so 0.2 is approx 22km
+        const delta = 0.2;
+        const minLon = longitude - delta;
+        const maxLon = longitude + delta;
+        const minLat = latitude - delta;
+        const maxLat = latitude + delta;
+
+        // Use 'viewbox' and 'bounded=1' to restrict results to this area
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=hospital&limit=20&viewbox=${minLon},${maxLat},${maxLon},${minLat}&bounded=1`;
 
         const response = await fetch(url, {
             headers: {
@@ -358,7 +367,7 @@ const APIService = {
 
         const data = await response.json();
 
-        // Map OSM format to our app's hospital format
+        // Map OSM format and filter out distant results manually as a safety net
         return data.map((item, index) => {
             // Calculate distance
             const dist = calculateDistance(
@@ -366,9 +375,12 @@ const APIService = {
                 parseFloat(item.lat), parseFloat(item.lon)
             );
 
+            // Double check: if valid distance is too far (e.g. > 50km), ignore it 
+            // (Mocking this filter check inside the map, usually done with .filter next)
             return {
+                _tempDist: dist, // Internal use for filter
                 id: `OSM${item.place_id || index}`,
-                name: item.display_name.split(',')[0], // Take first part of name
+                name: item.display_name.split(',')[0],
                 city: (item.display_name.split(',').length > 2) ? item.display_name.split(',').slice(-4)[0].trim() : 'Local',
                 type: 'Hospital',
                 coords: {
@@ -376,13 +388,15 @@ const APIService = {
                     longitude: parseFloat(item.lon)
                 },
                 distance: dist.toFixed(1),
-                beds: { total: '?', available: '?', icu: '?', icuAvailable: '?' }, // Unknown for public API
-                resources: { oxygen: true, ventilators: true, bloodBank: true }, // Assumed
+                beds: { total: '?', available: '?', icu: '?', icuAvailable: '?' },
+                resources: { oxygen: true, ventilators: true, bloodBank: true },
                 contact: { phone: 'N/A', email: 'N/A', emergency: '108' },
                 address: item.display_name,
-                rating: 4.5 // Default high rating for real places
+                rating: 4.5
             };
-        }).sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+        })
+            .filter(h => h._tempDist < 50) // STRICT FILTER: Remove anything > 50km away
+            .sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
     },
 
     async getPatientProfile() {
