@@ -3,6 +3,22 @@
  * Handles all API calls with mock data for demo purposes
  */
 
+// Helper functions for distance calculation
+function deg2rad(deg) {
+    return deg * (Math.PI / 180);
+}
+
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+}
+
 const APIService = {
     /**
      * Make a mock API call
@@ -186,38 +202,76 @@ const APIService = {
 
     /**
      * Get mock hospital data
+     * @param {object|null} userLocation - User's location {latitude, longitude}
      * @returns {Array} Array of hospital objects
      */
-    getMockHospitals() {
-        const hospitals = [];
-        const cities = ['Delhi', 'Mumbai', 'Bangalore', 'Chennai', 'Kolkata', 'Hyderabad'];
-        const types = ['Government', 'Private', 'Trust'];
+    getMockHospitals(userLocation = null) {
+        // Real Major Hospitals in India (Fallback Data)
+        let hospitals = [
+            // Delhi NCR
+            { id: 'H001', name: 'AIIMS New Delhi', city: 'Delhi', type: 'Government', coords: { latitude: 28.5672, longitude: 77.2100 }, address: 'Ansari Nagar, New Delhi' },
+            { id: 'H002', name: 'Safdarjung Hospital', city: 'Delhi', type: 'Government', coords: { latitude: 28.5680, longitude: 77.2058 }, address: 'Ring Road, New Delhi' },
+            { id: 'H003', name: 'Sir Ganga Ram Hospital', city: 'Delhi', type: 'Private', coords: { latitude: 28.6380, longitude: 77.1890 }, address: 'Rajinder Nagar, New Delhi' },
+            { id: 'H004', name: 'Max Super Speciality Hospital', city: 'Delhi', type: 'Private', coords: { latitude: 28.5284, longitude: 77.2185 }, address: 'Saket, New Delhi' },
+            { id: 'H005', name: 'Apollo Hospital Delhi', city: 'Delhi', type: 'Private', coords: { latitude: 28.5413, longitude: 77.2843 }, address: 'Sarita Vihar, New Delhi' },
+            { id: 'H006', name: 'RML Hospital', city: 'Delhi', type: 'Government', coords: { latitude: 28.6277, longitude: 77.1977 }, address: 'Baba Kharak Singh Marg, New Delhi' },
 
-        for (let i = 1; i <= 20; i++) {
-            hospitals.push({
-                id: `H${String(i).padStart(3, '0')}`,
-                name: `${types[i % 3]} Hospital ${i}`,
-                city: cities[i % cities.length],
-                type: types[i % 3],
-                beds: {
-                    total: 200 + (i * 10),
-                    available: 50 + (i * 2),
-                    icu: 20 + i,
-                    icuAvailable: 5 + (i % 5)
-                },
-                resources: {
-                    oxygen: i % 2 === 0,
-                    ventilators: i % 3 === 0,
-                    bloodBank: i % 2 === 0
-                },
-                contact: {
-                    phone: `011-${20000000 + i}`,
-                    email: `contact@hospital${i}.gov.in`,
-                    emergency: '108'
-                },
-                address: `${i} Hospital Road, ${cities[i % cities.length]}`,
-                rating: 3.5 + (i % 3) * 0.5
-            });
+            // Mumbai
+            { id: 'H007', name: 'Tata Memorial Hospital', city: 'Mumbai', type: 'Government', coords: { latitude: 19.0142, longitude: 72.8447 }, address: 'Parel, Mumbai' },
+            { id: 'H008', name: 'Lilavati Hospital', city: 'Mumbai', type: 'Private', coords: { latitude: 19.0516, longitude: 72.8317 }, address: 'Bandra West, Mumbai' },
+            { id: 'H009', name: 'Kokilaben Dhirubhai Ambani Hospital', city: 'Mumbai', type: 'Private', coords: { latitude: 19.1303, longitude: 72.8335 }, address: 'Andheri West, Mumbai' },
+            { id: 'H010', name: 'Breach Candy Hospital', city: 'Mumbai', type: 'Private', coords: { latitude: 18.9740, longitude: 72.8066 }, address: 'Breach Candy, Mumbai' },
+            { id: 'H011', name: 'KEM Hospital', city: 'Mumbai', type: 'Government', coords: { latitude: 19.0028, longitude: 72.8427 }, address: 'Parel, Mumbai' },
+
+            // Bangalore
+            { id: 'H012', name: 'NIMHANS', city: 'Bangalore', type: 'Government', coords: { latitude: 12.9378, longitude: 77.5956 }, address: 'Hosur Road, Bangalore' },
+            { id: 'H013', name: 'Manipal Hospital', city: 'Bangalore', type: 'Private', coords: { latitude: 12.9592, longitude: 77.6496 }, address: 'Old Airport Road, Bangalore' },
+            { id: 'H014', name: 'Narayana Health City', city: 'Bangalore', type: 'Private', coords: { latitude: 12.8378, longitude: 77.6750 }, address: 'Bommasandra, Bangalore' },
+            { id: 'H015', name: 'Fortis Hospital', city: 'Bangalore', type: 'Private', coords: { latitude: 12.8953, longitude: 77.5986 }, address: 'Bannerghatta Road, Bangalore' },
+
+            // Chennai
+            { id: 'H016', name: 'Apollo Main Hospital', city: 'Chennai', type: 'Private', coords: { latitude: 13.0645, longitude: 80.2520 }, address: 'Greams Road, Chennai' },
+            { id: 'H017', name: 'CMC Vellore', city: 'Vellore', type: 'Trust', coords: { latitude: 12.9246, longitude: 79.1352 }, address: 'Vellore, Tamil Nadu' },
+            { id: 'H018', name: 'Madras Medical College (GH)', city: 'Chennai', type: 'Government', coords: { latitude: 13.0822, longitude: 80.2755 }, address: 'Park Town, Chennai' },
+
+            // Hyderabad
+            { id: 'H019', name: 'Yashoda Hospital', city: 'Hyderabad', type: 'Private', coords: { latitude: 17.4390, longitude: 78.4870 }, address: 'Secunderabad, Hyderabad' },
+            { id: 'H020', name: 'Apollo Health City', city: 'Hyderabad', type: 'Private', coords: { latitude: 17.4087, longitude: 78.4116 }, address: 'Jubilee Hills, Hyderabad' },
+            { id: 'H021', name: 'Osmania General Hospital', city: 'Hyderabad', type: 'Government', coords: { latitude: 17.3713, longitude: 78.4735 }, address: 'Afzal Gunj, Hyderabad' },
+
+            // Kolkata
+            { id: 'H022', name: 'Apollo Gleneagles', city: 'Kolkata', type: 'Private', coords: { latitude: 22.5801, longitude: 88.3970 }, address: 'Kankurgachi, Kolkata' },
+            { id: 'H023', name: 'SSKM Hospital', city: 'Kolkata', type: 'Government', coords: { latitude: 22.5385, longitude: 88.3444 }, address: 'Bhowanipore, Kolkata' },
+
+            // Others
+            { id: 'H024', name: 'PGIMER', city: 'Chandigarh', type: 'Government', coords: { latitude: 30.7634, longitude: 76.7725 }, address: 'Sector 12, Chandigarh' },
+            { id: 'H025', name: 'Medanta - The Medicity', city: 'Gurgaon', type: 'Private', coords: { latitude: 28.4385, longitude: 77.0423 }, address: 'Sector 38, Gurgaon' }
+        ];
+
+        // Add dummy resource/bed data to the real list
+        hospitals = hospitals.map(h => ({
+            ...h,
+            beds: { total: 500, available: Math.floor(Math.random() * 100), icu: 50, icuAvailable: Math.floor(Math.random() * 10) },
+            resources: { oxygen: true, ventilators: true, bloodBank: true },
+            contact: { phone: '011-23456789', email: 'info@hospital.com', emergency: '108' },
+            rating: 4.0 + (Math.random() * 1.0)
+        }));
+
+        // If user location is provided, calculate distance and sort
+        if (userLocation && userLocation.latitude && userLocation.longitude) {
+            try {
+                hospitals = hospitals.map(hospital => {
+                    const dist = calculateDistance(
+                        userLocation.latitude,
+                        userLocation.longitude,
+                        hospital.coords.latitude,
+                        hospital.coords.longitude
+                    );
+                    return { ...hospital, distance: dist.toFixed(1) };
+                }).sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+            } catch (err) {
+                console.error("Error calculating distances:", err);
+            }
         }
 
         return hospitals;
@@ -232,8 +286,78 @@ const APIService = {
         return this.request('/health/air-quality');
     },
 
-    async getHospitals() {
-        return this.request('/hospitals');
+    async getHospitals(location = null) {
+        // If location is available, try to fetch real data from OSM first
+        if (location && location.latitude && location.longitude) {
+            try {
+                // Race between OSM fetch and a 3-second timeout
+                const osmData = await Promise.race([
+                    this.getRealHospitalsFromOSM(location),
+                    new Promise((_, reject) => setTimeout(() => reject('Timeout'), 3000))
+                ]);
+
+                if (osmData && osmData.length > 0) {
+                    return {
+                        success: true,
+                        data: osmData
+                    };
+                }
+            } catch (error) {
+                console.warn('Failed to fetch from OSM, falling back to static list:', error);
+            }
+        }
+
+        // Fallback to static list (which now contains real major hospitals)
+        // Pass location to body mock if needed, but here we just call local helper directly or via mock response
+        return {
+            success: true,
+            data: this.getMockHospitals(location)
+        };
+    },
+
+    /**
+     * Fetch real hospitals from OpenStreetMap (Nominatim)
+     */
+    async getRealHospitalsFromOSM(location) {
+        const { latitude, longitude } = location;
+        // Search for hospitals near the location
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=hospital&limit=15&lat=${latitude}&lon=${longitude}`;
+
+        const response = await fetch(url, {
+            headers: {
+                'User-Agent': 'SwasthyaSetu-DemoApp/1.0'
+            }
+        });
+
+        if (!response.ok) throw new Error('OSM API Error');
+
+        const data = await response.json();
+
+        // Map OSM format to our app's hospital format
+        return data.map((item, index) => {
+            // Calculate distance
+            const dist = calculateDistance(
+                latitude, longitude,
+                parseFloat(item.lat), parseFloat(item.lon)
+            );
+
+            return {
+                id: `OSM${item.place_id || index}`,
+                name: item.display_name.split(',')[0], // Take first part of name
+                city: (item.display_name.split(',').length > 2) ? item.display_name.split(',').slice(-4)[0].trim() : 'Local',
+                type: 'Hospital',
+                coords: {
+                    latitude: parseFloat(item.lat),
+                    longitude: parseFloat(item.lon)
+                },
+                distance: dist.toFixed(1),
+                beds: { total: '?', available: '?', icu: '?', icuAvailable: '?' }, // Unknown for public API
+                resources: { oxygen: true, ventilators: true, bloodBank: true }, // Assumed
+                contact: { phone: 'N/A', email: 'N/A', emergency: '108' },
+                address: item.display_name,
+                rating: 4.5 // Default high rating for real places
+            };
+        }).sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
     },
 
     async getPatientProfile() {

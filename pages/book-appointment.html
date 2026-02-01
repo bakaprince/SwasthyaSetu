@@ -172,15 +172,15 @@
                                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <span class="material-icons-outlined text-gray-400">local_hospital</span>
                                 </span>
-                                <select required
+                                <select required id="hospital-select"
                                     class="block w-full pl-10 pr-10 py-3 border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-secondary focus:border-secondary transition-shadow">
-                                    <option value="" disabled selected>Select a Hospital</option>
-                                    <option value="AIIMS Delhi">AIIMS Delhi</option>
-                                    <option value="Safdarjung Hospital">Safdarjung Hospital</option>
-                                    <option value="RML Hospital">RML Hospital</option>
-                                    <option value="Max Super Speciality">Max Super Speciality</option>
-                                    <option value="Apollo Hospital">Apollo Hospital</option>
+                                    <option value="" disabled selected>Detecting location...</option>
                                 </select>
+                                <div id="location-status"
+                                    class="text-xs text-gray-500 mt-1 ml-1 flex items-center gap-1">
+                                    <span class="material-icons-outlined text-[10px] animate-pulse">my_location</span>
+                                    <span>Locating nearby hospitals...</span>
+                                </div>
                             </div>
                         </div>
 
@@ -265,6 +265,7 @@
     <!-- JavaScript -->
     <script src="../js/config/app-config.js"></script>
     <script src="../js/utils/helpers.js"></script>
+    <script src="../js/services/api.js"></script>
     <script src="../js/services/auth.js"></script>
     <script src="../js/components/navigation.js"></script>
 
@@ -287,6 +288,77 @@
                 document.getElementById('patient-age').value = user.age || 'N/A';
                 document.getElementById('patient-gender').value = user.gender || 'N/A';
                 document.getElementById('patient-mobile').value = user.mobile || user.identifier || 'N/A';
+                document.getElementById('patient-mobile').value = user.mobile || user.identifier || 'N/A';
+            }
+
+            // Load Hospitals with Location
+            loadHospitals();
+
+            function loadHospitals() {
+                const hospitalSelect = document.getElementById('hospital-select');
+                const locationStatus = document.getElementById('location-status');
+
+                // Success callback
+                const onLocationSuccess = async (position) => {
+                    const coords = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    };
+
+                    locationStatus.innerHTML = `
+                        <span class="material-icons-outlined text-[10px] text-green-500">check_circle</span>
+                        <span class="text-green-600">Location detected. Showing nearby hospitals.</span>
+                    `;
+
+                    fetchAndPopulateHospitals(coords);
+                };
+
+                // Error callback (denied or failed)
+                const onLocationError = (error) => {
+                    console.warn("Location access denied or failed:", error);
+                    locationStatus.innerHTML = `
+                        <span class="material-icons-outlined text-[10px] text-orange-500">location_disabled</span>
+                        <span class="text-orange-600">Location access denied. Showing all hospitals.</span>
+                    `;
+                    fetchAndPopulateHospitals(null);
+                };
+
+                // Request location
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(onLocationSuccess, onLocationError);
+                } else {
+                    onLocationError(null);
+                }
+            }
+
+            async function fetchAndPopulateHospitals(location) {
+                const hospitalSelect = document.getElementById('hospital-select');
+                try {
+                    const response = await APIService.getHospitals(location);
+
+                    if (response.success) {
+                        const hospitals = response.data;
+                        hospitalSelect.innerHTML = '<option value="" disabled selected>Select a Hospital</option>';
+
+                        hospitals.forEach(hospital => {
+                            const option = document.createElement('option');
+                            option.value = hospital.name;
+
+                            // Show distance if available
+                            if (hospital.distance) {
+                                option.textContent = `${hospital.name} (${hospital.distance} km away)`;
+                            } else {
+                                option.textContent = `${hospital.name} - ${hospital.city}`;
+                            }
+
+                            hospitalSelect.appendChild(option);
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error fetching hospitals:', error);
+                    hospitalSelect.innerHTML = '<option value="" disabled>Error loading hospitals</option>';
+                    Helpers.showToast('Failed to load hospitals', 'error');
+                }
             }
 
             // Handle form submission
