@@ -110,6 +110,10 @@
                             <span class="text-gray-700 dark:text-gray-300" id="profile-dob">Loading...</span>
                         </div>
                         <div class="flex items-center gap-3 text-sm">
+                            <span class="material-icons-outlined text-gray-400">hourglass_empty</span>
+                            <span class="text-gray-700 dark:text-gray-300" id="profile-age">Loading...</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm">
                             <span class="material-icons-outlined text-gray-400">bloodtype</span>
                             <span class="text-gray-700 dark:text-gray-300" id="profile-blood">Loading...</span>
                         </div>
@@ -367,7 +371,8 @@
 
         async function loadProfile() {
             try {
-                const profile = await APIService.getPatientProfile();
+                const response = await APIService.getPatientProfile();
+                const profile = response.data;
 
                 // Update profile card
                 document.getElementById('profile-name').textContent = profile.name;
@@ -375,6 +380,7 @@
                 document.getElementById('profile-phone').textContent = profile.mobile;
                 document.getElementById('profile-email').textContent = profile.email;
                 document.getElementById('profile-dob').textContent = Helpers.formatDate(profile.dateOfBirth);
+                document.getElementById('profile-age').textContent = `Age: ${profile.age || 'N/A'}`;
                 document.getElementById('profile-blood').textContent = `Blood Group: ${profile.bloodGroup}`;
                 document.getElementById('profile-address').textContent = profile.address;
 

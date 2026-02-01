@@ -197,8 +197,11 @@
 
         async function loadAppointments() {
             try {
-                allAppointments = await APIService.getAppointments();
-                displayAppointments();
+                const response = await APIService.getAppointments();
+                if (response.success) {
+                    allAppointments = response.data;
+                    displayAppointments();
+                }
             } catch (error) {
                 console.error('Error loading appointments:', error);
                 Helpers.showToast('Failed to load appointments', 'error');

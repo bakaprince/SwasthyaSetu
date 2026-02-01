@@ -107,9 +107,9 @@ const AppConfig = {
                 mobile: '9876543210',
                 password: 'demo123',
                 name: 'Rajesh Kumar',
-                age: 42,
+                age: 40,
                 gender: 'Male',
-                dob: '1984-01-01'
+                dob: '1986-01-01'
             },
             {
                 type: 'admin',

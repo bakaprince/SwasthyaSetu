@@ -88,16 +88,18 @@ const APIService = {
             const savedLocation = Helpers.getStorage(AppConfig.storage.userLocation);
 
             // Build profile from current user data
+            // Strictly hardcode profile for demo purposes as requested
             const profile = {
-                id: currentUser?.id || 'P001',
-                name: currentUser?.name || 'Demo User',
-                abhaId: currentUser?.identifier || '12-3456-7890-1234',
-                mobile: currentUser?.identifier || '9876543210',
-                email: currentUser?.email || `${currentUser?.name?.toLowerCase().replace(' ', '.')}@example.com` || 'user@example.com',
-                dateOfBirth: currentUser?.dob || '1990-01-01',
-                gender: currentUser?.gender || 'Male',
-                bloodGroup: currentUser?.bloodGroup || 'O+',
-                address: savedLocation?.address || currentUser?.address || 'India',
+                id: 'P001',
+                name: 'Rajesh Kumar',
+                abhaId: '12-3456-7890-1234',
+                mobile: '9876543210',
+                email: 'rajesh.kumar@example.com',
+                dateOfBirth: '1986-01-01',
+                age: 40,
+                gender: 'Male',
+                bloodGroup: 'O+',
+                address: '123, Gandhi Nagar, New Delhi, India',
                 location: savedLocation ? {
                     latitude: savedLocation.latitude,
                     longitude: savedLocation.longitude,
@@ -105,10 +107,10 @@ const APIService = {
                     state: savedLocation.state,
                     country: savedLocation.country
                 } : null,
-                emergencyContact: currentUser?.emergencyContact || {
-                    name: 'Emergency Contact',
-                    relation: 'Family',
-                    mobile: '1234567890'
+                emergencyContact: {
+                    name: 'Sita Sharma',
+                    relation: 'Wife',
+                    mobile: '9876543211'
                 }
             };
 
