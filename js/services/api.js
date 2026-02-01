@@ -165,28 +165,53 @@ const APIService = {
 
         // Appointments
         if (endpoint.includes('/patient/appointments')) {
+            // Get current date and future dates for appointments
+            const today = new Date();
+            const futureDate1 = new Date(today);
+            futureDate1.setDate(today.getDate() + 5);
+            const futureDate2 = new Date(today);
+            futureDate2.setDate(today.getDate() + 10);
+            const pastDate = new Date(today);
+            pastDate.setDate(today.getDate() - 15);
+
             return {
                 success: true,
                 data: [
                     {
                         id: 'A001',
-                        date: '2024-02-05',
+                        date: futureDate1.toISOString().split('T')[0],
                         time: '10:00 AM',
                         hospital: 'AIIMS Delhi',
-                        doctor: 'Dr. Sharma',
+                        doctor: 'Dr. Rajesh Sharma',
+                        specialty: 'General Medicine',
                         department: 'General Medicine',
                         status: 'confirmed',
-                        type: 'in-person'
+                        type: 'In-person',
+                        reason: 'Regular checkup and consultation'
                     },
                     {
                         id: 'A002',
-                        date: '2024-02-10',
+                        date: futureDate2.toISOString().split('T')[0],
                         time: '3:00 PM',
-                        hospital: 'Apollo Hospital',
-                        doctor: 'Dr. Patel',
+                        hospital: 'Apollo Hospital, Delhi',
+                        doctor: 'Dr. Priya Patel',
+                        specialty: 'Cardiology',
                         department: 'Cardiology',
-                        status: 'pending',
-                        type: 'telemedicine'
+                        status: 'confirmed',
+                        type: 'Telemedicine',
+                        reason: 'Follow-up consultation for heart health'
+                    },
+                    {
+                        id: 'A003',
+                        date: pastDate.toISOString().split('T')[0],
+                        time: '11:30 AM',
+                        hospital: 'Max Hospital, Delhi',
+                        doctor: 'Dr. Amit Verma',
+                        specialty: 'Orthopedics',
+                        department: 'Orthopedics',
+                        status: 'completed',
+                        type: 'In-person',
+                        reason: 'Knee pain assessment'
                     }
                 ]
             };
