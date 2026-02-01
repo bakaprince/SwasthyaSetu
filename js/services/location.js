@@ -36,13 +36,32 @@ const LocationService = {
             }
 
             navigator.geolocation.getCurrentPosition(
-                (position) => {
+                async (position) => {
                     const locationData = {
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude,
                         accuracy: position.coords.accuracy,
                         timestamp: new Date().toISOString()
                     };
+
+                    // Try to get address from reverse geocoding
+                    try {
+                        const addressData = await this.reverseGeocode(
+                            locationData.latitude,
+                            locationData.longitude
+                        );
+
+                        if (addressData) {
+                            locationData.city = addressData.city;
+                            locationData.state = addressData.state;
+                            locationData.country = addressData.country;
+                            locationData.address = addressData.formattedAddress;
+                        }
+                    } catch (error) {
+                        console.warn('Reverse geocoding failed:', error);
+                        // Continue with just coordinates
+                        locationData.address = `${locationData.latitude.toFixed(4)}, ${locationData.longitude.toFixed(4)}`;
+                    }
 
                     // Save location
                     this.currentLocation = locationData;
@@ -86,6 +105,46 @@ const LocationService = {
                 }
             );
         });
+    },
+
+    /**
+     * Reverse geocode coordinates to get address
+     * @param {number} latitude - Latitude
+     * @param {number} longitude - Longitude
+     * @returns {Promise<object>} Address data
+     */
+    async reverseGeocode(latitude, longitude) {
+        try {
+            // Using OpenStreetMap Nominatim API (free, no API key required)
+            const response = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1`,
+                {
+                    headers: {
+                        'User-Agent': 'SwasthyaSetu/1.0'
+                    }
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error('Geocoding request failed');
+            }
+
+            const data = await response.json();
+
+            if (data && data.address) {
+                return {
+                    city: data.address.city || data.address.town || data.address.village || 'Unknown',
+                    state: data.address.state || data.address.region || 'Unknown',
+                    country: data.address.country || 'Unknown',
+                    formattedAddress: data.display_name || `${latitude}, ${longitude}`
+                };
+            }
+
+            return null;
+        } catch (error) {
+            console.error('Reverse geocoding error:', error);
+            return null;
+        }
     },
 
     /**

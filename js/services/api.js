@@ -81,24 +81,40 @@ const APIService = {
 
         // Patient Profile
         if (endpoint.includes('/patient/profile')) {
+            // Get current user from auth service
+            const currentUser = AuthService.getCurrentUser();
+
+            // Get saved location if available
+            const savedLocation = Helpers.getStorage(AppConfig.storage.userLocation);
+
+            // Build profile from current user data
+            const profile = {
+                id: currentUser?.id || 'P001',
+                name: currentUser?.name || 'Demo User',
+                abhaId: currentUser?.identifier || '12-3456-7890-1234',
+                mobile: currentUser?.identifier || '9876543210',
+                email: currentUser?.email || `${currentUser?.name?.toLowerCase().replace(' ', '.')}@example.com` || 'user@example.com',
+                dateOfBirth: currentUser?.dob || '1990-01-01',
+                gender: currentUser?.gender || 'Male',
+                bloodGroup: currentUser?.bloodGroup || 'O+',
+                address: savedLocation?.address || currentUser?.address || 'India',
+                location: savedLocation ? {
+                    latitude: savedLocation.latitude,
+                    longitude: savedLocation.longitude,
+                    city: savedLocation.city,
+                    state: savedLocation.state,
+                    country: savedLocation.country
+                } : null,
+                emergencyContact: currentUser?.emergencyContact || {
+                    name: 'Emergency Contact',
+                    relation: 'Family',
+                    mobile: '1234567890'
+                }
+            };
+
             return {
                 success: true,
-                data: {
-                    id: 'P001',
-                    name: 'Rajesh Kumar',
-                    abhaId: '12-3456-7890-1234',
-                    mobile: '9876543210',
-                    email: 'rajesh.kumar@example.com',
-                    dob: '1985-06-15',
-                    gender: 'Male',
-                    bloodGroup: 'O+',
-                    address: 'New Delhi, India',
-                    emergencyContact: {
-                        name: 'Priya Kumar',
-                        relation: 'Spouse',
-                        mobile: '9876543211'
-                    }
-                }
+                data: profile
             };
         }
 
