@@ -511,7 +511,7 @@
             }
 
             // Handle form submission
-            document.getElementById('booking-form').addEventListener('submit', (e) => {
+            document.getElementById('booking-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
 
                 // Validate Hospital
@@ -523,16 +523,47 @@
                     return;
                 }
 
-                // Show loading state (optional)
+                // Show loading state
                 const btn = e.submitter;
                 const originalText = btn.innerHTML;
                 btn.innerHTML = '<span class="material-icons-outlined animate-spin">refresh</span> Processing...';
                 btn.disabled = true;
 
-                // Simulate API call
-                setTimeout(() => {
-                    document.getElementById('booking-success-modal').classList.remove('hidden');
-                }, 1000);
+                try {
+                    // Collect form data
+                    const formData = new FormData(e.target);
+
+                    // Get hospital ID (for now, we'll use a mock ID - in production, this should be from hospital selection)
+                    const hospitalId = '507f1f77bcf86cd799439011'; // Mock MongoDB ObjectId
+
+                    const appointmentData = {
+                        hospitalId: hospitalId,
+                        hospital: hospitalInput.value,
+                        doctor: doctorSelect.value,
+                        specialty: departmentSelect.value,
+                        date: formData.get('date') || e.target.querySelector('input[type="date"]').value,
+                        time: e.target.querySelector('select[required]').value,
+                        type: 'In-person',
+                        reason: e.target.querySelector('textarea').value || 'General consultation'
+                    };
+
+                    // Call real backend API
+                    const response = await APIService.createAppointment(appointmentData);
+
+                    if (response.success) {
+                        // Show success modal
+                        setTimeout(() => {
+                            document.getElementById('booking-success-modal').classList.remove('hidden');
+                        }, 500);
+                    } else {
+                        throw new Error(response.message || 'Failed to create appointment');
+                    }
+                } catch (error) {
+                    console.error('Error creating appointment:', error);
+                    Helpers.showToast(error.message || 'Failed to book appointment. Please try again.', 'error');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
             });
         });
     </script>

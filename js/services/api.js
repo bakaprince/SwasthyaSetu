@@ -20,20 +20,67 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 }
 
 const APIService = {
+    // Backend API URL
+    baseURL: 'http://localhost:5000/api',
+
     /**
-     * Make a mock API call
+     * Get JWT token from localStorage
+     */
+    getToken() {
+        const user = AuthService?.getCurrentUser();
+        return user?.token || localStorage.getItem('token') || null;
+    },
+
+    /**
+     * Make a real API call to backend
      * @param {string} endpoint - API endpoint
      * @param {object} options - Request options
      * @returns {Promise} API response
      */
     async request(endpoint, options = {}) {
-        const { method = 'GET', body = null, delay = 500 } = options;
+        const { method = 'GET', body = null, useMock = false } = options;
 
-        // Simulate network delay
-        await Helpers.delay(delay);
+        // If useMock is true, use mock data (for features not yet implemented in backend)
+        if (useMock) {
+            await Helpers.delay(500);
+            return this.getMockResponse(endpoint, method, body);
+        }
 
-        // Mock responses based on endpoint
-        return this.getMockResponse(endpoint, method, body);
+        try {
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+
+            // Add auth token if available
+            const token = this.getToken();
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            const config = {
+                method,
+                headers
+            };
+
+            if (body && method !== 'GET') {
+                config.body = JSON.stringify(body);
+            }
+
+            const response = await fetch(`${this.baseURL}${endpoint}`, config);
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'API request failed');
+            }
+
+            return data;
+        } catch (error) {
+            console.error('API Error:', error);
+            // Fallback to mock data if backend is not available
+            console.warn('Backend not available, using mock data');
+            await Helpers.delay(500);
+            return this.getMockResponse(endpoint, method, body);
+        }
     },
 
     /**
@@ -375,7 +422,7 @@ const APIService = {
                 parseFloat(item.lat), parseFloat(item.lon)
             );
 
-            // Double check: if valid distance is too far (e.g. > 50km), ignore it 
+            // Double check: if valid distance is too far (e.g. > 50km), ignore it
             // (Mocking this filter check inside the map, usually done with .filter next)
             return {
                 _tempDist: dist, // Internal use for filter
@@ -407,8 +454,21 @@ const APIService = {
         return this.request('/patient/records');
     },
 
+    /**
+     * Get user appointments from backend
+     */
     async getAppointments() {
-        return this.request('/patient/appointments');
+        return this.request('/appointments');
+    },
+
+    /**
+     * Create new appointment in backend
+     */
+    async createAppointment(appointmentData) {
+        return this.request('/appointments', {
+            method: 'POST',
+            body: appointmentData
+        });
     }
 };
 

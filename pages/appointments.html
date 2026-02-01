@@ -192,14 +192,21 @@
 
         async function loadAppointments() {
             try {
+                // Get appointments from backend API
                 const response = await APIService.getAppointments();
+
                 if (response.success) {
-                    allAppointments = response.data;
-                    displayAppointments();
+                    allAppointments = response.data || [];
+                } else {
+                    allAppointments = [];
                 }
+
+                displayAppointments();
             } catch (error) {
                 console.error('Error loading appointments:', error);
                 Helpers.showToast('Failed to load appointments', 'error');
+                allAppointments = [];
+                displayAppointments();
             }
         }
 
