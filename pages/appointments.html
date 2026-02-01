@@ -134,6 +134,9 @@
         let allAppointments = [];
 
         document.addEventListener('DOMContentLoaded', async () => {
+            // Initialize auth service first to load user from storage
+            AuthService.init();
+
             // Check authentication
             if (!AuthService.isAuthenticated()) {
                 window.location.href = '../index.html';

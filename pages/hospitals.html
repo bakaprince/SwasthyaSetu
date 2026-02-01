@@ -61,13 +61,14 @@
             <img src="../assets/images/logo.png" alt="SwasthyaSetu Logo" class="h-8 w-auto">
         </div>
         <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
-            <a class="hover:text-primary transition-colors" href="../index.html">Home</a>
-            <a class="text-primary font-semibold" href="hospitals.html">Hospitals</a>
             <a class="hover:text-primary transition-colors" href="dashboard.html">Dashboard</a>
+            <a class="text-primary font-semibold" href="hospitals.html">Hospitals</a>
+            <a class="hover:text-primary transition-colors" href="appointments.html">Appointments</a>
+            <a class="hover:text-primary transition-colors" href="profile.html">Profile</a>
         </div>
-        <button
-            class="bg-primary text-secondary font-bold py-2 px-6 rounded-full hover:bg-white transition-colors duration-300 text-sm">
-            Emergency: 108
+        <button id="logout-btn"
+            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors text-sm font-semibold">
+            Logout
         </button>
     </nav>
 
@@ -227,15 +228,33 @@
     <script src="../js/config/app-config.js"></script>
     <script src="../js/utils/helpers.js"></script>
     <script src="../js/services/api.js"></script>
+    <script src="../js/services/auth.js"></script>
 
     <script>
         let allHospitals = [];
 
         // Load hospitals on page load
         document.addEventListener('DOMContentLoaded', async () => {
+            // Initialize auth service
+            AuthService.init();
+
             await loadHospitals();
             setupFilters();
+            setupLogout();
         });
+
+        function setupLogout() {
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', async () => {
+                    await AuthService.logout();
+                    Helpers.showToast('Logged out successfully', 'success');
+                    setTimeout(() => {
+                        window.location.href = '../index.html';
+                    }, 1000);
+                });
+            }
+        }
 
         async function loadHospitals() {
             try {
