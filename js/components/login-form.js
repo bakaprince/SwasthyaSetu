@@ -12,6 +12,10 @@ class LoginForm {
         this.setupTabSwitching();
         this.setupFormValidation();
         this.setupOTPButton();
+
+        // Set initial form fields for patient tab
+        this.updateFormFields();
+
         console.log('Login form component initialized');
     }
 
@@ -39,6 +43,68 @@ class LoginForm {
 
         // Update active tab
         this.activeTab = button.dataset.tab || 'patient';
+
+        // Update form fields based on active tab
+        this.updateFormFields();
+    }
+
+    updateFormFields() {
+        const idLabel = document.querySelector('label[for="abha-id"]');
+        const idInput = document.getElementById('abha-id');
+        const passwordLabel = document.querySelector('label[for="password"]');
+        const passwordInput = document.getElementById('password');
+        const otpButton = document.querySelector('.otp-button');
+        const abhaSection = document.querySelector('.login-form').parentElement.querySelector('.mt-6');
+
+        if (this.activeTab === 'patient') {
+            // Patient form fields
+            idLabel.textContent = 'ABHA Address / Mobile Number';
+            idInput.placeholder = 'e.g. name@abdm';
+            passwordLabel.textContent = 'Password / OTP';
+            passwordInput.placeholder = '••••••••';
+            passwordInput.type = 'password';
+
+            // Show OTP button
+            if (otpButton) {
+                otpButton.style.display = 'block';
+            }
+
+            // Show ABHA creation section
+            if (abhaSection) {
+                abhaSection.style.visibility = 'visible';
+                abhaSection.style.opacity = '1';
+                abhaSection.style.height = 'auto';
+                abhaSection.style.overflow = 'visible';
+                abhaSection.style.pointerEvents = 'auto';
+                abhaSection.style.transition = 'opacity 0.2s ease, height 0.2s ease';
+            }
+        } else {
+            // Hospital admin form fields
+            idLabel.textContent = 'Hospital ID / Email';
+            idInput.placeholder = 'e.g. hospital@example.com';
+            passwordLabel.textContent = 'Admin Password';
+            passwordInput.placeholder = '••••••••';
+            passwordInput.type = 'password';
+
+            // Hide OTP button
+            if (otpButton) {
+                otpButton.style.display = 'none';
+            }
+
+            // Hide ABHA creation section but maintain space
+            if (abhaSection) {
+                abhaSection.style.visibility = 'hidden';
+                abhaSection.style.opacity = '0';
+                abhaSection.style.height = '0';
+                abhaSection.style.overflow = 'hidden';
+                abhaSection.style.pointerEvents = 'none';
+                abhaSection.style.transition = 'opacity 0.2s ease, height 0.2s ease';
+            }
+        }
+
+        // Clear form inputs when switching tabs
+        idInput.value = '';
+        passwordInput.value = '';
     }
 
     setupFormValidation() {
@@ -78,9 +144,13 @@ class LoginForm {
                 Helpers.showToast('Login successful!', 'success');
                 console.log('Logged in user:', response.user);
 
-                // Redirect to dashboard after short delay
+                // Redirect to appropriate dashboard after short delay
                 setTimeout(() => {
-                    window.location.href = 'pages/dashboard.html';
+                    if (this.activeTab === 'patient') {
+                        window.location.href = 'pages/dashboard.html';
+                    } else {
+                        window.location.href = 'pages/admin-dashboard.html';
+                    }
                 }, 1000);
             } else {
                 Helpers.showToast(response.message || 'Login failed', 'error');
