@@ -66,10 +66,17 @@
             <a class="hover:text-primary transition-colors" href="appointments.html">Appointments</a>
             <a class="hover:text-primary transition-colors" href="profile.html">Profile</a>
         </div>
-        <button id="logout-btn"
-            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors text-sm font-semibold">
-            Logout
-        </button>
+        <div class="flex items-center gap-4">
+            <button id="emergency-btn"
+                class="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors font-semibold shadow-lg hover:shadow-red-500/30">
+                <span class="material-icons-outlined text-xl">emergency</span>
+                <span class="hidden md:inline">Emergency Access</span>
+            </button>
+            <button id="logout-btn"
+                class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors text-sm font-semibold">
+                Logout
+            </button>
+        </div>
     </nav>
 
     <!-- Main Content -->
@@ -224,11 +231,46 @@
         </div>
     </footer>
 
+    <!-- Emergency Modal -->
+    <div id="emergency-modal" class="modal-overlay fixed inset-0 z-50 hidden flex items-center justify-center">
+        <div
+            class="modal-content bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-red-500"></div>
+            <button id="close-modal-btn"
+                class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
+                <span class="material-icons-outlined">close</span>
+            </button>
+
+            <div class="text-center mb-6 pt-2">
+                <div
+                    class="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+                    <span class="material-icons-outlined text-red-600 text-3xl">emergency</span>
+                </div>
+                <h3 class="font-display text-2xl font-bold text-gray-900 dark:text-white">Emergency Support</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Select an option for immediate assistance</p>
+            </div>
+
+            <div class="space-y-3">
+                <button
+                    class="w-full flex items-center justify-center gap-3 bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-red-500/30 group">
+                    <span class="material-icons-outlined text-2xl group-hover:animate-bounce">airport_shuttle</span>
+                    <span class="text-lg whitespace-nowrap">Get an Ambulance</span>
+                </button>
+            </div>
+
+            <div class="mt-6 text-center">
+                <p class="text-xs text-gray-400">By using this service, you agree to share your location for emergency
+                    response.</p>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript -->
     <script src="../js/config/app-config.js"></script>
     <script src="../js/utils/helpers.js"></script>
     <script src="../js/services/api.js"></script>
     <script src="../js/services/auth.js"></script>
+    <script src="../js/components/navigation.js"></script>
 
     <script>
         let allHospitals = [];
@@ -241,6 +283,11 @@
             await loadHospitals();
             setupFilters();
             setupLogout();
+
+            // Initialize Navigation (for emergency modal)
+            if (typeof Navigation !== 'undefined') {
+                new Navigation();
+            }
         });
 
         function setupLogout() {
