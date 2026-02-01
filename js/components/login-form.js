@@ -165,6 +165,15 @@ class LoginForm {
         return true;
     }
 
+    setupOTPButton() {
+        const otpButton = document.querySelector('.otp-button');
+        if (otpButton) {
+            otpButton.addEventListener('click', () => {
+                this.requestOTP();
+            });
+        }
+    }
+
     async requestOTP() {
         const abhaInput = document.getElementById('abha-id');
         if (!abhaInput.value) {

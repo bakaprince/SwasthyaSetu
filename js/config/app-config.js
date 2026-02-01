@@ -68,6 +68,7 @@ const AppConfig = {
     storage: {
         authToken: 'swasthyasetu_auth_token',
         userProfile: 'swasthyasetu_user_profile',
+        userLocation: 'swasthyasetu_user_location',
         theme: 'swasthyasetu_theme',
         language: 'swasthyasetu_language'
     },
