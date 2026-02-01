@@ -61,6 +61,7 @@ class Navigation {
     updateAuthLinks() {
         // Get all navigation links that require authentication
         const authLinks = document.querySelectorAll('.nav-auth-link[data-auth-required="true"]');
+        const emergencyBtn = document.getElementById('emergency-btn');
 
         // Check if user is authenticated
         const isAuthenticated = AuthService && AuthService.isAuthenticated();
@@ -73,6 +74,15 @@ class Navigation {
                 link.classList.add('hidden');
             }
         });
+
+        // Hide emergency button if authenticated
+        if (emergencyBtn) {
+            if (isAuthenticated) {
+                emergencyBtn.classList.add('hidden');
+            } else {
+                emergencyBtn.classList.remove('hidden');
+            }
+        }
 
         console.log('Auth links updated. Authenticated:', isAuthenticated);
     }
