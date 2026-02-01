@@ -27,9 +27,10 @@ const AuthService = {
      * @param {string} identifier - ABHA ID or mobile number
      * @param {string} password - Password or OTP
      * @param {string} userType - 'patient' or 'admin'
+     * @param {boolean} rememberMe - Whether to remember credentials
      * @returns {Promise<object>} Login response
      */
-    async login(identifier, password, userType = 'patient') {
+    async login(identifier, password, userType = 'patient', rememberMe = false) {
         // Simulate API delay
         await Helpers.delay(AppConfig.demo.mockDelay);
 
@@ -57,6 +58,16 @@ const AuthService = {
             // Save to storage
             Helpers.setStorage(AppConfig.storage.authToken, token);
             Helpers.setStorage(AppConfig.storage.userProfile, userProfile);
+
+            // Handle Remember Me
+            if (rememberMe) {
+                Helpers.setStorage(AppConfig.storage.rememberMe, true);
+                Helpers.setStorage(AppConfig.storage.rememberedIdentifier, identifier);
+                Helpers.setStorage(AppConfig.storage.rememberedUserType, userType);
+            } else {
+                // Clear remember me if unchecked
+                this.clearRememberedCredentials();
+            }
 
             this.currentUser = userProfile;
 
@@ -194,6 +205,9 @@ const AuthService = {
         Helpers.removeStorage(AppConfig.storage.authToken);
         Helpers.removeStorage(AppConfig.storage.userProfile);
 
+        // Clear remembered credentials
+        this.clearRememberedCredentials();
+
         this.currentUser = null;
 
         // Dispatch auth state changed event
@@ -255,6 +269,32 @@ const AuthService = {
             message: 'Profile updated successfully',
             user: this.currentUser
         };
+    },
+
+    /**
+     * Get remembered credentials
+     * @returns {object|null} Remembered credentials or null
+     */
+    getRememberedCredentials() {
+        const rememberMe = Helpers.getStorage(AppConfig.storage.rememberMe);
+        if (!rememberMe) {
+            return null;
+        }
+
+        return {
+            identifier: Helpers.getStorage(AppConfig.storage.rememberedIdentifier),
+            userType: Helpers.getStorage(AppConfig.storage.rememberedUserType),
+            rememberMe: true
+        };
+    },
+
+    /**
+     * Clear remembered credentials
+     */
+    clearRememberedCredentials() {
+        Helpers.removeStorage(AppConfig.storage.rememberMe);
+        Helpers.removeStorage(AppConfig.storage.rememberedIdentifier);
+        Helpers.removeStorage(AppConfig.storage.rememberedUserType);
     }
 };
 

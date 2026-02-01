@@ -68,8 +68,12 @@ const AppConfig = {
     storage: {
         authToken: 'swasthyasetu_auth_token',
         userProfile: 'swasthyasetu_user_profile',
+        userLocation: 'swasthyasetu_user_location',
         theme: 'swasthyasetu_theme',
-        language: 'swasthyasetu_language'
+        language: 'swasthyasetu_language',
+        rememberMe: 'swasthyasetu_remember_me',
+        rememberedIdentifier: 'swasthyasetu_remembered_identifier',
+        rememberedUserType: 'swasthyasetu_remembered_user_type'
     },
 
     // Validation Rules

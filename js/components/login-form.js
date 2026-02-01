@@ -16,7 +16,45 @@ class LoginForm {
         // Set initial form fields for patient tab
         this.updateFormFields();
 
+        // Load remembered credentials if available
+        this.loadRememberedCredentials();
+
         console.log('Login form component initialized');
+    }
+
+    loadRememberedCredentials() {
+        const remembered = AuthService.getRememberedCredentials();
+        if (remembered) {
+            // Set the active tab to the remembered user type
+            this.activeTab = remembered.userType;
+
+            // Update tab UI
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                if (button.dataset.tab === remembered.userType) {
+                    button.classList.remove('text-gray-500', 'dark:text-gray-400', 'hover:text-gray-700', 'dark:hover:text-gray-200', 'hover:bg-gray-50', 'dark:hover:bg-gray-700/50');
+                    button.classList.add('bg-white', 'dark:bg-gray-700', 'text-secondary', 'dark:text-white', 'shadow-sm', 'ring-1', 'ring-black/5');
+                } else {
+                    button.classList.add('text-gray-500', 'dark:text-gray-400', 'hover:text-gray-700', 'dark:hover:text-gray-200', 'hover:bg-gray-50', 'dark:hover:bg-gray-700/50');
+                    button.classList.remove('bg-white', 'dark:bg-gray-700', 'text-secondary', 'dark:text-white', 'shadow-sm', 'ring-1', 'ring-black/5');
+                }
+            });
+
+            // Update form fields for the correct tab
+            this.updateFormFields();
+
+            // Fill in the identifier
+            const abhaInput = document.getElementById('abha-id');
+            if (abhaInput && remembered.identifier) {
+                abhaInput.value = remembered.identifier;
+            }
+
+            // Check the remember me checkbox
+            const rememberCheckbox = document.getElementById('remember-me');
+            if (rememberCheckbox) {
+                rememberCheckbox.checked = true;
+            }
+        }
     }
 
     setupTabSwitching() {
@@ -105,6 +143,22 @@ class LoginForm {
         // Clear form inputs when switching tabs
         idInput.value = '';
         passwordInput.value = '';
+
+        // Check if we have remembered credentials for this tab
+        const remembered = AuthService.getRememberedCredentials();
+        if (remembered && remembered.userType === this.activeTab) {
+            idInput.value = remembered.identifier;
+            const rememberCheckbox = document.getElementById('remember-me');
+            if (rememberCheckbox) {
+                rememberCheckbox.checked = true;
+            }
+        } else {
+            // Uncheck remember me if switching to different user type
+            const rememberCheckbox = document.getElementById('remember-me');
+            if (rememberCheckbox) {
+                rememberCheckbox.checked = false;
+            }
+        }
     }
 
     setupFormValidation() {
@@ -133,11 +187,16 @@ class LoginForm {
             submitBtn.textContent = 'Logging in...';
             submitBtn.disabled = true;
 
+            // Get remember me checkbox state
+            const rememberCheckbox = document.getElementById('remember-me');
+            const rememberMe = rememberCheckbox ? rememberCheckbox.checked : false;
+
             // Attempt login
             const response = await AuthService.login(
                 abhaInput.value,
                 passwordInput.value,
-                this.activeTab
+                this.activeTab,
+                rememberMe
             );
 
             if (response.success) {
@@ -163,6 +222,15 @@ class LoginForm {
         }
 
         return true;
+    }
+
+    setupOTPButton() {
+        const otpButton = document.querySelector('.otp-button');
+        if (otpButton) {
+            otpButton.addEventListener('click', () => {
+                this.requestOTP();
+            });
+        }
     }
 
     async requestOTP() {
