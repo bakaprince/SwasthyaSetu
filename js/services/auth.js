@@ -49,10 +49,10 @@ const AuthService = {
             // Create user profile
             const userProfile = {
                 id: Helpers.generateId(8),
-                name: user?.name || 'Demo User',
                 type: userType,
                 identifier: identifier,
-                loginTime: new Date().toISOString()
+                loginTime: new Date().toISOString(),
+                ...user // Spread all properties from the mock user (name, age, gender, etc.)
             };
 
             // Save to storage
