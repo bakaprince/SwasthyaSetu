@@ -106,7 +106,10 @@ const AppConfig = {
                 abhaId: '12345678901234',
                 mobile: '9876543210',
                 password: 'demo123',
-                name: 'Rajesh Kumar'
+                name: 'Rajesh Kumar',
+                age: 42,
+                gender: 'Male',
+                dob: '1984-01-01'
             },
             {
                 type: 'admin',
