@@ -424,16 +424,18 @@
                                 <div>
                                     <h4 class="font-display font-bold text-xl text-secondary dark:text-white">Air
                                         Quality</h4>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">Current Average AQI</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                                        <span id="aqi-city">Your Location</span>
+                                    </p>
                                 </div>
                             </div>
                             <div class="text-right">
-                                <span class="block text-2xl font-bold text-yellow-600">142</span>
-                                <span
+                                <span id="aqi-value" class="block text-2xl font-bold text-yellow-600">142</span>
+                                <span id="aqi-level"
                                     class="text-xs font-bold text-yellow-700 bg-yellow-100 px-1.5 py-0.5 rounded">Unhealthy</span>
                             </div>
                         </div>
-                        <div class="grid grid-cols-5 gap-1 mb-4 h-1.5 w-full">
+                        <div id="aqi-indicator" class="grid grid-cols-5 gap-1 mb-4 h-1.5 w-full">
                             <div class="bg-green-400 rounded-l-full opacity-30"></div>
                             <div class="bg-yellow-400 opacity-30"></div>
                             <div class="bg-orange-400 transform scale-y-150 rounded-sm shadow-sm"></div>
@@ -442,7 +444,7 @@
                         </div>
                         <p class="text-gray-600 dark:text-gray-300 text-xs mb-0 flex items-center gap-2">
                             <span class="material-icons-outlined text-sm text-blue-500">masks</span>
-                            <span>Sensitive groups should wear masks outdoors.</span>
+                            <span id="aqi-recommendation">Sensitive groups should wear masks outdoors.</span>
                         </p>
                     </div>
                 </div>
@@ -586,6 +588,7 @@
     <script src="js/services/api.js"></script>
     <script src="js/services/auth.js"></script>
     <script src="js/services/location.js"></script>
+    <script src="js/services/aqi.js"></script>
 
     <!-- Components -->
     <script src="js/components/navigation.js"></script>

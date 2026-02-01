@@ -69,6 +69,7 @@ const AppConfig = {
         authToken: 'swasthyasetu_auth_token',
         userProfile: 'swasthyasetu_user_profile',
         userLocation: 'swasthyasetu_user_location',
+        aqiData: 'swasthyasetu_aqi',
         theme: 'swasthyasetu_theme',
         language: 'swasthyasetu_language',
         rememberMe: 'swasthyasetu_remember_me',

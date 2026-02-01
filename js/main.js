@@ -28,6 +28,9 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // Initialize location service
+    initializeLocationService();
+
     // Dark mode toggle (if needed in the future)
     // const darkModeToggle = document.getElementById('dark-mode-toggle');
     // if (darkModeToggle) {

@@ -67,6 +67,11 @@ const LocationService = {
                     this.currentLocation = locationData;
                     Helpers.setStorage(AppConfig.storage.userLocation, locationData);
 
+                    // Dispatch custom event for other services to listen
+                    window.dispatchEvent(new CustomEvent('locationUpdated', {
+                        detail: locationData
+                    }));
+
                     resolve({
                         success: true,
                         message: 'Location retrieved successfully',
