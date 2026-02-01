@@ -8,10 +8,11 @@ const {
     cancelAppointment
 } = require('../controllers/appointmentController');
 const { protect, authorize } = require('../middleware/auth');
+const { validateAppointment } = require('../middleware/validation');
 
 // Patient routes
 router.get('/', protect, getAppointments);
-router.post('/', protect, authorize('patient'), createAppointment);
+router.post('/', protect, authorize('patient'), validateAppointment, createAppointment);
 router.delete('/:id', protect, cancelAppointment);
 
 // Hospital admin routes

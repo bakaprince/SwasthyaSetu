@@ -203,14 +203,29 @@ class LoginForm {
                 Helpers.showToast('Login successful!', 'success');
                 console.log('Logged in user:', response.user);
 
-                // Redirect to appropriate dashboard after short delay
+                // Redirect to appropriate dashboard
                 setTimeout(() => {
-                    if (this.activeTab === 'patient') {
-                        window.location.href = 'pages/dashboard.html';
-                    } else {
-                        window.location.href = 'pages/admin-dashboard.html';
+                    const userRole = response.user.type || this.activeTab;
+                    console.log('Redirecting user with role:', userRole);
+
+                    try {
+                        if (userRole === 'patient') {
+                            console.log('Redirecting to patient dashboard...');
+                            window.location.assign('pages/dashboard.html');
+                        } else {
+                            console.log('Redirecting to admin dashboard...');
+                            window.location.assign('pages/admin-dashboard.html');
+                        }
+                    } catch (e) {
+                        console.error('Redirection failed:', e);
+                        // Fallback
+                        if (userRole === 'patient') {
+                            window.location.href = 'pages/dashboard.html';
+                        } else {
+                            window.location.href = 'pages/admin-dashboard.html';
+                        }
                     }
-                }, 1000);
+                }, 500);
             } else {
                 Helpers.showToast(response.message || 'Login failed', 'error');
                 submitBtn.textContent = originalText;

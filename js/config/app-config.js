@@ -93,31 +93,6 @@ const AppConfig = {
             length: 6,
             pattern: /^\d{6}$/
         }
-    },
-
-    // Demo Mode Settings
-    demo: {
-        enabled: true,
-        autoLogin: false,
-        mockDelay: 500, // Simulate API delay in ms
-        sampleUsers: [
-            {
-                type: 'patient',
-                abhaId: '12345678901234',
-                mobile: '9876543210',
-                password: 'demo123',
-                name: 'Rajesh Kumar',
-                age: 40,
-                gender: 'Male',
-                dob: '1986-01-01'
-            },
-            {
-                type: 'admin',
-                email: 'admin@hospital.gov.in',
-                password: 'admin123',
-                hospital: 'AIIMS Delhi'
-            }
-        ]
     }
 };
 
