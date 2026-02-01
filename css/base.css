@@ -1,0 +1,36 @@
+/* Base Styles and Global Utilities */
+
+/* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Background Patterns */
+.hero-pattern {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+.dot-pattern {
+    background-image: radial-gradient(#113841 1px, transparent 1px);
+    background-size: 16px 16px;
+    opacity: 0.05;
+}
+
+/* Global Transitions */
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}

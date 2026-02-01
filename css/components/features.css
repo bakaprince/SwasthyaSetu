@@ -1,0 +1,28 @@
+/* Features Section Component Styles */
+
+.feature-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Feature icon container */
+.feature-icon {
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover .feature-icon {
+    transform: scale(1.1);
+}
+
+/* Learn more link hover effect */
+.learn-more-link {
+    transition: gap 0.2s ease;
+}
+
+.learn-more-link:hover {
+    gap: 0.5rem;
+}

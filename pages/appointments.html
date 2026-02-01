@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>My Appointments - SwasthyaSetu</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet" />
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#86efac",
+                        secondary: "#113841",
+                        "secondary-light": "#1d525e",
+                        "background-dark": "#0d2b32",
+                        "accent-purple": "#e0defc",
+                        "accent-green": "#e6f0c2",
+                        "accent-blue": "#d0e8f2",
+                        "health-orange": "#f78e69",
+                    },
+                    fontFamily: {
+                        display: ["Playfair Display", "serif"],
+                        sans: ["DM Sans", "sans-serif"],
+                    },
+                },
+            },
+        };
+    </script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+
+<body class="bg-gray-50 dark:bg-background-dark font-sans antialiased text-gray-800 dark:text-gray-100 min-h-screen">
+
+    <!-- Navigation -->
+    <nav
+        class="w-full bg-secondary text-white py-4 px-6 md:px-12 flex justify-between items-center border-b border-white/10">
+        <div class="flex items-center gap-2">
+            <span class="material-icons-outlined text-primary text-3xl">local_hospital</span>
+            <span class="font-display font-bold text-2xl tracking-wide">MedConnect</span>
+        </div>
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
+            <a class="hover:text-primary transition-colors" href="dashboard.html">Dashboard</a>
+            <a class="hover:text-primary transition-colors" href="hospitals.html">Hospitals</a>
+            <a class="text-primary font-semibold" href="appointments.html">Appointments</a>
+            <a class="hover:text-primary transition-colors" href="profile.html">Profile</a>
+        </div>
+        <button id="logout-btn"
+            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors text-sm font-semibold">
+            Logout
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        <!-- Header -->
+        <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+                <h1 class="font-display text-4xl font-bold text-secondary dark:text-white mb-2">My Appointments</h1>
+                <p class="text-gray-600 dark:text-gray-400">Manage your upcoming and past appointments</p>
+            </div>
+            <button
+                class="bg-secondary text-white px-6 py-3 rounded-lg font-semibold hover:bg-secondary-light transition-colors flex items-center gap-2 w-fit">
+                <span class="material-icons-outlined">add</span>
+                Book New Appointment
+            </button>
+        </div>
+
+        <!-- Tabs -->
+        <div class="mb-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex gap-8">
+                <button
+                    class="tab-btn active pb-4 px-2 font-semibold text-secondary dark:text-primary border-b-2 border-secondary dark:border-primary"
+                    data-tab="upcoming">
+                    Upcoming
+                </button>
+                <button
+                    class="tab-btn pb-4 px-2 font-semibold text-gray-500 hover:text-secondary dark:hover:text-primary border-b-2 border-transparent"
+                    data-tab="past">
+                    Past
+                </button>
+                <button
+                    class="tab-btn pb-4 px-2 font-semibold text-gray-500 hover:text-secondary dark:hover:text-primary border-b-2 border-transparent"
+                    data-tab="cancelled">
+                    Cancelled
+                </button>
+            </div>
+        </div>
+
+        <!-- Upcoming Appointments -->
+        <div id="upcoming-tab" class="tab-content">
+            <div class="space-y-4" id="upcoming-appointments">
+                <!-- Appointments will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Past Appointments -->
+        <div id="past-tab" class="tab-content hidden">
+            <div class="space-y-4" id="past-appointments">
+                <!-- Past appointments will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Cancelled Appointments -->
+        <div id="cancelled-tab" class="tab-content hidden">
+            <div class="space-y-4" id="cancelled-appointments">
+                <p class="text-center text-gray-500 py-8">No cancelled appointments</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="../js/config/app-config.js"></script>
+    <script src="../js/utils/helpers.js"></script>
+    <script src="../js/services/api.js"></script>
+    <script src="../js/services/auth.js"></script>
+
+    <script>
+        let allAppointments = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check authentication
+            if (!AuthService.isAuthenticated()) {
+                window.location.href = '../index.html';
+                return;
+            }
+
+            await loadAppointments();
+            setupTabs();
+            setupEventListeners();
+        });
+
+        async function loadAppointments() {
+            try {
+                allAppointments = await APIService.getAppointments();
+                displayAppointments();
+            } catch (error) {
+                console.error('Error loading appointments:', error);
+                Helpers.showToast('Failed to load appointments', 'error');
+            }
+        }
+
+        function displayAppointments() {
+            const now = new Date();
+
+            const upcoming = allAppointments.filter(apt => {
+                const aptDate = new Date(apt.date + ' ' + apt.time);
+                return aptDate > now && apt.status === 'confirmed';
+            });
+
+            const past = allAppointments.filter(apt => {
+                const aptDate = new Date(apt.date + ' ' + apt.time);
+                return aptDate <= now || apt.status === 'completed';
+            });
+
+            displayAppointmentList('upcoming-appointments', upcoming);
+            displayAppointmentList('past-appointments', past);
+        }
+
+        function displayAppointmentList(containerId, appointments) {
+            const container = document.getElementById(containerId);
+
+            if (appointments.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-500 py-8">No appointments found</p>';
+                return;
+            }
+
+            container.innerHTML = appointments.map(apt => {
+                const statusColors = {
+                    confirmed: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200',
+                    pending: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200',
+                    completed: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200',
+                    cancelled: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200'
+                };
+
+                const typeIcons = {
+                    'In-person': 'local_hospital',
+                    'Telemedicine': 'video_call'
+                };
+
+                return `
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg transition-shadow">
+                        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                            <!-- Appointment Info -->
+                            <div class="flex gap-4 flex-1">
+                                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-secondary to-secondary-light flex items-center justify-center flex-shrink-0">
+                                    <span class="material-icons-outlined text-primary text-3xl">${typeIcons[apt.type]}</span>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <div>
+                                            <h3 class="font-display text-xl font-bold text-secondary dark:text-white">
+                                                ${apt.doctor}
+                                            </h3>
+                                            <p class="text-sm text-gray-600 dark:text-gray-400">${apt.specialty}</p>
+                                        </div>
+                                        <span class="px-3 py-1 ${statusColors[apt.status]} rounded-full text-xs font-bold uppercase">
+                                            ${apt.status}
+                                        </span>
+                                    </div>
+
+                                    <div class="space-y-2 mt-3">
+                                        <div class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                                            <span class="material-icons-outlined text-sm text-gray-400">location_on</span>
+                                            ${apt.hospital}
+                                        </div>
+                                        <div class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                                            <span class="material-icons-outlined text-sm text-gray-400">calendar_today</span>
+                                            ${Helpers.formatDate(apt.date)} at ${apt.time}
+                                        </div>
+                                        <div class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                                            <span class="material-icons-outlined text-sm text-gray-400">${typeIcons[apt.type]}</span>
+                                            ${apt.type}
+                                        </div>
+                                    </div>
+
+                                    ${apt.reason ? `
+                                        <div class="mt-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                            <p class="text-sm text-gray-700 dark:text-gray-300">
+                                                <span class="font-semibold">Reason:</span> ${apt.reason}
+                                            </p>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="flex md:flex-col gap-2 md:w-40">
+                                ${apt.status === 'confirmed' ? `
+                                    ${apt.type === 'Telemedicine' ? `
+                                        <button class="flex-1 bg-primary text-secondary px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-400 transition-colors flex items-center justify-center gap-1">
+                                            <span class="material-icons-outlined text-sm">video_call</span>
+                                            Join Call
+                                        </button>
+                                    ` : ''}
+                                    <button class="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                                        Reschedule
+                                    </button>
+                                    <button class="flex-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors">
+                                        Cancel
+                                    </button>
+                                ` : apt.status === 'completed' ? `
+                                    <button class="flex-1 bg-secondary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-secondary-light transition-colors">
+                                        View Report
+                                    </button>
+                                    <button class="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                                        Book Again
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function setupTabs() {
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tabName = btn.dataset.tab;
+
+                    // Update button states
+                    tabButtons.forEach(b => {
+                        b.classList.remove('active', 'text-secondary', 'dark:text-primary', 'border-secondary', 'dark:border-primary');
+                        b.classList.add('text-gray-500', 'border-transparent');
+                    });
+                    btn.classList.add('active', 'text-secondary', 'dark:text-primary', 'border-secondary', 'dark:border-primary');
+                    btn.classList.remove('text-gray-500', 'border-transparent');
+
+                    // Update content visibility
+                    tabContents.forEach(content => {
+                        content.classList.add('hidden');
+                    });
+                    document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+                });
+            });
+        }
+
+        function setupEventListeners() {
+            // Logout button
+            document.getElementById('logout-btn').addEventListener('click', async () => {
+                await AuthService.logout();
+                Helpers.showToast('Logged out successfully', 'success');
+                setTimeout(() => {
+                    window.location.href = '../index.html';
+                }, 1000);
+            });
+        }
+    </script>
+</body>
+
+</html>

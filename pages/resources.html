@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Resources - MedConnect</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet" />
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#86efac",
+                        secondary: "#113841",
+                        "secondary-light": "#1d525e",
+                        "background-dark": "#0d2b32",
+                        "accent-purple": "#e0defc",
+                        "accent-green": "#e6f0c2",
+                        "accent-blue": "#d0e8f2",
+                        "health-orange": "#f78e69",
+                    },
+                    fontFamily: {
+                        display: ["Playfair Display", "serif"],
+                        sans: ["DM Sans", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        'xl': '1rem',
+                        '2xl': '1.5rem',
+                        '3xl': '2rem',
+                    },
+                },
+            },
+        };
+    </script>
+
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-sans antialiased text-gray-800 dark:text-gray-100 min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="w-full bg-secondary/85 backdrop-blur-md text-white py-4 px-6 md:px-12 flex justify-between items-center relative z-20 border-b border-white/10">
+        <div class="flex items-center gap-2">
+            <span class="material-icons-outlined text-primary text-3xl">local_hospital</span>
+            <span class="font-display font-bold text-2xl tracking-wide">MedConnect</span>
+        </div>
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
+            <a class="hover:text-primary transition-colors" href="../index.html">Home</a>
+            <a class="hover:text-primary transition-colors" href="about.html">About Mission</a>
+            <a class="hover:text-primary transition-colors" href="hospitals.html">Hospitals</a>
+            <a class="hover:text-primary transition-colors text-primary" href="#">Resources</a>
+            <a class="hover:text-primary transition-colors" href="help.html">Help Desk</a>
+        </div>
+        <button class="bg-primary text-secondary font-bold py-2 px-6 rounded-full hover:bg-white transition-colors duration-300 text-sm">
+            Emergency Access
+        </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative bg-secondary text-white py-20">
+        <div class="absolute inset-0 bg-gradient-to-br from-secondary to-background-dark opacity-90"></div>
+        <div class="relative z-10 max-w-7xl mx-auto px-6 text-center">
+            <h1 class="font-display text-5xl md:text-6xl font-bold mb-6">Healthcare Resources</h1>
+            <p class="text-xl text-gray-300 max-w-3xl mx-auto">Real-time tracking and management of medical resources across India's healthcare network.</p>
+        </div>
+    </section>
+
+    <!-- Resource Dashboard -->
+    <section class="py-16 bg-white dark:bg-gray-900">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid lg:grid-cols-4 gap-6 mb-12">
+                <div class="bg-accent-green rounded-2xl p-6 text-center">
+                    <span class="material-icons-outlined text-4xl text-secondary mb-4">hotel</span>
+                    <div class="text-3xl font-bold text-secondary mb-2">45,678</div>
+                    <div class="text-sm text-gray-700">Total Beds Available</div>
+                    <div class="text-xs text-green-600 mt-2">↑ 12% from last week</div>
+                </div>
+                <div class="bg-accent-blue rounded-2xl p-6 text-center">
+                    <span class="material-icons-outlined text-4xl text-secondary mb-4">air</span>
+                    <div class="text-3xl font-bold text-secondary mb-2">8,945</div>
+                    <div class="text-sm text-gray-700">Oxygen Cylinders</div>
+                    <div class="text-xs text-blue-600 mt-2">↑ 5% from last week</div>
+                </div>
+                <div class="bg-accent-purple rounded-2xl p-6 text-center">
+                    <span class="material-icons-outlined text-4xl text-secondary mb-4">settings_input_antenna</span>
+                    <div class="text-3xl font-bold text-secondary mb-2">2,156</div>
+                    <div class="text-sm text-gray-700">Ventilators</div>
+                    <div class="text-xs text-purple-600 mt-2">↑ 8% from last week</div>
+                </div>
+                <div class="bg-health-orange/20 rounded-2xl p-6 text-center">
+                    <span class="material-icons-outlined text-4xl text-secondary mb-4">local_shipping</span>
+                    <div class="text-3xl font-bold text-secondary mb-2">1,234</div>
+                    <div class="text-sm text-gray-700">Ambulances Active</div>
+                    <div class="text-xs text-orange-600 mt-2">↑ 3% from last week</div>
+                </div>
+            </div>
+
+            <!-- Resource Categories -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center gap-4 mb-4">
+                        <span class="material-icons-outlined text-3xl text-primary">medical_services</span>
+                        <h3 class="font-display text-xl font-bold text-secondary dark:text-white">Medical Equipment</h3>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-300">MRI Machines</span>
+                            <span class="font-bold text-secondary dark:text-white">456</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-300">CT Scanners</span>
+                            <span class="font-bold text-secondary dark:text-white">789</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-300">X-Ray Units</span>
+                            <span class="font-bold text-secondary dark:text-white">2,345</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center gap-4 mb-4">
+                        <span class="material-icons-outlined text-3xl text-primary">bloodtype</span>
+                        <h3 class="font-display text-xl font-bold text-secondary dark:text-white">Blood Bank</h3>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-300">A+ Units</span>
+                            <span class="font-bold text-green-600">1,234</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-300">O- Units</span>
+                            <span class="font-bold text-red-600">456</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-300">AB+ Units</span>
+                            <span class="font-bold text-blue-600">789</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center gap-4 mb-4">
+                        <span class="material-icons-outlined text-3xl text-primary">medication</span>
+                        <h3 class="font-display text-xl font-bold text-secondary dark:text-white">Pharmacy</h3>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-300">Essential Drugs</span>
+                            <span class="font-bold text-green-600">98%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-300">Vaccines</span>
+                            <span class="font-bold text-blue-600">95%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-300">Emergency Meds</span>
+                            <span class="font-bold text-orange-600">92%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resource Allocation -->
+    <section class="py-16 bg-gray-50 dark:bg-gray-800">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="font-display text-4xl font-bold text-center mb-12 text-secondary dark:text-white">Resource Allocation by State</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-lg">
+                    <h3 class="font-bold text-lg mb-4 text-secondary dark:text-white">Delhi</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Hospitals</span>
+                            <span class="font-bold">45</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Beds</span>
+                            <span class="font-bold">8,456</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-primary h-2 rounded-full" style="width: 85%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-lg">
+                    <h3 class="font-bold text-lg mb-4 text-secondary dark:text-white">Maharashtra</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Hospitals</span>
+                            <span class="font-bold">78</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Beds</span>
+                            <span class="font-bold">12,345</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-primary h-2 rounded-full" style="width: 92%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-lg">
+                    <h3 class="font-bold text-lg mb-4 text-secondary dark:text-white">Karnataka</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Hospitals</span>
+                            <span class="font-bold">56</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Beds</span>
+                            <span class="font-bold">9,876</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-primary h-2 rounded-full" style="width: 78%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-lg">
+                    <h3 class="font-bold text-lg mb-4 text-secondary dark:text-white">Tamil Nadu</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Hospitals</span>
+                            <span class="font-bold">67</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">Beds</span>
+                            <span class="font-bold">11,234</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-primary h-2 rounded-full" style="width: 88%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emergency Resources -->
+    <section class="py-16 bg-secondary text-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="font-display text-4xl font-bold text-center mb-12">Emergency Resource Network</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <span class="material-icons-outlined text-6xl text-primary mb-4">emergency</span>
+                    <h3 class="font-display text-2xl font-bold mb-4">24/7 Emergency</h3>
+                    <p class="text-gray-300">Round-the-clock emergency resource allocation and ambulance dispatch system.</p>
+                </div>
+                <div class="text-center">
+                    <span class="material-icons-outlined text-6xl text-primary mb-4">swap_horiz</span>
+                    <h3 class="font-display text-2xl font-bold mb-4">Inter-Hospital Transfer</h3>
+                    <p class="text-gray-300">Seamless patient transfer coordination between hospitals based on resource availability.</p>
+                </div>
+                <div class="text-center">
+                    <span class="material-icons-outlined text-6xl text-primary mb-4">analytics</span>
+                    <h3 class="font-display text-2xl font-bold mb-4">Predictive Analytics</h3>
+                    <p class="text-gray-300">AI-powered resource demand forecasting to optimize allocation and prevent shortages.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-background-dark text-white py-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="material-icons-outlined text-primary text-2xl">local_hospital</span>
+                    <span class="font-display font-bold text-xl">MedConnect</span>
+                </div>
+                <p class="text-gray-400 text-sm">© 2024 Government of India. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

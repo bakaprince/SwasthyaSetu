@@ -1,0 +1,24 @@
+/* Login Form Component Styles */
+
+.login-form-container {
+    /* Form container specific styles */
+}
+
+/* Tab switching animation */
+.tab-button {
+    transition: all 0.2s ease-in-out;
+}
+
+.tab-button.active {
+    /* Active tab styles are handled by Tailwind classes */
+}
+
+/* Input focus effects */
+.form-input:focus {
+    /* Focus styles are handled by Tailwind's focus: utilities */
+}
+
+/* OTP button hover effect */
+.otp-button:hover {
+    text-decoration: underline;
+}

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>About Mission - MedConnect</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet" />
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#86efac",
+                        secondary: "#113841",
+                        "secondary-light": "#1d525e",
+                        "background-dark": "#0d2b32",
+                        "accent-purple": "#e0defc",
+                        "accent-green": "#e6f0c2",
+                        "accent-blue": "#d0e8f2",
+                        "health-orange": "#f78e69",
+                    },
+                    fontFamily: {
+                        display: ["Playfair Display", "serif"],
+                        sans: ["DM Sans", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        'xl': '1rem',
+                        '2xl': '1.5rem',
+                        '3xl': '2rem',
+                    },
+                },
+            },
+        };
+    </script>
+
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-sans antialiased text-gray-800 dark:text-gray-100 min-h-screen">
+
+    <!-- Navigation -->
+    <nav
+        class="w-full bg-secondary/85 backdrop-blur-md text-white py-4 px-6 md:px-12 flex justify-between items-center relative z-20 border-b border-white/10">
+        <div class="flex items-center gap-2">
+            <span class="material-icons-outlined text-primary text-3xl">local_hospital</span>
+            <span class="font-display font-bold text-2xl tracking-wide">MedConnect</span>
+        </div>
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
+            <a class="hover:text-primary transition-colors" href="../index.html">Home</a>
+            <a class="hover:text-primary transition-colors text-primary" href="#">About Mission</a>
+            <a class="nav-auth-link hover:text-primary transition-colors hidden" href="hospitals.html"
+                data-auth-required="true">Hospitals</a>
+            <a class="nav-auth-link hover:text-primary transition-colors hidden" href="resources.html"
+                data-auth-required="true">Resources</a>
+            <a class="hover:text-primary transition-colors" href="help.html">Help Desk</a>
+        </div>
+        <button
+            class="bg-primary text-secondary font-bold py-2 px-6 rounded-full hover:bg-white transition-colors duration-300 text-sm">
+            Emergency Access
+        </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative bg-secondary text-white py-20">
+        <div class="absolute inset-0 bg-gradient-to-br from-secondary to-background-dark opacity-90"></div>
+        <div class="relative z-10 max-w-7xl mx-auto px-6 text-center">
+            <h1 class="font-display text-5xl md:text-6xl font-bold mb-6">Our Mission</h1>
+            <p class="text-xl text-gray-300 max-w-3xl mx-auto">Transforming healthcare delivery across India through
+                unified digital infrastructure and accessible medical services for every citizen.</p>
+        </div>
+    </section>
+
+    <!-- Mission Content -->
+    <section class="py-16 bg-white dark:bg-gray-900">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-12 items-center mb-16">
+                <div>
+                    <h2 class="font-display text-4xl font-bold mb-6 text-secondary dark:text-white">Vision 2030</h2>
+                    <p class="text-lg text-gray-600 dark:text-gray-300 mb-6">To create a unified healthcare ecosystem
+                        where every Indian citizen has seamless access to quality medical care, regardless of their
+                        location or economic status.</p>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <span class="material-icons-outlined text-primary">check_circle</span>
+                            <span>Universal Health Coverage through ABHA integration</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="material-icons-outlined text-primary">check_circle</span>
+                            <span>Real-time resource optimization across 500+ hospitals</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="material-icons-outlined text-primary">check_circle</span>
+                            <span>24/7 telemedicine access for rural communities</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-accent-blue rounded-3xl p-8">
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-secondary">500+</div>
+                            <div class="text-sm text-gray-600">Connected Hospitals</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-secondary">1.3B</div>
+                            <div class="text-sm text-gray-600">Citizens Served</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-secondary">24/7</div>
+                            <div class="text-sm text-gray-600">Emergency Access</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-secondary">100%</div>
+                            <div class="text-sm text-gray-600">Data Security</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Initiatives -->
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-accent-green rounded-2xl p-6">
+                    <span class="material-icons-outlined text-4xl text-secondary mb-4">health_and_safety</span>
+                    <h3 class="font-display text-xl font-bold mb-3 text-secondary">Digital Health Records</h3>
+                    <p class="text-gray-700">Secure, portable medical records accessible from any healthcare facility
+                        nationwide.</p>
+                </div>
+                <div class="bg-accent-purple rounded-2xl p-6">
+                    <span class="material-icons-outlined text-4xl text-secondary mb-4">network_check</span>
+                    <h3 class="font-display text-xl font-bold mb-3 text-secondary">Hospital Network</h3>
+                    <p class="text-gray-700">Real-time coordination between hospitals for optimal resource utilization
+                        and patient care.</p>
+                </div>
+                <div class="bg-accent-blue rounded-2xl p-6">
+                    <span class="material-icons-outlined text-4xl text-secondary mb-4">warning</span>
+                    <h3 class="font-display text-xl font-bold mb-3 text-secondary">Health Alerts</h3>
+                    <p class="text-gray-700">Proactive disease surveillance and public health notifications for better
+                        prevention.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Government Partnership -->
+    <section class="py-16 bg-secondary text-white">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <h2 class="font-display text-4xl font-bold mb-8">Government Partnership</h2>
+            <p class="text-xl text-gray-300 mb-12 max-w-3xl mx-auto">SwasthyaSetu is developed in collaboration with the
+                Ministry of Health & Family Welfare and National Health Authority to ensure compliance with national
+                healthcare standards.</p>
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <span class="material-icons-outlined text-5xl text-primary mb-4">account_balance</span>
+                    <h4 class="font-bold mb-2">Ministry of Health</h4>
+                    <p class="text-sm text-gray-300">Policy Framework</p>
+                </div>
+                <div class="text-center">
+                    <span class="material-icons-outlined text-5xl text-primary mb-4">verified_user</span>
+                    <h4 class="font-bold mb-2">ABHA Integration</h4>
+                    <p class="text-sm text-gray-300">Digital Identity</p>
+                </div>
+                <div class="text-center">
+                    <span class="material-icons-outlined text-5xl text-primary mb-4">security</span>
+                    <h4 class="font-bold mb-2">Data Protection</h4>
+                    <p class="text-sm text-gray-300">Privacy Compliance</p>
+                </div>
+                <div class="text-center">
+                    <span class="material-icons-outlined text-5xl text-primary mb-4">public</span>
+                    <h4 class="font-bold mb-2">National Scale</h4>
+                    <p class="text-sm text-gray-300">Pan-India Deployment</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-background-dark text-white py-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="material-icons-outlined text-primary text-2xl">local_hospital</span>
+                    <span class="font-display font-bold text-xl">MedConnect</span>
+                </div>
+                <p class="text-gray-400 text-sm">© 2024 Government of India. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="../js/config/app-config.js"></script>
+    <script src="../js/utils/helpers.js"></script>
+    <script src="../js/services/auth.js"></script>
+    <script src="../js/components/navigation.js"></script>
+    <script>
+        // Initialize navigation component
+        const nav = new Navigation();
+    </script>
+
+</body>
+
+</html>

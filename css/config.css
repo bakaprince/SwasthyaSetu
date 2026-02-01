@@ -1,0 +1,17 @@
+/* Tailwind CSS Custom Configuration */
+/* This file contains custom color palette, fonts, and utilities */
+
+:root {
+    /* Custom Color Palette */
+    --color-primary: #86efac;
+    --color-secondary: #113841;
+    --color-secondary-light: #1d525e;
+    --color-background-dark: #0d2b32;
+    --color-accent-purple: #e0defc;
+    --color-accent-green: #e6f0c2;
+    --color-accent-blue: #d0e8f2;
+    --color-health-orange: #f78e69;
+}
+
+/* Note: Tailwind configuration is loaded via CDN with inline script in index.html */
+/* For production, consider using a tailwind.config.js file with a build process */

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>My Profile - SwasthyaSetu</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet" />
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#86efac",
+                        secondary: "#113841",
+                        "secondary-light": "#1d525e",
+                        "background-dark": "#0d2b32",
+                        "accent-purple": "#e0defc",
+                        "accent-green": "#e6f0c2",
+                        "accent-blue": "#d0e8f2",
+                        "health-orange": "#f78e69",
+                    },
+                    fontFamily: {
+                        display: ["Playfair Display", "serif"],
+                        sans: ["DM Sans", "sans-serif"],
+                    },
+                },
+            },
+        };
+    </script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+
+<body class="bg-gray-50 dark:bg-background-dark font-sans antialiased text-gray-800 dark:text-gray-100 min-h-screen">
+
+    <!-- Navigation -->
+    <nav
+        class="w-full bg-secondary text-white py-4 px-6 md:px-12 flex justify-between items-center border-b border-white/10">
+        <div class="flex items-center gap-2">
+            <span class="material-icons-outlined text-primary text-3xl">local_hospital</span>
+            <span class="font-display font-bold text-2xl tracking-wide">MedConnect</span>
+        </div>
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
+            <a class="hover:text-primary transition-colors" href="dashboard.html">Dashboard</a>
+            <a class="hover:text-primary transition-colors" href="hospitals.html">Hospitals</a>
+            <a class="text-primary font-semibold" href="profile.html">Profile</a>
+        </div>
+        <button id="logout-btn"
+            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors text-sm font-semibold">
+            Logout
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-6 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="font-display text-4xl font-bold text-secondary dark:text-white mb-2">My Profile</h1>
+            <p class="text-gray-600 dark:text-gray-400">Manage your personal information and health records</p>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Profile Card -->
+            <div class="lg:col-span-1">
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sticky top-6">
+                    <div class="text-center mb-6">
+                        <div
+                            class="w-24 h-24 rounded-full bg-gradient-to-br from-secondary to-secondary-light mx-auto mb-4 flex items-center justify-center">
+                            <span class="material-icons-outlined text-primary text-5xl">person</span>
+                        </div>
+                        <h2 class="font-display text-2xl font-bold text-secondary dark:text-white" id="profile-name">
+                            Loading...</h2>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1" id="profile-abha">ABHA: Loading...</p>
+                    </div>
+
+                    <div class="space-y-3 border-t border-gray-200 dark:border-gray-700 pt-4">
+                        <div class="flex items-center gap-3 text-sm">
+                            <span class="material-icons-outlined text-gray-400">phone</span>
+                            <span class="text-gray-700 dark:text-gray-300" id="profile-phone">Loading...</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm">
+                            <span class="material-icons-outlined text-gray-400">email</span>
+                            <span class="text-gray-700 dark:text-gray-300" id="profile-email">Loading...</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm">
+                            <span class="material-icons-outlined text-gray-400">cake</span>
+                            <span class="text-gray-700 dark:text-gray-300" id="profile-dob">Loading...</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm">
+                            <span class="material-icons-outlined text-gray-400">bloodtype</span>
+                            <span class="text-gray-700 dark:text-gray-300" id="profile-blood">Loading...</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm">
+                            <span class="material-icons-outlined text-gray-400">location_on</span>
+                            <span class="text-gray-700 dark:text-gray-300" id="profile-address">Loading...</span>
+                        </div>
+                    </div>
+
+                    <button
+                        class="w-full mt-6 bg-secondary text-white py-3 rounded-lg font-semibold hover:bg-secondary-light transition-colors">
+                        Download ABHA Card
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Personal Information -->
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="font-display text-2xl font-bold text-secondary dark:text-white">Personal Information
+                        </h2>
+                        <button id="edit-profile-btn"
+                            class="text-secondary dark:text-primary hover:underline text-sm font-semibold">
+                            Edit Profile
+                        </button>
+                    </div>
+
+                    <form id="profile-form" class="space-y-4">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full
+                                    Name</label>
+                                <input type="text" id="input-name" disabled
+                                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-60">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date of
+                                    Birth</label>
+                                <input type="date" id="input-dob" disabled
+                                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-60">
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Mobile
+                                    Number</label>
+                                <input type="tel" id="input-phone" disabled
+                                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-60">
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                                <input type="email" id="input-email" disabled
+                                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-60">
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Blood
+                                    Group</label>
+                                <select id="input-blood" disabled
+                                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-60">
+                                    <option>A+</option>
+                                    <option>A-</option>
+                                    <option>B+</option>
+                                    <option>B-</option>
+                                    <option>O+</option>
+                                    <option>O-</option>
+                                    <option>AB+</option>
+                                    <option>AB-</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Gender</label>
+                                <select id="input-gender" disabled
+                                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-60">
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Address</label>
+                            <textarea id="input-address" rows="3" disabled
+                                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-60"></textarea>
+                        </div>
+
+                        <div id="save-buttons" class="hidden flex gap-3">
+                            <button type="submit"
+                                class="flex-1 bg-secondary text-white py-3 rounded-lg font-semibold hover:bg-secondary-light transition-colors">
+                                Save Changes
+                            </button>
+                            <button type="button" id="cancel-edit-btn"
+                                class="flex-1 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 py-3 rounded-lg font-semibold hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Medical History -->
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <h2 class="font-display text-2xl font-bold text-secondary dark:text-white mb-6">Medical History</h2>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Chronic
+                                Conditions</label>
+                            <div class="flex flex-wrap gap-2">
+                                <span
+                                    class="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 rounded-full text-sm">Diabetes</span>
+                                <span
+                                    class="px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200 rounded-full text-sm">Hypertension</span>
+                                <button
+                                    class="px-3 py-1 border-2 border-dashed border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 rounded-full text-sm hover:border-secondary hover:text-secondary">
+                                    + Add Condition
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Allergies</label>
+                            <div class="flex flex-wrap gap-2">
+                                <span
+                                    class="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 rounded-full text-sm">Penicillin</span>
+                                <button
+                                    class="px-3 py-1 border-2 border-dashed border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 rounded-full text-sm hover:border-secondary hover:text-secondary">
+                                    + Add Allergy
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Current
+                                Medications</label>
+                            <div class="space-y-2">
+                                <div
+                                    class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                    <div>
+                                        <p class="font-semibold text-secondary dark:text-white">Metformin 500mg</p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Twice daily after meals</p>
+                                    </div>
+                                    <span class="text-xs text-gray-500">Since: Jan 2024</span>
+                                </div>
+                                <button
+                                    class="w-full p-3 border-2 border-dashed border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 rounded-lg hover:border-secondary hover:text-secondary">
+                                    + Add Medication
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emergency Contacts -->
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <h2 class="font-display text-2xl font-bold text-secondary dark:text-white mb-6">Emergency Contacts
+                    </h2>
+
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                                    <span class="material-icons-outlined text-blue-600 dark:text-blue-400">person</span>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-secondary dark:text-white">Sita Sharma (Wife)</p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">+91 9876543211</p>
+                                </div>
+                            </div>
+                            <button class="text-gray-400 hover:text-red-500">
+                                <span class="material-icons-outlined">delete</span>
+                            </button>
+                        </div>
+
+                        <button
+                            class="w-full p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 rounded-lg hover:border-secondary hover:text-secondary font-semibold">
+                            + Add Emergency Contact
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="../js/config/app-config.js"></script>
+    <script src="../js/utils/helpers.js"></script>
+    <script src="../js/services/api.js"></script>
+    <script src="../js/services/auth.js"></script>
+
+    <script>
+        let isEditing = false;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check authentication
+            if (!AuthService.isAuthenticated()) {
+                window.location.href = '../index.html';
+                return;
+            }
+
+            await loadProfile();
+            setupEventListeners();
+        });
+
+        async function loadProfile() {
+            try {
+                const profile = await APIService.getPatientProfile();
+
+                // Update profile card
+                document.getElementById('profile-name').textContent = profile.name;
+                document.getElementById('profile-abha').textContent = `ABHA: ${profile.abhaId}`;
+                document.getElementById('profile-phone').textContent = profile.mobile;
+                document.getElementById('profile-email').textContent = profile.email;
+                document.getElementById('profile-dob').textContent = Helpers.formatDate(profile.dateOfBirth);
+                document.getElementById('profile-blood').textContent = `Blood Group: ${profile.bloodGroup}`;
+                document.getElementById('profile-address').textContent = profile.address;
+
+                // Update form fields
+                document.getElementById('input-name').value = profile.name;
+                document.getElementById('input-dob').value = profile.dateOfBirth;
+                document.getElementById('input-phone').value = profile.mobile;
+                document.getElementById('input-email').value = profile.email;
+                document.getElementById('input-blood').value = profile.bloodGroup;
+                document.getElementById('input-gender').value = profile.gender;
+                document.getElementById('input-address').value = profile.address;
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                Helpers.showToast('Failed to load profile', 'error');
+            }
+        }
+
+        function setupEventListeners() {
+            // Edit profile button
+            document.getElementById('edit-profile-btn').addEventListener('click', () => {
+                isEditing = true;
+                toggleEditMode(true);
+            });
+
+            // Cancel edit button
+            document.getElementById('cancel-edit-btn').addEventListener('click', () => {
+                isEditing = false;
+                toggleEditMode(false);
+                loadProfile(); // Reset form
+            });
+
+            // Form submission
+            document.getElementById('profile-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const updatedProfile = {
+                    name: document.getElementById('input-name').value,
+                    email: document.getElementById('input-email').value,
+                    phone: document.getElementById('input-phone').value,
+                    bloodGroup: document.getElementById('input-blood').value,
+                    address: document.getElementById('input-address').value,
+                };
+
+                try {
+                    await AuthService.updateProfile(updatedProfile);
+                    Helpers.showToast('Profile updated successfully!', 'success');
+                    isEditing = false;
+                    toggleEditMode(false);
+                    await loadProfile();
+                } catch (error) {
+                    Helpers.showToast('Failed to update profile', 'error');
+                }
+            });
+
+            // Logout button
+            document.getElementById('logout-btn').addEventListener('click', async () => {
+                await AuthService.logout();
+                Helpers.showToast('Logged out successfully', 'success');
+                setTimeout(() => {
+                    window.location.href = '../index.html';
+                }, 1000);
+            });
+        }
+
+        function toggleEditMode(enabled) {
+            const inputs = document.querySelectorAll('#profile-form input, #profile-form select, #profile-form textarea');
+            inputs.forEach(input => {
+                if (input.id !== 'input-dob') { // DOB shouldn't be editable
+                    input.disabled = !enabled;
+                }
+            });
+
+            document.getElementById('save-buttons').classList.toggle('hidden', !enabled);
+            document.getElementById('edit-profile-btn').classList.toggle('hidden', enabled);
+        }
+    </script>
+</body>
+
+</html>

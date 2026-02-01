@@ -1,0 +1,19 @@
+/* Hero Section Component Styles */
+
+.hero-section {
+    /* Hero-specific styles */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Background overlay animations */
+.hero-overlay {
+    transition: opacity 0.5s ease;
+}
+
+/* Gradient fade effect at bottom */
+.hero-gradient-fade {
+    background: linear-gradient(to top, var(--color-background-dark), transparent);
+}
+
+/* Animated badge pulse effect is handled by Tailwind's animate-pulse */

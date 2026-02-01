@@ -1,0 +1,91 @@
+<!-- Login Form Component -->
+<div class="bg-background-light dark:bg-background-dark p-1 rounded-2xl shadow-2xl">
+    <div
+        class="bg-white dark:bg-gray-900 rounded-xl p-8 md:p-10 border border-gray-100 dark:border-gray-800 relative overflow-hidden">
+        <div x-data="{ activeTab: 'patient' }">
+            <div class="flex space-x-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg mb-8">
+                <button
+                    class="tab-button flex-1 py-2.5 text-sm font-medium rounded-md transition-all duration-200 focus:outline-none flex items-center justify-center gap-2 bg-white dark:bg-gray-700 text-secondary dark:text-white shadow-sm ring-1 ring-black/5"
+                    data-tab="patient">
+                    <span class="material-icons-outlined text-lg">person</span>
+                    Patient / ABHA
+                </button>
+                <button
+                    class="tab-button flex-1 py-2.5 text-sm font-medium rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-all duration-200 focus:outline-none flex items-center justify-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                    data-tab="admin">
+                    <span class="material-icons-outlined text-lg">admin_panel_settings</span>
+                    Hospital Admin
+                </button>
+            </div>
+            <form class="login-form space-y-5">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="abha-id">ABHA
+                        Address / Mobile Number</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="material-icons-outlined text-gray-400">badge</span>
+                        </div>
+                        <input
+                            class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg leading-5 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary sm:text-sm transition duration-150 ease-in-out"
+                            id="abha-id" placeholder="e.g. name@abdm" type="text" />
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                        for="password">Password / OTP</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="material-icons-outlined text-gray-400">lock</span>
+                        </div>
+                        <input
+                            class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg leading-5 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary sm:text-sm transition duration-150 ease-in-out"
+                            id="password" placeholder="••••••••" type="password" />
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <button
+                                class="otp-button text-secondary dark:text-primary text-xs font-semibold hover:underline"
+                                type="button">Get OTP</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input class="h-4 w-4 text-secondary focus:ring-secondary border-gray-300 rounded"
+                            id="remember-me" type="checkbox" />
+                        <label class="ml-2 block text-sm text-gray-600 dark:text-gray-400" for="remember-me">
+                            Remember me
+                        </label>
+                    </div>
+                    <div class="text-sm">
+                        <a class="font-medium text-secondary dark:text-primary hover:underline" href="#">
+                            Forgot password?
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <button
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-secondary hover:bg-secondary-light dark:bg-secondary-light dark:hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary transition-colors duration-200"
+                        type="submit">
+                        Secure Login
+                    </button>
+                </div>
+            </form>
+            <div class="mt-6">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-200 dark:border-gray-700"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white dark:bg-gray-900 text-gray-500">Don't have an ABHA ID?</span>
+                    </div>
+                </div>
+                <div class="mt-4 grid grid-cols-1 gap-3">
+                    <button
+                        class="w-full inline-flex justify-center py-2.5 px-4 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <span class="material-icons-outlined text-orange-500 mr-2">add_card</span>
+                        Create New ABHA Number
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

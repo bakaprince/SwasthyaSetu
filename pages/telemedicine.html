@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Telemedicine - MedConnect</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet" />
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#86efac",
+                        secondary: "#113841",
+                        "secondary-light": "#1d525e",
+                        "background-dark": "#0d2b32",
+                        "accent-purple": "#e0defc",
+                        "accent-green": "#e6f0c2",
+                        "accent-blue": "#d0e8f2",
+                        "health-orange": "#f78e69",
+                    },
+                    fontFamily: {
+                        display: ["Playfair Display", "serif"],
+                        sans: ["DM Sans", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        'xl': '1rem',
+                        '2xl': '1.5rem',
+                        '3xl': '2rem',
+                    },
+                },
+            },
+        };
+    </script>
+
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-sans antialiased text-gray-800 dark:text-gray-100 min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="w-full bg-secondary/85 backdrop-blur-md text-white py-4 px-6 md:px-12 flex justify-between items-center relative z-20 border-b border-white/10">
+        <div class="flex items-center gap-2">
+            <span class="material-icons-outlined text-primary text-3xl">local_hospital</span>
+            <span class="font-display font-bold text-2xl tracking-wide">MedConnect</span>
+        </div>
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
+            <a class="hover:text-primary transition-colors" href="../index.html">Home</a>
+            <a class="hover:text-primary transition-colors" href="dashboard.html">Dashboard</a>
+            <a class="hover:text-primary transition-colors text-primary" href="#">Telemedicine</a>
+            <a class="hover:text-primary transition-colors" href="appointments.html">Appointments</a>
+            <a class="hover:text-primary transition-colors" href="records.html">Records</a>
+        </div>
+        <button class="bg-primary text-secondary font-bold py-2 px-6 rounded-full hover:bg-white transition-colors duration-300 text-sm">
+            Emergency Call
+        </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative bg-secondary text-white py-20">
+        <div class="absolute inset-0 bg-gradient-to-br from-secondary to-background-dark opacity-90"></div>
+        <div class="relative z-10 max-w-7xl mx-auto px-6 text-center">
+            <h1 class="font-display text-5xl md:text-6xl font-bold mb-6">24/7 Telemedicine</h1>
+            <p class="text-xl text-gray-300 max-w-3xl mx-auto">Connect with qualified doctors from the comfort of your home. Get instant medical consultation and prescriptions.</p>
+        </div>
+    </section>
+
+    <!-- Quick Consultation -->
+    <section class="py-16 bg-white dark:bg-gray-900">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="font-display text-4xl font-bold mb-6 text-secondary dark:text-white">Start Consultation</h2>
+                    <p class="text-lg text-gray-600 dark:text-gray-300 mb-8">Choose your preferred consultation method and connect with available doctors instantly.</p>
+                    
+                    <div class="grid md:grid-cols-2 gap-4 mb-8">
+                        <button class="bg-primary text-secondary font-bold py-4 px-6 rounded-xl hover:bg-green-400 transition-colors flex items-center gap-3">
+                            <span class="material-icons-outlined text-2xl">videocam</span>
+                            <div class="text-left">
+                                <div>Video Call</div>
+                                <div class="text-xs opacity-80">Face-to-face consultation</div>
+                            </div>
+                        </button>
+                        <button class="bg-accent-blue text-secondary font-bold py-4 px-6 rounded-xl hover:bg-blue-300 transition-colors flex items-center gap-3">
+                            <span class="material-icons-outlined text-2xl">call</span>
+                            <div class="text-left">
+                                <div>Voice Call</div>
+                                <div class="text-xs opacity-80">Audio consultation</div>
+                            </div>
+                        </button>
+                        <button class="bg-accent-purple text-secondary font-bold py-4 px-6 rounded-xl hover:bg-purple-300 transition-colors flex items-center gap-3">
+                            <span class="material-icons-outlined text-2xl">chat</span>
+                            <div class="text-left">
+                                <div>Text Chat</div>
+                                <div class="text-xs opacity-80">Message-based consultation</div>
+                            </div>
+                        </button>
+                        <button class="bg-health-orange/20 text-secondary font-bold py-4 px-6 rounded-xl hover:bg-orange-200 transition-colors flex items-center gap-3">
+                            <span class="material-icons-outlined text-2xl">emergency</span>
+                            <div class="text-left">
+                                <div>Emergency</div>
+                                <div class="text-xs opacity-80">Urgent consultation</div>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="bg-accent-green rounded-xl p-6">
+                        <h3 class="font-bold text-lg mb-2 text-secondary">Free Government Consultation</h3>
+                        <p class="text-gray-700 text-sm">Basic consultations with government hospital doctors are completely free for all citizens.</p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-8">
+                    <h3 class="font-display text-2xl font-bold mb-6 text-secondary dark:text-white">Available Doctors</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 p-4 bg-white dark:bg-gray-900 rounded-xl">
+                            <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
+                                <span class="material-icons-outlined text-secondary">person</span>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-bold text-secondary dark:text-white">Dr. Rajesh Kumar</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-300">General Medicine • AIIMS Delhi</div>
+                                <div class="text-xs text-green-600">Available Now</div>
+                            </div>
+                            <button class="bg-primary text-secondary px-4 py-2 rounded-lg font-bold hover:bg-green-400 transition-colors">
+                                Connect
+                            </button>
+                        </div>
+
+                        <div class="flex items-center gap-4 p-4 bg-white dark:bg-gray-900 rounded-xl">
+                            <div class="w-12 h-12 bg-accent-blue rounded-full flex items-center justify-center">
+                                <span class="material-icons-outlined text-secondary">person</span>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-bold text-secondary dark:text-white">Dr. Priya Sharma</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-300">Pediatrics • Safdarjung Hospital</div>
+                                <div class="text-xs text-green-600">Available Now</div>
+                            </div>
+                            <button class="bg-primary text-secondary px-4 py-2 rounded-lg font-bold hover:bg-green-400 transition-colors">
+                                Connect
+                            </button>
+                        </div>
+
+                        <div class="flex items-center gap-4 p-4 bg-white dark:bg-gray-900 rounded-xl">
+                            <div class="w-12 h-12 bg-accent-purple rounded-full flex items-center justify-center">
+                                <span class="material-icons-outlined text-secondary">person</span>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-bold text-secondary dark:text-white">Dr. Amit Singh</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-300">Cardiology • RML Hospital</div>
+                                <div class="text-xs text-orange-600">Busy - Available in 15 min</div>
+                            </div>
+                            <button class="bg-gray-300 text-gray-600 px-4 py-2 rounded-lg font-bold">
+                                Wait
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Specialties -->
+    <section class="py-16 bg-gray-50 dark:bg-gray-800">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="font-display text-4xl font-bold text-center mb-12 text-secondary dark:text-white">Medical Specialties</h2>
+            <div class="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div class="bg-white dark:bg-gray-900 rounded-xl p-6 text-center shadow-lg hover:shadow-xl transition-shadow">
+                    <span class="material-icons-outlined text-4xl text-primary mb-4">favorite</span>
+                    <h3 class="font-bold text-lg mb-2 text-secondary dark:text-white">Cardiology</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">Heart and cardiovascular care</p>
+                    <div class="text-xs text-green-600 mt-2">12 doctors available</div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 rounded-xl p-6 text-center shadow-lg hover:shadow-xl transition-shadow">
+                    <span class="material-icons-outlined text-4xl text-primary mb-4">psychology</span>
+                    <h3 class="font-bold text-lg mb-2 text-secondary dark:text-white">Neurology</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">Brain and nervous system</p>
+                    <div class="text-xs text-green-600 mt-2">8 doctors available</div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 rounded-xl p-6 text-center shadow-lg hover:shadow-xl transition-shadow">
+                    <span class="material-icons-outlined text-4xl text-primary mb-4">child_care</span>
+                    <h3 class="font-bold text-lg mb-2 text-secondary dark:text-white">Pediatrics</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">Children's healthcare</p>
+                    <div class="text-xs text-green-600 mt-2">15 doctors available</div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 rounded-xl p-6 text-center shadow-lg hover:shadow-xl transition-shadow">
+                    <span class="material-icons-outlined text-4xl text-primary mb-4">healing</span>
+                    <h3 class="font-bold text-lg mb-2 text-secondary dark:text-white">Orthopedics</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">Bone and joint care</p>
+                    <div class="text-xs text-green-600 mt-2">10 doctors available</div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 rounded-xl p-6 text-center shadow-lg hover:shadow-xl transition-shadow">
+                    <span class="material-icons-outlined text-4xl text-primary mb-4">visibility</span>
+                    <h3 class="font-bold text-lg mb-2 text-secondary dark:text-white">Ophthalmology</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">Eye care and vision</p>
+                    <div class="text-xs text-green-600 mt-2">6 doctors available</div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 rounded-xl p-6 text-center shadow-lg hover:shadow-xl transition-shadow">
+                    <span class="material-icons-outlined text-4xl text-primary mb-4">face</span>
+                    <h3 class="font-bold text-lg mb-2 text-secondary dark:text-white">Dermatology</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">Skin and hair care</p>
+                    <div class="text-xs text-green-600 mt-2">9 doctors available</div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 rounded-xl p-6 text-center shadow-lg hover:shadow-xl transition-shadow">
+                    <span class="material-icons-outlined text-4xl text-primary mb-4">pregnant_woman</span>
+                    <h3 class="font-bold text-lg mb-2 text-secondary dark:text-white">Gynecology</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">Women's health</p>
+                    <div class="text-xs text-green-600 mt-2">11 doctors available</div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 rounded-xl p-6 text-center shadow-lg hover:shadow-xl transition-shadow">
+                    <span class="material-icons-outlined text-4xl text-primary mb-4">medical_services</span>
+                    <h3 class="font-bold text-lg mb-2 text-secondary dark:text-white">General Medicine</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">Primary healthcare</p>
+                    <div class="text-xs text-green-600 mt-2">25 doctors available</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="py-16 bg-secondary text-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="font-display text-4xl font-bold text-center mb-12">How Telemedicine Works</h2>
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="material-icons-outlined text-2xl text-secondary">login</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">1. Login</h3>
+                    <p class="text-gray-300 text-sm">Sign in with your ABHA ID to access telemedicine services</p>
+                </div>
+
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="material-icons-outlined text-2xl text-secondary">search</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">2. Choose Doctor</h3>
+                    <p class="text-gray-300 text-sm">Select from available doctors based on specialty and availability</p>
+                </div>
+
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="material-icons-outlined text-2xl text-secondary">videocam</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">3. Consult</h3>
+                    <p class="text-gray-300 text-sm">Connect via video, voice, or chat for your medical consultation</p>
+                </div>
+
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="material-icons-outlined text-2xl text-secondary">receipt</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">4. Get Prescription</h3>
+                    <p class="text-gray-300 text-sm">Receive digital prescription and follow-up instructions</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-background-dark text-white py-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="material-icons-outlined text-primary text-2xl">local_hospital</span>
+                    <span class="font-display font-bold text-xl">MedConnect</span>
+                </div>
+                <p class="text-gray-400 text-sm">© 2024 Government of India. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

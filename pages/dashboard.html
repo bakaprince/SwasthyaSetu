@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Patient Dashboard - SwasthyaSetu</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet" />
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#86efac",
+                        secondary: "#113841",
+                        "secondary-light": "#1d525e",
+                        "background-dark": "#0d2b32",
+                    },
+                    fontFamily: {
+                        display: ["Playfair Display", "serif"],
+                        sans: ["DM Sans", "sans-serif"],
+                    },
+                },
+            },
+        };
+    </script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+
+<body class="bg-gray-50 dark:bg-background-dark font-sans antialiased text-gray-800 dark:text-gray-100 min-h-screen">
+
+    <!-- Navigation -->
+    <nav
+        class="w-full bg-secondary text-white py-4 px-6 md:px-12 flex justify-between items-center border-b border-white/10">
+        <div class="flex items-center gap-2">
+            <span class="material-icons-outlined text-primary text-3xl">local_hospital</span>
+            <span class="font-display font-bold text-2xl tracking-wide">MedConnect</span>
+        </div>
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
+            <a class="text-primary font-semibold" href="dashboard.html">Dashboard</a>
+            <a class="hover:text-primary transition-colors" href="hospitals.html">Hospitals</a>
+            <a class="hover:text-primary transition-colors" href="appointments.html">Appointments</a>
+            <a class="hover:text-primary transition-colors" href="profile.html">Profile</a>
+        </div>
+        <button id="logout-btn"
+            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors text-sm font-semibold">
+            Logout
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        <!-- Welcome Section -->
+        <div class="mb-8">
+            <h1 class="font-display text-4xl font-bold text-secondary dark:text-white mb-2">
+                Welcome, <span id="user-name">Patient</span>
+            </h1>
+            <p class="text-gray-600 dark:text-gray-400">ABHA ID: <span id="user-abha" class="font-mono">--</span></p>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Upcoming</p>
+                        <p class="text-2xl font-bold text-secondary dark:text-white" id="stat-appointments">0</p>
+                    </div>
+                    <span class="material-icons-outlined text-blue-500 text-4xl">event</span>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">Appointments</p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Total</p>
+                        <p class="text-2xl font-bold text-secondary dark:text-white" id="stat-records">0</p>
+                    </div>
+                    <span class="material-icons-outlined text-green-500 text-4xl">folder</span>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">Medical Records</p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Active</p>
+                        <p class="text-2xl font-bold text-secondary dark:text-white" id="stat-prescriptions">0</p>
+                    </div>
+                    <span class="material-icons-outlined text-purple-500 text-4xl">medication</span>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">Prescriptions</p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Health</p>
+                        <p class="text-2xl font-bold text-green-500">Good</p>
+                    </div>
+                    <span class="material-icons-outlined text-green-500 text-4xl">favorite</span>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">Overall Status</p>
+            </div>
+        </div>
+
+        <!-- Appointments Section -->
+        <div
+            class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="font-display text-2xl font-bold text-secondary dark:text-white">Upcoming Appointments</h2>
+                <button
+                    class="bg-primary text-secondary px-4 py-2 rounded-lg font-semibold hover:bg-green-400 transition-colors">
+                    Book New
+                </button>
+            </div>
+            <div id="appointments-list" class="space-y-4">
+                <!-- Appointments will be loaded here -->
+                <p class="text-gray-500 text-center py-8">Loading appointments...</p>
+            </div>
+        </div>
+
+        <!-- Medical Records Section -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="font-display text-2xl font-bold text-secondary dark:text-white">Recent Medical Records</h2>
+                <button class="text-secondary dark:text-primary font-semibold hover:underline">
+                    View All
+                </button>
+            </div>
+            <div id="records-list" class="space-y-4">
+                <!-- Records will be loaded here -->
+                <p class="text-gray-500 text-center py-8">Loading medical records...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="../js/config/app-config.js"></script>
+    <script src="../js/utils/helpers.js"></script>
+    <script src="../js/services/api.js"></script>
+    <script src="../js/services/auth.js"></script>
+
+    <script>
+        // Dashboard Logic
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check authentication
+            if (!AuthService.isAuthenticated()) {
+                window.location.href = '../index.html';
+                return;
+            }
+
+            const user = AuthService.getCurrentUser();
+
+            // Update user info
+            document.getElementById('user-name').textContent = user.name || 'Patient';
+            document.getElementById('user-abha').textContent = user.identifier || '--';
+
+            // Load data
+            await loadDashboardData();
+
+            // Logout handler
+            document.getElementById('logout-btn').addEventListener('click', async () => {
+                await AuthService.logout();
+                Helpers.showToast('Logged out successfully', 'success');
+                setTimeout(() => {
+                    window.location.href = '../index.html';
+                }, 1000);
+            });
+        });
+
+        async function loadDashboardData() {
+            try {
+                // Load appointments
+                const appointmentsResponse = await APIService.getAppointments();
+                if (appointmentsResponse.success) {
+                    displayAppointments(appointmentsResponse.data);
+                    document.getElementById('stat-appointments').textContent = appointmentsResponse.data.length;
+                }
+
+                // Load medical records
+                const recordsResponse = await APIService.getMedicalRecords();
+                if (recordsResponse.success) {
+                    displayRecords(recordsResponse.data);
+                    document.getElementById('stat-records').textContent = recordsResponse.data.length;
+                }
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+
+        function displayAppointments(appointments) {
+            const container = document.getElementById('appointments-list');
+
+            if (appointments.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-8">No upcoming appointments</p>';
+                return;
+            }
+
+            container.innerHTML = appointments.map(apt => `
+                <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                            <span class="material-icons-outlined text-blue-600 dark:text-blue-300">event</span>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-secondary dark:text-white">${apt.doctor}</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">${apt.department} - ${apt.hospital}</p>
+                            <p class="text-xs text-gray-500">${Helpers.formatDate(apt.date)} at ${apt.time}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold ${apt.status === 'confirmed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">
+                            ${apt.status}
+                        </span>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold ${apt.type === 'telemedicine' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'}">
+                            ${apt.type}
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function displayRecords(records) {
+            const container = document.getElementById('records-list');
+
+            if (records.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-8">No medical records found</p>';
+                return;
+            }
+
+            container.innerHTML = records.slice(0, 5).map(record => `
+                <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                            <span class="material-icons-outlined text-green-600 dark:text-green-300">folder</span>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-secondary dark:text-white">${record.diagnosis}</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">${record.hospital} - Dr. ${record.doctor}</p>
+                            <p class="text-xs text-gray-500">${Helpers.formatDate(record.date)}</p>
+                        </div>
+                    </div>
+                    <button class="text-secondary dark:text-primary hover:underline text-sm font-semibold">
+                        View Details
+                    </button>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+
+</html>

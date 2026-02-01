@@ -1,0 +1,33 @@
+/* Health Alerts Section Component Styles */
+
+.health-alert-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.health-alert-card:hover {
+    transform: translateY(-4px);
+}
+
+/* Alert badge pulse animation */
+.alert-badge-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Symptom grid styling */
+.symptom-grid {
+    /* Grid styles are handled by Tailwind */
+}
+
+/* AQI indicator scale effect */
+.aqi-indicator {
+    transition: transform 0.2s ease;
+}
+
+.aqi-indicator.active {
+    transform: scaleY(1.5);
+}
+
+/* Telemedicine CTA hover effect */
+.telemedicine-cta:hover {
+    transform: scale(1.05);
+}

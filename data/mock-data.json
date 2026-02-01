@@ -1,0 +1,218 @@
+{
+    "patients": [
+        {
+            "id": "P001",
+            "name": "Rajesh Kumar",
+            "abhaId": "12-3456-7890-1234",
+            "mobile": "9876543210",
+            "email": "rajesh.kumar@example.com",
+            "dob": "1985-06-15",
+            "gender": "Male",
+            "bloodGroup": "O+",
+            "address": "123 MG Road, New Delhi, 110001",
+            "emergencyContact": {
+                "name": "Priya Kumar",
+                "relation": "Spouse",
+                "mobile": "9876543211"
+            }
+        },
+        {
+            "id": "P002",
+            "name": "Priya Sharma",
+            "abhaId": "98-7654-3210-9876",
+            "mobile": "9123456789",
+            "email": "priya.sharma@example.com",
+            "dob": "1990-03-22",
+            "gender": "Female",
+            "bloodGroup": "A+",
+            "address": "456 Park Street, Mumbai, 400001",
+            "emergencyContact": {
+                "name": "Amit Sharma",
+                "relation": "Spouse",
+                "mobile": "9123456788"
+            }
+        }
+    ],
+    "medicalRecords": [
+        {
+            "id": "R001",
+            "patientId": "P001",
+            "date": "2024-01-15",
+            "hospital": "AIIMS Delhi",
+            "hospitalId": "H001",
+            "doctor": "Dr. Ramesh Sharma",
+            "department": "General Medicine",
+            "diagnosis": "Seasonal Flu",
+            "symptoms": [
+                "Fever",
+                "Cough",
+                "Body ache"
+            ],
+            "prescriptions": [
+                {
+                    "medicine": "Paracetamol",
+                    "dosage": "500mg",
+                    "frequency": "3 times daily",
+                    "duration": "5 days"
+                },
+                {
+                    "medicine": "Vitamin C",
+                    "dosage": "1000mg",
+                    "frequency": "Once daily",
+                    "duration": "7 days"
+                }
+            ],
+            "labTests": [
+                {
+                    "name": "Complete Blood Count",
+                    "result": "Normal",
+                    "date": "2024-01-15"
+                }
+            ],
+            "documents": [
+                "prescription_R001.pdf",
+                "lab_report_R001.pdf"
+            ],
+            "followUp": "2024-01-22"
+        },
+        {
+            "id": "R002",
+            "patientId": "P001",
+            "date": "2023-12-10",
+            "hospital": "Max Hospital",
+            "hospitalId": "H005",
+            "doctor": "Dr. Anjali Verma",
+            "department": "Preventive Medicine",
+            "diagnosis": "Annual Health Checkup",
+            "prescriptions": [],
+            "labTests": [
+                {
+                    "name": "Lipid Profile",
+                    "result": "Normal",
+                    "date": "2023-12-10"
+                },
+                {
+                    "name": "Blood Sugar",
+                    "result": "Normal",
+                    "date": "2023-12-10"
+                }
+            ],
+            "documents": [
+                "checkup_report_R002.pdf"
+            ],
+            "followUp": "2024-12-10"
+        }
+    ],
+    "appointments": [
+        {
+            "id": "A001",
+            "patientId": "P001",
+            "date": "2024-02-05",
+            "time": "10:00 AM",
+            "hospital": "AIIMS Delhi",
+            "hospitalId": "H001",
+            "doctor": "Dr. Ramesh Sharma",
+            "department": "General Medicine",
+            "status": "confirmed",
+            "type": "in-person",
+            "reason": "Follow-up consultation"
+        },
+        {
+            "id": "A002",
+            "patientId": "P001",
+            "date": "2024-02-10",
+            "time": "3:00 PM",
+            "hospital": "Apollo Hospital",
+            "hospitalId": "H003",
+            "doctor": "Dr. Suresh Patel",
+            "department": "Cardiology",
+            "status": "pending",
+            "type": "telemedicine",
+            "reason": "Cardiac health consultation"
+        }
+    ],
+    "healthAlerts": [
+        {
+            "id": "HA001",
+            "title": "Dengue Prevention Protocol",
+            "severity": "high",
+            "type": "disease",
+            "category": "Vector-borne Disease",
+            "description": "Mosquito-borne viral infection cases are rising. Early detection and preventing mosquito breeding are key to safety.",
+            "symptoms": [
+                "High Fever",
+                "Nausea",
+                "Pain Behind Eyes",
+                "Joint Aches",
+                "Skin Rash"
+            ],
+            "prevention": [
+                "Remove stagnant water from containers",
+                "Use mosquito repellents",
+                "Wear protective clothing",
+                "Use mosquito nets while sleeping",
+                "Keep surroundings clean"
+            ],
+            "affectedRegions": [
+                "Delhi",
+                "Mumbai",
+                "Bangalore",
+                "Hyderabad"
+            ],
+            "caseCount": 1247,
+            "updatedAt": "2024-02-01T10:00:00Z",
+            "source": "National Vector Borne Disease Control Programme"
+        },
+        {
+            "id": "HA002",
+            "title": "Seasonal Flu Alert",
+            "severity": "moderate",
+            "type": "disease",
+            "category": "Viral Respiratory Infection",
+            "description": "Increasing cases of H3N2 influenza reported. Vulnerable groups (children & elderly) should take extra precaution.",
+            "symptoms": [
+                "Fever",
+                "Cough",
+                "Sore Throat",
+                "Body Aches",
+                "Fatigue"
+            ],
+            "prevention": [
+                "Get vaccinated",
+                "Wash hands frequently",
+                "Avoid crowded places",
+                "Wear masks in public",
+                "Maintain social distancing"
+            ],
+            "affectedRegions": [
+                "Delhi",
+                "Punjab",
+                "Haryana",
+                "Uttar Pradesh"
+            ],
+            "riskLevel": 65,
+            "caseCount": 3456,
+            "updatedAt": "2024-02-01T08:00:00Z",
+            "source": "Ministry of Health & Family Welfare"
+        },
+        {
+            "id": "HA003",
+            "title": "Air Quality Alert",
+            "severity": "moderate",
+            "type": "environmental",
+            "category": "Air Pollution",
+            "description": "Air Quality Index (AQI) has reached unhealthy levels. Sensitive groups should limit outdoor activities.",
+            "aqi": 142,
+            "level": "Unhealthy for Sensitive Groups",
+            "recommendation": "Wear N95 masks outdoors. Keep windows closed. Use air purifiers indoors.",
+            "affectedRegions": [
+                "Delhi NCR",
+                "Noida",
+                "Gurgaon",
+                "Faridabad"
+            ],
+            "updatedAt": "2024-02-01T12:00:00Z",
+            "source": "Central Pollution Control Board"
+        }
+    ]
+}

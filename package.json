@@ -1,0 +1,24 @@
+{
+    "name": "SwasthyaSetu",
+    "version": "1.0.0",
+    "description": "SwasthyaSetu - Government Health Portal for Unified Medical Access",
+    "main": "index.html",
+    "scripts": {
+        "dev": "npx live-server --port=3000 --open=/index.html --watch=.",
+        "start": "npm run dev",
+        "build": "node scripts/build.js"
+    },
+    "keywords": [
+        "healthcare",
+        "government",
+        "medical",
+        "ABHA",
+        "telemedicine",
+        "hackathon"
+    ],
+    "author": "SwasthyaSetu Team",
+    "license": "MIT",
+    "devDependencies": {
+        "live-server": "^1.2.2"
+    }
+}

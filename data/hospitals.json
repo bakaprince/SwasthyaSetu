@@ -1,0 +1,264 @@
+[
+    {
+        "id": "H001",
+        "name": "All India Institute of Medical Sciences (AIIMS)",
+        "shortName": "AIIMS Delhi",
+        "type": "Government",
+        "city": "New Delhi",
+        "state": "Delhi",
+        "address": "Ansari Nagar, New Delhi, 110029",
+        "pincode": "110029",
+        "contact": {
+            "phone": "011-26588500",
+            "emergency": "011-26588700",
+            "email": "aiims@aiims.edu",
+            "website": "https://www.aiims.edu"
+        },
+        "beds": {
+            "total": 2478,
+            "available": 234,
+            "icu": 200,
+            "icuAvailable": 23,
+            "emergency": 150,
+            "emergencyAvailable": 45
+        },
+        "resources": {
+            "oxygen": true,
+            "ventilators": 120,
+            "ventilatorsAvailable": 34,
+            "bloodBank": true,
+            "ambulances": 25,
+            "ambulancesAvailable": 12
+        },
+        "departments": [
+            "Cardiology",
+            "Neurology",
+            "Orthopedics",
+            "Oncology",
+            "Pediatrics",
+            "General Medicine",
+            "Emergency Medicine"
+        ],
+        "specialties": [
+            "Cardiac Surgery",
+            "Neurosurgery",
+            "Transplant Surgery"
+        ],
+        "rating": 4.8,
+        "accreditation": "NABH",
+        "telemedicine": true,
+        "coordinates": {
+            "lat": 28.5672,
+            "lng": 77.2100
+        }
+    },
+    {
+        "id": "H002",
+        "name": "Safdarjung Hospital",
+        "shortName": "Safdarjung Hospital",
+        "type": "Government",
+        "city": "New Delhi",
+        "state": "Delhi",
+        "address": "Ansari Nagar West, New Delhi, 110029",
+        "pincode": "110029",
+        "contact": {
+            "phone": "011-26165060",
+            "emergency": "011-26165061",
+            "email": "contact@safdarjung.gov.in",
+            "website": "https://www.safdarjunghospital.nic.in"
+        },
+        "beds": {
+            "total": 1800,
+            "available": 156,
+            "icu": 150,
+            "icuAvailable": 18,
+            "emergency": 100,
+            "emergencyAvailable": 32
+        },
+        "resources": {
+            "oxygen": true,
+            "ventilators": 90,
+            "ventilatorsAvailable": 25,
+            "bloodBank": true,
+            "ambulances": 18,
+            "ambulancesAvailable": 8
+        },
+        "departments": [
+            "General Medicine",
+            "Surgery",
+            "Pediatrics",
+            "Gynecology",
+            "Orthopedics",
+            "ENT",
+            "Ophthalmology"
+        ],
+        "specialties": [
+            "Trauma Care",
+            "Burn Unit"
+        ],
+        "rating": 4.2,
+        "accreditation": "NABH",
+        "telemedicine": true,
+        "coordinates": {
+            "lat": 28.5678,
+            "lng": 77.2089
+        }
+    },
+    {
+        "id": "H003",
+        "name": "Apollo Hospital",
+        "shortName": "Apollo Delhi",
+        "type": "Private",
+        "city": "New Delhi",
+        "state": "Delhi",
+        "address": "Sarita Vihar, New Delhi, 110076",
+        "pincode": "110076",
+        "contact": {
+            "phone": "011-26825000",
+            "emergency": "011-26825001",
+            "email": "info@apollodelhi.com",
+            "website": "https://www.apollohospitals.com"
+        },
+        "beds": {
+            "total": 710,
+            "available": 89,
+            "icu": 100,
+            "icuAvailable": 12,
+            "emergency": 50,
+            "emergencyAvailable": 15
+        },
+        "resources": {
+            "oxygen": true,
+            "ventilators": 75,
+            "ventilatorsAvailable": 20,
+            "bloodBank": true,
+            "ambulances": 15,
+            "ambulancesAvailable": 7
+        },
+        "departments": [
+            "Cardiology",
+            "Neurology",
+            "Oncology",
+            "Orthopedics",
+            "Gastroenterology",
+            "Nephrology",
+            "Urology"
+        ],
+        "specialties": [
+            "Robotic Surgery",
+            "Organ Transplant",
+            "Cancer Care"
+        ],
+        "rating": 4.7,
+        "accreditation": "JCI, NABH",
+        "telemedicine": true,
+        "coordinates": {
+            "lat": 28.5355,
+            "lng": 77.2860
+        }
+    },
+    {
+        "id": "H004",
+        "name": "Fortis Hospital",
+        "shortName": "Fortis Vasant Kunj",
+        "type": "Private",
+        "city": "New Delhi",
+        "state": "Delhi",
+        "address": "Sector B, Pocket 1, Vasant Kunj, New Delhi, 110070",
+        "pincode": "110070",
+        "contact": {
+            "phone": "011-42776222",
+            "emergency": "011-42776223",
+            "email": "info@fortishealthcare.com",
+            "website": "https://www.fortishealthcare.com"
+        },
+        "beds": {
+            "total": 262,
+            "available": 45,
+            "icu": 50,
+            "icuAvailable": 8,
+            "emergency": 30,
+            "emergencyAvailable": 10
+        },
+        "resources": {
+            "oxygen": true,
+            "ventilators": 40,
+            "ventilatorsAvailable": 12,
+            "bloodBank": true,
+            "ambulances": 10,
+            "ambulancesAvailable": 5
+        },
+        "departments": [
+            "Cardiology",
+            "Orthopedics",
+            "Neurology",
+            "Oncology",
+            "Gastroenterology",
+            "Pulmonology"
+        ],
+        "specialties": [
+            "Cardiac Sciences",
+            "Joint Replacement"
+        ],
+        "rating": 4.5,
+        "accreditation": "NABH",
+        "telemedicine": true,
+        "coordinates": {
+            "lat": 28.5244,
+            "lng": 77.1586
+        }
+    },
+    {
+        "id": "H005",
+        "name": "Max Super Speciality Hospital",
+        "shortName": "Max Saket",
+        "type": "Private",
+        "city": "New Delhi",
+        "state": "Delhi",
+        "address": "1, Press Enclave Road, Saket, New Delhi, 110017",
+        "pincode": "110017",
+        "contact": {
+            "phone": "011-26515050",
+            "emergency": "011-26515051",
+            "email": "info@maxhealthcare.com",
+            "website": "https://www.maxhealthcare.in"
+        },
+        "beds": {
+            "total": 500,
+            "available": 67,
+            "icu": 80,
+            "icuAvailable": 10,
+            "emergency": 40,
+            "emergencyAvailable": 12
+        },
+        "resources": {
+            "oxygen": true,
+            "ventilators": 60,
+            "ventilatorsAvailable": 18,
+            "bloodBank": true,
+            "ambulances": 12,
+            "ambulancesAvailable": 6
+        },
+        "departments": [
+            "Cardiology",
+            "Neurosciences",
+            "Oncology",
+            "Orthopedics",
+            "Gastroenterology",
+            "Nephrology",
+            "Pulmonology"
+        ],
+        "specialties": [
+            "Minimal Invasive Surgery",
+            "Cancer Care",
+            "Neurosurgery"
+        ],
+        "rating": 4.6,
+        "accreditation": "NABH, JCI",
+        "telemedicine": true,
+        "coordinates": {
+            "lat": 28.5244,
+            "lng": 77.2066
+        }
+    }
+]

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Help Desk - MedConnect</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet" />
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#86efac",
+                        secondary: "#113841",
+                        "secondary-light": "#1d525e",
+                        "background-dark": "#0d2b32",
+                        "accent-purple": "#e0defc",
+                        "accent-green": "#e6f0c2",
+                        "accent-blue": "#d0e8f2",
+                        "health-orange": "#f78e69",
+                    },
+                    fontFamily: {
+                        display: ["Playfair Display", "serif"],
+                        sans: ["DM Sans", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        'xl': '1rem',
+                        '2xl': '1.5rem',
+                        '3xl': '2rem',
+                    },
+                },
+            },
+        };
+    </script>
+
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-sans antialiased text-gray-800 dark:text-gray-100 min-h-screen">
+
+    <!-- Navigation -->
+    <nav
+        class="w-full bg-secondary/85 backdrop-blur-md text-white py-4 px-6 md:px-12 flex justify-between items-center relative z-20 border-b border-white/10">
+        <div class="flex items-center gap-2">
+            <span class="material-icons-outlined text-primary text-3xl">local_hospital</span>
+            <span class="font-display font-bold text-2xl tracking-wide">MedConnect</span>
+        </div>
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
+            <a class="hover:text-primary transition-colors" href="../index.html">Home</a>
+            <a class="hover:text-primary transition-colors" href="about.html">About Mission</a>
+            <a class="nav-auth-link hover:text-primary transition-colors hidden" href="hospitals.html"
+                data-auth-required="true">Hospitals</a>
+            <a class="nav-auth-link hover:text-primary transition-colors hidden" href="resources.html"
+                data-auth-required="true">Resources</a>
+            <a class="hover:text-primary transition-colors text-primary" href="#">Help Desk</a>
+        </div>
+        <button
+            class="bg-primary text-secondary font-bold py-2 px-6 rounded-full hover:bg-white transition-colors duration-300 text-sm">
+            Emergency Access
+        </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative bg-secondary text-white py-20">
+        <div class="absolute inset-0 bg-gradient-to-br from-secondary to-background-dark opacity-90"></div>
+        <div class="relative z-10 max-w-7xl mx-auto px-6 text-center">
+            <h1 class="font-display text-5xl md:text-6xl font-bold mb-6">Help & Support</h1>
+            <p class="text-xl text-gray-300 max-w-3xl mx-auto">Get assistance with your healthcare needs. Our support
+                team is available 24/7 to help you navigate the platform.</p>
+        </div>
+    </section>
+
+    <!-- Quick Help -->
+    <section class="py-16 bg-white dark:bg-gray-900">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="font-display text-4xl font-bold text-center mb-12 text-secondary dark:text-white">Quick Help</h2>
+            <div class="grid md:grid-cols-3 gap-8 mb-16">
+                <div class="bg-accent-green rounded-2xl p-6 text-center">
+                    <span class="material-icons-outlined text-5xl text-secondary mb-4">call</span>
+                    <h3 class="font-display text-xl font-bold mb-3 text-secondary">Emergency Helpline</h3>
+                    <p class="text-gray-700 mb-4">24/7 emergency medical assistance</p>
+                    <div class="text-2xl font-bold text-secondary">102</div>
+                </div>
+                <div class="bg-accent-blue rounded-2xl p-6 text-center">
+                    <span class="material-icons-outlined text-5xl text-secondary mb-4">chat</span>
+                    <h3 class="font-display text-xl font-bold mb-3 text-secondary">Live Chat</h3>
+                    <p class="text-gray-700 mb-4">Instant support for platform queries</p>
+                    <button
+                        class="bg-secondary text-white px-6 py-2 rounded-full hover:bg-secondary-light transition-colors">Start
+                        Chat</button>
+                </div>
+                <div class="bg-accent-purple rounded-2xl p-6 text-center">
+                    <span class="material-icons-outlined text-5xl text-secondary mb-4">email</span>
+                    <h3 class="font-display text-xl font-bold mb-3 text-secondary">Email Support</h3>
+                    <p class="text-gray-700 mb-4">Detailed assistance via email</p>
+                    <div class="text-sm font-bold text-secondary">support@medconnect.gov.in</div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="max-w-4xl mx-auto">
+                <h3 class="font-display text-3xl font-bold text-center mb-8 text-secondary dark:text-white">Frequently
+                    Asked Questions</h3>
+                <div class="space-y-4">
+                    <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-6">
+                        <h4 class="font-bold text-lg mb-2 text-secondary dark:text-white">How do I register with my ABHA
+                            ID?</h4>
+                        <p class="text-gray-600 dark:text-gray-300">Click on "Login/Register" and select "New User".
+                            Enter your 14-digit ABHA ID and follow the verification process via OTP.</p>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-6">
+                        <h4 class="font-bold text-lg mb-2 text-secondary dark:text-white">How can I book an appointment?
+                        </h4>
+                        <p class="text-gray-600 dark:text-gray-300">After logging in, go to "Book Appointment", select
+                            your preferred hospital and doctor, choose available time slots, and confirm your booking.
+                        </p>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-6">
+                        <h4 class="font-bold text-lg mb-2 text-secondary dark:text-white">Can I access my medical
+                            records from any hospital?</h4>
+                        <p class="text-gray-600 dark:text-gray-300">Yes, your digital health records are linked to your
+                            ABHA ID and can be accessed from any connected hospital in our network.</p>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-6">
+                        <h4 class="font-bold text-lg mb-2 text-secondary dark:text-white">Is telemedicine consultation
+                            free?</h4>
+                        <p class="text-gray-600 dark:text-gray-300">Basic telemedicine consultations are free for
+                            government hospital doctors. Private consultations may have charges as per hospital
+                            policies.</p>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-6">
+                        <h4 class="font-bold text-lg mb-2 text-secondary dark:text-white">How do I update my profile
+                            information?</h4>
+                        <p class="text-gray-600 dark:text-gray-300">Go to your dashboard, click on "Profile Settings",
+                            make necessary changes, and verify updates via OTP for security.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form -->
+    <section class="py-16 bg-gray-50 dark:bg-gray-800">
+        <div class="max-w-4xl mx-auto px-6">
+            <h2 class="font-display text-4xl font-bold text-center mb-12 text-secondary dark:text-white">Contact Support
+            </h2>
+            <div class="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg">
+                <form class="space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full
+                                Name</label>
+                            <input type="text"
+                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">ABHA
+                                ID</label>
+                            <input type="text"
+                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                            <input type="email"
+                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone</label>
+                            <input type="tel"
+                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Issue
+                            Category</label>
+                        <select
+                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <option>Login/Registration Issues</option>
+                            <option>Appointment Booking</option>
+                            <option>Medical Records Access</option>
+                            <option>Telemedicine Support</option>
+                            <option>Technical Issues</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Message</label>
+                        <textarea rows="5"
+                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+                            placeholder="Describe your issue in detail..."></textarea>
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-primary text-secondary font-bold py-3 px-6 rounded-xl hover:bg-green-400 transition-colors duration-300">
+                        Submit Support Request
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Support Resources -->
+    <section class="py-16 bg-secondary text-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="font-display text-4xl font-bold text-center mb-12">Support Resources</h2>
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <span class="material-icons-outlined text-5xl text-primary mb-4">menu_book</span>
+                    <h3 class="font-bold text-lg mb-2">User Guide</h3>
+                    <p class="text-gray-300 text-sm">Step-by-step instructions for using the platform</p>
+                </div>
+                <div class="text-center">
+                    <span class="material-icons-outlined text-5xl text-primary mb-4">play_circle</span>
+                    <h3 class="font-bold text-lg mb-2">Video Tutorials</h3>
+                    <p class="text-gray-300 text-sm">Watch how-to videos for common tasks</p>
+                </div>
+                <div class="text-center">
+                    <span class="material-icons-outlined text-5xl text-primary mb-4">forum</span>
+                    <h3 class="font-bold text-lg mb-2">Community Forum</h3>
+                    <p class="text-gray-300 text-sm">Connect with other users and share experiences</p>
+                </div>
+                <div class="text-center">
+                    <span class="material-icons-outlined text-5xl text-primary mb-4">download</span>
+                    <h3 class="font-bold text-lg mb-2">Downloads</h3>
+                    <p class="text-gray-300 text-sm">Mobile app and helpful documents</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-background-dark text-white py-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="material-icons-outlined text-primary text-2xl">local_hospital</span>
+                    <span class="font-display font-bold text-xl">MedConnect</span>
+                </div>
+                <p class="text-gray-400 text-sm">© 2024 Government of India. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="../js/config/app-config.js"></script>
+    <script src="../js/utils/helpers.js"></script>
+    <script src="../js/services/auth.js"></script>
+    <script src="../js/components/navigation.js"></script>
+    <script>
+        // Initialize navigation component
+        const nav = new Navigation();
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,16 @@
+/* Navigation Component Styles */
+
+.navigation {
+    /* Additional navigation-specific styles can be added here */
+    /* Most styling is handled by Tailwind utility classes */
+}
+
+/* Navigation hover effects are handled by Tailwind classes */
+/* This file is reserved for complex navigation-specific styles */
+
+/* Mobile menu toggle (for future implementation) */
+@media (max-width: 768px) {
+    .nav-links {
+        /* Mobile navigation styles can be added here */
+    }
+}
