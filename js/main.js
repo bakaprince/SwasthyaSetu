@@ -126,3 +126,48 @@ function toggleDarkMode() {
 if (localStorage.getItem('darkMode') === 'true') {
     document.documentElement.classList.add('dark');
 }
+
+// AQI Reload Button Handler
+document.addEventListener('DOMContentLoaded', function () {
+    const aqiReloadBtn = document.getElementById('aqi-reload-btn');
+    if (aqiReloadBtn) {
+        aqiReloadBtn.addEventListener('click', function () {
+            console.log('AQI reload button clicked');
+
+            // Add spinning animation
+            const icon = this.querySelector('.material-icons-outlined');
+            icon.classList.add('animate-spin');
+
+            // Get current location
+            if (typeof LocationService !== 'undefined' && LocationService.hasLocation()) {
+                const location = LocationService.getLocation();
+                console.log('Reloading AQI for location:', location);
+
+                if (location && location.latitude && location.longitude && typeof AQIService !== 'undefined') {
+                    // Clear cache and fetch fresh data
+                    localStorage.removeItem('swasthyasetu_aqi');
+                    AQIService.fetchAQI(location.latitude, location.longitude)
+                        .then(() => {
+                            icon.classList.remove('animate-spin');
+                            if (typeof Helpers !== 'undefined') {
+                                Helpers.showToast('AQI data refreshed!', 'success');
+                            }
+                        })
+                        .catch(() => {
+                            icon.classList.remove('animate-spin');
+                        });
+                } else {
+                    icon.classList.remove('animate-spin');
+                    if (typeof Helpers !== 'undefined') {
+                        Helpers.showToast('Please enable location access first', 'error');
+                    }
+                }
+            } else {
+                icon.classList.remove('animate-spin');
+                if (typeof Helpers !== 'undefined') {
+                    Helpers.showToast('Please enable location access first', 'error');
+                }
+            }
+        });
+    }
+});
