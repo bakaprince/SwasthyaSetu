@@ -10,6 +10,7 @@
 /* 3. Component Styles */
 @import 'components/navigation.css';
 @import 'components/hero.css';
+@import 'components/booking.css';
 @import 'components/login-form.css';
 @import 'components/health-alerts.css';
 @import 'components/features.css';

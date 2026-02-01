@@ -1,0 +1,83 @@
+/* Booking Wizard Styles */
+
+.booking-modal-overlay {
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    transition: opacity 0.3s ease-in-out;
+}
+
+.booking-modal-content {
+    animation: modal-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modal-slide-up {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Wizard Steps */
+.wizard-step {
+    display: none;
+    animation: fade-in-right 0.3s ease-out;
+}
+
+.wizard-step.active {
+    display: block;
+}
+
+@keyframes fade-in-right {
+    0% {
+        opacity: 0;
+        transform: translateX(10px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Selection Cards */
+.selection-card {
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.selection-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.selection-card.selected {
+    border-color: #86efac;
+    /* primary color */
+    background-color: rgba(134, 239, 172, 0.1);
+}
+
+/* Time Slots */
+.time-slot {
+    transition: all 0.2s;
+}
+
+.time-slot:hover:not(:disabled) {
+    background-color: #86efac;
+    color: #113841;
+}
+
+.time-slot.selected {
+    background-color: #113841;
+    color: #86efac;
+}
+
+.time-slot:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}

@@ -124,7 +124,7 @@
             class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="font-display text-2xl font-bold text-secondary dark:text-white">Upcoming Appointments</h2>
-                <button
+                <button id="book-appointment-btn"
                     class="bg-primary text-secondary px-4 py-2 rounded-lg font-semibold hover:bg-green-400 transition-colors">
                     Book New
                 </button>
@@ -272,6 +272,47 @@
             `).join('');
         }
     </script>
+    <!-- Booking Wizard Script -->
+    <script src="../js/components/booking-wizard.js"></script>
+    <script>
+        // Initialize Wizard
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof BookingWizard !== 'undefined') {
+                new BookingWizard();
+            }
+        });
+    </script>
+
+    <!-- Booking Wizard Modal -->
+    <div id="booking-modal"
+        class="booking-modal-overlay fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div
+            class="booking-modal-content bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col relative overflow-hidden">
+            <div
+                class="px-8 py-6 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-primary/20 text-secondary dark:text-primary flex items-center justify-center">
+                        <span class="material-icons-outlined">medical_services</span>
+                    </div>
+                    <div>
+                        <h2 class="font-display font-bold text-xl text-secondary dark:text-white">Book Appointment</h2>
+                        <p class="text-xs text-gray-500">Step-by-step easy booking</p>
+                    </div>
+                </div>
+                <button id="close-booking-btn"
+                    class="w-8 h-8 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors">
+                    <span class="material-icons-outlined text-gray-500">close</span>
+                </button>
+            </div>
+            <div id="wizard-container" class="p-8 overflow-y-auto custom-scrollbar flex-grow">
+                <!-- Content injected by JS -->
+            </div>
+            <div class="h-1 bg-gray-100 dark:bg-gray-800 w-full">
+                <div class="h-full bg-primary transition-all duration-300" style="width: 20%"></div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
