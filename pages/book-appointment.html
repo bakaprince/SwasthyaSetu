@@ -138,6 +138,30 @@
                     </h2>
 
                     <div class="space-y-6">
+                        <!-- Hospital (First) -->
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Hospital</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="material-icons-outlined text-gray-400">local_hospital</span>
+                                </span>
+                                <!-- Trigger for Modal -->
+                                <button type="button" id="hospital-trigger"
+                                    class="block w-full pl-10 pr-10 py-3 text-left border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 focus:ring-secondary focus:border-secondary transition-shadow hover:bg-gray-50 dark:hover:bg-gray-800">
+                                    Select Nearby Hospital
+                                </button>
+                                <!-- Hidden input to store value -->
+                                <input type="hidden" id="hospital-input" required name="hospital">
+
+                                <div id="location-status"
+                                    class="text-xs text-gray-500 mt-1 ml-1 flex items-center gap-1 hidden">
+                                    <span class="material-icons-outlined text-[10px] animate-pulse">my_location</span>
+                                    <span>Locating...</span>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Department -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Specialty /
@@ -146,7 +170,7 @@
                                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <span class="material-icons-outlined text-gray-400">category</span>
                                 </span>
-                                <select required
+                                <select required id="department-select"
                                     class="block w-full pl-10 pr-10 py-3 border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-secondary focus:border-secondary transition-shadow">
                                     <option value="" disabled selected>Select a Department</option>
                                     <option value="General Medicine">General Medicine</option>
@@ -159,23 +183,18 @@
                             </div>
                         </div>
 
-                        <!-- Hospital -->
+                        <!-- Doctor (New) -->
                         <div>
-                            <label
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Hospital</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Choose a
+                                Doctor</label>
                             <div class="relative">
                                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="material-icons-outlined text-gray-400">local_hospital</span>
+                                    <span class="material-icons-outlined text-gray-400">person_search</span>
                                 </span>
-                                <select required id="hospital-select"
-                                    class="block w-full pl-10 pr-10 py-3 border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-secondary focus:border-secondary transition-shadow">
-                                    <option value="" disabled selected>Detecting location...</option>
+                                <select required id="doctor-select" disabled
+                                    class="block w-full pl-10 pr-10 py-3 border-gray-300 dark:border-gray-600 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed focus:ring-secondary focus:border-secondary transition-shadow">
+                                    <option value="" disabled selected>Select Department First</option>
                                 </select>
-                                <div id="location-status"
-                                    class="text-xs text-gray-500 mt-1 ml-1 flex items-center gap-1">
-                                    <span class="material-icons-outlined text-[10px] animate-pulse">my_location</span>
-                                    <span>Locating nearby hospitals...</span>
-                                </div>
                             </div>
                         </div>
 
@@ -257,6 +276,38 @@
         </div>
     </div>
 
+    <!-- Hospital Selection Modal -->
+    <div id="hospital-modal"
+        class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div
+            class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col overflow-hidden transform transition-all scale-100">
+            <!-- Modal Header -->
+            <div
+                class="p-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
+                <div>
+                    <h3 class="font-display text-xl font-bold text-secondary dark:text-white">Select Hospital</h3>
+                    <p id="modal-location-status" class="text-xs text-gray-500 flex items-center gap-1 mt-1">
+                        <span class="material-icons-outlined text-[12px] animate-spin">refresh</span>
+                        Detecting your location...
+                    </p>
+                </div>
+                <button type="button" id="close-modal-btn"
+                    class="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors">
+                    <span class="material-icons-outlined text-gray-500">close</span>
+                </button>
+            </div>
+
+            <!-- Hospital List -->
+            <div id="hospital-list-container" class="overflow-y-auto p-4 space-y-3 flex-1">
+                <!-- Loading State -->
+                <div class="flex flex-col items-center justify-center py-10 text-gray-400">
+                    <span class="material-icons-outlined text-4xl mb-2 animate-bounce">place</span>
+                    <p>Searching for nearby hospitals...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript -->
     <script src="../js/config/app-config.js"></script>
     <script src="../js/utils/helpers.js"></script>
@@ -283,16 +334,30 @@
                 document.getElementById('patient-age').value = user.age || 'N/A';
                 document.getElementById('patient-gender').value = user.gender || 'N/A';
                 document.getElementById('patient-mobile').value = user.mobile || user.identifier || 'N/A';
-                document.getElementById('patient-mobile').value = user.mobile || user.identifier || 'N/A';
             }
 
+            // --- Modal & Hospital Logic ---
+            const hospitalModal = document.getElementById('hospital-modal');
+            const hospitalTrigger = document.getElementById('hospital-trigger');
+            const hospitalInput = document.getElementById('hospital-input');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const hospitalListContainer = document.getElementById('hospital-list-container');
+            const modalLocationStatus = document.getElementById('modal-location-status');
+
+            // Open Modal
+            hospitalTrigger.addEventListener('click', () => {
+                hospitalModal.classList.remove('hidden');
+                // Auto-load hospitals if not already loaded or to refresh location
+                loadHospitals();
+            });
+
+            // Close Modal
+            closeModalBtn.addEventListener('click', () => {
+                hospitalModal.classList.add('hidden');
+            });
+
             // Load Hospitals with Location
-            loadHospitals();
-
             function loadHospitals() {
-                const hospitalSelect = document.getElementById('hospital-select');
-                const locationStatus = document.getElementById('location-status');
-
                 // Success callback
                 const onLocationSuccess = async (position) => {
                     const coords = {
@@ -300,8 +365,8 @@
                         longitude: position.coords.longitude
                     };
 
-                    locationStatus.innerHTML = `
-                        <span class="material-icons-outlined text-[10px] text-green-500">check_circle</span>
+                    modalLocationStatus.innerHTML = `
+                        <span class="material-icons-outlined text-[12px] text-green-500">check_circle</span>
                         <span class="text-green-600">Location detected. Showing nearby hospitals.</span>
                     `;
 
@@ -311,9 +376,9 @@
                 // Error callback (denied or failed)
                 const onLocationError = (error) => {
                     console.warn("Location access denied or failed:", error);
-                    locationStatus.innerHTML = `
-                        <span class="material-icons-outlined text-[10px] text-orange-500">location_disabled</span>
-                        <span class="text-orange-600">Location access denied. Showing all hospitals.</span>
+                    modalLocationStatus.innerHTML = `
+                        <span class="material-icons-outlined text-[12px] text-orange-500">location_disabled</span>
+                        <span class="text-orange-600">Location access denied. Showing major hospitals.</span>
                     `;
                     fetchAndPopulateHospitals(null);
                 };
@@ -327,38 +392,136 @@
             }
 
             async function fetchAndPopulateHospitals(location) {
-                const hospitalSelect = document.getElementById('hospital-select');
                 try {
                     const response = await APIService.getHospitals(location);
 
                     if (response.success) {
                         const hospitals = response.data;
-                        hospitalSelect.innerHTML = '<option value="" disabled selected>Select a Hospital</option>';
+                        hospitalListContainer.innerHTML = ''; // Clear loading state
+
+                        if (hospitals.length === 0) {
+                            hospitalListContainer.innerHTML = '<div class="text-center text-gray-500 py-4">No hospitals found nearby.</div>';
+                            return;
+                        }
 
                         hospitals.forEach(hospital => {
-                            const option = document.createElement('option');
-                            option.value = hospital.name;
+                            // Create hospital card item
+                            const item = document.createElement('div');
+                            item.className = 'p-4 border border-gray-100 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors group';
 
-                            // Show distance if available
-                            if (hospital.distance) {
-                                option.textContent = `${hospital.name} (${hospital.distance} km away)`;
-                            } else {
-                                option.textContent = `${hospital.name} - ${hospital.city}`;
-                            }
+                            const distanceBadge = hospital.distance
+                                ? `<span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full font-bold ml-auto flex-shrink-0">${hospital.distance} km</span>`
+                                : '';
 
-                            hospitalSelect.appendChild(option);
+                            item.innerHTML = `
+                                <div class="flex items-start gap-3">
+                                    <div class="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg text-blue-600">
+                                        <span class="material-icons-outlined">local_hospital</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-start">
+                                            <h4 class="font-bold text-secondary dark:text-white group-hover:text-primary transition-colors">${hospital.name}</h4>
+                                            ${distanceBadge}
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-1">${hospital.address || hospital.city}</p>
+                                        <div class="flex gap-2 mt-2 text-xs text-gray-400">
+                                            <span class="flex items-center gap-1"><span class="material-icons-outlined text-[10px]">star</span> ${hospital.rating}</span>
+                                            <span class="flex items-center gap-1"><span class="material-icons-outlined text-[10px]">medical_services</span> ${hospital.type}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+
+                            // Handle Selection
+                            item.addEventListener('click', () => {
+                                selectHospital(hospital);
+                            });
+
+                            hospitalListContainer.appendChild(item);
                         });
                     }
                 } catch (error) {
                     console.error('Error fetching hospitals:', error);
-                    hospitalSelect.innerHTML = '<option value="" disabled>Error loading hospitals</option>';
-                    Helpers.showToast('Failed to load hospitals', 'error');
+                    hospitalListContainer.innerHTML = '<div class="text-center text-red-500 py-4">Error loading hospitals. Please try again.</div>';
                 }
+            }
+
+            function selectHospital(hospital) {
+                // Update trigger button
+                hospitalTrigger.innerHTML = `
+                    <div class="flex items-center justify-between pointer-events-none">
+                        <span class="text-secondary dark:text-white font-semibold">${hospital.name}</span>
+                        <span class="material-icons-outlined text-green-500">check_circle</span>
+                    </div>
+                `;
+                hospitalTrigger.classList.add('border-green-500', 'bg-green-50');
+
+                // Set hidden input value
+                hospitalInput.value = hospital.name;
+
+                // Close modal
+                hospitalModal.classList.add('hidden');
+
+                // Trigger doctor update if department is already selected
+                if (document.getElementById('department-select').value) {
+                    loadDoctors();
+                }
+            }
+
+            // --- Doctor Logic ---
+            const departmentSelect = document.getElementById('department-select');
+            const doctorSelect = document.getElementById('doctor-select');
+
+            departmentSelect.addEventListener('change', loadDoctors);
+
+            function loadDoctors() {
+                const department = departmentSelect.value;
+                const hospital = hospitalInput.value; // Optional dependence
+
+                if (!department) return;
+
+                // Enable dropdown
+                doctorSelect.disabled = false;
+                doctorSelect.className = doctorSelect.className.replace('bg-gray-100 cursor-not-allowed', 'bg-white cursor-pointer');
+
+                // Generate Mock Doctors based on department
+                // In a real app, this would be an API call
+                const doctors = generateMockDoctors(department);
+
+                doctorSelect.innerHTML = '<option value="" disabled selected>Select a Doctor</option>';
+                doctors.forEach(doc => {
+                    const option = document.createElement('option');
+                    option.value = doc.name;
+                    option.textContent = `${doc.name} (${doc.exp} yrs exp)`;
+                    doctorSelect.appendChild(option);
+                });
+            }
+
+            function generateMockDoctors(dept) {
+                const names = ['Sharma', 'Verma', 'Patel', 'Gupta', 'Singh', 'Rao', 'Nair', 'Iyer'];
+                const doctors = [];
+                for (let i = 0; i < 3; i++) {
+                    const name = `Dr. ${names[Math.floor(Math.random() * names.length)]}`;
+                    doctors.push({
+                        name: name,
+                        exp: 5 + Math.floor(Math.random() * 20)
+                    });
+                }
+                return doctors;
             }
 
             // Handle form submission
             document.getElementById('booking-form').addEventListener('submit', (e) => {
                 e.preventDefault();
+
+                // Validate Hospital
+                if (!hospitalInput.value) {
+                    Helpers.showToast('Please select a hospital first', 'error');
+                    hospitalTrigger.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    hospitalTrigger.classList.add('animate-pulse', 'border-red-500');
+                    setTimeout(() => hospitalTrigger.classList.remove('animate-pulse', 'border-red-500'), 2000);
+                    return;
+                }
 
                 // Show loading state (optional)
                 const btn = e.submitter;
