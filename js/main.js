@@ -2,7 +2,7 @@
 // Initializes all components and sets up global event listeners
 
 document.addEventListener('DOMContentLoaded', function () {
-    console.log('MedConnect application initialized');
+    console.log('SwasthyaSetu application initialized');
 
     // Initialize Navigation
     if (typeof Navigation !== 'undefined') {
