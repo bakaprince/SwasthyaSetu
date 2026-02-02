@@ -30,12 +30,14 @@ mongodb+srv://username:password@cluster.mongodb.net/swasthyasetu?retryWrites=tru
 
    Or manually create a file named `.env` in the `backend` folder with this content:
    ```
-   MONGODB_URI=mongodb+srv://swasthyasetu_db_user:swasthyasetu@cluster0.iv0i7uk.mongodb.net/swasthyasetu?retryWrites=true&w=majority&appName=Cluster0
-   JWT_SECRET=swasthya_setu_jwt_secret_2026_secure
+   MONGODB_URI=<ASK_PROJECT_OWNER_FOR_CONNECTION_STRING>
+   JWT_SECRET=<ASK_PROJECT_OWNER_FOR_JWT_SECRET>
    PORT=5000
    NODE_ENV=development
    FRONTEND_URL=http://localhost:3000
    ```
+
+   **Important:** Ask the project owner for the actual MongoDB connection string and JWT secret.
 
 4. **Seed the database (only if database is empty):**
    ```bash

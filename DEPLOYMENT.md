@@ -45,14 +45,16 @@
    Click "Environment Variables" and add these:
 
    ```
-   MONGODB_URI=mongodb+srv://swasthyasetu_db_user:swasthyasetu@cluster0.iv0i7uk.mongodb.net/swasthyasetu?retryWrites=true&w=majority&appName=Cluster0
+   MONGODB_URI=your_mongodb_connection_string_here
 
-   JWT_SECRET=swasthya_setu_jwt_secret_2026_secure
+   JWT_SECRET=your_secure_random_jwt_secret_here
 
    NODE_ENV=production
 
    PORT=5000
    ```
+
+   **Important:** Replace `your_mongodb_connection_string_here` with your actual MongoDB Atlas connection string.
 
 4. **Deploy:**
    - Click "Deploy"
