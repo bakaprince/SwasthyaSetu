@@ -72,6 +72,29 @@ const AuthService = {
                     token: data.token
                 };
 
+                // Validate Role Match
+                // Admin tab (userType='admin') allows 'admin' or 'hospital_admin' or 'doctor'
+                // Patient tab (userType='patient') allows only 'patient'
+
+                const isPatientLogin = userType === 'patient';
+                const userRole = userProfile.type;
+
+                if (isPatientLogin && userRole !== 'patient') {
+                    return {
+                        success: false,
+                        message: 'This account is for Hospital Staff. Please use the Hospital Admin login.',
+                        error: 'ROLE_MISMATCH'
+                    };
+                }
+
+                if (!isPatientLogin && userRole === 'patient') {
+                    return {
+                        success: false,
+                        message: 'This account is for Patients. Please use the Patient login.',
+                        error: 'ROLE_MISMATCH'
+                    };
+                }
+
                 // Save to storage
                 Helpers.setStorage(AppConfig.storage.authToken, data.token);
                 Helpers.setStorage(AppConfig.storage.userProfile, userProfile);
