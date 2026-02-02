@@ -170,16 +170,13 @@
                                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <span class="material-icons-outlined text-gray-400">category</span>
                                 </span>
-                                <select required id="department-select"
-                                    class="block w-full pl-10 pr-10 py-3 border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-secondary focus:border-secondary transition-shadow">
-                                    <option value="" disabled selected>Select a Department</option>
-                                    <option value="General Medicine">General Medicine</option>
-                                    <option value="Cardiology">Cardiology</option>
-                                    <option value="Pediatrics">Pediatrics</option>
-                                    <option value="Orthopedics">Orthopedics</option>
-                                    <option value="Dermatology">Dermatology</option>
-                                    <option value="Gynecology">Gynecology</option>
-                                </select>
+                                <input type="text" id="department-trigger" readonly placeholder="Select a Department"
+                                    required
+                                    class="block w-full pl-10 pr-10 py-3 border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-secondary focus:border-secondary transition-shadow cursor-pointer">
+                                <span class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <span class="material-icons-outlined text-gray-400">arrow_drop_down</span>
+                                </span>
+                                <input type="hidden" id="department-input" name="specialty">
                             </div>
                         </div>
 
@@ -308,6 +305,73 @@
         </div>
     </div>
 
+    <!-- Department Selection Modal -->
+    <div id="department-modal"
+        class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div
+            class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col overflow-hidden transform transition-all scale-100">
+            <div
+                class="p-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
+                <h3 class="font-display text-xl font-bold text-secondary dark:text-white">Select Department</h3>
+                <button type="button" id="close-department-modal-btn"
+                    class="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors">
+                    <span class="material-icons-outlined text-gray-500">close</span>
+                </button>
+            </div>
+            <div class="p-4 grid grid-cols-2 gap-4 overflow-y-auto">
+                <!-- Department Items -->
+                <div class="department-item cursor-pointer p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex flex-col items-center gap-2 text-center transition-all"
+                    data-value="General Medicine">
+                    <div
+                        class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                        <span class="material-icons-outlined">medical_services</span>
+                    </div>
+                    <span class="font-bold text-gray-800 dark:text-gray-200">General Medicine</span>
+                </div>
+                <div class="department-item cursor-pointer p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex flex-col items-center gap-2 text-center transition-all"
+                    data-value="Cardiology">
+                    <div
+                        class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center text-red-600 dark:text-red-400">
+                        <span class="material-icons-outlined">favorite</span>
+                    </div>
+                    <span class="font-bold text-gray-800 dark:text-gray-200">Cardiology</span>
+                </div>
+                <div class="department-item cursor-pointer p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex flex-col items-center gap-2 text-center transition-all"
+                    data-value="Pediatrics">
+                    <div
+                        class="w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-900/40 flex items-center justify-center text-yellow-600 dark:text-yellow-400">
+                        <span class="material-icons-outlined">child_care</span>
+                    </div>
+                    <span class="font-bold text-gray-800 dark:text-gray-200">Pediatrics</span>
+                </div>
+                <div class="department-item cursor-pointer p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex flex-col items-center gap-2 text-center transition-all"
+                    data-value="Orthopedics">
+                    <div
+                        class="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/40 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                        <span class="material-icons-outlined">accessibility_new</span>
+                    </div>
+                    <span class="font-bold text-gray-800 dark:text-gray-200">Orthopedics</span>
+                </div>
+                <div class="department-item cursor-pointer p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex flex-col items-center gap-2 text-center transition-all"
+                    data-value="Dermatology">
+                    <div
+                        class="w-12 h-12 rounded-full bg-pink-100 dark:bg-pink-900/40 flex items-center justify-center text-pink-600 dark:text-pink-400">
+                        <span class="material-icons-outlined">face</span>
+                    </div>
+                    <span class="font-bold text-gray-800 dark:text-gray-200">Dermatology</span>
+                </div>
+                <div class="department-item cursor-pointer p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex flex-col items-center gap-2 text-center transition-all"
+                    data-value="Gynecology">
+                    <div
+                        class="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                        <span class="material-icons-outlined">pregnant_woman</span>
+                    </div>
+                    <span class="font-bold text-gray-800 dark:text-gray-200">Gynecology</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript -->
     <script src="../js/config/app-config.js"></script>
     <script src="../js/utils/helpers.js"></script>
@@ -399,67 +463,129 @@
 
             async function fetchAndPopulateHospitals(location) {
                 try {
+                    // 1. Try Local Backend First
                     const response = await APIService.getHospitals(location);
 
-                    if (response.success) {
-                        const hospitals = response.data;
-                        hospitalListContainer.innerHTML = ''; // Clear loading state
-
-                        if (hospitals.length === 0) {
-                            if (location) {
-                                console.log("No nearby hospitals found. Falling back to all hospitals.");
-                                modalLocationStatus.innerHTML = `
-                                    <span class="material-icons-outlined text-[12px] text-orange-500">info</span>
-                                    <span class="text-orange-600">No hospitals nearby. Showing all available hospitals.</span>
-                                `;
-                                await fetchAndPopulateHospitals(null); // Recursive call without location
-                                return;
-                            } else {
-                                hospitalListContainer.innerHTML = '<div class="text-center text-gray-500 py-4">No hospitals found in the database.</div>';
-                                return;
-                            }
-                        }
-
-                        hospitals.forEach(hospital => {
-                            // Create hospital card item
-                            const item = document.createElement('div');
-                            item.className = 'p-4 border border-gray-100 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors group';
-
-                            const distanceBadge = hospital.distance
-                                ? `<span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full font-bold ml-auto flex-shrink-0">${hospital.distance} km</span>`
-                                : '';
-
-                            item.innerHTML = `
-                                <div class="flex items-start gap-3">
-                                    <div class="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg text-blue-600">
-                                        <span class="material-icons-outlined">local_hospital</span>
-                                    </div>
-                                    <div class="flex-1">
-                                        <div class="flex justify-between items-start">
-                                            <h4 class="font-bold text-secondary dark:text-white group-hover:text-primary transition-colors">${hospital.name}</h4>
-                                            ${distanceBadge}
-                                        </div>
-                                        <p class="text-xs text-gray-500 mt-1">${hospital.address || hospital.city}</p>
-                                        <div class="flex gap-2 mt-2 text-xs text-gray-400">
-                                            <span class="flex items-center gap-1"><span class="material-icons-outlined text-[10px]">star</span> ${hospital.rating}</span>
-                                            <span class="flex items-center gap-1"><span class="material-icons-outlined text-[10px]">medical_services</span> ${hospital.type}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-
-                            // Handle Selection
-                            item.addEventListener('click', () => {
-                                selectHospital(hospital);
-                            });
-
-                            hospitalListContainer.appendChild(item);
-                        });
+                    if (response.success && response.data.length > 0) {
+                        populateHospitalList(response.data);
+                        return;
                     }
+
+                    // 2. If Backend Empty, Try Overpass API (OpenStreetMap)
+                    if (location) {
+                        console.log("Local DB empty, trying Overpass API...");
+                        modalLocationStatus.innerHTML = `
+                            <span class="material-icons-outlined text-[12px] text-blue-500">public</span>
+                            <span class="text-blue-600">Searching global hospital database...</span>
+                        `;
+
+                        const overpassHospitals = await fetchHospitalsFromOverpassAPI(location.latitude, location.longitude);
+
+                        if (overpassHospitals.length > 0) {
+                            populateHospitalList(overpassHospitals);
+                            return;
+                        }
+                    }
+
+                    // 3. Absolute Fallback to All DB Hospitals (Recursive check to avoid infinite loop)
+                    if (location) { // Only fallback if we haven't already tried "null" location
+                        console.log("Overpass API failed/empty. Falling back to all DB hospitals.");
+                        modalLocationStatus.innerHTML = `
+                            <span class="material-icons-outlined text-[12px] text-orange-500">info</span>
+                            <span class="text-orange-600">No hospitals nearby. Showing all available hospitals.</span>
+                        `;
+                        await fetchAndPopulateHospitals(null);
+                    } else {
+                        hospitalListContainer.innerHTML = '<div class="text-center text-gray-500 py-4">No hospitals found in the database.</div>';
+                    }
+
                 } catch (error) {
                     console.error('Error fetching hospitals:', error);
                     hospitalListContainer.innerHTML = '<div class="text-center text-red-500 py-4">Error loading hospitals. Please try again.</div>';
                 }
+            }
+
+            async function fetchHospitalsFromOverpassAPI(lat, lng) {
+                try {
+                    const radius = 10000; // 10km
+                    const query = `
+                        [out:json];
+                        node["amenity"="hospital"](around:${radius},${lat},${lng});
+                        out;
+                    `;
+                    const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+
+                    const response = await fetch(url);
+                    const data = await response.json();
+
+                    return data.elements.map(element => ({
+                        _id: element.id, // Use OSM ID
+                        name: element.tags.name || "Unnamed Hospital",
+                        address: element.tags['addr:street'] || element.tags['addr:city'] || "Address details from OSM",
+                        distance: calculateDistance(lat, lng, element.lat, element.lon).toFixed(1),
+                        rating: (4 + Math.random()).toFixed(1), // Mock rating for external data
+                        type: element.tags.healthcare || 'General',
+                        isExternal: true // Flag to identify external data
+                    }));
+                } catch (err) {
+                    console.warn("Overpass API Error:", err);
+                    return [];
+                }
+            }
+
+            // Haversine Distance Helper
+            function calculateDistance(lat1, lon1, lat2, lon2) {
+                const R = 6371; // km
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                return R * c;
+            }
+
+            function populateHospitalList(hospitals) {
+                hospitalListContainer.innerHTML = '';
+                hospitals.forEach(hospital => {
+                    const item = document.createElement('div');
+                    item.className = 'p-4 border border-gray-100 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors group';
+
+                    const distanceBadge = hospital.distance
+                        ? `<span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full font-bold ml-auto flex-shrink-0">${hospital.distance} km</span>`
+                        : '';
+
+                    const sourceBadge = hospital.isExternal
+                        ? `<span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded-full font-bold ml-2">OSM</span>`
+                        : '';
+
+                    item.innerHTML = `
+                        <div class="flex items-start gap-3">
+                            <div class="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg text-blue-600">
+                                <span class="material-icons-outlined">local_hospital</span>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="font-bold text-secondary dark:text-white group-hover:text-primary transition-colors flex items-center">
+                                        ${hospital.name} ${sourceBadge}
+                                    </h4>
+                                    ${distanceBadge}
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">${hospital.address || hospital.city || 'Address N/A'}</p>
+                                <div class="flex gap-2 mt-2 text-xs text-gray-400">
+                                    <span class="flex items-center gap-1"><span class="material-icons-outlined text-[10px]">star</span> ${hospital.rating || '4.5'}</span>
+                                    <span class="flex items-center gap-1"><span class="material-icons-outlined text-[10px]">medical_services</span> ${hospital.type || 'Hospital'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    // Handle Selection
+                    item.addEventListener('click', () => {
+                        selectHospital(hospital);
+                    });
+
+                    hospitalListContainer.appendChild(item);
+                });
             }
 
             function selectHospital(hospital) {
@@ -485,13 +611,46 @@
             }
 
             // --- Doctor Logic ---
-            const departmentSelect = document.getElementById('department-select');
+            const departmentInput = document.getElementById('department-input');
+            const departmentTrigger = document.getElementById('department-trigger');
+            const departmentModal = document.getElementById('department-modal');
+            const closeDepartmentModalBtn = document.getElementById('close-department-modal-btn');
             const doctorSelect = document.getElementById('doctor-select');
 
-            departmentSelect.addEventListener('change', loadDoctors);
+            // Open Department Modal
+            departmentTrigger.addEventListener('click', () => {
+                departmentModal.classList.remove('hidden');
+            });
+
+            // Close Department Modal
+            closeDepartmentModalBtn.addEventListener('click', () => {
+                departmentModal.classList.add('hidden');
+            });
+
+            // Handle Department Selection
+            document.querySelectorAll('.department-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const value = item.dataset.value;
+                    const name = item.querySelector('span.font-bold').textContent;
+
+                    // Update Inputs
+                    departmentInput.value = value;
+                    departmentTrigger.value = name;
+
+                    // Visual Feedback
+                    document.querySelectorAll('.department-item').forEach(el => el.classList.remove('bg-blue-50', 'border-blue-500'));
+                    item.classList.add('bg-blue-50', 'border-blue-500');
+
+                    // Close Modal
+                    departmentModal.classList.add('hidden');
+
+                    // Load Doctors
+                    loadDoctors();
+                });
+            });
 
             function loadDoctors() {
-                const department = departmentSelect.value;
+                const department = departmentInput.value;
                 const hospital = hospitalInput.value; // Optional dependence
 
                 if (!department) return;
