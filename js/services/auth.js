@@ -35,9 +35,12 @@ const AuthService = {
             // Detect API URL based on environment
             const hostname = window.location.hostname;
             const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
-            const apiBaseUrl = isLocal ? 'http://localhost:5000/api' : '/api';
+            const apiBaseUrl = isLocal
+                ? 'http://localhost:5000/api'
+                : 'https://swasthyasetu-9y9l.onrender.com/api';
 
             console.log('🔐 Login attempt');
+            console.log('   Hostname:', hostname);
             console.log('   API URL:', `${apiBaseUrl}/auth/login`);
 
             // Call backend API

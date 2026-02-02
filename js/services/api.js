@@ -7,7 +7,9 @@ const APIService = {
     get baseURL() {
         const hostname = window.location.hostname;
         const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
-        const apiUrl = isLocal ? 'http://localhost:5000/api' : '/api';
+        const apiUrl = isLocal
+            ? 'http://localhost:5000/api'
+            : 'https://swasthyasetu-9y9l.onrender.com/api';
 
         // Log for debugging
         console.log('🌐 API Service initialized');
