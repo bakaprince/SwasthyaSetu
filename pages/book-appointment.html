@@ -153,6 +153,7 @@
                                 </button>
                                 <!-- Hidden input to store value -->
                                 <input type="hidden" id="hospital-input" required name="hospital">
+                                <input type="hidden" id="hospital-address-input" name="hospitalAddress">
 
                                 <div id="location-status"
                                     class="text-xs text-gray-500 mt-1 ml-1 flex items-center gap-1 hidden">
@@ -636,15 +637,18 @@
 
                 // Set hidden input value
                 hospitalInput.value = hospital.name;
+                document.getElementById('hospital-address-input').value = hospital.address || '';
 
                 // Close modal
                 hospitalModal.classList.add('hidden');
 
                 // Trigger doctor update if department is already selected
-                if (document.getElementById('department-select').value) {
+                if (document.getElementById('department-input').value) {
                     loadDoctors();
                 }
             }
+
+
 
             // --- Doctor Logic ---
             const departmentInput = document.getElementById('department-input');
@@ -744,12 +748,13 @@
                     // Collect form data
                     const formData = new FormData(e.target);
 
-                    // Get hospital ID (for now, we'll use a mock ID - in production, this should be from hospital selection)
-                    const hospitalId = '507f1f77bcf86cd799439011'; // Mock MongoDB ObjectId
+                    // Get hospital ID
+                    const hospitalId = hospitalInput.dataset.id || '507f1f77bcf86cd799439011'; // Use selected ID or fallback
 
                     const appointmentData = {
                         hospitalId: hospitalId,
                         hospital: hospitalInput.value,
+                        hospitalAddress: document.getElementById('hospital-address-input').value,
                         doctor: doctorSelect.value,
                         specialty: departmentInput.value,
                         date: formData.get('date') || e.target.querySelector('input[type="date"]').value,
