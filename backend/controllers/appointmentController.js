@@ -56,23 +56,48 @@ const getHospitalAppointments = async (req, res, next) => {
  * @route   POST /api/appointments
  * @access  Private (Patient)
  */
+const mongoose = require('mongoose');
+
+// ... (existing imports/code)
+
+/**
+ * @desc    Create appointment request
+ * @route   POST /api/appointments
+ * @access  Private (Patient)
+ */
 const createAppointment = async (req, res, next) => {
     try {
-        const { hospitalId, doctor, specialty, date, time, type, reason } = req.body;
+        const { hospitalId, hospital, hospitalAddress, doctor, specialty, date, time, type, reason } = req.body;
 
-        // Verify hospital exists
-        const hospital = await Hospital.findById(hospitalId);
-        if (!hospital) {
-            return res.status(404).json({
-                success: false,
-                message: 'Hospital not found'
-            });
+        let finalHospitalName = hospital;
+        let finalHospitalAddress = hospitalAddress;
+
+        // Verify hospital exists ONLY if it looks like a valid MongoDB ObjectId
+        if (mongoose.Types.ObjectId.isValid(hospitalId)) {
+            const dbHospital = await Hospital.findById(hospitalId);
+            if (dbHospital) {
+                finalHospitalName = dbHospital.name;
+                finalHospitalAddress = `${dbHospital.address}, ${dbHospital.city}`;
+            } else if (!hospital) {
+                // If it's a valid ID but not found, and no name provided (fallback)
+                return res.status(404).json({
+                    success: false,
+                    message: 'Hospital not found'
+                });
+            }
+        }
+
+        // Ensure we have a name (either from DB or request)
+        if (!finalHospitalName) {
+            finalHospitalName = "Unknown Hospital";
         }
 
         // Create appointment
         const appointment = await Appointment.create({
             userId: req.user.id,
             hospitalId,
+            hospital: finalHospitalName,
+            hospitalAddress: finalHospitalAddress,
             doctor,
             specialty,
             date,
@@ -82,14 +107,22 @@ const createAppointment = async (req, res, next) => {
             status: 'pending' // Default status for patient requests
         });
 
-        // Populate hospital details
-        await appointment.populate('hospitalId', 'name city address contact');
+        // We don't populate 'hospitalId' here anymore because it might be a string
+        // Instead we construct the response with the data we have
+        const populatedAppointment = appointment.toObject();
+        populatedAppointment.hospitalId = {
+            _id: appointment.hospitalId,
+            name: finalHospitalName,
+            city: finalHospitalAddress,
+            address: finalHospitalAddress
+        };
 
         res.status(201).json({
             success: true,
             message: 'Appointment request created successfully',
-            data: appointment
+            data: populatedAppointment
         });
+
     } catch (error) {
         next(error);
     }

@@ -7,9 +7,15 @@ const appointmentSchema = new mongoose.Schema({
         required: [true, 'User ID is required']
     },
     hospitalId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Hospital',
+        type: String, // Changed to String to support both ObjectId and external IDs
         required: [true, 'Hospital ID is required']
+    },
+    hospital: {
+        type: String, // Store name for external hospitals (matches frontend payload)
+        required: [true, 'Hospital name is required']
+    },
+    hospitalAddress: {
+        type: String // Store address for external hospitals
     },
     doctor: {
         type: String,
