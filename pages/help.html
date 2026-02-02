@@ -77,6 +77,10 @@
 
     <!-- Hero Section -->
     <section class="relative bg-secondary text-white py-20">
+        <!-- Background Image Layer -->
+        <div class="absolute inset-0 bg-cover bg-[center_60%] bg-no-repeat"
+            style="background-image: url('../assets/images/help_and_support.webp');"></div>
+        <!-- Semi-transparent Overlay -->
         <div class="absolute inset-0 bg-gradient-to-br from-secondary to-background-dark opacity-90"></div>
         <div class="relative z-10 max-w-7xl mx-auto px-6 text-center">
             <h1 class="font-display text-5xl md:text-6xl font-bold mb-6">Help & Support</h1>
@@ -113,107 +117,220 @@
             </div>
 
             <!-- FAQ Section -->
-            <div class="max-w-4xl mx-auto">
-                <h3 class="font-display text-3xl font-bold text-center mb-8 text-secondary dark:text-white">Frequently
-                    Asked Questions</h3>
-                <div class="space-y-4">
-                    <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-6">
-                        <h4 class="font-bold text-lg mb-2 text-secondary dark:text-white">How do I register with my ABHA
-                            ID?</h4>
-                        <p class="text-gray-600 dark:text-gray-300">Click on "Login/Register" and select "New User".
-                            Enter your 14-digit ABHA ID and follow the verification process via OTP.</p>
-                    </div>
-                    <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-6">
-                        <h4 class="font-bold text-lg mb-2 text-secondary dark:text-white">How can I book an appointment?
-                        </h4>
-                        <p class="text-gray-600 dark:text-gray-300">After logging in, go to "Book Appointment", select
-                            your preferred hospital and doctor, choose available time slots, and confirm your booking.
-                        </p>
-                    </div>
-                    <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-6">
-                        <h4 class="font-bold text-lg mb-2 text-secondary dark:text-white">Can I access my medical
-                            records from any hospital?</h4>
-                        <p class="text-gray-600 dark:text-gray-300">Yes, your digital health records are linked to your
-                            ABHA ID and can be accessed from any connected hospital in our network.</p>
-                    </div>
-                    <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-6">
-                        <h4 class="font-bold text-lg mb-2 text-secondary dark:text-white">Is telemedicine consultation
-                            free?</h4>
-                        <p class="text-gray-600 dark:text-gray-300">Basic telemedicine consultations are free for
-                            government hospital doctors. Private consultations may have charges as per hospital
-                            policies.</p>
-                    </div>
-                    <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-6">
-                        <h4 class="font-bold text-lg mb-2 text-secondary dark:text-white">How do I update my profile
-                            information?</h4>
-                        <p class="text-gray-600 dark:text-gray-300">Go to your dashboard, click on "Profile Settings",
-                            make necessary changes, and verify updates via OTP for security.</p>
+        </div>
+    </section>
+
+    <!-- FAQ Carousel Section -->
+    <section class="py-16 bg-[#fffefc] dark:bg-gray-900">
+        <div class="mb-12 flex items-center justify-center gap-6">
+            <h3 class="font-display text-3xl font-bold text-center text-secondary dark:text-white">Frequently
+                Asked Questions</h3>
+            <button id="contact-support-btn"
+                class="bg-primary text-secondary font-bold py-3 px-8 rounded-full hover:bg-green-400 transition-all duration-300 text-base whitespace-nowrap flex items-center gap-2 hover:scale-105">
+                <span class="material-icons-outlined">touch_app</span>
+                Contact Support
+            </button>
+        </div>
+
+        <div class="w-full overflow-hidden">
+            <style>
+                @keyframes slideLoop {
+                    0% {
+                        transform: translateX(0);
+                    }
+
+                    100% {
+                        transform: translateX(-100%);
+                    }
+                }
+
+                .faq-container {
+                    display: flex;
+                    animation: slideLoop 60s linear infinite;
+                    gap: 2rem;
+                }
+
+                .faq-container:hover {
+                    animation-play-state: paused;
+                }
+
+                .faq-box {
+                    min-width: 320px;
+                    width: 320px;
+                    height: 240px;
+                    flex-shrink: 0;
+                    border-radius: 30px;
+                    background: #fffefc;
+                    box-shadow: 15px 15px 30px #d9d8d6, -15px -15px 30px #ffffff;
+                    border: none;
+                    outline: none;
+                }
+            </style>
+
+            <div class="relative">
+                <div class="flex overflow-hidden overflow-y-hidden">
+                    <div class="faq-container">
+                        <!-- First set of FAQ boxes -->
+                        <div class="faq-box p-6">
+                            <div class="h-full flex flex-col justify-center">
+                                <h4 class="font-bold text-base mb-3 text-secondary dark:text-white">How do I register
+                                    with my ABHA ID?</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">Click on
+                                    "Login/Register" and select "New User". Enter your 14-digit ABHA ID and follow the
+                                    verification process via OTP.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-box p-6">
+                            <div class="h-full flex flex-col justify-center">
+                                <h4 class="font-bold text-base mb-3 text-secondary dark:text-white">How can I book an
+                                    appointment?</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">After logging in, go
+                                    to "Book Appointment", select your preferred hospital and doctor, choose available
+                                    time slots, and confirm your booking.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-box p-6">
+                            <div class="h-full flex flex-col justify-center">
+                                <h4 class="font-bold text-base mb-3 text-secondary dark:text-white">Can I access my
+                                    medical records from any hospital?</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">Yes, your digital
+                                    health records are linked to your ABHA ID and can be accessed from any connected
+                                    hospital in our network.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-box p-6">
+                            <div class="h-full flex flex-col justify-center">
+                                <h4 class="font-bold text-base mb-3 text-secondary dark:text-white">Is telemedicine
+                                    consultation free?</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">Basic telemedicine
+                                    consultations are free for government hospital doctors. Private consultations may
+                                    have charges as per hospital policies.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-box p-6">
+                            <div class="h-full flex flex-col justify-center">
+                                <h4 class="font-bold text-base mb-3 text-secondary dark:text-white">How do I update my
+                                    profile information?</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">Go to your
+                                    dashboard, click on "Profile Settings", make necessary changes, and verify updates
+                                    via OTP for security.</p>
+                            </div>
+                        </div>
+
+                        <!-- Duplicate set for seamless loop -->
+                        <div class="faq-box p-6">
+                            <div class="h-full flex flex-col justify-center">
+                                <h4 class="font-bold text-base mb-3 text-secondary dark:text-white">How do I register
+                                    with
+                                    my ABHA ID?</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">Click on
+                                    "Login/Register" and select "New User". Enter your 14-digit ABHA ID and follow the
+                                    verification process via OTP.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-box p-6">
+                            <div class="h-full flex flex-col justify-center">
+                                <h4 class="font-bold text-base mb-3 text-secondary dark:text-white">How can I book an
+                                    appointment?</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">After logging in, go
+                                    to "Book Appointment", select your preferred hospital and doctor, choose available
+                                    time slots, and confirm your booking.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-box p-6">
+                            <div class="h-full flex flex-col justify-center">
+                                <h4 class="font-bold text-base mb-3 text-secondary dark:text-white">Can I access my
+                                    medical records from any hospital?</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">Yes, your digital
+                                    health records are linked to your ABHA ID and can be accessed from any connected
+                                    hospital in our network.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-box p-6">
+                            <div class="h-full flex flex-col justify-center">
+                                <h4 class="font-bold text-base mb-3 text-secondary dark:text-white">Is telemedicine
+                                    consultation free?</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">Basic telemedicine
+                                    consultations are free for government hospital doctors. Private consultations may
+                                    have charges as per hospital policies.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-box p-6">
+                            <div class="h-full flex flex-col justify-center">
+                                <h4 class="font-bold text-base mb-3 text-secondary dark:text-white">How do I update my
+                                    profile information?</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">Go to your
+                                    dashboard, click on "Profile Settings", make necessary changes, and verify updates
+                                    via OTP for security.</p>
+                            </div>
+                        </div>
+
+                        <!-- Third duplicate set for extra seamless loop -->
+                        <div class="faq-box p-6">
+                            <div class="h-full flex flex-col justify-center">
+                                <h4 class="font-bold text-base mb-3 text-secondary dark:text-white">How do I register
+                                    with my ABHA ID?</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">Click on
+                                    "Login/Register" and select "New User". Enter your 14-digit ABHA ID and follow the
+                                    verification process via OTP.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-box p-6">
+                            <div class="h-full flex flex-col justify-center">
+                                <h4 class="font-bold text-base mb-3 text-secondary dark:text-white">How can I book an
+                                    appointment?</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">After logging in, go
+                                    to "Book Appointment", select your preferred hospital and doctor, choose available
+                                    time slots, and confirm your booking.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-box p-6">
+                            <div class="h-full flex flex-col justify-center">
+                                <h4 class="font-bold text-base mb-3 text-secondary dark:text-white">Can I access my
+                                    medical records from any hospital?</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">Yes, your digital
+                                    health records are linked to your ABHA ID and can be accessed from any connected
+                                    hospital in our network.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-box p-6">
+                            <div class="h-full flex flex-col justify-center">
+                                <h4 class="font-bold text-base mb-3 text-secondary dark:text-white">Is telemedicine
+                                    consultation free?</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">Basic telemedicine
+                                    consultations are free for government hospital doctors. Private consultations may
+                                    have charges as per hospital policies.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-box p-6">
+                            <div class="h-full flex flex-col justify-center">
+                                <h4 class="font-bold text-base mb-3 text-secondary dark:text-white">How do I update my
+                                    profile information?</h4>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">Go to your
+                                    dashboard, click on "Profile Settings", make necessary changes, and verify updates
+                                    via OTP for security.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-
-    <!-- Contact Form -->
-    <section class="py-16 bg-gray-50 dark:bg-gray-800">
-        <div class="max-w-4xl mx-auto px-6">
-            <h2 class="font-display text-4xl font-bold text-center mb-12 text-secondary dark:text-white">Contact Support
-            </h2>
-            <div class="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg">
-                <form class="space-y-6">
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full
-                                Name</label>
-                            <input type="text"
-                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">ABHA
-                                ID</label>
-                            <input type="text"
-                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent">
-                        </div>
-                    </div>
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
-                            <input type="email"
-                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone</label>
-                            <input type="tel"
-                                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Issue
-                            Category</label>
-                        <select
-                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent">
-                            <option>Login/Registration Issues</option>
-                            <option>Appointment Booking</option>
-                            <option>Medical Records Access</option>
-                            <option>Telemedicine Support</option>
-                            <option>Technical Issues</option>
-                            <option>Other</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Message</label>
-                        <textarea rows="5"
-                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
-                            placeholder="Describe your issue in detail..."></textarea>
-                    </div>
-                    <button type="submit"
-                        class="w-full bg-primary text-secondary font-bold py-3 px-6 rounded-xl hover:bg-green-400 transition-colors duration-300">
-                        Submit Support Request
-                    </button>
-                </form>
-            </div>
         </div>
     </section>
+
+
 
     <!-- Support Resources -->
     <section class="py-16 bg-secondary text-white">
@@ -276,6 +393,159 @@
     <script src="../js/utils/helpers.js"></script>
     <script src="../js/services/auth.js"></script>
     <script src="../js/components/navigation.js"></script>
+
+    <!-- Contact Support Modal -->
+    <div id="contact-support-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 backdrop-blur-sm">
+        <div
+            class="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-hidden">
+            <!-- Header with gradient -->
+            <div class="bg-gradient-to-r from-secondary to-secondary-light p-6 relative">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="font-display text-3xl font-bold text-white mb-1">Contact Support</h2>
+                        <p class="text-gray-200 text-sm">We're here to help you 24/7</p>
+                    </div>
+                    <button id="close-contact-modal" class="text-white hover:text-primary transition-colors">
+                        <span class="material-icons-outlined text-3xl">close</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Form content with scroll -->
+            <div class="p-8 overflow-y-auto max-h-[calc(90vh-120px)]">
+
+                <form id="contact-support-form" class="space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label
+                                class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                                <span class="material-icons-outlined text-primary text-lg">person</span>
+                                Full Name
+                            </label>
+                            <input type="text" required placeholder="Enter your full name"
+                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                                <span class="material-icons-outlined text-primary text-lg">badge</span>
+                                ABHA ID
+                            </label>
+                            <input type="text" required placeholder="14-digit ABHA ID"
+                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label
+                                class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                                <span class="material-icons-outlined text-primary text-lg">email</span>
+                                Email Address
+                            </label>
+                            <input type="email" required placeholder="your.email@example.com"
+                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                                <span class="material-icons-outlined text-primary text-lg">phone</span>
+                                Phone Number
+                            </label>
+                            <input type="tel" required placeholder="+91 XXXXX XXXXX"
+                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label
+                            class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                            <span class="material-icons-outlined text-primary text-lg">category</span>
+                            Issue Category
+                        </label>
+                        <select required
+                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                            <option value="">Select an issue category</option>
+                            <option>🔐 Login/Registration Issues</option>
+                            <option>📅 Appointment Booking</option>
+                            <option>📋 Medical Records Access</option>
+                            <option>💻 Telemedicine Support</option>
+                            <option>⚙️ Technical Issues</option>
+                            <option>❓ Other</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label
+                            class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                            <span class="material-icons-outlined text-primary text-lg">message</span>
+                            Describe Your Issue
+                        </label>
+                        <textarea rows="5" required
+                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary transition-all resize-none"
+                            placeholder="Please provide detailed information about your issue so we can assist you better..."></textarea>
+                    </div>
+
+                    <div class="flex gap-4 pt-4">
+                        <button type="button" id="cancel-contact-btn"
+                            class="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold py-3 px-6 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-300">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="flex-1 bg-gradient-to-r from-primary to-green-400 text-secondary font-bold py-3 px-6 rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2">
+                            <span class="material-icons-outlined">send</span>
+                            Submit Request
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Contact Support Modal functionality
+        const contactSupportBtn = document.getElementById('contact-support-btn');
+        const contactSupportModal = document.getElementById('contact-support-modal');
+        const closeContactModal = document.getElementById('close-contact-modal');
+        const contactSupportForm = document.getElementById('contact-support-form');
+
+        // Open modal
+        contactSupportBtn.addEventListener('click', () => {
+            contactSupportModal.classList.remove('hidden');
+            contactSupportModal.classList.add('flex');
+        });
+
+        // Close modal
+        const cancelContactBtn = document.getElementById('cancel-contact-btn');
+        closeContactModal.addEventListener('click', () => {
+            contactSupportModal.classList.add('hidden');
+            contactSupportModal.classList.remove('flex');
+        });
+
+        // Cancel button
+        cancelContactBtn.addEventListener('click', () => {
+            contactSupportModal.classList.add('hidden');
+            contactSupportModal.classList.remove('flex');
+        });
+
+        // Close on outside click
+        contactSupportModal.addEventListener('click', (e) => {
+            if (e.target === contactSupportModal) {
+                contactSupportModal.classList.add('hidden');
+                contactSupportModal.classList.remove('flex');
+            }
+        });
+
+        // Handle form submission
+        contactSupportForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Support request submitted successfully! We will contact you soon.');
+            contactSupportModal.classList.add('hidden');
+            contactSupportModal.classList.remove('flex');
+            contactSupportForm.reset();
+        });
+    </script>
 
 </body>
 
