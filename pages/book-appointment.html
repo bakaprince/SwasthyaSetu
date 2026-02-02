@@ -507,26 +507,62 @@
 
             async function fetchHospitalsFromOverpassAPI(lat, lng) {
                 try {
-                    const radius = 10000; // 10km
+                    const radius = 25000; // Increased to 25km to find more results in rural areas
+                    // Query for hospitals, clinics, and doctors
                     const query = `
-                        [out:json];
-                        node["amenity"="hospital"](around:${radius},${lat},${lng});
-                        out;
+                        [out:json][timeout:25];
+                        (
+                          node["amenity"="hospital"](around:${radius},${lat},${lng});
+                          way["amenity"="hospital"](around:${radius},${lat},${lng});
+                          relation["amenity"="hospital"](around:${radius},${lat},${lng});
+                          node["amenity"="clinic"](around:${radius},${lat},${lng});
+                          way["amenity"="clinic"](around:${radius},${lat},${lng});
+                        );
+                        out center;
                     `;
                     const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
 
                     const response = await fetch(url);
                     const data = await response.json();
 
-                    return data.elements.map(element => ({
-                        _id: element.id, // Use OSM ID
-                        name: element.tags.name || "Unnamed Hospital",
-                        address: element.tags['addr:street'] || element.tags['addr:city'] || "Address details from OSM",
-                        distance: calculateDistance(lat, lng, element.lat, element.lon).toFixed(1),
-                        rating: (4 + Math.random()).toFixed(1), // Mock rating for external data
-                        type: element.tags.healthcare || 'General',
-                        isExternal: true // Flag to identify external data
-                    }));
+                    return data.elements.map(element => {
+                        const tags = element.tags || {};
+                        const name = tags.name || tags['name:en'] || "Medical Center";
+
+                        // Better address construction
+                        let addressParts = [];
+                        if (tags['addr:street']) addressParts.push(tags['addr:street']);
+                        if (tags['addr:suburb']) addressParts.push(tags['addr:suburb']);
+                        if (tags['addr:district']) addressParts.push(tags['addr:district']);
+                        if (tags['addr:city']) addressParts.push(tags['addr:city']);
+
+                        let address = "Address details not available";
+                        if (addressParts.length > 0) {
+                            address = addressParts.join(', ');
+                        } else if (tags['addr:full']) {
+                            address = tags['addr:full'];
+                        }
+
+                        // Determine latitude/longitude (center for ways/relations)
+                        const elLat = element.lat || (element.center && element.center.lat);
+                        const elLon = element.lon || (element.center && element.center.lon);
+
+                        // Fallback logic for coordinates if missing (shouldn't happen with 'out center')
+                        if (!elLat || !elLon) return null;
+
+                        return {
+                            _id: element.id,
+                            name: name,
+                            address: address,
+                            distance: calculateDistance(lat, lng, elLat, elLon).toFixed(1),
+                            rating: (3.5 + Math.random() * 1.5).toFixed(1),
+                            type: tags.healthcare || (tags.amenity === 'clinic' ? 'Clinic' : 'Hospital'),
+                            isExternal: true
+                        };
+                    })
+                        .filter(item => item !== null) // Remove failed items
+                        .sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance)) // Sort by distance
+                        .slice(0, 50); // Limit results
                 } catch (err) {
                     console.warn("Overpass API Error:", err);
                     return [];
