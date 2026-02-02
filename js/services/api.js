@@ -3,7 +3,21 @@
  */
 
 const APIService = {
-    baseURL: 'http://localhost:5000/api',
+    // Automatically detect the correct API URL
+    get baseURL() {
+        const hostname = window.location.hostname;
+        const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+        const apiUrl = isLocal
+            ? 'http://localhost:5000/api'
+            : 'https://swasthyasetu-9y5l.onrender.com/api';
+
+        // Log for debugging
+        console.log('🌐 API Service initialized');
+        console.log('   Hostname:', hostname);
+        console.log('   API URL:', apiUrl);
+
+        return apiUrl;
+    },
 
     getToken() {
         const user = AuthService?.getCurrentUser();
@@ -34,9 +48,9 @@ const APIService = {
             }
 
             console.log(`API Call: ${method} ${this.baseURL}${endpoint}`);
-            
+
             const response = await fetch(`${this.baseURL}${endpoint}`, config);
-            
+
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({ message: 'Network error' }));
                 throw new Error(errorData.message || `HTTP ${response.status}`);
@@ -47,11 +61,11 @@ const APIService = {
 
         } catch (error) {
             console.error('API Error:', error);
-            
+
             if (error.name === 'TypeError' || error.message.includes('Failed to fetch')) {
                 throw new Error('Backend server not running. Please start: npm run dev');
             }
-            
+
             throw error;
         }
     },

@@ -1,38 +1,38 @@
 {
     "name": "swasthyasetu-backend",
     "version": "1.0.0",
-    "description": "Backend API for SwasthyaSetu - Government Health Portal with MongoDB Atlas",
+    "description": "Backend API for SwasthyaSetu Healthcare Platform",
     "main": "server.js",
     "scripts": {
         "start": "node server.js",
         "dev": "nodemon server.js",
-        "seed": "node scripts/seed.js"
+        "seed": "node scripts/seed.js",
+        "vercel-build": "echo 'Building backend for Vercel'"
     },
     "keywords": [
         "healthcare",
-        "government",
-        "mongodb",
-        "atlas",
+        "api",
+        "nodejs",
         "express"
     ],
-    "author": "SwasthyaSetu Team",
+    "author": "",
     "license": "ISC",
     "dependencies": {
         "bcryptjs": "^2.4.3",
         "cors": "^2.8.5",
-        "dotenv": "^16.3.1",
+        "dotenv": "^16.0.3",
         "express": "^4.18.2",
-        "express-rate-limit": "^7.5.1",
+        "express-rate-limit": "^6.7.0",
         "express-validator": "^7.0.1",
-        "helmet": "^7.2.0",
-        "jsonwebtoken": "^9.0.2",
-        "mongoose": "^8.0.0",
+        "helmet": "^7.0.0",
+        "jsonwebtoken": "^9.0.0",
+        "mongoose": "^7.0.3",
         "morgan": "^1.10.0"
     },
     "devDependencies": {
-        "nodemon": "^3.0.1"
+        "nodemon": "^2.0.22"
     },
     "engines": {
-        "node": ">=16.0.0"
+        "node": ">=18.x"
     }
 }

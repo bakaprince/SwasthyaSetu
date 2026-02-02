@@ -27,22 +27,29 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// CORS configuration - Allow all origins in development
+// Manual CORS headers - Set before cors package
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+
+    // Handle preflight
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+    }
+    next();
+});
+
+// CORS configuration - Allow all origins
 const corsOptions = {
-    origin: process.env.NODE_ENV === 'production'
-        ? [
-            'http://localhost:8000',
-            'http://127.0.0.1:8000',
-            'http://localhost:3000',
-            'http://localhost:5500'
-        ]
-        : '*', // Allow all origins in development
-    credentials: process.env.NODE_ENV === 'production',
+    origin: '*', // Allow all origins
+    credentials: false,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 };
 
 app.use(cors(corsOptions));
+
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
@@ -108,11 +115,18 @@ process.on('SIGINT', () => {
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`\n🚀 SwasthyaSetu Backend Server`);
-    console.log(`📡 Server running on port ${PORT}`);
-    console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`🔗 API URL: http://localhost:${PORT}/api`);
-    console.log(`📚 Health Check: http://localhost:${PORT}/api/health-check`);
-    console.log(`\n✅ Ready to accept requests!\n`);
-});
+
+// Only start server if not in Vercel serverless environment
+if (process.env.VERCEL !== '1') {
+    app.listen(PORT, () => {
+        console.log(`\n🚀 SwasthyaSetu Backend Server`);
+        console.log(`📡 Server running on port ${PORT}`);
+        console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+        console.log(`🔗 API URL: http://localhost:${PORT}/api`);
+        console.log(`📚 Health Check: http://localhost:${PORT}/api/health-check`);
+        console.log(`\n✅ Ready to accept requests!\n`);
+    });
+}
+
+// Export for Vercel serverless
+module.exports = app;
