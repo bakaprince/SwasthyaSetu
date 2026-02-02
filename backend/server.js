@@ -27,6 +27,19 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
+// Manual CORS headers - Set before cors package
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+
+    // Handle preflight
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+    }
+    next();
+});
+
 // CORS configuration - Allow all origins
 const corsOptions = {
     origin: '*', // Allow all origins
