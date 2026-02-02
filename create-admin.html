@@ -44,8 +44,13 @@
                 name: "AIIMS Admin",
                 email: "admin@aiims.gov.in",
                 password: "admin123",
-                role: "hospital_admin",
-                hospitalId: "642a8b9e1234567890abcdef" // Dummy ID, will be updated later or ignored
+                role: "admin", // Corrected to match Schema enum: ['patient', 'doctor', 'admin']
+                // Required fields by Schema
+                abhaId: "99-9999-9999-9999",
+                mobile: "9999999999",
+                gender: "Other",
+                dateOfBirth: "1980-01-01",
+                hospitalId: "642a8b9e1234567890abcdef" // Dummy ID
             };
 
             try {
