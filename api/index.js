@@ -1,1 +1,4 @@
-module.exports = require('../backend/server.js');
+// Vercel Serverless Function Handler
+const app = require('../backend/server.js');
+
+module.exports = app;
