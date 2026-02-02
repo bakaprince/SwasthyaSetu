@@ -82,8 +82,13 @@ const login = async (req, res, next) => {
         }
 
         // Find user (include password for comparison)
+        // Checks abhaId, mobile, OR email (since frontend might send email in abhaId field)
         const user = await User.findOne({
-            $or: [{ abhaId }, { mobile }]
+            $or: [
+                { abhaId: abhaId },
+                { mobile: mobile || abhaId }, // Handle case where mobile is passed in abhaId
+                { email: abhaId } // Allow login with email
+            ]
         }).select('+password');
 
         if (!user) {
