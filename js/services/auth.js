@@ -32,8 +32,16 @@ const AuthService = {
      */
     async login(identifier, password, userType = 'patient', rememberMe = false) {
         try {
-            // Call real backend API
-            const response = await fetch('http://localhost:5000/api/auth/login', {
+            // Detect API URL based on environment
+            const hostname = window.location.hostname;
+            const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+            const apiBaseUrl = isLocal ? 'http://localhost:5000/api' : '/api';
+
+            console.log('🔐 Login attempt');
+            console.log('   API URL:', `${apiBaseUrl}/auth/login`);
+
+            // Call backend API
+            const response = await fetch(`${apiBaseUrl}/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

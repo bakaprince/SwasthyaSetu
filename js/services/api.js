@@ -3,10 +3,19 @@
  */
 
 const APIService = {
-    // Use environment-based URL: production Vercel URL or local development
-    baseURL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? 'http://localhost:5000/api'
-        : '/api',
+    // Automatically detect the correct API URL
+    get baseURL() {
+        const hostname = window.location.hostname;
+        const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+        const apiUrl = isLocal ? 'http://localhost:5000/api' : '/api';
+
+        // Log for debugging
+        console.log('🌐 API Service initialized');
+        console.log('   Hostname:', hostname);
+        console.log('   API URL:', apiUrl);
+
+        return apiUrl;
+    },
 
     getToken() {
         const user = AuthService?.getCurrentUser();
