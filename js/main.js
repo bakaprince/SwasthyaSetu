@@ -14,6 +14,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const loginForm = new LoginForm();
     }
 
+    // Initialize Health Alerts
+    if (typeof HealthAlertService !== 'undefined') {
+        HealthAlertService.init();
+    }
+
     // Add smooth scroll behavior to all anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
