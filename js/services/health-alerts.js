@@ -334,10 +334,10 @@ const HealthAlertService = {
     },
 
     renderLoadingState() {
-        const container = document.getElementById('health-alerts-container');
-        if (container) return; // Prevent double render
+        if (document.getElementById('health-alerts-loading')) return; // Prevent double render
 
-        const section = document.querySelector('#health-alerts-container').parentElement; // The section wrapper
+        const container = document.getElementById('health-alerts-container');
+        if (!container) return;
 
         const loader = `
             <div id="health-alerts-loading" class="flex flex-col items-center justify-center py-20 gap-4">
@@ -345,8 +345,8 @@ const HealthAlertService = {
                 <p class="text-gray-500 font-medium">Analyzing local health data...</p>
             </div>
         `;
-        document.getElementById('health-alerts-container').insertAdjacentHTML('beforebegin', loader);
-        document.getElementById('health-alerts-container').classList.add('hidden');
+        container.insertAdjacentHTML('beforebegin', loader);
+        container.classList.add('hidden');
     },
 
     renderErrorState() {
