@@ -13,7 +13,7 @@ class LoginForm {
         // Initialize form event listeners
         this.setupTabSwitching();
         this.setupFormValidation();
-        this.setupOTPButton();
+        this.setupPasswordToggle();
 
         // Set initial form fields for patient tab
         this.updateFormFields();
@@ -93,7 +93,7 @@ class LoginForm {
         const idInput = document.getElementById('abha-id');
         const passwordLabel = document.querySelector('label[for="password"]');
         const passwordInput = document.getElementById('password');
-        const otpButton = document.querySelector('.otp-button');
+        // Removed otpButton reference
         const abhaSection = document.querySelector('.login-form').parentElement.querySelector('.mt-6');
 
         if (this.activeTab === 'patient') {
@@ -104,10 +104,9 @@ class LoginForm {
             passwordInput.placeholder = '••••••••';
             passwordInput.type = 'password';
 
-            // Show OTP button
-            if (otpButton) {
-                otpButton.style.display = 'block';
-            }
+            passwordInput.placeholder = '••••••••';
+            passwordInput.type = 'password';
+            this.updateToggleIcon(false);
 
             // Show ABHA creation section
             if (abhaSection) {
@@ -126,10 +125,11 @@ class LoginForm {
             passwordInput.placeholder = '••••••••';
             passwordInput.type = 'password';
 
-            // Hide OTP button
-            if (otpButton) {
-                otpButton.style.display = 'none';
-            }
+            passwordInput.placeholder = '••••••••';
+            passwordInput.type = 'password';
+            this.updateToggleIcon(false);
+
+            // Previously we hid OTP button here, now toggle is always visible for password fields
 
             // Hide ABHA creation section but maintain space
             if (abhaSection) {
@@ -252,44 +252,26 @@ class LoginForm {
         return true;
     }
 
-    setupOTPButton() {
-        const otpButton = document.querySelector('.otp-button');
-        if (otpButton) {
-            otpButton.addEventListener('click', () => {
-                this.requestOTP();
+    setupPasswordToggle() {
+        const toggleBtn = document.getElementById('password-toggle');
+        const passwordInput = document.getElementById('password');
+
+        if (toggleBtn && passwordInput) {
+            toggleBtn.addEventListener('click', () => {
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+                this.updateToggleIcon(!isPassword);
             });
         }
     }
 
-    async requestOTP() {
-        const abhaInput = document.getElementById('abha-id');
-        if (!abhaInput.value) {
-            Helpers.showToast('Please enter your ABHA ID or mobile number first', 'warning');
-            return;
-        }
-
-        try {
-            // Extract mobile number if ABHA format
-            let mobile = abhaInput.value;
-            if (Helpers.validateMobile(mobile)) {
-                const response = await AuthService.sendOTP(mobile);
-
-                if (response.success) {
-                    Helpers.showToast('OTP sent successfully!', 'success');
-
-                    // Change password field to OTP mode
-                    const passwordInput = document.getElementById('password');
-                    passwordInput.placeholder = 'Enter 6-digit OTP';
-                    passwordInput.maxLength = 6;
-                } else {
-                    Helpers.showToast(response.message || 'Failed to send OTP', 'error');
-                }
-            } else {
-                Helpers.showToast('Please enter a valid mobile number', 'warning');
+    updateToggleIcon(isVisible) {
+        const toggleBtn = document.getElementById('password-toggle');
+        if (toggleBtn) {
+            const icon = toggleBtn.querySelector('.material-icons-outlined');
+            if (icon) {
+                icon.textContent = isVisible ? 'visibility_off' : 'visibility';
             }
-        } catch (error) {
-            console.error('OTP request error:', error);
-            Helpers.showToast('Failed to send OTP', 'error');
         }
     }
 }
