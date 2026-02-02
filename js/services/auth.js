@@ -31,66 +31,79 @@ const AuthService = {
      * @returns {Promise<object>} Login response
      */
     async login(identifier, password, userType = 'patient', rememberMe = false) {
-        // Simulate API delay
-        await Helpers.delay(AppConfig.demo.mockDelay);
+        try {
+            // Call real backend API
+            const response = await fetch('http://localhost:5000/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    abhaId: identifier,
+                    password: password
+                })
+            });
 
-        // Mock validation
-        const demoUsers = AppConfig.demo.sampleUsers;
-        const user = demoUsers.find(u =>
-            u.type === userType &&
-            (u.abhaId === identifier || u.mobile === identifier || u.email === identifier) &&
-            u.password === password
-        );
+            const data = await response.json();
 
-        if (user || AppConfig.demo.enabled) {
-            // Generate mock token
-            const token = 'mock_token_' + Helpers.generateId(16);
+            if (data.success && data.token) {
+                // Create user profile from backend response
+                const userProfile = {
+                    id: data.user._id,
+                    type: data.user.role,
+                    identifier: data.user.abhaId,
+                    name: data.user.name,
+                    mobile: data.user.mobile,
+                    email: data.user.email,
+                    age: data.user.age,
+                    gender: data.user.gender,
+                    loginTime: new Date().toISOString(),
+                    token: data.token
+                };
 
-            // Create user profile
-            const userProfile = {
-                id: Helpers.generateId(8),
-                type: userType,
-                identifier: identifier,
-                loginTime: new Date().toISOString(),
-                ...user // Spread all properties from the mock user (name, age, gender, etc.)
-            };
+                // Save to storage
+                Helpers.setStorage(AppConfig.storage.authToken, data.token);
+                Helpers.setStorage(AppConfig.storage.userProfile, userProfile);
 
-            // Save to storage
-            Helpers.setStorage(AppConfig.storage.authToken, token);
-            Helpers.setStorage(AppConfig.storage.userProfile, userProfile);
+                // Handle Remember Me
+                if (rememberMe) {
+                    Helpers.setStorage(AppConfig.storage.rememberMe, true);
+                    Helpers.setStorage(AppConfig.storage.rememberedIdentifier, identifier);
+                    Helpers.setStorage(AppConfig.storage.rememberedUserType, userType);
+                } else {
+                    this.clearRememberedCredentials();
+                }
 
-            // Handle Remember Me
-            if (rememberMe) {
-                Helpers.setStorage(AppConfig.storage.rememberMe, true);
-                Helpers.setStorage(AppConfig.storage.rememberedIdentifier, identifier);
-                Helpers.setStorage(AppConfig.storage.rememberedUserType, userType);
-            } else {
-                // Clear remember me if unchecked
-                this.clearRememberedCredentials();
-            }
+                this.currentUser = userProfile;
 
-            this.currentUser = userProfile;
+                // Dispatch auth state changed event
+                if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent('authStateChanged', {
+                        detail: { authenticated: true, user: userProfile }
+                    }));
+                }
 
-            // Dispatch auth state changed event
-            if (typeof window !== 'undefined') {
-                window.dispatchEvent(new CustomEvent('authStateChanged', {
-                    detail: { authenticated: true, user: userProfile }
-                }));
+                return {
+                    success: true,
+                    message: 'Login successful',
+                    user: userProfile,
+                    token: data.token
+                };
             }
 
             return {
-                success: true,
-                message: 'Login successful',
-                user: userProfile,
-                token: token
+                success: false,
+                message: data.message || 'Invalid credentials',
+                error: 'INVALID_CREDENTIALS'
+            };
+        } catch (error) {
+            console.error('Login error:', error);
+            return {
+                success: false,
+                message: 'Login failed. Please check your connection and try again.',
+                error: 'CONNECTION_ERROR'
             };
         }
-
-        return {
-            success: false,
-            message: 'Invalid credentials',
-            error: 'INVALID_CREDENTIALS'
-        };
     },
 
     /**
@@ -157,41 +170,47 @@ const AuthService = {
      * @returns {Promise<object>} Registration response
      */
     async register(userData) {
-        await Helpers.delay(AppConfig.demo.mockDelay);
+        try {
+            // Call real backend API
+            const response = await fetch('http://localhost:5000/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    abhaId: userData.abhaId,
+                    name: userData.name,
+                    mobile: userData.mobile,
+                    email: userData.email,
+                    password: userData.password,
+                    dateOfBirth: userData.dob,
+                    gender: userData.gender
+                })
+            });
 
-        // Validate required fields
-        const required = ['name', 'mobile', 'dob'];
-        const missing = required.filter(field => !userData[field]);
+            const data = await response.json();
 
-        if (missing.length > 0) {
+            if (data.success) {
+                return {
+                    success: true,
+                    message: 'Registration successful',
+                    user: data.user
+                };
+            }
+
             return {
                 success: false,
-                message: `Missing required fields: ${missing.join(', ')}`,
-                error: 'MISSING_FIELDS'
+                message: data.message || 'Registration failed',
+                error: 'REGISTRATION_FAILED'
             };
-        }
-
-        // In demo mode, always succeed
-        if (AppConfig.demo.enabled) {
-            const abhaId = Math.floor(10000000000000 + Math.random() * 90000000000000).toString();
-
+        } catch (error) {
+            console.error('Registration error:', error);
             return {
-                success: true,
-                message: 'Registration successful',
-                abhaId: abhaId,
-                user: {
-                    ...userData,
-                    abhaId: abhaId,
-                    id: Helpers.generateId(8)
-                }
+                success: false,
+                message: 'Registration failed. Please check your connection and try again.',
+                error: 'CONNECTION_ERROR'
             };
         }
-
-        return {
-            success: false,
-            message: 'Registration failed',
-            error: 'REGISTRATION_FAILED'
-        };
     },
 
     /**

@@ -89,7 +89,7 @@ const login = async (req, res, next) => {
         if (!user) {
             return res.status(401).json({
                 success: false,
-                message: 'Invalid credentials'
+                message: 'User not found'
             });
         }
 
@@ -99,7 +99,7 @@ const login = async (req, res, next) => {
         if (!isPasswordMatch) {
             return res.status(401).json({
                 success: false,
-                message: 'Invalid credentials'
+                message: 'Invalid password'
             });
         }
 
