@@ -112,18 +112,24 @@ SwasthyaSetu/
 
 ## 🌐 Deployment
 
-### Deploy to Vercel
+### Deploy to Production
 
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
+The application uses a two-tier deployment architecture:
 
-**Quick Deploy:**
+- **Frontend**: [Vercel](https://swasthya-setu-ebon.vercel.app) (Static hosting)
+- **Backend**: [Render](https://swasthyasetu-9y5l.onrender.com) (Node.js API)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/YOUR_USERNAME/SwasthyaSetu)
+See [RENDER_DEPLOYMENT.md](./RENDER_DEPLOYMENT.md) for detailed backend deployment instructions.
 
-1. Push code to GitHub
-2. Import project in Vercel
-3. Add environment variables
-4. Deploy!
+**Live Demo Credentials:**
+
+**Patient Login:**
+- ABHA ID: `12-3456-7890-1234`
+- Password: `patient123`
+
+**Admin Login:**
+- Email: `admin@aiims.gov.in`
+- Password: `admin123`
 
 ## 📚 API Documentation
 
