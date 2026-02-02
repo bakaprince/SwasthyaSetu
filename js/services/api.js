@@ -84,7 +84,10 @@ const APIService = {
         return this.request('/health/alerts');
     },
 
-    async getHospitals() {
+    async getHospitals(location) {
+        if (location && location.latitude && location.longitude) {
+            return this.request(`/hospitals/nearby/${location.latitude}/${location.longitude}`);
+        }
         return this.request('/hospitals');
     },
 
