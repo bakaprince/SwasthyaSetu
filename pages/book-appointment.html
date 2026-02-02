@@ -406,8 +406,18 @@
                         hospitalListContainer.innerHTML = ''; // Clear loading state
 
                         if (hospitals.length === 0) {
-                            hospitalListContainer.innerHTML = '<div class="text-center text-gray-500 py-4">No hospitals found nearby.</div>';
-                            return;
+                            if (location) {
+                                console.log("No nearby hospitals found. Falling back to all hospitals.");
+                                modalLocationStatus.innerHTML = `
+                                    <span class="material-icons-outlined text-[12px] text-orange-500">info</span>
+                                    <span class="text-orange-600">No hospitals nearby. Showing all available hospitals.</span>
+                                `;
+                                await fetchAndPopulateHospitals(null); // Recursive call without location
+                                return;
+                            } else {
+                                hospitalListContainer.innerHTML = '<div class="text-center text-gray-500 py-4">No hospitals found in the database.</div>';
+                                return;
+                            }
                         }
 
                         hospitals.forEach(hospital => {
