@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Inventory Management - SwasthyaSetu</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet" />
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#86efac",
+                        secondary: "#113841",
+                        "secondary-light": "#1d525e",
+                        "background-dark": "#0d2b32",
+                        "accent-purple": "#e0defc",
+                        "accent-green": "#e6f0c2",
+                        "accent-blue": "#d0e8f2",
+                        "health-orange": "#f78e69",
+                    },
+                    fontFamily: {
+                        display: ["Playfair Display", "serif"],
+                        sans: ["DM Sans", "sans-serif"],
+                    },
+                },
+            },
+        };
+    </script>
+
+    <style>
+        .nav-link {
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #86efac;
+        }
+
+        .nav-link.active {
+            color: #86efac;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #86efac;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 dark:bg-background-dark font-sans antialiased">
+
+    <!-- Top Navigation -->
+    <nav class="bg-secondary dark:bg-secondary text-white border-b border-white/10">
+        <!-- Top Bar -->
+        <div class="px-8 py-4 flex items-center justify-between border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <img src="../assets/images/logo.png" alt="SwasthyaSetu Logo" class="h-8 w-auto">
+                <span class="ml-3 px-3 py-1 bg-health-orange text-white text-xs font-bold rounded-full">ADMIN</span>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="relative">
+                    <input type="text" placeholder="Search inventory..."
+                        class="w-80 pl-10 pr-4 py-2 bg-secondary-light border border-white/20 rounded-lg text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <span class="material-icons-outlined absolute left-3 top-2.5 text-gray-400 text-sm">search</span>
+                </div>
+                <button class="relative p-2 text-gray-300 hover:text-white">
+                    <span class="material-icons-outlined">notifications</span>
+                    <span class="absolute top-1 right-1 w-2 h-2 bg-health-orange rounded-full"></span>
+                </button>
+                <button class="p-2 text-gray-300 hover:text-white">
+                    <span class="material-icons-outlined">settings</span>
+                </button>
+                <div class="flex items-center gap-3 ml-4 pl-4 border-l border-white/20">
+                    <img src="https://ui-avatars.com/api/?name=Sarah+Bennett&background=86efac&color=113841" alt="User"
+                        class="w-8 h-8 rounded-full">
+                    <div>
+                        <p class="text-sm font-semibold">Dr. Sarah Bennett</p>
+                        <p class="text-xs text-gray-400">Chief Administrator</p>
+                    </div>
+                </div>
+                <button id="logout-btn"
+                    class="ml-4 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-semibold transition-colors">
+                    Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="px-8 py-0 flex items-center gap-8">
+            <a href="admin-dashboard.html"
+                class="nav-link flex items-center gap-2 px-4 py-4 text-sm font-medium text-gray-300">
+                <span class="material-icons-outlined text-lg">dashboard</span>
+                Dashboard
+            </a>
+            <a href="admin-patients.html"
+                class="nav-link flex items-center gap-2 px-4 py-4 text-sm font-medium text-gray-300">
+                <span class="material-icons-outlined text-lg">people</span>
+                Patients
+            </a>
+            <a href="admin-inventory.html"
+                class="nav-link active flex items-center gap-2 px-4 py-4 text-sm font-medium">
+                <span class="material-icons-outlined text-lg">inventory_2</span>
+                Inventory
+            </a>
+            <a href="admin-staff.html"
+                class="nav-link flex items-center gap-2 px-4 py-4 text-sm font-medium text-gray-300">
+                <span class="material-icons-outlined text-lg">group</span>
+                Staff
+            </a>
+            <a href="admin-reports.html"
+                class="nav-link flex items-center gap-2 px-4 py-4 text-sm font-medium text-gray-300">
+                <span class="material-icons-outlined text-lg">assessment</span>
+                Reports
+            </a>
+            <a href="help.html" class="nav-link flex items-center gap-2 px-4 py-4 text-sm font-medium text-gray-300">
+                <span class="material-icons-outlined text-lg">help</span>
+                Help Center
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="p-8">
+
+        <!-- Page Header -->
+        <div class="mb-8 flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-secondary dark:text-white mb-1 font-display">Inventory Management
+                </h1>
+                <p class="text-gray-600 dark:text-gray-400">Track and manage medical supplies and equipment.</p>
+            </div>
+            <div class="flex gap-3">
+                <button
+                    class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2">
+                    <span class="material-icons-outlined text-lg">download</span>
+                    Export
+                </button>
+                <button
+                    class="px-4 py-2 bg-primary text-secondary rounded-lg text-sm font-semibold hover:bg-green-400 flex items-center gap-2">
+                    <span class="material-icons-outlined text-lg">add</span>
+                    Add Item
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-4 gap-6 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                        <span class="material-icons-outlined text-blue-600 dark:text-blue-400">inventory</span>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1">Total Items</p>
+                    <p class="text-3xl font-bold text-secondary dark:text-white">1,245</p>
+                    <p class="text-xs text-gray-500 mt-1">In stock</p>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+                        <span class="material-icons-outlined text-red-600 dark:text-red-400">warning</span>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1">Low Stock</p>
+                    <p class="text-3xl font-bold text-secondary dark:text-white">23</p>
+                    <p class="text-xs text-red-600 mt-1">Needs reorder</p>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <div class="flex items-start justify-between mb-4">
+                    <div
+                        class="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
+                        <span class="material-icons-outlined text-orange-600 dark:text-orange-400">schedule</span>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1">Expiring Soon</p>
+                    <p class="text-3xl font-bold text-secondary dark:text-white">45</p>
+                    <p class="text-xs text-gray-500 mt-1">Within 30 days</p>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <div class="flex items-start justify-between mb-4">
+                    <div
+                        class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                        <span class="material-icons-outlined text-green-600 dark:text-green-400">local_shipping</span>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1">Orders Pending</p>
+                    <p class="text-3xl font-bold text-secondary dark:text-white">12</p>
+                    <p class="text-xs text-gray-500 mt-1">In transit</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory Categories -->
+        <div class="grid grid-cols-3 gap-6 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-bold text-secondary dark:text-white mb-4">Medicines</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white">Paracetamol 500mg</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Stock: 5,000 units</p>
+                        </div>
+                        <span
+                            class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded text-xs font-semibold">Good</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white">Amoxicillin 250mg</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Stock: 3,200 units</p>
+                        </div>
+                        <span
+                            class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded text-xs font-semibold">Good</span>
+                    </div>
+                    <div
+                        class="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white">Insulin Injection</p>
+                            <p class="text-xs text-red-600">Stock: 45 units</p>
+                        </div>
+                        <span
+                            class="px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 rounded text-xs font-semibold">Low</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-bold text-secondary dark:text-white mb-4">Equipment</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white">Ventilators</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Available: 34 units</p>
+                        </div>
+                        <span
+                            class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded text-xs font-semibold">Good</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white">Oxygen Cylinders</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Available: 120 units</p>
+                        </div>
+                        <span
+                            class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded text-xs font-semibold">Good</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white">Wheelchairs</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Available: 45 units</p>
+                        </div>
+                        <span
+                            class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded text-xs font-semibold">Good</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-bold text-secondary dark:text-white mb-4">Supplies</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white">Surgical Gloves</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Stock: 10,000 pairs</p>
+                        </div>
+                        <span
+                            class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded text-xs font-semibold">Good</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white">Face Masks</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Stock: 25,000 units</p>
+                        </div>
+                        <span
+                            class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded text-xs font-semibold">Good</span>
+                    </div>
+                    <div
+                        class="flex items-center justify-between p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white">Syringes</p>
+                            <p class="text-xs text-amber-600">Stock: 1,200 units</p>
+                        </div>
+                        <span
+                            class="px-2 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 rounded text-xs font-semibold">Medium</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-bold text-secondary dark:text-white mb-6">Recent Inventory Activity</h3>
+            <div class="space-y-4">
+                <div class="flex items-start gap-4 pb-4 border-b border-gray-200 dark:border-gray-700">
+                    <div
+                        class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0">
+                        <span
+                            class="material-icons-outlined text-green-600 dark:text-green-400 text-sm">add_circle</span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-semibold text-secondary dark:text-white">New Stock Added</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">500 units of Paracetamol 500mg added to
+                            inventory</p>
+                        <p class="text-xs text-gray-500 mt-1">2 hours ago</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4 pb-4 border-b border-gray-200 dark:border-gray-700">
+                    <div
+                        class="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center flex-shrink-0">
+                        <span
+                            class="material-icons-outlined text-orange-600 dark:text-orange-400 text-sm">warning</span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-semibold text-secondary dark:text-white">Low Stock Alert</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Insulin Injection stock below minimum
+                            threshold</p>
+                        <p class="text-xs text-gray-500 mt-1">5 hours ago</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4">
+                    <div
+                        class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
+                        <span
+                            class="material-icons-outlined text-blue-600 dark:text-blue-400 text-sm">local_shipping</span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-semibold text-secondary dark:text-white">Order Received</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Shipment of surgical supplies delivered</p>
+                        <p class="text-xs text-gray-500 mt-1">1 day ago</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JavaScript -->
+    <script src="../js/config/app-config.js"></script>
+    <script src="../js/utils/helpers.js"></script>
+    <script src="../js/services/auth.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            AuthService.init();
+            if (!AuthService.isAuthenticated()) {
+                window.location.href = '../index.html';
+                return;
+            }
+            const user = AuthService.getCurrentUser();
+            if (user.type !== 'admin') {
+                Helpers.showToast('Access denied. Admin only.', 'error');
+                setTimeout(() => {
+                    window.location.href = '../index.html';
+                }, 2000);
+                return;
+            }
+            document.getElementById('logout-btn').addEventListener('click', async () => {
+                await AuthService.logout();
+                Helpers.showToast('Logged out successfully', 'success');
+                setTimeout(() => {
+                    window.location.href = '../index.html';
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+
+</html>
