@@ -109,16 +109,16 @@ const login = async (req, res, next) => {
         res.json({
             success: true,
             message: 'Login successful',
-            data: {
-                id: user._id,
+            token: token,
+            user: {
+                _id: user._id,
                 abhaId: user.abhaId,
                 name: user.name,
                 mobile: user.mobile,
                 email: user.email,
                 age: user.age,
                 gender: user.gender,
-                role: user.role,
-                token
+                role: user.role
             }
         });
     } catch (error) {

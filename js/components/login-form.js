@@ -1,6 +1,8 @@
 // Login Form Component Logic
 // Handles tab switching, form validation, and OTP requests
 
+console.log('🔄 LOGIN-FORM.JS VERSION 3 LOADED');
+
 class LoginForm {
     constructor() {
         this.activeTab = 'patient';
@@ -191,6 +193,8 @@ class LoginForm {
             const rememberCheckbox = document.getElementById('remember-me');
             const rememberMe = rememberCheckbox ? rememberCheckbox.checked : false;
 
+            console.log('🔍 BEFORE LOGIN CALL');
+
             // Attempt login
             const response = await AuthService.login(
                 abhaInput.value,
@@ -199,40 +203,49 @@ class LoginForm {
                 rememberMe
             );
 
-            if (response.success) {
+            console.log('🔍 AFTER LOGIN CALL - Response:', response);
+            console.log('🔍 Response type:', typeof response);
+            console.log('🔍 Response.success:', response?.success);
+            console.log('🔍 Response keys:', response ? Object.keys(response) : 'null');
+
+            // Check if login was successful (multiple ways)
+            const isSuccess = response && (response.success === true || response.success === 'true' || response.token || response.user);
+
+            console.log('🔍 Is Success:', isSuccess);
+
+            if (isSuccess) {
+                console.log('=== LOGIN SUCCESS CONFIRMED ===');
+                console.log('Full response:', JSON.stringify(response, null, 2));
+
                 Helpers.showToast('Login successful!', 'success');
-                console.log('Logged in user:', response.user);
 
-                // Redirect to appropriate dashboard
+                // Determine user role
+                const userRole = response.user?.type || this.activeTab;
+                console.log('🎯 User role:', userRole);
+
+                // Force immediate redirect
+                const redirectUrl = userRole === 'patient' ? 'pages/dashboard.html' : 'pages/admin-dashboard.html';
+                console.log('🚀 FORCING REDIRECT TO:', redirectUrl);
+
+                // FORCE REDIRECT - Multiple methods
+                console.log('⏱️ Setting timeout for redirect...');
                 setTimeout(() => {
-                    const userRole = response.user.type || this.activeTab;
-                    console.log('Redirecting user with role:', userRole);
+                    console.log('⚡ EXECUTING REDIRECT NOW!');
+                    window.location.href = redirectUrl;
+                }, 100);
 
-                    try {
-                        if (userRole === 'patient') {
-                            console.log('Redirecting to patient dashboard...');
-                            window.location.assign('pages/dashboard.html');
-                        } else {
-                            console.log('Redirecting to admin dashboard...');
-                            window.location.assign('pages/admin-dashboard.html');
-                        }
-                    } catch (e) {
-                        console.error('Redirection failed:', e);
-                        // Fallback
-                        if (userRole === 'patient') {
-                            window.location.href = 'pages/dashboard.html';
-                        } else {
-                            window.location.href = 'pages/admin-dashboard.html';
-                        }
-                    }
-                }, 500);
+                // Also try immediate redirect as backup
+                console.log('⚡ ALSO TRYING IMMEDIATE REDIRECT');
+                window.location.replace(redirectUrl);
+
             } else {
-                Helpers.showToast(response.message || 'Login failed', 'error');
+                console.log('❌ LOGIN FAILED');
+                Helpers.showToast(response?.message || 'Login failed', 'error');
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
             }
         } catch (error) {
-            console.error('Login error:', error);
+            console.error('💥 Login error:', error);
             Helpers.showToast('An error occurred during login', 'error');
         }
 

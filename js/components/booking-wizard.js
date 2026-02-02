@@ -11,7 +11,7 @@ class BookingWizard {
             slot: null
         };
 
-        // Mock Data
+        // Data - start with mock data, will be replaced by API data
         this.data = {
             hospitals: [
                 { id: 1, name: "City General Hospital", distance: "2.5 km", rating: 4.5, address: "123 Main St, Central District" },
@@ -35,6 +35,8 @@ class BookingWizard {
             ]
         };
 
+        this.isLoadingHospitals = false;
+        this.hasLoadedFromAPI = false;
         this.init();
     }
 
@@ -56,12 +58,59 @@ class BookingWizard {
                 if (e.target.closest('.time-slot')) this.handleSlotSelection(e.target.closest('.time-slot'));
             });
         }
+
+        // Load hospitals from API in background
+        this.loadHospitals();
     }
 
-    open() {
+    async loadHospitals() {
+        if (this.isLoadingHospitals || this.hasLoadedFromAPI) return;
+
+        this.isLoadingHospitals = true;
+        console.log('🏥 Loading hospitals from API...');
+
+        try {
+            const response = await fetch('http://localhost:5000/api/hospitals');
+            const result = await response.json();
+
+            console.log('🏥 API Response:', result);
+
+            if (result.success && result.data && result.data.length > 0) {
+                // Transform backend data to match expected format
+                this.data.hospitals = result.data.map(h => ({
+                    id: h._id,
+                    name: h.name,
+                    distance: "N/A", // Can calculate if we have user location
+                    rating: 4.5, // Use actual rating if available
+                    address: h.address || `${h.city}, ${h.state}`
+                }));
+                this.hasLoadedFromAPI = true;
+                console.log('✅ Loaded', this.data.hospitals.length, 'hospitals from API');
+
+                // Re-render if modal is open and on hospital selection step
+                if (!this.modal.classList.contains('hidden') && this.currentStep === 2) {
+                    this.renderStep();
+                }
+            } else {
+                console.warn('⚠️ No hospital data in API response, using mock data');
+            }
+        } catch (error) {
+            console.error('❌ Error loading hospitals from API, using mock data:', error);
+        } finally {
+            this.isLoadingHospitals = false;
+        }
+    }
+
+    async open() {
         this.modal.classList.remove('hidden');
         this.currentStep = 1;
         this.resetBooking();
+
+        // Try to load hospitals from API if not already loaded
+        if (!this.hasLoadedFromAPI) {
+            this.loadHospitals();
+        }
+
         this.renderStep();
     }
 
@@ -223,22 +272,35 @@ class BookingWizard {
                          <h3 class="text-2xl font-bold text-secondary dark:text-white">Select Hospital</h3>
                          <button type="button" class="prev-step-btn text-sm text-gray-500 hover:text-gray-700">Back</button>
                     </div>
-                    <div class="grid gap-4">
-                        ${this.data.hospitals.map(h => `
-                            <div class="selection-card p-4 rounded-xl border border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800" data-type="hospital" data-id="${h.id}">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <h4 class="font-bold text-lg text-gray-900 dark:text-white">${h.name}</h4>
-                                        <p class="text-sm text-gray-500">${h.address}</p>
-                                    </div>
-                                    <div class="text-right">
-                                        <div class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-bold mb-1">${h.rating} ★</div>
-                                        <span class="text-xs text-gray-400">${h.distance} away</span>
+                    ${this.isLoadingHospitals ? `
+                        <div class="text-center py-12">
+                            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                            <p class="text-gray-500">Loading hospitals...</p>
+                        </div>
+                    ` : this.data.hospitals.length === 0 ? `
+                        <div class="text-center py-12">
+                            <span class="material-icons-outlined text-6xl text-gray-300 mb-4">local_hospital</span>
+                            <p class="text-gray-500 mb-2">No hospitals found nearby</p>
+                            <p class="text-sm text-gray-400">Please check your connection or try again later</p>
+                        </div>
+                    ` : `
+                        <div class="grid gap-4">
+                            ${this.data.hospitals.map(h => `
+                                <div class="selection-card p-4 rounded-xl border border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800" data-type="hospital" data-id="${h.id}">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h4 class="font-bold text-lg text-gray-900 dark:text-white">${h.name}</h4>
+                                            <p class="text-sm text-gray-500">${h.address}</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-bold mb-1">${h.rating} ★</div>
+                                            <span class="text-xs text-gray-400">${h.distance} away</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        `).join('')}
-                    </div>
+                            `).join('')}
+                        </div>
+                    `}
                 `;
                 break;
             case 3: // Department Selection
@@ -298,7 +360,7 @@ class BookingWizard {
                         <h3 class="text-2xl font-bold text-secondary dark:text-white">Confirm Booking</h3>
                         <p class="text-gray-500">Please review your appointment details</p>
                     </div>
-                    
+
                     <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 space-y-4 mb-6 text-left border border-gray-200 dark:border-gray-700">
                         <div class="flex justify-between border-b border-gray-200 dark:border-gray-700 pb-2">
                             <span class="text-gray-500 text-sm">Patient</span>

@@ -34,3 +34,36 @@
 body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* Prevent layout shift when scrollbar appears/disappears */
+html {
+    scrollbar-gutter: stable;
+}
+
+/* Prevent navigation link shifting - make all links semibold */
+nav a {
+    font-weight: 600;
+}
+
+/* Prevent FOUC (Flash of Unstyled Content) */
+html {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Ensure fonts are loaded before display */
+body {
+    font-display: swap;
+}
+
+/* Prevent layout shift during page load */
+nav {
+    min-height: 72px;
+}
+
+/* Force GPU acceleration for smoother rendering */
+nav,
+nav * {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
