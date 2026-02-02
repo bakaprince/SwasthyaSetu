@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Patients Management - SwasthyaSetu</title>
+    <title>Staff Management - SwasthyaSetu</title>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
@@ -81,7 +81,7 @@
 
             <div class="flex items-center gap-4">
                 <div class="relative">
-                    <input type="text" placeholder="Search patients..."
+                    <input type="text" placeholder="Search staff..."
                         class="w-80 pl-10 pr-4 py-2 bg-secondary-light border border-white/20 rounded-lg text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
                     <span class="material-icons-outlined absolute left-3 top-2.5 text-gray-400 text-sm">search</span>
                 </div>
@@ -114,7 +114,8 @@
                 <span class="material-icons-outlined text-lg">dashboard</span>
                 Dashboard
             </a>
-            <a href="admin-patients.html" class="nav-link active flex items-center gap-2 px-4 py-4 text-sm font-medium">
+            <a href="admin-patients.html"
+                class="nav-link flex items-center gap-2 px-4 py-4 text-sm font-medium text-gray-300">
                 <span class="material-icons-outlined text-lg">people</span>
                 Patients
             </a>
@@ -123,8 +124,7 @@
                 <span class="material-icons-outlined text-lg">inventory_2</span>
                 Inventory
             </a>
-            <a href="admin-staff.html"
-                class="nav-link flex items-center gap-2 px-4 py-4 text-sm font-medium text-gray-300">
+            <a href="admin-staff.html" class="nav-link active flex items-center gap-2 px-4 py-4 text-sm font-medium">
                 <span class="material-icons-outlined text-lg">group</span>
                 Staff
             </a>
@@ -133,10 +133,9 @@
                 <span class="material-icons-outlined text-lg">assessment</span>
                 Reports
             </a>
-            <a href="admin-feedback.html"
-                class="nav-link flex items-center gap-2 px-4 py-4 text-sm font-medium text-gray-300">
-                <span class="material-icons-outlined text-lg">star</span>
-                Ratings & Feedback
+            <a href="help.html" class="nav-link flex items-center gap-2 px-4 py-4 text-sm font-medium text-gray-300">
+                <span class="material-icons-outlined text-lg">help</span>
+                Help Center
             </a>
         </div>
     </nav>
@@ -147,8 +146,8 @@
         <!-- Page Header -->
         <div class="mb-8 flex items-center justify-between">
             <div>
-                <h1 class="text-3xl font-bold text-secondary dark:text-white mb-1 font-display">Patient Management</h1>
-                <p class="text-gray-600 dark:text-gray-400">View and manage all patient records and admissions.</p>
+                <h1 class="text-3xl font-bold text-secondary dark:text-white mb-1 font-display">Staff Management</h1>
+                <p class="text-gray-600 dark:text-gray-400">Manage hospital staff, schedules, and assignments.</p>
             </div>
             <div class="flex gap-3">
                 <button
@@ -159,7 +158,7 @@
                 <button
                     class="px-4 py-2 bg-primary text-secondary rounded-lg text-sm font-semibold hover:bg-green-400 flex items-center gap-2">
                     <span class="material-icons-outlined text-lg">person_add</span>
-                    Add Patient
+                    Add Staff
                 </button>
             </div>
         </div>
@@ -169,13 +168,13 @@
             <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
                 <div class="flex items-start justify-between mb-4">
                     <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                        <span class="material-icons-outlined text-blue-600 dark:text-blue-400">people</span>
+                        <span class="material-icons-outlined text-blue-600 dark:text-blue-400">group</span>
                     </div>
                 </div>
                 <div>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1">Total Patients</p>
-                    <p class="text-3xl font-bold text-secondary dark:text-white">2,847</p>
-                    <p class="text-xs text-green-600 mt-1">+12% this month</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1">Total Staff</p>
+                    <p class="text-3xl font-bold text-secondary dark:text-white">487</p>
+                    <p class="text-xs text-gray-500 mt-1">Active employees</p>
                 </div>
             </div>
 
@@ -183,27 +182,13 @@
                 <div class="flex items-start justify-between mb-4">
                     <div
                         class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
-                        <span class="material-icons-outlined text-green-600 dark:text-green-400">person_add</span>
+                        <span class="material-icons-outlined text-green-600 dark:text-green-400">medical_services</span>
                     </div>
                 </div>
                 <div>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1">New Admissions</p>
-                    <p class="text-3xl font-bold text-secondary dark:text-white">156</p>
-                    <p class="text-xs text-gray-500 mt-1">Last 7 days</p>
-                </div>
-            </div>
-
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                <div class="flex items-start justify-between mb-4">
-                    <div
-                        class="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
-                        <span class="material-icons-outlined text-orange-600 dark:text-orange-400">local_hospital</span>
-                    </div>
-                </div>
-                <div>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1">In Treatment</p>
-                    <p class="text-3xl font-bold text-secondary dark:text-white">1,095</p>
-                    <p class="text-xs text-gray-500 mt-1">Active cases</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1">Doctors</p>
+                    <p class="text-3xl font-bold text-secondary dark:text-white">145</p>
+                    <p class="text-xs text-green-600 mt-1">+5 this month</p>
                 </div>
             </div>
 
@@ -211,21 +196,98 @@
                 <div class="flex items-start justify-between mb-4">
                     <div
                         class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
-                        <span class="material-icons-outlined text-purple-600 dark:text-purple-400">check_circle</span>
+                        <span class="material-icons-outlined text-purple-600 dark:text-purple-400">local_hospital</span>
                     </div>
                 </div>
                 <div>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1">Discharged</p>
-                    <p class="text-3xl font-bold text-secondary dark:text-white">89</p>
-                    <p class="text-xs text-gray-500 mt-1">This week</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1">Nurses</p>
+                    <p class="text-3xl font-bold text-secondary dark:text-white">234</p>
+                    <p class="text-xs text-gray-500 mt-1">All departments</p>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <div class="flex items-start justify-between mb-4">
+                    <div
+                        class="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
+                        <span class="material-icons-outlined text-orange-600 dark:text-orange-400">schedule</span>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1">On Duty</p>
+                    <p class="text-3xl font-bold text-secondary dark:text-white">312</p>
+                    <p class="text-xs text-gray-500 mt-1">Current shift</p>
                 </div>
             </div>
         </div>
 
-        <!-- Patient List -->
+        <!-- Department Overview -->
+        <div class="grid grid-cols-3 gap-6 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-bold text-secondary dark:text-white mb-4">Emergency Department</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Doctors</span>
+                        <span class="text-sm font-semibold text-secondary dark:text-white">12 / 15</span>
+                    </div>
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div class="bg-blue-500 h-2 rounded-full" style="width: 80%"></div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Nurses</span>
+                        <span class="text-sm font-semibold text-secondary dark:text-white">25 / 30</span>
+                    </div>
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div class="bg-purple-500 h-2 rounded-full" style="width: 83%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-bold text-secondary dark:text-white mb-4">ICU & Critical Care</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Doctors</span>
+                        <span class="text-sm font-semibold text-secondary dark:text-white">18 / 20</span>
+                    </div>
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div class="bg-blue-500 h-2 rounded-full" style="width: 90%"></div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Nurses</span>
+                        <span class="text-sm font-semibold text-secondary dark:text-white">40 / 45</span>
+                    </div>
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div class="bg-purple-500 h-2 rounded-full" style="width: 89%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-bold text-secondary dark:text-white mb-4">General Ward</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Doctors</span>
+                        <span class="text-sm font-semibold text-secondary dark:text-white">35 / 40</span>
+                    </div>
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div class="bg-blue-500 h-2 rounded-full" style="width: 87.5%"></div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Nurses</span>
+                        <span class="text-sm font-semibold text-secondary dark:text-white">80 / 90</span>
+                    </div>
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div class="bg-purple-500 h-2 rounded-full" style="width: 89%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Staff List -->
         <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
             <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-bold text-secondary dark:text-white">Recent Patients</h3>
+                <h3 class="text-lg font-bold text-secondary dark:text-white">Staff Directory</h3>
             </div>
 
             <div class="overflow-x-auto">
@@ -234,19 +296,19 @@
                         <tr>
                             <th
                                 class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase">
-                                Patient ID</th>
+                                Staff ID</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase">
                                 Name</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase">
-                                Age</th>
+                                Role</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase">
-                                Ward</th>
+                                Department</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase">
-                                Admission Date</th>
+                                Shift</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase">
                                 Status</th>
@@ -257,78 +319,113 @@
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30">
-                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">PT-2024-001</td>
-                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Rajesh Kumar</td>
-                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">45</td>
-                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">ICU</td>
-                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Jan 28, 2024</td>
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">ST-2024-001</td>
                             <td class="px-6 py-4">
-                                <span
-                                    class="px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200 rounded-full text-xs font-semibold">Critical</span>
+                                <div class="flex items-center gap-3">
+                                    <img src="https://ui-avatars.com/api/?name=Dr+Amit+Sharma&background=2563eb&color=fff"
+                                        class="w-8 h-8 rounded-full">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">Dr. Amit Sharma</span>
+                                </div>
                             </td>
-                            <td class="px-6 py-4">
-                                <button class="text-primary hover:text-green-400 text-sm font-medium">View
-                                    Details</button>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30">
-                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">PT-2024-002</td>
-                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Priya Sharma</td>
-                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">32</td>
-                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">General Ward</td>
-                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Jan 30, 2024</td>
-                            <td class="px-6 py-4">
-                                <span
-                                    class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded-full text-xs font-semibold">Stable</span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <button class="text-primary hover:text-green-400 text-sm font-medium">View
-                                    Details</button>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30">
-                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">PT-2024-003</td>
-                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Amit Verma</td>
-                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">58</td>
-                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">ICU</td>
-                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Feb 01, 2024</td>
-                            <td class="px-6 py-4">
-                                <span
-                                    class="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 rounded-full text-xs font-semibold">Moderate</span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <button class="text-primary hover:text-green-400 text-sm font-medium">View
-                                    Details</button>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30">
-                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">PT-2024-004</td>
-                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Sunita Devi</td>
-                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">67</td>
-                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">General Ward</td>
-                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Feb 02, 2024</td>
-                            <td class="px-6 py-4">
-                                <span
-                                    class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded-full text-xs font-semibold">Stable</span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <button class="text-primary hover:text-green-400 text-sm font-medium">View
-                                    Details</button>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30">
-                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">PT-2024-005</td>
-                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Vikram Singh</td>
-                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">41</td>
+                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Senior Doctor</td>
                             <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Emergency</td>
-                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Feb 03, 2024</td>
+                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Morning</td>
                             <td class="px-6 py-4">
                                 <span
-                                    class="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 rounded-full text-xs font-semibold">Emergency</span>
+                                    class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded-full text-xs font-semibold">On
+                                    Duty</span>
                             </td>
                             <td class="px-6 py-4">
                                 <button class="text-primary hover:text-green-400 text-sm font-medium">View
-                                    Details</button>
+                                    Profile</button>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">ST-2024-002</td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <img src="https://ui-avatars.com/api/?name=Priya+Mehta&background=8b5cf6&color=fff"
+                                        class="w-8 h-8 rounded-full">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">Priya Mehta</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Head Nurse</td>
+                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">ICU</td>
+                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Night</td>
+                            <td class="px-6 py-4">
+                                <span
+                                    class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded-full text-xs font-semibold">On
+                                    Duty</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <button class="text-primary hover:text-green-400 text-sm font-medium">View
+                                    Profile</button>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">ST-2024-003</td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <img src="https://ui-avatars.com/api/?name=Dr+Rajesh+Kumar&background=10b981&color=fff"
+                                        class="w-8 h-8 rounded-full">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">Dr. Rajesh Kumar</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Cardiologist</td>
+                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Cardiology</td>
+                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Morning</td>
+                            <td class="px-6 py-4">
+                                <span
+                                    class="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full text-xs font-semibold">Off
+                                    Duty</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <button class="text-primary hover:text-green-400 text-sm font-medium">View
+                                    Profile</button>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">ST-2024-004</td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <img src="https://ui-avatars.com/api/?name=Sunita+Verma&background=f59e0b&color=fff"
+                                        class="w-8 h-8 rounded-full">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">Sunita Verma</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Staff Nurse</td>
+                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">General Ward</td>
+                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Evening</td>
+                            <td class="px-6 py-4">
+                                <span
+                                    class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded-full text-xs font-semibold">On
+                                    Duty</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <button class="text-primary hover:text-green-400 text-sm font-medium">View
+                                    Profile</button>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">ST-2024-005</td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <img src="https://ui-avatars.com/api/?name=Dr+Vikram+Singh&background=ef4444&color=fff"
+                                        class="w-8 h-8 rounded-full">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">Dr. Vikram Singh</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Surgeon</td>
+                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Surgery</td>
+                            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">Morning</td>
+                            <td class="px-6 py-4">
+                                <span
+                                    class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded-full text-xs font-semibold">On
+                                    Duty</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <button class="text-primary hover:text-green-400 text-sm font-medium">View
+                                    Profile</button>
                             </td>
                         </tr>
                     </tbody>
@@ -336,7 +433,7 @@
             </div>
 
             <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
-                <p class="text-sm text-gray-600 dark:text-gray-400">Showing 1-5 of 2,847 patients</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Showing 1-5 of 487 staff members</p>
                 <div class="flex gap-2">
                     <button
                         class="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">Previous</button>
