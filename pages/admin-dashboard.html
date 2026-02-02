@@ -4,14 +4,13 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Admin Dashboard - SwasthyaSetu</title>
+    <title>Hospital Management Dashboard - SwasthyaSetu</title>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
 
     <!-- Google Fonts -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
         rel="stylesheet" />
 
     <!-- Material Icons -->
@@ -24,293 +23,432 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: "#86efac",
-                        secondary: "#113841",
-                        "secondary-light": "#1d525e",
-                        "background-dark": "#0d2b32",
-                        "accent-purple": "#e0defc",
-                        "accent-green": "#e6f0c2",
-                        "accent-blue": "#d0e8f2",
-                        "health-orange": "#f78e69",
+                        primary: "#2563eb",
+                        secondary: "#1e40af",
+                        success: "#10b981",
+                        warning: "#f59e0b",
+                        danger: "#ef4444",
+                        info: "#3b82f6",
                     },
                     fontFamily: {
-                        display: ["Playfair Display", "serif"],
-                        sans: ["DM Sans", "sans-serif"],
+                        sans: ["Inter", "sans-serif"],
                     },
                 },
             },
         };
     </script>
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="../css/main.css">
+    <style>
+        .sidebar-link {
+            transition: all 0.2s;
+        }
+
+        .sidebar-link:hover {
+            background-color: #eff6ff;
+            border-left: 3px solid #2563eb;
+        }
+
+        .sidebar-link.active {
+            background-color: #dbeafe;
+            border-left: 3px solid #2563eb;
+            color: #1e40af;
+        }
+    </style>
 </head>
 
-<body class="bg-gray-50 dark:bg-background-dark font-sans antialiased text-gray-800 dark:text-gray-100 min-h-screen">
+<body class="bg-gray-50 font-sans antialiased">
 
-    <!-- Navigation -->
-    <nav
-        class="w-full bg-secondary text-white py-4 px-6 md:px-12 flex justify-between items-center border-b border-white/10">
-        <div class="flex items-center gap-2">
-            <img src="../assets/images/logo.png" alt="SwasthyaSetu Logo" class="h-8 w-auto">
-            <span class="ml-3 px-3 py-1 bg-health-orange text-white text-xs font-bold rounded-full">ADMIN</span>
-        </div>
-        <div class="flex items-center gap-6">
-            <span class="text-sm text-gray-300" id="hospital-name">AIIMS Delhi</span>
-            <button id="logout-btn"
-                class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors text-sm font-semibold">
-                Logout
-            </button>
-        </div>
-    </nav>
+    <!-- Main Container -->
+    <div class="flex h-screen overflow-hidden">
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-6 py-8">
-        <!-- Header Section -->
-        <div class="mb-8">
-            <h1 class="font-display text-4xl font-bold text-secondary dark:text-white mb-2">
-                Hospital Admin Dashboard
-            </h1>
-            <p class="text-gray-600 dark:text-gray-400">Manage resources, track patients, and coordinate care</p>
-        </div>
-
-        <!-- Quick Stats -->
-        <div class="grid md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                <div class="flex items-center justify-between mb-3">
-                    <div
-                        class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                        <span class="material-icons-outlined text-blue-600 dark:text-blue-400">hotel</span>
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
+            <!-- Logo -->
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                        <span class="material-icons-outlined text-white">local_hospital</span>
                     </div>
-                    <span class="text-xs font-semibold text-gray-500 uppercase">Total Beds</span>
-                </div>
-                <p class="text-3xl font-bold text-secondary dark:text-white">2,478</p>
-                <p class="text-sm text-gray-500 mt-1">234 Available</p>
-                <div class="mt-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div class="bg-blue-500 h-2 rounded-full" style="width: 9.4%"></div>
+                    <div>
+                        <h1 class="font-bold text-gray-900 text-lg">National Health</h1>
+                        <p class="text-xs text-gray-500">Resource Network</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                <div class="flex items-center justify-between mb-3">
-                    <div
-                        class="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
-                        <span class="material-icons-outlined text-orange-600 dark:text-orange-400">local_hospital</span>
-                    </div>
-                    <span class="text-xs font-semibold text-gray-500 uppercase">ICU Beds</span>
+            <!-- Navigation -->
+            <nav class="flex-1 p-4 space-y-1">
+                <a href="#"
+                    class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700">
+                    <span class="material-icons-outlined text-xl">dashboard</span>
+                    Dashboard
+                </a>
+                <a href="#"
+                    class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700">
+                    <span class="material-icons-outlined text-xl">people</span>
+                    Patients
+                </a>
+                <a href="#"
+                    class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700">
+                    <span class="material-icons-outlined text-xl">inventory_2</span>
+                    Inventory
+                </a>
+                <a href="#"
+                    class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700">
+                    <span class="material-icons-outlined text-xl">group</span>
+                    Staff
+                </a>
+                <a href="#"
+                    class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700">
+                    <span class="material-icons-outlined text-xl">assessment</span>
+                    Reports
+                </a>
+
+                <div class="pt-4 mt-4 border-t border-gray-200">
+                    <p class="px-4 text-xs font-semibold text-gray-400 uppercase mb-2">System</p>
+                    <a href="#"
+                        class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700">
+                        <span class="material-icons-outlined text-xl">settings</span>
+                        Settings
+                    </a>
+                    <a href="#"
+                        class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700">
+                        <span class="material-icons-outlined text-xl">help</span>
+                        Help Center
+                    </a>
                 </div>
-                <p class="text-3xl font-bold text-secondary dark:text-white">200</p>
-                <p class="text-sm text-gray-500 mt-1">23 Available</p>
-                <div class="mt-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div class="bg-orange-500 h-2 rounded-full" style="width: 11.5%"></div>
+            </nav>
+
+            <!-- User Profile -->
+            <div class="p-4 border-t border-gray-200">
+                <div class="flex items-center gap-3">
+                    <img src="https://ui-avatars.com/api/?name=Sarah+Bennett&background=2563eb&color=fff" alt="User"
+                        class="w-10 h-10 rounded-full">
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-gray-900">Dr. Sarah Bennett</p>
+                        <p class="text-xs text-gray-500">Chief Administrator</p>
+                    </div>
                 </div>
             </div>
+        </aside>
 
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                <div class="flex items-center justify-between mb-3">
-                    <div
-                        class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                        <span class="material-icons-outlined text-green-600 dark:text-green-400">air</span>
-                    </div>
-                    <span class="text-xs font-semibold text-gray-500 uppercase">Ventilators</span>
-                </div>
-                <p class="text-3xl font-bold text-secondary dark:text-white">120</p>
-                <p class="text-sm text-gray-500 mt-1">34 Available</p>
-                <div class="mt-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div class="bg-green-500 h-2 rounded-full" style="width: 28.3%"></div>
-                </div>
-            </div>
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
 
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                <div class="flex items-center justify-between mb-3">
-                    <div
-                        class="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                        <span class="material-icons-outlined text-purple-600 dark:text-purple-400">emergency</span>
-                    </div>
-                    <span class="text-xs font-semibold text-gray-500 uppercase">Ambulances</span>
-                </div>
-                <p class="text-3xl font-bold text-secondary dark:text-white">25</p>
-                <p class="text-sm text-gray-500 mt-1">12 Available</p>
-                <div class="mt-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div class="bg-purple-500 h-2 rounded-full" style="width: 48%"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Resource Management -->
-        <div class="grid lg:grid-cols-2 gap-8 mb-8">
-            <!-- Update Resources -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <h2 class="font-display text-2xl font-bold text-secondary dark:text-white mb-6">Update Resources</h2>
-
-                <form class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Available
-                            Beds</label>
-                        <input type="number" value="234"
-                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-secondary">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Available ICU
-                            Beds</label>
-                        <input type="number" value="23"
-                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-secondary">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Available
-                            Ventilators</label>
-                        <input type="number" value="34"
-                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-secondary">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Available
-                            Ambulances</label>
-                        <input type="number" value="12"
-                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-secondary">
-                    </div>
-
+            <!-- Top Header -->
+            <header class="bg-white border-b border-gray-200 px-8 py-4">
+                <div class="flex items-center justify-between">
                     <div class="flex items-center gap-4">
-                        <label class="flex items-center gap-2">
-                            <input type="checkbox" checked class="w-5 h-5 text-secondary rounded focus:ring-secondary">
-                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Oxygen Available</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="checkbox" checked class="w-5 h-5 text-secondary rounded focus:ring-secondary">
-                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Blood Bank Active</span>
-                        </label>
-                    </div>
-
-                    <button type="submit"
-                        class="w-full bg-secondary text-white py-3 rounded-lg font-semibold hover:bg-secondary-light transition-colors">
-                        Update Resources
-                    </button>
-                </form>
-            </div>
-
-            <!-- Transfer Requests -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <h2 class="font-display text-2xl font-bold text-secondary dark:text-white mb-6">Transfer Requests</h2>
-
-                <div class="space-y-4">
-                    <div
-                        class="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-                        <div class="flex items-start justify-between mb-2">
-                            <div>
-                                <p class="font-semibold text-secondary dark:text-white">Patient: Ramesh Kumar</p>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">From: Max Hospital</p>
-                            </div>
-                            <span
-                                class="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200 rounded-full text-xs font-bold">
-                                PENDING
-                            </span>
-                        </div>
-                        <p class="text-sm text-gray-700 dark:text-gray-300 mb-3">Requires: ICU Bed, Ventilator</p>
-                        <div class="flex gap-2">
-                            <button
-                                class="flex-1 bg-green-500 text-white py-2 rounded-lg text-sm font-semibold hover:bg-green-600">
-                                Accept
-                            </button>
-                            <button
-                                class="flex-1 bg-red-500 text-white py-2 rounded-lg text-sm font-semibold hover:bg-red-600">
-                                Decline
-                            </button>
+                        <a href="../index.html" class="text-gray-500 hover:text-gray-700">
+                            <span class="material-icons-outlined">arrow_back</span>
+                        </a>
+                        <div>
+                            <h2 class="text-sm font-medium text-gray-500">Home / Dashboard</h2>
                         </div>
                     </div>
-
-                    <div
-                        class="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-                        <div class="flex items-start justify-between mb-2">
-                            <div>
-                                <p class="font-semibold text-secondary dark:text-white">Patient: Priya Sharma</p>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">From: Apollo Hospital</p>
-                            </div>
+                    <div class="flex items-center gap-4">
+                        <div class="relative">
+                            <input type="text" placeholder="Search records, staff..."
+                                class="w-80 pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
                             <span
-                                class="px-3 py-1 bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200 rounded-full text-xs font-bold">
-                                ACCEPTED
-                            </span>
+                                class="material-icons-outlined absolute left-3 top-2.5 text-gray-400 text-sm">search</span>
                         </div>
-                        <p class="text-sm text-gray-700 dark:text-gray-300">Requires: General Bed</p>
-                    </div>
-
-                    <div
-                        class="p-4 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg">
-                        <div class="flex items-start justify-between mb-2">
-                            <div>
-                                <p class="font-semibold text-secondary dark:text-white">Patient: Amit Verma</p>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">From: Fortis Hospital</p>
-                            </div>
-                            <span
-                                class="px-3 py-1 bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200 rounded-full text-xs font-bold">
-                                DECLINED
-                            </span>
-                        </div>
-                        <p class="text-sm text-gray-700 dark:text-gray-300">Requires: ICU Bed (No availability)</p>
+                        <button class="relative p-2 text-gray-500 hover:text-gray-700">
+                            <span class="material-icons-outlined">notifications</span>
+                            <span class="absolute top-1 right-1 w-2 h-2 bg-danger rounded-full"></span>
+                        </button>
+                        <button class="p-2 text-gray-500 hover:text-gray-700">
+                            <span class="material-icons-outlined">settings</span>
+                        </button>
                     </div>
                 </div>
-            </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-y-auto bg-gray-50 p-8">
+
+                <!-- Page Header -->
+                <div class="mb-8 flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900 mb-1">Hospital Management Dashboard</h1>
+                        <p class="text-gray-600">Real-time resource tracking and inter-hospital coordination.</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button
+                            class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                            <span class="material-icons-outlined text-lg">download</span>
+                            Export Report
+                        </button>
+                        <button
+                            class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-secondary flex items-center gap-2">
+                            <span class="material-icons-outlined text-lg">add</span>
+                            Add Record
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-4 gap-6 mb-8">
+                    <!-- Available Beds -->
+                    <div class="bg-white rounded-xl p-6 border border-gray-200 relative overflow-hidden">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <span class="material-icons-outlined text-blue-600">hotel</span>
+                            </div>
+                            <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded">+5%</span>
+                        </div>
+                        <div>
+                            <p class="text-gray-600 text-sm font-medium mb-1">Available Beds</p>
+                            <p class="text-3xl font-bold text-gray-900">145</p>
+                            <p class="text-xs text-gray-500 mt-1">/ 1,240 Total</p>
+                        </div>
+                    </div>
+
+                    <!-- Blood Units -->
+                    <div class="bg-white rounded-xl p-6 border border-gray-200 relative overflow-hidden">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                                <span class="material-icons-outlined text-red-600">bloodtype</span>
+                            </div>
+                            <span class="text-xs font-semibold text-red-600 bg-red-50 px-2 py-1 rounded">Low
+                                Stock</span>
+                        </div>
+                        <div>
+                            <p class="text-gray-600 text-sm font-medium mb-1">Blood Units</p>
+                            <p class="text-3xl font-bold text-gray-900">450</p>
+                            <p class="text-xs text-red-600 mt-1">O- Critical</p>
+                        </div>
+                    </div>
+
+                    <!-- Oxygen Capacity -->
+                    <div class="bg-white rounded-xl p-6 border border-gray-200 relative overflow-hidden">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center">
+                                <span class="material-icons-outlined text-cyan-600">air</span>
+                            </div>
+                            <span
+                                class="text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded">Stable</span>
+                        </div>
+                        <div>
+                            <p class="text-gray-600 text-sm font-medium mb-1">Oxygen Capacity</p>
+                            <p class="text-3xl font-bold text-gray-900">85%</p>
+                            <p class="text-xs text-gray-500 mt-1">Last updated 1h ago</p>
+                        </div>
+                    </div>
+
+                    <!-- Active Ambulances -->
+                    <div class="bg-white rounded-xl p-6 border border-gray-200 relative overflow-hidden">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center">
+                                <span class="material-icons-outlined text-amber-600">emergency</span>
+                            </div>
+                            <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded">+2
+                                Active</span>
+                        </div>
+                        <div>
+                            <p class="text-gray-600 text-sm font-medium mb-1">Active Ambulances</p>
+                            <p class="text-3xl font-bold text-gray-900">12</p>
+                            <p class="text-xs text-gray-500 mt-1">/ 4 Idle</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Grid -->
+                <div class="grid grid-cols-3 gap-6 mb-8">
+
+                    <!-- Bed Occupancy Status -->
+                    <div class="col-span-2 bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-bold text-gray-900">Bed Occupancy Status</h3>
+                            <a href="#" class="text-sm font-medium text-primary hover:text-secondary">View Details</a>
+                        </div>
+
+                        <div class="space-y-5">
+                            <!-- ICU & Critical Care -->
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-gray-700">ICU & Critical Care</span>
+                                    <span class="text-sm font-semibold text-gray-900">12 / 40 Available</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="bg-blue-500 h-3 rounded-full" style="width: 30%"></div>
+                                </div>
+                            </div>
+
+                            <!-- General Ward -->
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-gray-700">General Ward</span>
+                                    <span class="text-sm font-semibold text-gray-900">120 / 800 Available</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="bg-purple-500 h-3 rounded-full" style="width: 15%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Ventilator Beds -->
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-gray-700">Ventilator Beds</span>
+                                    <span class="text-sm font-semibold text-red-600">3 / 50 Available</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="bg-red-500 h-3 rounded-full" style="width: 6%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-6 mt-6 pt-4 border-t border-gray-200">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                <span class="text-xs text-gray-600">ICU</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
+                                <span class="text-xs text-gray-600">General</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                                <span class="text-xs text-gray-600">Ventilator (Crit.)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Blood Bank -->
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h3 class="text-lg font-bold text-gray-900 mb-6">Blood Bank</h3>
+
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-gray-900">A+</p>
+                                        <p class="text-xs text-gray-500">45u</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-gray-900">A-</p>
+                                        <p class="text-xs text-gray-500">12u</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-gray-900">B+</p>
+                                        <p class="text-xs text-gray-500">32u</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-2 h-2 bg-amber-500 rounded-full"></div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-gray-900">B</p>
+                                        <p class="text-xs text-gray-500">8u</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div
+                                class="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-200">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-gray-900">O-</p>
+                                        <p class="text-xs text-red-600">4u</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-gray-900">O+</p>
+                                        <p class="text-xs text-gray-500">65u</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button
+                            class="w-full mt-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+                            Request Stock
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Real-time Alerts -->
+                <div class="bg-white rounded-xl p-6 border border-gray-200">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-bold text-gray-900">Real-time Alerts</h3>
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                            <span class="text-xs font-medium text-red-600">Live Updates</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- Alert 1 -->
+                        <div class="flex items-start gap-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <span class="material-icons-outlined text-red-600">warning</span>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-start justify-between mb-2">
+                                    <div>
+                                        <p class="font-semibold text-gray-900">Critical Blood Shortage (O- Negative)</p>
+                                        <p class="text-sm text-gray-600 mt-1">St. Mary's Hospital requests immediate
+                                            transfer of 5 units.</p>
+                                    </div>
+                                    <span class="text-xs text-gray-500 whitespace-nowrap ml-4">2 min ago</span>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button
+                                        class="px-4 py-1.5 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700">
+                                        Approve Transfer
+                                    </button>
+                                    <button
+                                        class="px-4 py-1.5 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50">
+                                        Ignore
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Alert 2 -->
+                        <div class="flex items-start gap-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                            <div
+                                class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <span class="material-icons-outlined text-amber-600">emergency</span>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <p class="font-semibold text-gray-900">Incoming Mass Casualty Event</p>
+                                        <p class="text-sm text-gray-600 mt-1">Highway 405 Accident. Preparing Trauma
+                                            Center A.</p>
+                                    </div>
+                                    <span class="text-xs text-gray-500 whitespace-nowrap ml-4">15 min ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
         </div>
-
-        <!-- Recent Activity -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h2 class="font-display text-2xl font-bold text-secondary dark:text-white mb-6">Recent Activity</h2>
-
-            <div class="space-y-4">
-                <div class="flex items-start gap-4 pb-4 border-b border-gray-200 dark:border-gray-700">
-                    <div
-                        class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
-                        <span class="material-icons-outlined text-blue-600 dark:text-blue-400 text-sm">person_add</span>
-                    </div>
-                    <div class="flex-1">
-                        <p class="font-semibold text-secondary dark:text-white">New Patient Admission</p>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Rajesh Kumar admitted to General Ward</p>
-                        <p class="text-xs text-gray-500 mt-1">2 hours ago</p>
-                    </div>
-                </div>
-
-                <div class="flex items-start gap-4 pb-4 border-b border-gray-200 dark:border-gray-700">
-                    <div
-                        class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0">
-                        <span class="material-icons-outlined text-green-600 dark:text-green-400 text-sm">update</span>
-                    </div>
-                    <div class="flex-1">
-                        <p class="font-semibold text-secondary dark:text-white">Resource Update</p>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Bed availability updated: 234 beds available
-                        </p>
-                        <p class="text-xs text-gray-500 mt-1">3 hours ago</p>
-                    </div>
-                </div>
-
-                <div class="flex items-start gap-4 pb-4 border-b border-gray-200 dark:border-gray-700">
-                    <div
-                        class="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center flex-shrink-0">
-                        <span
-                            class="material-icons-outlined text-purple-600 dark:text-purple-400 text-sm">swap_horiz</span>
-                    </div>
-                    <div class="flex-1">
-                        <p class="font-semibold text-secondary dark:text-white">Transfer Completed</p>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Patient transferred to ICU successfully</p>
-                        <p class="text-xs text-gray-500 mt-1">5 hours ago</p>
-                    </div>
-                </div>
-
-                <div class="flex items-start gap-4">
-                    <div
-                        class="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center flex-shrink-0">
-                        <span
-                            class="material-icons-outlined text-orange-600 dark:text-orange-400 text-sm">emergency</span>
-                    </div>
-                    <div class="flex-1">
-                        <p class="font-semibold text-secondary dark:text-white">Emergency Alert</p>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Ambulance dispatched to MG Road</p>
-                        <p class="text-xs text-gray-500 mt-1">6 hours ago</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
+    </div>
 
     <!-- JavaScript -->
     <script src="../js/config/app-config.js"></script>
@@ -319,7 +457,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize auth service first to load user from storage
+            // Initialize auth service
             AuthService.init();
 
             // Check authentication
@@ -336,21 +474,6 @@
                 }, 2000);
                 return;
             }
-
-            // Logout handler
-            document.getElementById('logout-btn').addEventListener('click', async () => {
-                await AuthService.logout();
-                Helpers.showToast('Logged out successfully', 'success');
-                setTimeout(() => {
-                    window.location.href = '../index.html';
-                }, 1000);
-            });
-
-            // Form submission
-            document.querySelector('form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                Helpers.showToast('Resources updated successfully!', 'success');
-            });
         });
     </script>
 </body>
