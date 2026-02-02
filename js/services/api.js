@@ -3,7 +3,10 @@
  */
 
 const APIService = {
-    baseURL: 'http://localhost:5000/api',
+    // Use environment-based URL: production Vercel URL or local development
+    baseURL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:5000/api'
+        : '/api',
 
     getToken() {
         const user = AuthService?.getCurrentUser();
@@ -34,9 +37,9 @@ const APIService = {
             }
 
             console.log(`API Call: ${method} ${this.baseURL}${endpoint}`);
-            
+
             const response = await fetch(`${this.baseURL}${endpoint}`, config);
-            
+
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({ message: 'Network error' }));
                 throw new Error(errorData.message || `HTTP ${response.status}`);
@@ -47,11 +50,11 @@ const APIService = {
 
         } catch (error) {
             console.error('API Error:', error);
-            
+
             if (error.name === 'TypeError' || error.message.includes('Failed to fetch')) {
                 throw new Error('Backend server not running. Please start: npm run dev');
             }
-            
+
             throw error;
         }
     },

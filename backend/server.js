@@ -108,11 +108,18 @@ process.on('SIGINT', () => {
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`\n🚀 SwasthyaSetu Backend Server`);
-    console.log(`📡 Server running on port ${PORT}`);
-    console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`🔗 API URL: http://localhost:${PORT}/api`);
-    console.log(`📚 Health Check: http://localhost:${PORT}/api/health-check`);
-    console.log(`\n✅ Ready to accept requests!\n`);
-});
+
+// Only start server if not in Vercel serverless environment
+if (process.env.VERCEL !== '1') {
+    app.listen(PORT, () => {
+        console.log(`\n🚀 SwasthyaSetu Backend Server`);
+        console.log(`📡 Server running on port ${PORT}`);
+        console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+        console.log(`🔗 API URL: http://localhost:${PORT}/api`);
+        console.log(`📚 Health Check: http://localhost:${PORT}/api/health-check`);
+        console.log(`\n✅ Ready to accept requests!\n`);
+    });
+}
+
+// Export for Vercel serverless
+module.exports = app;
