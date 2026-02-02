@@ -73,7 +73,10 @@ const createAppointment = async (req, res, next) => {
         let finalHospitalAddress = hospitalAddress;
 
         // Verify hospital exists ONLY if it looks like a valid MongoDB ObjectId
-        if (mongoose.Types.ObjectId.isValid(hospitalId)) {
+        // AND it's not our generic fallback ID for external hospitals
+        const fallbackId = '507f1f77bcf86cd799439011';
+
+        if (mongoose.Types.ObjectId.isValid(hospitalId) && hospitalId !== fallbackId) {
             const dbHospital = await Hospital.findById(hospitalId);
             if (dbHospital) {
                 finalHospitalName = dbHospital.name;

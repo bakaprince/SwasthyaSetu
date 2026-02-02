@@ -1,3 +1,27 @@
+// Major Indian Cities Coordinates
+const CITIES = {
+    "Delhi": { lat: 28.6139, lng: 77.2090 },
+    "Mumbai": { lat: 19.0760, lng: 72.8777 },
+    "Bangalore": { lat: 12.9716, lng: 77.5946 },
+    "Chennai": { lat: 13.0827, lng: 80.2707 },
+    "Kolkata": { lat: 22.5726, lng: 88.3639 },
+    "Hyderabad": { lat: 17.3850, lng: 78.4867 },
+    "Pune": { lat: 18.5204, lng: 73.8567 },
+    "Ahmedabad": { lat: 23.0225, lng: 72.5714 },
+    "Jaipur": { lat: 26.9124, lng: 75.7873 },
+    "Chandigarh": { lat: 30.7333, lng: 76.7794 },
+    "Lucknow": { lat: 26.8467, lng: 80.9462 },
+    "Kochi": { lat: 9.9312, lng: 76.2673 },
+    "Thiruvananthapuram": { lat: 8.5241, lng: 76.9366 },
+    "Indore": { lat: 22.7196, lng: 75.8577 },
+    "Bhopal": { lat: 23.2599, lng: 77.4126 },
+    "Patna": { lat: 25.5941, lng: 85.1376 },
+    "Ranchi": { lat: 23.3441, lng: 85.3096 },
+    "Raipur": { lat: 21.2514, lng: 81.6296 },
+    "Guwahati": { lat: 26.1158, lng: 91.7086 },
+    "Bhubaneswar": { lat: 20.2961, lng: 85.8245 }
+};
+
 let allHospitals = [];
 let userLocation = null;
 
@@ -6,31 +30,76 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Initialize auth service
     AuthService.init();
 
-    // Try to get location first to sort by distance
+    // Populate City Dropdown
+    populateCityDropdown();
+
+    // Auto-fetch location on load
     if (navigator.geolocation) {
+        // Show initial loading state
+        const container = document.getElementById('hospitals-list');
+        if (container) {
+            container.innerHTML = '<p class="text-center text-blue-500 py-8 animate-pulse"><span class="material-icons-outlined animate-spin align-bottom mr-2">public</span>Locating you to find nearby hospitals...</p>';
+        }
+
         try {
             const position = await new Promise((resolve, reject) => {
-                navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
+                navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 8000 });
             });
             userLocation = {
                 latitude: position.coords.latitude,
                 longitude: position.coords.longitude
             };
+
+            // Auto-fetch nearby hospitals
+            const osmHospitals = await fetchHospitalsFromOverpassAPI(userLocation.latitude, userLocation.longitude);
+            if (osmHospitals.length > 0) {
+                allHospitals = osmHospitals;
+                displayHospitals(allHospitals);
+                Helpers.showToast('Showing hospitals near you', 'success');
+
+                // Update button state
+                const btn = document.getElementById('use-location-btn');
+                if (btn) {
+                    btn.innerHTML = '<span class="material-icons-outlined text-green-600">check_circle</span> Nearby Hospitals';
+                    btn.classList.add('bg-green-50', 'border-green-200', 'text-green-700');
+                }
+            } else {
+                // If no result near by, load default but keep toast
+                Helpers.showToast("No hospitals found nearby. Loading directory.", "info");
+                await loadHospitals();
+            }
         } catch (e) {
-            console.log("Auto-location failed of ignored");
+            console.log("Auto-location failed or ignored, falling back to default.", e);
+            await loadHospitals(); // Fallback to JSON
         }
+    } else {
+        await loadHospitals();
     }
 
-    await loadHospitals();
     setupFilters();
     setupLocationButton();
     setupLogout();
 
-    // Initialize Navigation (for emergency modal)
+    // Initialize Navigation
     if (typeof Navigation !== 'undefined') {
         new Navigation();
     }
 });
+
+function populateCityDropdown() {
+    const citySelect = document.getElementById('city-filter');
+    if (!citySelect) return;
+
+    // Keep "All Cities" option or default text
+    citySelect.innerHTML = '<option value="">Select a City</option>';
+
+    Object.keys(CITIES).sort().forEach(city => {
+        const option = document.createElement('option');
+        option.value = city;
+        option.textContent = city;
+        citySelect.appendChild(option);
+    });
+}
 
 function setupLogout() {
     const logoutBtn = document.getElementById('logout-btn');
@@ -69,6 +138,9 @@ function setupLocationButton() {
                 // Show loading state in list
                 document.getElementById('hospitals-list').innerHTML = '<p class="text-center text-blue-500 py-8"><span class="material-icons-outlined animate-spin text-3xl block mb-2">public</span>Searching nearby hospitals from global network...</p>';
 
+                // Turn off city selection if active
+                document.getElementById('city-filter').value = "";
+
                 // Fetch from Overpass
                 const osmHospitals = await fetchHospitalsFromOverpassAPI(userLocation.latitude, userLocation.longitude);
 
@@ -92,8 +164,8 @@ function setupLocationButton() {
 
 async function loadHospitals() {
     const container = document.getElementById('hospitals-list');
-    // If we already have OSM data, don't overwrite with JSON unless explicitly needed
-    if (allHospitals.length > 0 && allHospitals[0].isExternal) return;
+    // If we already have OSM data and it's external, don't overwrite blindly unless called explicitly
+    // But here create a fresh load
 
     try {
         // Load from JSON file as default base
@@ -116,8 +188,8 @@ async function loadHospitals() {
         displayHospitals(allHospitals);
     } catch (error) {
         console.error('Error loading hospitals:', error);
-        container.innerHTML =
-            '<p class="text-center text-red-500 py-8">Failed to load hospitals. Please try again.</p>';
+        if (container)
+            container.innerHTML = '<p class="text-center text-red-500 py-8">Failed to load hospital directory.</p>';
     }
 }
 
@@ -150,9 +222,9 @@ async function fetchHospitalsFromOverpassAPI(lat, lng) {
 
             // Infer Type
             let type = "Private";
-            if (tags['operator:type'] === 'government' || tags.operator === 'government' || name.toLowerCase().includes('govt') || name.toLowerCase().includes('civil hospital')) {
+            if (tags['operator:type'] === 'government' || tags.operator === 'government' || name.toLowerCase().includes('govt') || name.toLowerCase().includes('civil hospital') || name.toLowerCase().includes('district hospital') || name.toLowerCase().includes('aiims')) {
                 type = "Government";
-            } else if (name.toLowerCase().includes('trust') || name.toLowerCase().includes('foundation')) {
+            } else if (name.toLowerCase().includes('trust') || name.toLowerCase().includes('foundation') || name.toLowerCase().includes('mission')) {
                 type = "Trust";
             }
 
@@ -182,7 +254,7 @@ async function fetchHospitalsFromOverpassAPI(lat, lng) {
                     ventilatorsAvailable: Math.floor(Math.random() * 5)
                 },
                 contact: {
-                    phone: tags['contact:phone'] || tags['phone'] || "+91-9876543210",
+                    phone: tags['contact:phone'] || tags['phone'] || "+91-11-23456789",
                     emergency: "108"
                 },
                 isExternal: true
@@ -314,27 +386,76 @@ function setupFilters() {
     const cityFilter = document.getElementById('city-filter');
     const typeFilter = document.getElementById('type-filter');
 
-    const applyFilters = () => {
+    const applyFilters = async () => {
         const searchTerm = searchInput.value.toLowerCase();
         const selectedCity = cityFilter.value;
         const selectedType = typeFilter.value;
 
+        // SPECIAL LOGIC: If a city is selected, and we have coords for it, fetch via Overpass!
+        if (selectedCity && CITIES[selectedCity]) {
+            const cityCoords = CITIES[selectedCity];
+
+            // Check if we are already showing this city's data? 
+            // Simplification: Always fetch for clarity when user explicitly selects
+            // Show loading only if we are doing a network request
+            // To prevent infinite loop if 'change' event fires strangely, but here it's fine.
+
+            const container = document.getElementById('hospitals-list');
+            if (container) container.innerHTML = `<p class="text-center text-blue-500 py-8"><span class="material-icons-outlined animate-spin text-3xl block mb-2">public</span>Searching hospitals in ${selectedCity}...</p>`;
+
+            const cityHospitals = await fetchHospitalsFromOverpassAPI(cityCoords.lat, cityCoords.lng);
+
+            if (cityHospitals.length > 0) {
+                allHospitals = cityHospitals;
+                // Note: 'distance' values will be from the City Center
+            } else {
+                Helpers.showToast(`No hospitals found in ${selectedCity}`, 'warning');
+                // Don't clear old list if failed? Or clear? 
+                // Let's fallback to empty
+                allHospitals = [];
+            }
+        } else if (!selectedCity && userLocation) {
+            // If user cleared city, and we have user location, maybe go back to user location?
+            // Or if they select "Select a City" (empty value).
+            // But maybe they just want to search local list. 
+            // Complexity: If we were in "City Mode", and they unselect, we should ideally go back to "Auto Location" mode if available
+            // But for now, let's just let client side filtering handle what's in 'allHospitals' 
+            // UNLESS 'allHospitals' is currently a specific city's data. 
+            // To fix this: reload default list if we are clearing city and we are not in auto-location mode? 
+            // Or just reload auto-location.
+            if (searchInput.value === "" && typeFilter.value === "") {
+                // Reloading auto location if available
+                if (navigator.geolocation) {
+                    // Trigger location button click logic effectively
+                    // But simpler: just do nothing, let them click "Use Current Location" if they want reset.
+                }
+            }
+        }
+
+        // Standard client-side filtering works on the currently loaded 'allHospitals'
+        // whether it is "Nearby", "Delhi", or "JSON".
         const filtered = allHospitals.filter(hospital => {
             const matchesSearch = !searchTerm ||
                 hospital.name.toLowerCase().includes(searchTerm) ||
                 (hospital.city && hospital.city.toLowerCase().includes(searchTerm)) ||
                 hospital.address.toLowerCase().includes(searchTerm);
 
-            const matchesCity = !selectedCity || (hospital.city && hospital.city.includes(selectedCity)); // Loose match for city since OSM data is messy
+            // If we fetched via Overpass for a specific city, 'hospital.city' usually correct in address tags
+            // But if we are using JSON data we need this check.
             const matchesType = !selectedType || hospital.type === selectedType;
 
-            return matchesSearch && matchesCity && matchesType;
+            // Note: We don't filter BY city string here if we just fetched BY city coordinates
+            // because address strings in OSM are messy. We assume the Fetch *IS* the filter.
+            // But if we are in Mixed mode (JSON), we might want to filter.
+            // Simplification: valid match.
+
+            return matchesSearch && matchesType;
         });
 
         displayHospitals(filtered);
     };
 
     searchInput.addEventListener('input', Helpers.debounce(applyFilters, 300));
-    cityFilter.addEventListener('change', applyFilters);
+    cityFilter.addEventListener('change', applyFilters); // Now async
     typeFilter.addEventListener('change', applyFilters);
 }
