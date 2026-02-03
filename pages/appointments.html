@@ -215,7 +215,7 @@
 
             const upcoming = allAppointments.filter(apt => {
                 const aptDate = new Date(apt.date + ' ' + apt.time);
-                return aptDate > now && apt.status === 'confirmed';
+                return aptDate > now && (apt.status === 'confirmed' || apt.status === 'pending');
             });
 
             const past = allAppointments.filter(apt => {
