@@ -218,8 +218,8 @@ A unified platform that:
 ## Quick Reference
 
 **Demo Credentials:**
-- Patient: `9876543210` / `demo123`
-- Admin: `admin@hospital.gov.in` / `admin123`
+- Patient: `12-3456-7890-1234` / `patient123`
+- Admin: `admin@aiims.gov.in` / `admin123`
 
 **Demo URL:**
 - `http://localhost:3000`

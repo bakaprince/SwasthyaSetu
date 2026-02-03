@@ -9,7 +9,7 @@ class Navigation {
 
     init() {
         // Initialize navigation event listeners
-        // Mobile menu toggle can be added here in the future
+        this.initMobileMenu();
         console.log('Navigation component initialized');
 
         // Set initial auth link visibility
@@ -87,9 +87,35 @@ class Navigation {
         console.log('Auth links updated. Authenticated:', isAuthenticated);
     }
 
+    initMobileMenu() {
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                this.toggleMobileMenu();
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target) && this.mobileMenuOpen) {
+                    this.toggleMobileMenu();
+                }
+            });
+        }
+    }
+
     toggleMobileMenu() {
+        const mobileMenu = document.getElementById('mobile-menu');
         this.mobileMenuOpen = !this.mobileMenuOpen;
-        // Add mobile menu toggle logic here
+
+        if (this.mobileMenuOpen) {
+            mobileMenu.classList.remove('hidden');
+            mobileMenu.classList.add('flex');
+        } else {
+            mobileMenu.classList.add('hidden');
+            mobileMenu.classList.remove('flex');
+        }
     }
 
     // Smooth scroll to sections
