@@ -217,7 +217,13 @@
             const upcoming = allAppointments.filter(apt => {
                 // Safe date parsing
                 const dateStr = apt.date ? apt.date.toString().substring(0, 10) : '';
-                const timeStr = apt.time || '00:00';
+                let timeStr = apt.time || '00:00';
+
+                // Handle corrupted data where time field has doctor name (no digits)
+                if (!/\d/.test(timeStr)) {
+                    timeStr = '00:00';
+                }
+
                 const aptDate = new Date(`${dateStr} ${timeStr}`);
 
                 // Show if future AND (confirmed OR pending)
@@ -225,8 +231,14 @@
             });
 
             const past = allAppointments.filter(apt => {
-                const dateStr = apt.date.toString().substring(0, 10);
-                const aptDate = new Date(`${dateStr} ${apt.time}`);
+                const dateStr = apt.date ? apt.date.toString().substring(0, 10) : '';
+                let timeStr = apt.time || '00:00';
+
+                if (!/\d/.test(timeStr)) {
+                    timeStr = '00:00';
+                }
+
+                const aptDate = new Date(`${dateStr} ${timeStr}`);
                 return aptDate <= now || apt.status === 'completed';
             });
 
