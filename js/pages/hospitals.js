@@ -372,7 +372,7 @@ function displayHospitals(hospitals) {
                     <button class="view-details-btn px-4 py-2 bg-secondary text-white rounded-lg text-sm font-semibold hover:bg-secondary-light transition-colors" data-id="${hospital.id}">
                         View Details
                     </button>
-                    <a href="book-appointment.html" class="px-4 py-2 bg-primary text-secondary rounded-lg text-sm font-semibold hover:bg-green-400 transition-colors">
+                    <a href="book-appointment.html?hospital=${encodeURIComponent(hospital.name)}&address=${encodeURIComponent(hospital.address)}" class="px-4 py-2 bg-primary text-secondary rounded-lg text-sm font-semibold hover:bg-green-400 transition-colors">
                         Book Appointment
                     </a>
                 </div>

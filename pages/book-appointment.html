@@ -412,9 +412,30 @@
             const hospitalModal = document.getElementById('hospital-modal');
             const hospitalTrigger = document.getElementById('hospital-trigger');
             const hospitalInput = document.getElementById('hospital-input');
+            const hospitalAddressInput = document.getElementById('hospital-address-input'); // Ensure this matches HTML ID
             const closeModalBtn = document.getElementById('close-modal-btn');
             const hospitalListContainer = document.getElementById('hospital-list-container');
             const modalLocationStatus = document.getElementById('modal-location-status');
+
+            // Check for Autofill Params from Hospitals Page
+            const urlParams = new URLSearchParams(window.location.search);
+            const prefillName = urlParams.get('hospital');
+            const prefillAddress = urlParams.get('address');
+
+            if (prefillName) {
+                // Visual Update
+                hospitalTrigger.innerHTML = `
+                    <div class="flex flex-col items-start leading-tight">
+                        <span class="font-bold text-gray-900 dark:text-white">${prefillName}</span>
+                        ${prefillAddress ? `<span class="text-xs text-gray-500">${prefillAddress}</span>` : ''}
+                    </div>
+                `;
+                hospitalTrigger.classList.add('border-green-500', 'bg-green-50', 'dark:bg-green-900/10');
+
+                // Value Update
+                hospitalInput.value = prefillName;
+                if (hospitalAddressInput) hospitalAddressInput.value = prefillAddress || '';
+            }
 
             // Open Modal
             hospitalTrigger.addEventListener('click', () => {
