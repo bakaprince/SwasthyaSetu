@@ -67,3 +67,48 @@ nav * {
     transform: translateZ(0);
     backface-visibility: hidden;
 }
+
+/* --- PREMIUM UI/UX ENHANCEMENTS --- */
+
+/* 1. Global Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* 2. Premium Transitions for Interactive Elements */
+a, button, input, select, textarea, .card, .transition-all {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Standard Material Design curve */
+}
+
+/* 3. Tactile Feedback (Click Effect) */
+button:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+/* 4. Smooth Page Load Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.page-animate-in {
+    animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* 5. Consistent Focus States */
+*:focus-visible {
+    outline: 2px solid #86efac; /* Primary color */
+    outline-offset: 2px;
+}
+
+/* 6. Smooth Image Loading */
+img {
+    transition: opacity 0.3s ease-in-out;
+}
+

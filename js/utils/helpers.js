@@ -206,6 +206,29 @@ const Helpers = {
     }
 };
 
+// Global UI Enhancements
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Trigger Page Entrance Animation
+    document.body.classList.add('page-animate-in');
+
+    // 2. Add 'hover-lift' effect to cards if not present
+    const cards = document.querySelectorAll('.card, .bg-white.rounded-xl, .bg-white.rounded-2xl');
+    cards.forEach(card => {
+        card.classList.add('transition-all', 'duration-300', 'hover:-translate-y-1', 'hover:shadow-lg');
+    });
+
+    // 3. Handle "Under Development" Placeholders (Global)
+    document.addEventListener('click', (e) => {
+        // Check for any anchor with href="#" usually acting as a placeholder
+        const link = e.target.closest('a[href="#"]');
+        if (link) {
+            e.preventDefault();
+            Helpers.showToast('🚧 This feature is currently under development.', 'info');
+        }
+    });
+});
+
+
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = Helpers;
