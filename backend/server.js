@@ -4,6 +4,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const compression = require('compression'); // Performance optimization
 const connectDB = require('./config/database');
 const errorHandler = require('./middleware/errorHandler');
 
@@ -13,8 +14,9 @@ const app = express();
 // Connect to MongoDB Atlas
 connectDB();
 
-// Security middleware
+// Security and Performance middleware
 app.use(helmet());
+app.use(compression()); // Compress all responses
 
 // Rate limiting
 const limiter = rateLimit({

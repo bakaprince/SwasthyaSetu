@@ -7,8 +7,13 @@
     <link rel="icon" type="image/png" href="./assets/icons/favicon.png" />
     <title>SwasthyaSetu - Government Health Portal</title>
 
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <!-- Performance Optimization: Preconnect to CDNs -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+
+    <!-- Tailwind CSS CDN (Deferred for non-blocking render) -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries" defer></script>
 
     <!-- Google Fonts -->
     <link
@@ -608,24 +613,24 @@
 
     <!-- JavaScript -->
     <!-- Core Configuration -->
-    <script src="js/config/app-config.js"></script>
+    <script src="js/config/app-config.js" defer></script>
 
     <!-- Utilities -->
-    <script src="js/utils/helpers.js"></script>
+    <script src="js/utils/helpers.js" defer></script>
 
     <!-- Services -->
-    <script src="js/services/api.js"></script>
-    <script src="js/services/auth.js"></script>
-    <script src="js/services/location.js"></script>
-    <script src="js/services/aqi.js"></script>
+    <script src="js/services/api.js" defer></script>
+    <script src="js/services/auth.js" defer></script>
+    <script src="js/services/location.js" defer></script>
+    <script src="js/services/aqi.js" defer></script>
 
     <!-- Components -->
-    <script src="js/components/navigation.js"></script>
-    <script src="js/components/login-form.js?v=4"></script>
+    <script src="js/components/navigation.js" defer></script>
+    <script src="js/components/login-form.js?v=4" defer></script>
 
     <!-- Main Application -->
-    <script src="js/services/health-alerts.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/services/health-alerts.js" defer></script>
+    <script src="js/main.js" defer></script>
 
 
 
