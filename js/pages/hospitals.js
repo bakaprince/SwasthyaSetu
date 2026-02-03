@@ -521,3 +521,6 @@ function openHospitalModal(hospitalId) {
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden'; // Prevent background scrolling
 }
+
+// Ensure global access for HTML onclick
+window.openHospitalModal = openHospitalModal;
