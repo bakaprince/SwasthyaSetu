@@ -74,20 +74,58 @@ const createAppointment = async (req, res, next) => {
 
         // Verify hospital exists ONLY if it looks like a valid MongoDB ObjectId
         // AND it's not our generic fallback ID for external hospitals
+        // Check if hospital exists (by ID or Name) or Create it
         const fallbackId = '507f1f77bcf86cd799439011';
+        let dbHospital = null;
 
+        // 1. Try finding by ID
         if (mongoose.Types.ObjectId.isValid(hospitalId) && hospitalId !== fallbackId) {
-            const dbHospital = await Hospital.findById(hospitalId);
-            if (dbHospital) {
-                finalHospitalName = dbHospital.name;
-                finalHospitalAddress = `${dbHospital.address}, ${dbHospital.city}`;
-            } else if (!hospital) {
-                // If it's a valid ID but not found, and no name provided (fallback)
-                return res.status(404).json({
-                    success: false,
-                    message: 'Hospital not found'
-                });
+            dbHospital = await Hospital.findById(hospitalId);
+        }
+
+        // 2. If not found by ID, try finding by Name
+        if (!dbHospital && hospital) {
+            dbHospital = await Hospital.findOne({ name: hospital });
+        }
+
+        // 3. If still not found, Create new Hospital (Auto-onboarding)
+        if (!dbHospital && hospital) {
+            // Extract city from address or default
+            let city = 'Your City';
+            if (hospitalAddress) {
+                const parts = hospitalAddress.split(',');
+                if (parts.length > 1) {
+                    city = parts[parts.length - 1].trim(); // Take last part as city
+                }
             }
+
+            try {
+                dbHospital = await Hospital.create({
+                    name: hospital,
+                    address: hospitalAddress || 'Address not provided',
+                    city: city,
+                    type: 'Private', // Default type
+                    contact: {
+                        phone: '0000000000', // Placeholder
+                        emergency: '108'
+                    },
+                    // We don't have location coords easily from just address string, but that's ok
+                });
+                console.log(`Auto-onboarded new hospital: ${hospital}`);
+            } catch (createError) {
+                console.error("Error auto-creating hospital:", createError);
+                // Fallback to not having a dbHospital, just text
+            }
+        }
+
+        // Update details if we found/created a hospital
+        if (dbHospital) {
+            finalHospitalName = dbHospital.name;
+            finalHospitalAddress = dbHospital.address;
+            // UPDATE the request hospitalId to the REAL DB ID
+            // This ensures future lookups work
+            // We use 'var' or modify the 'hospitalId' variable if it was let, but it's const destructuring.
+            // So we override it in the create call below.
         }
 
         // Ensure we have a name (either from DB or request)
@@ -98,7 +136,7 @@ const createAppointment = async (req, res, next) => {
         // Create appointment
         const appointment = await Appointment.create({
             userId: req.user.id,
-            hospitalId,
+            hospitalId: dbHospital ? dbHospital._id : hospitalId,
             hospital: finalHospitalName,
             hospitalAddress: finalHospitalAddress,
             doctor,
