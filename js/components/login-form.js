@@ -117,7 +117,7 @@ class LoginForm {
                 abhaSection.style.pointerEvents = 'auto';
                 abhaSection.style.transition = 'opacity 0.2s ease, height 0.2s ease';
             }
-        } else {
+        } else if (this.activeTab === 'admin') {
             // Hospital admin form fields
             idLabel.textContent = 'Hospital ID / Email';
             idInput.placeholder = 'e.g. hospital@example.com';
@@ -139,6 +139,21 @@ class LoginForm {
                 abhaSection.style.overflow = 'hidden';
                 abhaSection.style.pointerEvents = 'none';
                 abhaSection.style.transition = 'opacity 0.2s ease, height 0.2s ease';
+            }
+        } else if (this.activeTab === 'government') {
+            // Government login fields
+            idLabel.textContent = 'Gov ID / Username';
+            idInput.placeholder = 'e.g. admin_gov';
+            passwordLabel.textContent = 'Auth Password';
+            passwordInput.placeholder = '••••••••';
+            passwordInput.type = 'password';
+
+            // Hide ABHA section
+            if (abhaSection) {
+                abhaSection.style.visibility = 'hidden';
+                abhaSection.style.opacity = '0';
+                abhaSection.style.height = '0';
+                abhaSection.style.pointerEvents = 'none';
             }
         }
 
@@ -224,7 +239,10 @@ class LoginForm {
                 console.log('🎯 User role:', userRole);
 
                 // Force immediate redirect
-                const redirectUrl = userRole === 'patient' ? 'pages/dashboard.html' : 'pages/admin-dashboard.html';
+                let redirectUrl = 'pages/dashboard.html';
+                if (userRole === 'admin') redirectUrl = 'pages/admin-dashboard.html';
+                if (userRole === 'government') redirectUrl = 'pages/government-dashboard.html';
+
                 console.log('🚀 FORCING REDIRECT TO:', redirectUrl);
 
                 // FORCE REDIRECT - Multiple methods

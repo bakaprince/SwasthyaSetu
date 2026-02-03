@@ -51,7 +51,8 @@ const AuthService = {
                 },
                 body: JSON.stringify({
                     abhaId: identifier,
-                    password: password
+                    password: password,
+                    role: userType // Pass the selected tab role
                 })
             });
 
@@ -61,9 +62,9 @@ const AuthService = {
                 // Create user profile from backend response
                 const userProfile = {
                     id: data.user._id,
-                    type: data.user.role,
-                    identifier: data.user.abhaId,
-                    name: data.user.name,
+                    type: data.user.role, // 'patient', 'admin', or 'government'
+                    identifier: data.user.abhaId || data.user.username,
+                    name: data.user.name || data.user.username,
                     mobile: data.user.mobile,
                     email: data.user.email,
                     age: data.user.age,
@@ -73,24 +74,37 @@ const AuthService = {
                 };
 
                 // Validate Role Match
-                // Admin tab (userType='admin') allows 'admin' or 'hospital_admin' or 'doctor'
-                // Patient tab (userType='patient') allows only 'patient'
-
-                const isPatientLogin = userType === 'patient';
+                const selectedRole = userType; // patient, admin, or government
                 const userRole = userProfile.type;
 
-                if (isPatientLogin && userRole !== 'patient') {
+                if (selectedRole === 'patient' && userRole !== 'patient') {
                     return {
                         success: false,
-                        message: 'This account is for Hospital Staff. Please use the Hospital Admin login.',
+                        message: 'This account is for staff. Please use the appropriate login tab.',
                         error: 'ROLE_MISMATCH'
                     };
                 }
 
-                if (!isPatientLogin && userRole === 'patient') {
+                if (selectedRole === 'admin' && userRole === 'patient') {
                     return {
                         success: false,
                         message: 'This account is for Patients. Please use the Patient login.',
+                        error: 'ROLE_MISMATCH'
+                    };
+                }
+
+                if (selectedRole === 'government' && userRole !== 'government') {
+                    return {
+                        success: false,
+                        message: 'This account is not a Government account.',
+                        error: 'ROLE_MISMATCH'
+                    };
+                }
+
+                if (userRole === 'government' && selectedRole !== 'government') {
+                    return {
+                        success: false,
+                        message: 'Please use the Government login tab for this account.',
                         error: 'ROLE_MISMATCH'
                     };
                 }

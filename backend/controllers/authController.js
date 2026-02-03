@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const GovernmentUser = require('../models/GovernmentUser');
 
 /**
  * Generate JWT token
@@ -71,25 +72,36 @@ const register = async (req, res, next) => {
  */
 const login = async (req, res, next) => {
     try {
-        const { abhaId, mobile, password } = req.body;
+        const { abhaId, mobile, password, role } = req.body;
 
         // Validate input
         if (!password || (!abhaId && !mobile)) {
             return res.status(400).json({
                 success: false,
-                message: 'Please provide ABHA ID or mobile and password'
+                message: 'Please provide credentials and password'
             });
         }
 
-        // Find user (include password for comparison)
-        // Checks abhaId, mobile, OR email (since frontend might send email in abhaId field)
-        const user = await User.findOne({
-            $or: [
-                { abhaId: abhaId },
-                { mobile: mobile || abhaId }, // Handle case where mobile is passed in abhaId
-                { email: abhaId } // Allow login with email
-            ]
-        }).select('+password');
+        let user;
+        if (role === 'government') {
+            // Find in Government collection
+            user = await GovernmentUser.findOne({
+                $or: [
+                    { username: abhaId },
+                    { email: abhaId }
+                ]
+            }).select('+password');
+        } else {
+            // Find user (include password for comparison)
+            // Checks abhaId, mobile, OR email (since frontend might send email in abhaId field)
+            user = await User.findOne({
+                $or: [
+                    { abhaId: abhaId },
+                    { mobile: mobile || abhaId }, // Handle case where mobile is passed in abhaId
+                    { email: abhaId } // Allow login with email
+                ]
+            }).select('+password');
+        }
 
         if (!user) {
             return res.status(401).json({

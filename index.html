@@ -162,16 +162,23 @@
                         <div x-data="{ activeTab: 'patient' }">
                             <div class="flex space-x-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg mb-8">
                                 <button
-                                    class="tab-button flex-1 py-2.5 text-sm font-medium rounded-md transition-all duration-200 focus:outline-none flex items-center justify-center gap-2 bg-white dark:bg-gray-700 text-secondary dark:text-white shadow-sm ring-1 ring-black/5"
+                                    class="tab-button flex-1 py-1.5 md:py-2.5 text-[10px] md:text-sm font-medium rounded-md transition-all duration-200 focus:outline-none flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 bg-white dark:bg-gray-700 text-secondary dark:text-white shadow-sm ring-1 ring-black/5"
                                     data-tab="patient">
-                                    <span class="material-icons-outlined text-lg">person</span>
-                                    Patient / ABHA
+                                    <span class="material-icons-outlined text-base md:text-lg">person</span>
+                                    <span>Patient / ABHA</span>
                                 </button>
                                 <button
-                                    class="tab-button flex-1 py-2.5 text-sm font-medium rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-all duration-200 focus:outline-none flex items-center justify-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                                    class="tab-button flex-1 py-1.5 md:py-2.5 text-[10px] md:text-sm font-medium rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-all duration-200 focus:outline-none flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 hover:bg-gray-50 dark:hover:bg-gray-700/50"
                                     data-tab="admin">
-                                    <span class="material-icons-outlined text-lg">admin_panel_settings</span>
-                                    Hospital Admin
+                                    <span
+                                        class="material-icons-outlined text-base md:text-lg">admin_panel_settings</span>
+                                    <span>Hospital Admin</span>
+                                </button>
+                                <button
+                                    class="tab-button flex-1 py-1.5 md:py-2.5 text-[10px] md:text-sm font-medium rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-all duration-200 focus:outline-none flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                                    data-tab="government">
+                                    <span class="material-icons-outlined text-base md:text-lg">account_balance</span>
+                                    <span>Government</span>
                                 </button>
                             </div>
                             <form class="login-form space-y-5">
