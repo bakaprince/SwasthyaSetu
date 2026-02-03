@@ -214,12 +214,16 @@
             const now = new Date();
 
             const upcoming = allAppointments.filter(apt => {
-                const aptDate = new Date(apt.date + ' ' + apt.time);
+                // Handle date parsing safely. Database usually returns ISO string "2026-02-20T00:00:00.000Z"
+                // We just need the "YYYY-MM-DD" part to combine with time "HH:MM"
+                const dateStr = apt.date.toString().substring(0, 10);
+                const aptDate = new Date(`${dateStr} ${apt.time}`);
                 return aptDate > now && (apt.status === 'confirmed' || apt.status === 'pending');
             });
 
             const past = allAppointments.filter(apt => {
-                const aptDate = new Date(apt.date + ' ' + apt.time);
+                const dateStr = apt.date.toString().substring(0, 10);
+                const aptDate = new Date(`${dateStr} ${apt.time}`);
                 return aptDate <= now || apt.status === 'completed';
             });
 
