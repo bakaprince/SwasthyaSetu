@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link rel="icon" type="image/png" href="../assets/icons/favicon.png" />
     <title>My Appointments - SwasthyaSetu</title>
 
     <!-- Tailwind CSS CDN -->
@@ -214,10 +215,12 @@
             const now = new Date();
 
             const upcoming = allAppointments.filter(apt => {
-                // Handle date parsing safely. Database usually returns ISO string "2026-02-20T00:00:00.000Z"
-                // We just need the "YYYY-MM-DD" part to combine with time "HH:MM"
-                const dateStr = apt.date.toString().substring(0, 10);
-                const aptDate = new Date(`${dateStr} ${apt.time}`);
+                // Safe date parsing
+                const dateStr = apt.date ? apt.date.toString().substring(0, 10) : '';
+                const timeStr = apt.time || '00:00';
+                const aptDate = new Date(`${dateStr} ${timeStr}`);
+
+                // Show if future AND (confirmed OR pending)
                 return aptDate > now && (apt.status === 'confirmed' || apt.status === 'pending');
             });
 

@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link rel="icon" type="image/png" href="../assets/icons/favicon.png" />
     <title>Book Appointment - SwasthyaSetu</title>
 
     <!-- Tailwind CSS CDN -->
@@ -216,7 +217,7 @@
                                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <span class="material-icons-outlined text-gray-400">schedule</span>
                                     </span>
-                                    <select required
+                                    <select required id="appointment-time"
                                         class="block w-full pl-10 pr-10 py-3 border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-secondary focus:border-secondary transition-shadow">
                                         <option value="" disabled selected>Select Time Slot</option>
                                         <option value="09:00 AM">09:00 AM - 10:00 AM</option>
@@ -758,7 +759,7 @@
                         doctor: doctorSelect.value,
                         specialty: departmentInput.value,
                         date: formData.get('date') || e.target.querySelector('input[type="date"]').value,
-                        time: e.target.querySelector('select[required]').value,
+                        time: document.getElementById('appointment-time').value,
                         type: 'In-person',
                         reason: e.target.querySelector('textarea').value || 'General consultation'
                     };
