@@ -12,8 +12,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdn.tailwindcss.com">
 
-    <!-- Tailwind CSS CDN (Deferred for non-blocking render) -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries" defer></script>
+    <!-- Tailwind CSS CDN (Deferred removed to ensure config loads correctly) -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
 
     <!-- Google Fonts -->
     <link
@@ -23,7 +23,7 @@
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
 
-    <!-- Tailwind Configuration -->
+    <!-- Tailwind Configuration (Must load AFTER Tailwind script) -->
     <script>
         tailwind.config = {
             darkMode: "class",
