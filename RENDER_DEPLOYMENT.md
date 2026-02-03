@@ -61,7 +61,7 @@ NODE_ENV = production
 
 PORT = 5000
 
-FRONTEND_URL = https://swasthyasetu.vercel.app
+FRONTEND_URL = https://swasthya-setu-ebon.vercel.app
 ```
 
 > **Important:** Replace `YOUR_PASSWORD` with your actual MongoDB password!
