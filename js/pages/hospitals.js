@@ -369,7 +369,7 @@ function displayHospitals(hospitals) {
                     </a>
                 </div>
                 <div class="flex gap-2">
-                    <button class="px-4 py-2 bg-secondary text-white rounded-lg text-sm font-semibold hover:bg-secondary-light transition-colors">
+                    <button onclick="openHospitalModal('${hospital.id}')" class="px-4 py-2 bg-secondary text-white rounded-lg text-sm font-semibold hover:bg-secondary-light transition-colors">
                         View Details
                     </button>
                     <a href="book-appointment.html" class="px-4 py-2 bg-primary text-secondary rounded-lg text-sm font-semibold hover:bg-green-400 transition-colors">
@@ -395,7 +395,7 @@ function setupFilters() {
         if (selectedCity && CITIES[selectedCity]) {
             const cityCoords = CITIES[selectedCity];
 
-            // Check if we are already showing this city's data? 
+            // Check if we are already showing this city's data?
             // Simplification: Always fetch for clarity when user explicitly selects
             // Show loading only if we are doing a network request
             // To prevent infinite loop if 'change' event fires strangely, but here it's fine.
@@ -410,18 +410,18 @@ function setupFilters() {
                 // Note: 'distance' values will be from the City Center
             } else {
                 Helpers.showToast(`No hospitals found in ${selectedCity}`, 'warning');
-                // Don't clear old list if failed? Or clear? 
+                // Don't clear old list if failed? Or clear?
                 // Let's fallback to empty
                 allHospitals = [];
             }
         } else if (!selectedCity && userLocation) {
             // If user cleared city, and we have user location, maybe go back to user location?
             // Or if they select "Select a City" (empty value).
-            // But maybe they just want to search local list. 
+            // But maybe they just want to search local list.
             // Complexity: If we were in "City Mode", and they unselect, we should ideally go back to "Auto Location" mode if available
-            // But for now, let's just let client side filtering handle what's in 'allHospitals' 
-            // UNLESS 'allHospitals' is currently a specific city's data. 
-            // To fix this: reload default list if we are clearing city and we are not in auto-location mode? 
+            // But for now, let's just let client side filtering handle what's in 'allHospitals'
+            // UNLESS 'allHospitals' is currently a specific city's data.
+            // To fix this: reload default list if we are clearing city and we are not in auto-location mode?
             // Or just reload auto-location.
             if (searchInput.value === "" && typeFilter.value === "") {
                 // Reloading auto location if available
@@ -455,7 +455,69 @@ function setupFilters() {
         displayHospitals(filtered);
     };
 
+    // ... existing code ...
+
     searchInput.addEventListener('input', Helpers.debounce(applyFilters, 300));
     cityFilter.addEventListener('change', applyFilters); // Now async
     typeFilter.addEventListener('change', applyFilters);
+
+    // Modal Close Logic
+    const modal = document.getElementById('hospital-modal');
+    const closeBtn = document.getElementById('close-hospital-modal');
+
+    if (modal && closeBtn) {
+        const closeModal = () => {
+            modal.classList.add('hidden');
+            document.body.style.overflow = ''; // Restore scrolling
+        };
+
+        closeBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        // Escape key to close
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+    }
+}
+
+function openHospitalModal(hospitalId) {
+    const hospital = allHospitals.find(h => h.id === hospitalId);
+    if (!hospital) return;
+
+    const modal = document.getElementById('hospital-modal');
+    if (!modal) return;
+
+    // Populate Data
+    document.getElementById('modal-hospital-name').textContent = hospital.name;
+    document.getElementById('modal-hospital-address').innerHTML = `<span class="material-icons-outlined text-sm">location_on</span> ${hospital.address}`;
+
+    // Tags
+    const tagsContainer = document.getElementById('modal-tags');
+    tagsContainer.innerHTML = `
+        <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full text-xs font-semibold">${hospital.type}</span>
+        ${hospital.accreditation ? `<span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded-full text-xs font-semibold">${hospital.accreditation}</span>` : ''}
+        ${hospital.telemedicine ? `<span class="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 rounded-full text-xs font-semibold"><span class="material-icons-outlined text-xs align-middle">video_call</span> Telemedicine</span>` : ''}
+    `;
+
+    // Resources
+    document.getElementById('modal-total-beds').textContent = hospital.beds.total;
+    document.getElementById('modal-avail-beds').textContent = hospital.beds.available;
+    document.getElementById('modal-icu-beds').textContent = hospital.beds.icuAvailable; // Showing available ICU
+    document.getElementById('modal-ventilators').textContent = hospital.resources.ventilatorsAvailable;
+
+    // Buttons
+    const mapLink = document.getElementById('modal-map-link');
+    mapLink.href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(hospital.name + " " + hospital.address)}`;
+
+    const callBtn = document.getElementById('modal-call-btn');
+    callBtn.onclick = () => window.open(`tel:${hospital.contact.phone}`);
+
+    // Show Modal
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
 }
