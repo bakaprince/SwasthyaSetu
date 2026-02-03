@@ -78,17 +78,20 @@
         </button>
 
         <!-- Mobile Menu Overlay -->
-        <div id="mobile-menu" class="absolute top-full left-0 w-full bg-secondary border-t border-white/10 shadow-xl hidden md:hidden flex-col p-4 space-y-4 animate-fade-in-down z-50">
-            <a class="hover:text-primary transition-colors text-primary block py-2 border-b border-white/5" href="#">Home</a>
-            <a class="hover:text-primary transition-colors block py-2 border-b border-white/5" href="pages/about.html">About Mission</a>
-            <a class="nav-auth-link hover:text-primary transition-colors hidden block py-2 border-b border-white/5" href="pages/hospitals.html"
-                data-auth-required="true">Hospitals</a>
-            <a class="nav-auth-link hover:text-primary transition-colors hidden block py-2 border-b border-white/5" href="pages/resources.html"
-                data-auth-required="true">Resources</a>
+        <div id="mobile-menu"
+            class="absolute top-full left-0 w-full bg-secondary border-t border-white/10 shadow-xl hidden md:hidden flex-col p-4 space-y-4 animate-fade-in-down z-50">
+            <a class="hover:text-primary transition-colors text-primary block py-2 border-b border-white/5"
+                href="#">Home</a>
+            <a class="hover:text-primary transition-colors block py-2 border-b border-white/5"
+                href="pages/about.html">About Mission</a>
+            <a class="nav-auth-link hover:text-primary transition-colors hidden block py-2 border-b border-white/5"
+                href="pages/hospitals.html" data-auth-required="true">Hospitals</a>
+            <a class="nav-auth-link hover:text-primary transition-colors hidden block py-2 border-b border-white/5"
+                href="pages/resources.html" data-auth-required="true">Resources</a>
             <a class="hover:text-primary transition-colors block py-2" href="pages/help.html">Help Desk</a>
         </div>
         <button id="emergency-btn"
-            class="bg-primary text-secondary font-bold py-2 px-6 rounded-full hover:bg-white transition-colors duration-300 text-sm">
+            class="bg-primary text-secondary font-bold py-1.5 px-3 md:py-2 md:px-6 rounded-full hover:bg-white transition-colors duration-300 text-xs md:text-sm">
             Emergency Access
         </button>
     </nav>
@@ -645,11 +648,11 @@
             </div>
 
             <div class="space-y-3">
-                <button
-                    class="w-full flex items-center justify-center gap-3 bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-red-500/30 group">
+                <a href="tel:108"
+                    class="w-full flex items-center justify-center gap-3 bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-red-500/30 group no-underline">
                     <span class="material-icons-outlined text-2xl group-hover:animate-bounce">airport_shuttle</span>
                     <span class="text-lg whitespace-nowrap">Get an Ambulance</span>
-                </button>
+                </a>
             </div>
 
             <div class="mt-6 text-center">
