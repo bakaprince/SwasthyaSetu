@@ -104,6 +104,12 @@ const APIService = {
             method: 'POST',
             body: appointmentData
         });
+    },
+
+    async getMedicalRecords() {
+        // Placeholder for now as backend endpoint might not be ready
+        // Returning empty list to prevent crash
+        return { success: true, data: [] };
     }
 };
 
