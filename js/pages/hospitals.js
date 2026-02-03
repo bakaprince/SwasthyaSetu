@@ -499,8 +499,12 @@ function setupFilters() {
 }
 
 function openHospitalModal(hospitalId) {
-    const hospital = allHospitals.find(h => h.id === hospitalId);
-    if (!hospital) return;
+    // Loose equality '==' is intentional to handle string (dataset) vs number (API) IDs
+    const hospital = allHospitals.find(h => h.id == hospitalId);
+    if (!hospital) {
+        console.error("Hospital not found for ID:", hospitalId);
+        return;
+    }
 
     const modal = document.getElementById('hospital-modal');
     if (!modal) return;
