@@ -369,7 +369,7 @@ function displayHospitals(hospitals) {
                     </a>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="openHospitalModal('${hospital.id}')" class="px-4 py-2 bg-secondary text-white rounded-lg text-sm font-semibold hover:bg-secondary-light transition-colors">
+                    <button class="view-details-btn px-4 py-2 bg-secondary text-white rounded-lg text-sm font-semibold hover:bg-secondary-light transition-colors" data-id="${hospital.id}">
                         View Details
                     </button>
                     <a href="book-appointment.html" class="px-4 py-2 bg-primary text-secondary rounded-lg text-sm font-semibold hover:bg-green-400 transition-colors">
@@ -483,6 +483,19 @@ function setupFilters() {
             }
         });
     }
+
+    // Event Delegation for View Details
+    const listContainer = document.getElementById('hospitals-list');
+    if (listContainer) {
+        listContainer.addEventListener('click', (e) => {
+            const btn = e.target.closest('.view-details-btn');
+            if (btn) {
+                const hospitalId = btn.dataset.id;
+                console.log('View Details Clicked:', hospitalId); // Debug log
+                openHospitalModal(hospitalId);
+            }
+        });
+    }
 }
 
 function openHospitalModal(hospitalId) {
@@ -523,4 +536,4 @@ function openHospitalModal(hospitalId) {
 }
 
 // Ensure global access for HTML onclick
-window.openHospitalModal = openHospitalModal;
+// window.openHospitalModal = openHospitalModal; // Deprecated in favor of event delegation
