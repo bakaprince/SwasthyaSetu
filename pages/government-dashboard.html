@@ -274,16 +274,22 @@
                 <!-- Charts Section -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Outcome Chart -->
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                    <div
+                        class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 h-96 relative">
                         <h3 class="text-lg font-bold text-secondary dark:text-white mb-4">National Disease Outcomes
                             (Live API + Estimates)</h3>
-                        <canvas id="outcomeChart"></canvas>
+                        <div class="h-[calc(100%-2rem)] w-full">
+                            <canvas id="outcomeChart"></canvas>
+                        </div>
                     </div>
 
                     <!-- Hospital Performance Chart -->
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                    <div
+                        class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 h-96 relative">
                         <h3 class="text-lg font-bold text-secondary dark:text-white mb-4">Hospital Service Ratings</h3>
-                        <canvas id="performanceChart"></canvas>
+                        <div class="h-[calc(100%-2rem)] w-full">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
                     </div>
                 </div>
 
