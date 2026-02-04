@@ -145,25 +145,59 @@ const GovAnalytics = {
 
     // --- CHART.JS ---
     initCharts() {
-        const commonOptions = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'top' } }
-        };
-
-        // 1. Outcome Chart (Grouped Bar)
+        // 1. Outcome Chart (Horizontal Grouped Bar)
         const ctxOutcome = document.getElementById('outcomeChart').getContext('2d');
         this.charts.outcome = new Chart(ctxOutcome, {
             type: 'bar',
             data: {
-                labels: ['COVID-19', 'Dengue', 'Malaria', 'Tuberculosis', 'Influenza', 'Jaundice', 'Typhoid'],
+                labels: ['COVID-19', 'Dengue', 'Malaria', 'Typhoid', 'Jaundice', 'Hepatitis'],
                 datasets: [
-                    { label: 'Active', data: [0, 890, 450, 320, 670, 210, 180], backgroundColor: '#F59E0B' },
-                    { label: 'Recovered', data: [0, 3200, 2100, 1500, 4500, 900, 1200], backgroundColor: '#10B981' },
-                    { label: 'Deceased', data: [0, 45, 12, 68, 23, 5, 8], backgroundColor: '#EF4444' }
+                    {
+                        label: 'Active Cases',
+                        data: [0, 4500, 3200, 2100, 1800, 950], // Initial realistic data 
+                        backgroundColor: '#F59E0B',
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.8
+                    },
+                    {
+                        label: 'Recovered',
+                        data: [0, 12000, 8500, 6700, 5400, 3200],
+                        backgroundColor: '#10B981',
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.8
+                    },
+                    {
+                        label: 'Deceased',
+                        data: [0, 120, 85, 45, 30, 25],
+                        backgroundColor: '#EF4444',
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.8
+                    }
                 ]
             },
-            options: commonOptions
+            options: {
+                indexAxis: 'y', // Horizontal Bar Chart
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: { color: '#f3f4f6' },
+                        title: { display: true, text: 'Number of Patients' }
+                    },
+                    y: {
+                        grid: { display: false },
+                        title: { display: true, text: 'Disease' }
+                    }
+                }
+            }
         });
 
         // 2. Performance Chart (Scatter)
