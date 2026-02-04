@@ -154,21 +154,21 @@ const GovAnalytics = {
                 datasets: [
                     {
                         label: 'Active Cases',
-                        data: [0, 4500, 3200, 2100, 1800, 950], // Initial realistic data 
+                        data: [0, 450000, 320000, 210000, 180000, 95000], // Realistic National Stats
                         backgroundColor: '#F59E0B',
                         barPercentage: 0.7,
                         categoryPercentage: 0.8
                     },
                     {
                         label: 'Recovered',
-                        data: [0, 12000, 8500, 6700, 5400, 3200],
+                        data: [0, 1200000, 850000, 670000, 540000, 320000],
                         backgroundColor: '#10B981',
                         barPercentage: 0.7,
                         categoryPercentage: 0.8
                     },
                     {
                         label: 'Deceased',
-                        data: [0, 120, 85, 45, 30, 25],
+                        data: [0, 12000, 8500, 4500, 3000, 2500],
                         backgroundColor: '#EF4444',
                         barPercentage: 0.7,
                         categoryPercentage: 0.8
@@ -188,9 +188,19 @@ const GovAnalytics = {
                 },
                 scales: {
                     x: {
-                        beginAtZero: true,
+                        type: 'logarithmic', // Log scale to handle COVID vs Others disparity
+                        min: 1000, // Minimum value to prevent 0 issues
                         grid: { color: '#f3f4f6' },
-                        title: { display: true, text: 'Number of Patients' }
+                        title: { display: true, text: 'Number of Patients (Log Scale)' },
+                        ticks: {
+                            callback: function (value, index, values) {
+                                if (value === 1000000) return '1M';
+                                if (value === 100000) return '100k';
+                                if (value === 10000) return '10k';
+                                if (value === 1000) return '1k';
+                                return null;
+                            }
+                        }
                     },
                     y: {
                         grid: { display: false },
@@ -241,9 +251,22 @@ const GovAnalytics = {
                 plugins: {
                     legend: { position: 'top' },
                     tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        backgroundColor: 'rgba(17, 56, 65, 0.9)', // Secondary dark color
+                        titleFont: { size: 13, weight: 'bold' },
+                        bodyFont: { size: 12 },
+                        padding: 10,
+                        cornerRadius: 8,
+                        displayColors: true,
                         callbacks: {
-                            label: (ctx) => `${ctx.raw.name}: ${ctx.raw.y}★ (${ctx.raw.x} Reviews)`
+                            // Use the Hospital Name as the Header/Title of the tooltip
+                            title: function (context) {
+                                return context[0].raw.name;
+                            },
+                            // Custom label for the body
+                            label: function (context) {
+                                const pt = context.raw;
+                                return `${context.dataset.label}: ${pt.y}★ (${pt.x} Reviews)`;
+                            }
                         }
                     }
                 },
