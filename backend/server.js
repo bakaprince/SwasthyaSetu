@@ -64,6 +64,10 @@ if (process.env.NODE_ENV === 'development') {
     app.use(morgan('combined'));
 }
 
+
+// Static file serving for uploads
+app.use('/uploads', express.static('uploads'));
+
 // API Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/appointments', require('./routes/appointments'));

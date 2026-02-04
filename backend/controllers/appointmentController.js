@@ -231,7 +231,14 @@ const updateAppointment = async (req, res, next) => {
  */
 const uploadDocument = async (req, res, next) => {
     try {
-        const { type, notes, url } = req.body; // In real app, url comes from file upload service
+        const { type, notes } = req.body;
+        let fileUrl = req.body.url;
+
+        if (req.file) {
+            // Store relative path. Frontend/Backend will prepend host if needed.
+            // Using /uploads/reports/filename
+            fileUrl = `/uploads/reports/${req.file.filename}`;
+        }
 
         let appointment = await Appointment.findById(req.params.id);
 
@@ -244,14 +251,22 @@ const uploadDocument = async (req, res, next) => {
             return res.status(403).json({ success: false, message: 'Not authorized' });
         }
 
+        if (!fileUrl) {
+            return res.status(400).json({ success: false, message: 'No file or URL provided' });
+        }
+
         const newDoc = {
             type: type || 'prescription',
-            url: url || 'https://via.placeholder.com/150', // Default if not provided
+            url: fileUrl,
             notes: notes || '',
-            uploadedBy: req.user.id
+            uploadedBy: req.user.id,
+            uploadedAt: Date.now()
         };
 
         appointment.documents.push(newDoc);
+
+        // Also update status if needed? Maybe not.
+
         await appointment.save();
 
         res.json({

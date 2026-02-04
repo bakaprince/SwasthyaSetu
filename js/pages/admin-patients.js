@@ -237,9 +237,10 @@ const AdminPatients = {
                                             <option value="report">Lab Report</option>
                                         </select>
                                         <button id="upload-doc-btn" class="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-sm">
-                                            Upload File (Simulated)
+                                            Upload File
                                         </button>
                                     </div>
+                                    <input type="file" id="doc-file-input" class="mt-2 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
                                 </div>
                             </div>
                         </div>
@@ -312,20 +313,41 @@ const AdminPatients = {
                 ? 'http://localhost:5000/api'
                 : 'https://swasthyasetu-9y5l.onrender.com/api';
 
-            await fetch(`${apiBaseUrl}/appointments/${id}/documents`, {
+            const fileInput = document.getElementById('doc-file-input');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                Helpers.showToast('Please select a file to upload', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('type', type);
+            formData.append('notes', 'Uploaded via Admin Dashboard');
+
+            const response = await fetch(`${apiBaseUrl}/appointments/${id}/documents`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
+                    // Content-Type is auto-set with FormData
                 },
-                body: JSON.stringify({
-                    type: type,
-                    notes: `Uploaded via Admin Dashboard`,
-                    url: `https://via.placeholder.com/300?text=${type.toUpperCase()}` // Simulated URL
-                })
+                body: formData
             });
+
+            const data = await response.json();
+
+            if (data.success) {
+                Helpers.showToast('Document uploaded successfully!', 'success');
+                this.closeModal();
+                this.fetchPatients();
+            } else {
+                throw new Error(data.message || 'Upload failed');
+            }
+
         } catch (error) {
             console.error(error);
+            Helpers.showToast(error.message || 'Failed to upload document', 'error');
         }
     },
 
