@@ -19,6 +19,11 @@ document.addEventListener('DOMContentLoaded', function () {
         HealthAlertService.init();
     }
 
+    // Initialize Chatbot
+    if (typeof Chatbot !== 'undefined') {
+        new Chatbot();
+    }
+
     // Add smooth scroll behavior to all anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {

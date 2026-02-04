@@ -254,7 +254,9 @@
                 return;
             }
 
-            container.innerHTML = appointments.map(apt => `
+            container.innerHTML = appointments.map(apt => {
+                const hasDocs = apt.documents && apt.documents.length > 0;
+                return `
                 <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
@@ -267,6 +269,11 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
+                        ${hasDocs ?
+                        `<button onclick="openDocsModal('${apt._id}')" class="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg text-xs font-semibold hover:bg-purple-200">
+                                View Docs
+                            </button>` : ''
+                    }
                         <span class="px-3 py-1 rounded-full text-xs font-semibold ${apt.status === 'confirmed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">
                             ${apt.status}
                         </span>
@@ -275,7 +282,7 @@
                         </span>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         function displayRecords(records) {
@@ -309,6 +316,64 @@
 
     <!-- Booking Wizard Modal -->
 
+    <!-- Docs Modal -->
+    <div id="docs-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-black/50" onclick="closeDocsModal()"></div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md z-10 mx-4 relative shadow-xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Medical Documents</h3>
+                <button onclick="closeDocsModal()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400">
+                    <span class="material-icons-outlined">close</span>
+                </button>
+            </div>
+            <ul id="patient-docs-list" class="space-y-3 max-h-60 overflow-y-auto pr-2">
+                <!-- Docs go here -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function openDocsModal(aptId) {
+            // Re-fetch to be safe and simple
+            APIService.getAppointments().then(res => {
+                if (res.success) {
+                    const apt = res.data.find(a => a._id === aptId);
+                    if (!apt) return;
+
+                    const list = document.getElementById('patient-docs-list');
+                    list.innerHTML = '';
+
+                    if (!apt.documents || apt.documents.length === 0) {
+                        list.innerHTML = '<li class="text-gray-500 text-sm">No documents found.</li>';
+                    } else {
+                        apt.documents.forEach(doc => {
+                            const li = document.createElement('li');
+                            li.className = 'flex items-center justify-between text-sm p-3 bg-gray-50 dark:bg-gray-700 rounded-lg';
+                            li.innerHTML = `
+                                <div class="flex items-center gap-3">
+                                    <span class="material-icons-outlined text-purple-500">description</span>
+                                    <div>
+                                        <p class="font-medium dark:text-white capitalize">${doc.type}</p>
+                                        <p class="text-xs text-gray-500">${new Date(doc.uploadedAt).toLocaleDateString()}</p>
+                                    </div>
+                                </div>
+                                <a href="${doc.url}" target="_blank" class="text-primary hover:underline text-sm font-medium flex items-center gap-1">
+                                    <span>Download</span>
+                                    <span class="material-icons-outlined text-sm">open_in_new</span>
+                                </a>
+                            `;
+                            list.appendChild(li);
+                        });
+                    }
+                    document.getElementById('docs-modal').classList.remove('hidden');
+                }
+            });
+        }
+
+        function closeDocsModal() {
+            document.getElementById('docs-modal').classList.add('hidden');
+        }
+    </script>
 </body>
 
 </html>

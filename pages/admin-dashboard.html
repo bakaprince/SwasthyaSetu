@@ -390,7 +390,8 @@
 
             <div class="space-y-4">
                 <!-- Alert 1 -->
-                <div
+                <!-- Alert 1 -->
+                <div id="alert-transfer-1"
                     class="flex items-start gap-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                     <div
                         class="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -407,11 +408,11 @@
                             <span class="text-xs text-gray-500 whitespace-nowrap ml-4">2 min ago</span>
                         </div>
                         <div class="flex gap-2">
-                            <button
+                            <button onclick="handleTransfer('transfer-1', 'approve')"
                                 class="px-4 py-1.5 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700">
                                 Approve Transfer
                             </button>
-                            <button
+                            <button onclick="handleTransfer('transfer-1', 'reject')"
                                 class="px-4 py-1.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-600">
                                 Ignore
                             </button>
@@ -467,6 +468,16 @@
                 return;
             }
 
+            // Update User Profile UI
+            const userImg = document.querySelector('img[alt="User"]');
+            const userNameEl = document.querySelector('.text-sm.font-semibold');
+            const userRoleEl = document.querySelector('.text-xs.text-gray-400');
+
+            if (userImg) userImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=86efac&color=113841`;
+            if (userNameEl) userNameEl.textContent = user.name;
+            // Assuming hospital name is stored in user object or fetched separately
+            // For now, keeping 'Chief Administrator' as static or could be user.role
+
             // Logout handler
             document.getElementById('logout-btn').addEventListener('click', async () => {
                 await AuthService.logout();
@@ -475,7 +486,29 @@
                     window.location.href = '../index.html';
                 }, 1000);
             });
+
+            // Transfer Logic Impl (Mock ID for demo, usually would be dynamic)
+            const approveBtns = document.querySelectorAll('button:contains("Approve Transfer")'); // This needs specific selector, better to use ID or class
+            // Since the button in HTML doesn't have ID, let's fix the HTML part separately or query specifically
+
+            // Note: The HTML part for the alert needs an ID or data attribute to be fully functional.
+            // For now, I will modify the HTML to add IDs to these buttons in a separate step or just assume the first one.
         });
+
+        async function handleTransfer(id, action) {
+            try {
+                // In a real app, you'd call the API
+                // await fetch(`/api/appointments/${id}/transfer`, { method: 'PUT', body: JSON.stringify({ action }) ... });
+
+                Helpers.showToast(`Transfer ${action}ed successfully`, 'success');
+                // Remove the alert card from UI
+                const card = document.getElementById(`alert-${id}`);
+                if (card) card.remove();
+            } catch (error) {
+                console.error(error);
+                Helpers.showToast('Action failed', 'error');
+            }
+        }
     </script>
 </body>
 

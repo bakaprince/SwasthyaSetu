@@ -176,7 +176,7 @@ const createAppointment = async (req, res, next) => {
  */
 const updateAppointment = async (req, res, next) => {
     try {
-        const { status, notes } = req.body;
+        const { status, notes, transferStatus } = req.body;
 
         let appointment = await Appointment.findById(req.params.id);
 
@@ -199,7 +199,11 @@ const updateAppointment = async (req, res, next) => {
         appointment.status = status || appointment.status;
         appointment.notes = notes || appointment.notes;
 
-        if (status === 'confirmed') {
+        if (transferStatus) {
+            appointment.transferStatus = transferStatus;
+        }
+
+        if (status === 'confirmed' && appointment.status !== 'confirmed') {
             appointment.confirmedBy = req.user.id;
             appointment.confirmedAt = Date.now();
         }
@@ -207,7 +211,7 @@ const updateAppointment = async (req, res, next) => {
         await appointment.save();
 
         // Populate details
-        await appointment.populate('userId', 'name abhaId mobile');
+        await appointment.populate('userId', 'name abhaId mobile age gender');
         await appointment.populate('hospitalId', 'name city');
 
         res.json({
@@ -221,10 +225,81 @@ const updateAppointment = async (req, res, next) => {
 };
 
 /**
- * @desc    Cancel appointment
- * @route   DELETE /api/appointments/:id
- * @access  Private
+ * @desc    Upload document to appointment
+ * @route   POST /api/appointments/:id/documents
+ * @access  Private (Admin)
  */
+const uploadDocument = async (req, res, next) => {
+    try {
+        const { type, notes, url } = req.body; // In real app, url comes from file upload service
+
+        let appointment = await Appointment.findById(req.params.id);
+
+        if (!appointment) {
+            return res.status(404).json({ success: false, message: 'Appointment not found' });
+        }
+
+        // Validation (admin only currently)
+        if (req.user.role !== 'admin' || appointment.hospitalId.toString() !== req.user.hospitalId.toString()) {
+            return res.status(403).json({ success: false, message: 'Not authorized' });
+        }
+
+        const newDoc = {
+            type: type || 'prescription',
+            url: url || 'https://via.placeholder.com/150', // Default if not provided
+            notes: notes || '',
+            uploadedBy: req.user.id
+        };
+
+        appointment.documents.push(newDoc);
+        await appointment.save();
+
+        res.json({
+            success: true,
+            message: 'Document uploaded successfully',
+            data: appointment.documents
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * @desc    Handle Transfer (Approve/Reject)
+ * @route   PUT /api/appointments/:id/transfer
+ * @access  Private (Admin)
+ */
+const handleTransfer = async (req, res, next) => {
+    try {
+        const { action } = req.body; // 'approve' or 'reject'
+
+        let appointment = await Appointment.findById(req.params.id);
+
+        if (!appointment) {
+            return res.status(404).json({ success: false, message: 'Appointment not found' });
+        }
+
+        if (action === 'approve') {
+            appointment.transferStatus = 'approved';
+            appointment.notes = (appointment.notes || '') + ' [Transfer Approved]';
+        } else if (action === 'reject') {
+            appointment.transferStatus = 'rejected';
+        }
+
+        await appointment.save();
+
+        res.json({
+            success: true,
+            message: `Transfer ${action}d successfully`,
+            data: appointment
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
 const cancelAppointment = async (req, res, next) => {
     try {
         const appointment = await Appointment.findById(req.params.id);
@@ -262,5 +337,7 @@ module.exports = {
     getHospitalAppointments,
     createAppointment,
     updateAppointment,
-    cancelAppointment
+    cancelAppointment,
+    uploadDocument,
+    handleTransfer
 };

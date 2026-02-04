@@ -56,6 +56,21 @@ const appointmentSchema = new mongoose.Schema({
     },
     confirmedAt: {
         type: Date
+    },
+    documents: [{
+        type: { type: String, enum: ['prescription', 'diagnosis', 'report', 'other'], default: 'prescription' },
+        url: String, // In a real app, this would be a file path/URL. For simulation, base64 or placeholder.
+        notes: String,
+        uploadedAt: { type: Date, default: Date.now },
+        uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+    }],
+    transferStatus: {
+        type: String,
+        enum: ['none', 'pending', 'approved', 'rejected'],
+        default: 'none'
+    },
+    transferToHospital: {
+        type: String // Hospital ID requesting transfer or destination
     }
 }, {
     timestamps: true
