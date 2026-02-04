@@ -8,7 +8,7 @@ dotenv.config(); // Current dir
 dotenv.config({ path: path.join(__dirname, '../.env') }); // Backend root
 dotenv.config({ path: path.join(__dirname, '../../.env') }); // Project root
 
-const MONGO_URI = process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/swasthya_setu';
+const MONGO_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/swasthya_setu';
 
 const cities = [
     { name: 'New Delhi', state: 'Delhi', lat: 28.6139, lng: 77.2090 },
