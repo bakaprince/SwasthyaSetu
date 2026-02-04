@@ -112,36 +112,37 @@ const getCrisisAlerts = async (req, res, next) => {
  */
 const getHospitalPerformance = async (req, res, next) => {
     try {
-        // Simulated Performance Data (since we don't have a full Feedback model populated yet)
-        // In a real app, this would aggregate from a Feedback collection.
+        // Mocking rich data for Scatter Plot (Rating vs Reviews)
+        // Types: Government, Private, Trust
+        const hospitalTypes = ['Government', 'Private', 'Trust'];
+        const states = ['Delhi', 'Maharashtra', 'Karnataka', 'Tamil Nadu', 'West Bengal', 'Gujarat', 'Rajasthan', 'UP', 'Kerala'];
 
-        // Let's get actual hospital count
-        const totalHospitals = await Hospital.countDocuments();
+        const hospitals = [];
 
-        // Mock some aggregated data for charts
-        const performanceData = {
-            ratings: {
-                '5_star': 45,
-                '4_star': 30,
-                '3_star': 15,
-                '2_star': 8,
-                '1_star': 2
-            },
-            topPerforming: [
-                { name: 'AIIMS Delhi', rating: 4.9, reviews: 1240 },
-                { name: 'Apollo Chennai', rating: 4.8, reviews: 980 },
-                { name: 'Fortis Mumbai', rating: 4.7, reviews: 850 }
-            ],
-            needingAttention: [
-                { name: 'City General Hospital', rating: 2.1, issues: 'Hygiene, Wait Times' },
-                { name: 'District Hospital Agra', rating: 2.3, issues: 'Staff Shortage' }
-            ]
-        };
+        // Generate 60 diverse hospitals
+        for (let i = 1; i <= 60; i++) {
+            const type = hospitalTypes[Math.floor(Math.random() * hospitalTypes.length)];
+            const state = states[Math.floor(Math.random() * states.length)];
+
+            // Bias ratings based on type for realism (but keep it varied)
+            let ratingBase = type === 'Private' ? 3.5 : (type === 'Government' ? 3.0 : 3.8);
+            let rating = (ratingBase + (Math.random() * 1.5)).toFixed(1);
+            if (rating > 5) rating = 5.0;
+
+            hospitals.push({
+                name: `${type === 'Government' ? 'Govt. Hospital' : (type === 'Private' ? 'Apollo/Fortis' : 'Charitable Trust')} ${state} #${i}`,
+                state: state,
+                type: type,
+                rating: parseFloat(rating),
+                reviews: Math.floor(Math.random() * 2000) + 50,
+                color: type === 'Government' ? '#10B981' : (type === 'Private' ? '#3B82F6' : '#F59E0B') // Green, Blue, Orange
+            });
+        }
 
         res.json({
             success: true,
-            totalHospitals,
-            data: performanceData
+            totalHospitals: hospitals.length,
+            data: hospitals
         });
     } catch (error) {
         next(error);
@@ -149,36 +150,31 @@ const getHospitalPerformance = async (req, res, next) => {
 };
 
 /**
- * @desc    Get Casualties vs Recoveries Stats
+ * @desc    Get Casualties vs Recoveries Stats PER DISEASE
  * @route   GET /api/analytics/outcomes
  */
 const getOutcomeStats = async (req, res, next) => {
     try {
-        const stats = await PublicHealthLog.aggregate([
-            {
-                $group: {
-                    _id: "$status",
-                    count: { $sum: 1 }
-                }
+        // Fallback/Simulated Data for Disease Bar Chart
+        // Grouped by Disease: Active, Recovered, Deceased
+        const diseaseStats = {
+            labels: ['COVID-19', 'Dengue', 'Malaria', 'Tuberculosis', 'Influenza', 'Jaundice', 'Typhoid'],
+            datasets: {
+                active: [1240, 890, 450, 320, 670, 210, 180],
+                recovered: [8500, 3200, 2100, 1500, 4500, 900, 1200],
+                deceased: [142, 45, 12, 68, 23, 5, 8]
             }
-        ]);
-
-        // Transform to readable object
-        const outcomes = {
-            active: 0,
-            recovered: 0,
-            deceased: 0
         };
 
-        stats.forEach(s => {
-            if (outcomes[s._id] !== undefined) {
-                outcomes[s._id] = s.count;
-            }
-        });
+        // Try to fetch real aggregation if DB works
+        /*
+        const realData = await PublicHealthLog.aggregate([...]);
+        if (realData.length > 0) { ...transform logic... }
+        */
 
         res.json({
             success: true,
-            data: outcomes
+            data: diseaseStats
         });
     } catch (error) {
         next(error);

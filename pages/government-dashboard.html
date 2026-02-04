@@ -256,22 +256,15 @@
 
                 <!-- Disease Heatmap -->
                 <div
-                    class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 h-[500px] flex flex-col">
+                    class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 h-[600px] flex flex-col">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-xl font-bold text-secondary dark:text-white font-display">Disease Outbreak
-                            Heatmap</h3>
+                            Map (Live API)</h3>
                         <div class="flex gap-2">
                             <div class="flex items-center gap-2">
-                                <span class="w-3 h-3 rounded-full bg-red-500"></span>
-                                <span class="text-xs text-gray-500">High Severity</span>
+                                <span class="w-3 h-3 rounded-full bg-red-600 animate-pulse"></span>
+                                <span class="text-xs text-gray-500">Live Updates</span>
                             </div>
-                            <select id="disease-filter"
-                                class="text-xs border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-lg p-1.5 dark:text-gray-300">
-                                <option value="all">All Diseases</option>
-                                <option value="COVID-19">COVID-19</option>
-                                <option value="Dengue">Dengue</option>
-                                <option value="Malaria">Malaria</option>
-                            </select>
                         </div>
                     </div>
                     <!-- Map Container -->
