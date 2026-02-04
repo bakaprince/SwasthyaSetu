@@ -41,12 +41,15 @@ const getDiseaseMap = async (req, res, next) => {
         console.warn('Analytics DB Error, serving fallback data:', error.message);
         // Fallback Data for robustness
         const fallbackData = [
-            { city: 'Mumbai', lat: 19.0760, lng: 72.8777, disease: 'COVID-19', count: 145 },
-            { city: 'New Delhi', lat: 28.6139, lng: 77.2090, disease: 'Dengue', count: 89 },
-            { city: 'Chennai', lat: 13.0827, lng: 80.2707, disease: 'Influenza', count: 67 },
+            { city: 'Mumbai', lat: 19.0760, lng: 72.8777, disease: 'COVID-19', count: 185 }, // Severe
+            { city: 'New Delhi', lat: 28.6139, lng: 77.2090, disease: 'Dengue', count: 92 },
+            { city: 'Chennai', lat: 13.0827, lng: 80.2707, disease: 'Jaundice', count: 67 },
             { city: 'Bengaluru', lat: 12.9716, lng: 77.5946, disease: 'COVID-19', count: 45 },
-            { city: 'Kolkata', lat: 22.5726, lng: 88.3639, disease: 'Malaria', count: 112 },
-            { city: 'Pune', lat: 18.5204, lng: 73.8567, disease: 'COVID-19', count: 34 }
+            { city: 'Kolkata', lat: 22.5726, lng: 88.3639, disease: 'Malaria', count: 112 }, // Severe
+            { city: 'Pune', lat: 18.5204, lng: 73.8567, disease: 'COVID-19', count: 34 },
+            { city: 'Hyderabad', lat: 17.3850, lng: 78.4867, disease: 'Dengue', count: 56 },
+            { city: 'Ahmedabad', lat: 23.0225, lng: 72.5714, disease: 'Jaundice', count: 28 },
+            { city: 'Jaipur', lat: 26.9124, lng: 75.7873, disease: 'Malaria', count: 14 }
         ];
         res.json({ success: true, data: fallbackData });
     }

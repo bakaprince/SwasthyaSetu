@@ -32,8 +32,16 @@ const GovAnalytics = {
 
     // --- LEAFLET MAP ---
     initMap() {
-        // Center on India
-        this.map = L.map('india-map').setView([20.5937, 78.9629], 5);
+        // Center on India with constrained bounds
+        const southWest = L.latLng(5.0, 60.0);
+        const northEast = L.latLng(40.0, 100.0);
+        const bounds = L.latLngBounds(southWest, northEast);
+
+        this.map = L.map('india-map', {
+            maxBounds: bounds,
+            maxBoundsViscosity: 1.0,
+            minZoom: 4
+        }).setView([22.5937, 78.9629], 5);
 
         // Dark Mode Tile Layer
         const isDark = document.documentElement.classList.contains('dark');
@@ -42,8 +50,8 @@ const GovAnalytics = {
             : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
         L.tileLayer(tileUrl, {
-            attribution: '&copy; OpenStreetMap &copy; CARTO',
-            maxZoom: 19
+            attribution: '&copy; CARTO',
+            maxZoom: 10
         }).addTo(this.map);
     },
 
