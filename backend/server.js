@@ -73,6 +73,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/appointments', require('./routes/appointments'));
 app.use('/api/hospitals', require('./routes/hospitals'));
 app.use('/api/profile', require('./routes/profile'));
+app.use('/api/analytics', require('./routes/analytics')); // New Analytics Route
 app.use('/api/health', require('./routes/health'));
 
 // Health check route
