@@ -318,7 +318,21 @@ class Chatbot {
                 }
             );
 
+            // Check if response is OK
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('API Response Error:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    body: errorText
+                });
+                throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+            }
+
             const data = await response.json();
+
+            // Log API response for debugging
+            console.log('Gemini API Response:', data);
 
             this.hideTypingIndicator();
 
@@ -335,14 +349,42 @@ class Chatbot {
                 }
 
                 this.addBotMessage(aiResponse);
+            } else if (data.error) {
+                // API returned an error
+                console.error('API Error Response:', data.error);
+                throw new Error(data.error.message || 'API returned an error');
             } else {
+                // Unexpected response format
+                console.error('Unexpected API response format:', data);
                 throw new Error('Invalid response from AI');
             }
         } catch (error) {
             console.error('Gemini API Error:', error);
             this.hideTypingIndicator();
-            this.addBotMessage('Sorry, I encountered an error. Please try again or contact support.');
+
+            // Provide more specific error messages
+            let errorMessage = 'Sorry, I encountered an error. ';
+
+            if (error.message && error.message.includes('fetch')) {
+                errorMessage += 'Network connection issue. Please check your internet connection.';
+            } else if (error.message && error.message.includes('API key')) {
+                errorMessage += 'API key issue. Please verify your Gemini API key is correct.';
+            } else if (error.message && error.message.includes('quota')) {
+                errorMessage += 'API quota exceeded. Please try again later.';
+            } else {
+                errorMessage += 'Please try again or contact support.';
+            }
+
+            // Log detailed error for debugging
+            console.error('Error details:', {
+                message: error.message,
+                stack: error.stack,
+                apiKey: window.GeminiConfig?.apiKey ? 'Set (starts with: ' + window.GeminiConfig.apiKey.substring(0, 10) + '...)' : 'Not set'
+            });
+
+            this.addBotMessage(errorMessage);
         }
+
     }
 
     showTypingIndicator() {
