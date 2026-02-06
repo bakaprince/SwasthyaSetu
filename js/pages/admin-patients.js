@@ -1,545 +1,593 @@
 /**
- * Admin Patients Page Script
- * Handles fetching patient data, displaying the list, and managing the details modal.
+ * @fileoverview Admin Patients Page Controller
+ * Manages the patient appointment list view for hospital administrators
+ * Displays all appointments, allows viewing details, updating status, and uploading documents
+ * 
+ * @module pages/admin/AdminPatients
+ * @author SwasthyaSetu Team
+ * @version 2.0.0 (Refactored for modularity)
+ * 
+ * @requires services/AuthService
+ * @requires services/AppointmentService
+ * @requires utils/Helpers
+ * @requires utils/Formatters
+ * @requires components/modal/PatientDetailsModal
  */
 
+/**
+ * Admin Patients Page Module
+ * Singleton pattern for managing patient appointments view
+ */
 const AdminPatients = {
+    /**
+     * Internal state object
+     * @private
+     */
     state: {
+        /** @type {Array} All loaded appointments */
         appointments: [],
-        currentAppointment: null
+
+        /** @type {Object|null} Currently selected appointment */
+        currentAppointment: null,
+
+        /** @type {boolean} Loading state */
+        isLoading: false,
+
+        /** @type {string|null} Current filter */
+        filter: null
     },
 
-    async init() {
-        console.log('Initializing Admin Patients...');
+    /**
+     * Patient Details Modal instance
+     * @private
+     * @type {PatientDetailsModal|null}
+     */
+    modal: null,
 
-        // 1. Create Modal HTML if needed
-        if (!document.getElementById('patient-modal')) {
-            console.log('Creating modal...');
-            this.createModalHTML();
+    /**
+     * Initialize the admin patients page
+     * Sets up modal, event listeners, and loads initial data
+     * 
+     * @public
+     * @returns {Promise<void>}
+     * @example
+     * await AdminPatients.init();
+     */
+    async init() {
+        console.log('[AdminPatients] Initializing...');
+
+        try {
+            // 1. Create modal instance
+            this.createModal();
+
+            // 2. Setup event listeners
+            this.setupEventListeners();
+
+            // 3. Load appointments
+            await this.loadAppointments();
+
+            console.log('[AdminPatients] Initialization complete');
+        } catch (error) {
+            console.error('[AdminPatients] Initialization error:', error);
+            Helpers.showToast('Failed to initialize page', 'error');
+        }
+    },
+
+    /**
+     * Create and configure the patient details modal
+     * 
+     * @private
+     */
+    createModal() {
+        if (!this.modal) {
+            this.modal = new PatientDetailsModal();
+
+            // Set modal callbacks
+            this.modal.onStatusUpdate = (appointmentId, newStatus) => {
+                this.handleStatusUpdated(appointmentId, newStatus);
+            };
+
+            this.modal.onDocumentUpload = (appointmentId) => {
+                this.handleDocumentUploaded(appointmentId);
+            };
+
+            console.log('[AdminPatients] Modal created');
+        }
+    },
+
+    /**
+     * Setup page event listeners
+     * Configures filters, search, and other interactive elements
+     * 
+     * @private
+     */
+    setupEventListeners() {
+        // Add Patient button
+        const addBtn = document.getElementById('add-patient-btn');
+        if (addBtn) {
+            addBtn.addEventListener('click', () => this.handleAddPatient());
         }
 
-        // 2. Setup Event Listeners
-        this.setupEventListeners();
+        // Filter buttons (status filters)
+        document.querySelectorAll('[data-filter]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filter = btn.dataset.filter;
+                this.applyFilter(filter);
+            });
+        });
 
-        // 3. Fetch Appointments (Patients)
-        await this.fetchPatients();
+        // Search input (if exists)
+        const searchInput = document.getElementById('patient-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', Helpers.debounce((e) => {
+                this.handleSearch(e.target.value);
+            }, UI_CONFIG.SEARCH_DEBOUNCE_DELAY));
+        }
+
+        console.log('[AdminPatients] Event listeners setup complete');
     },
 
-    async fetchPatients() {
+    /**
+     * Load appointments from AppointmentService
+     * Handles both API and local storage fallback
+     * 
+     * @private
+     * @returns {Promise<void>}
+     */
+    async loadAppointments() {
+        this.setState({ isLoading: true });
+        this.showLoadingState();
+
         try {
-            // Need a valid token AND admin role
-            const token = AuthService.currentUser?.token;
-            const userType = AuthService.currentUser?.type;
+            console.log('[AdminPatients] Fetching appointments...');
 
-            // If no token OR not an admin, use local data
-            if (!token || userType !== 'admin') {
-                console.warn('No admin token found, rendering local data...');
-                this.renderDemoData();
-                return;
-            }
+            // Fetch from AppointmentService
+            const appointments = await AppointmentService.fetchAppointments();
 
-            // Detect API URL based on environment (copied from auth.js logic)
-            const hostname = window.location.hostname;
-            const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
-            const apiBaseUrl = isLocal
-                ? 'http://localhost:5000/api'
-                : 'https://swasthyasetu-9y5l.onrender.com/api';
-
-            // Fetch 'pending' or 'confirmed' appointments mostly
-            // We want all for the list, maybe filter by status later
-            const response = await fetch(`${apiBaseUrl}/appointments/hospital`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+            // Update state
+            this.setState({
+                appointments: appointments,
+                isLoading: false
             });
 
-            const data = await response.json();
+            // Render table
+            this.renderTable();
 
-            if (data.success) {
-                this.state.appointments = data.data;
-                this.renderTable(data.data);
-                this.updateStats(data.data);
-            } else {
-                Helpers.showToast('Failed to load patients', 'error');
-            }
+            // Update statistics
+            this.updateStatistics();
+
+            console.log(`[AdminPatients] Loaded ${appointments.length} appointments`);
+
         } catch (error) {
-            console.error('Error fetching patients:', error);
-            // Fallback for demo if API fails
-            this.renderDemoData();
+            console.error('[AdminPatients] Error loading appointments:', error);
+            this.setState({ isLoading: false });
+            this.showErrorState();
+            Helpers.showToast('Failed to load appointments', 'error');
         }
     },
 
-    renderTable(appointments) {
-        const tbody = document.querySelector('tbody');
-        if (!tbody) return;
+    /**
+     * Update state and trigger UI updates
+     * 
+     * @private
+     * @param {Object} updates - State updates
+     */
+    setState(updates) {
+        this.state = { ...this.state, ...updates };
+        // Note: We don't auto-render on every state change
+        // Call render methods explicitly where needed
+    },
 
-        tbody.innerHTML = '';
-
-        if (appointments.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-4 text-center text-gray-500">No patients found</td></tr>`;
+    /**
+     * Render appointments table
+     * Generates table HTML with all appointment rows
+     * 
+     * @private
+     */
+    renderTable() {
+        const tableBody = document.getElementById('patients-table-body');
+        if (!tableBody) {
+            console.warn('[AdminPatients] Table body element not found');
             return;
         }
 
-        appointments.forEach(app => {
-            const user = app.userId || {}; // Populated user object
-            // Map demo 'reason' to 'condition' if needed, or just use reason.
-            const statusColor = this.getStatusColor(app.status);
+        const appointments = this.getFilteredAppointments();
 
-            const tr = document.createElement('tr');
-            tr.className = 'hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors';
-            // Store ID on the row or button
-            tr.innerHTML = `
-                <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">${app.abhaId || app._id.substring(app._id.length - 8).toUpperCase()}</td>
-                <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
-                    <div class="font-medium">${user.name || 'Unknown'}</div>
-                    <div class="text-xs text-gray-500">${user.mobile || ''}</div>
-                </td>
-                <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">${user.age || 'N/A'}</td>
-                <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">${app.specialty || 'General'}</td>
-                <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">${new Date(app.date).toLocaleDateString()}</td>
-                <td class="px-6 py-4">
-                    <span class="px-3 py-1 ${statusColor} rounded-full text-xs font-semibold capitalize">${app.status}</span>
-                </td>
-                <td class="px-6 py-4">
-                    <button class="view-btn text-primary hover:text-green-400 text-sm font-medium" data-id="${app._id}">
-                        View Details
-                    </button>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
-    },
-
-    getStatusColor(status) {
-        switch (status) {
-            case 'pending': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200';
-            case 'confirmed': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200';
-            case 'completed': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200';
-            case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200';
-            default: return 'bg-gray-100 text-gray-800';
+        if (appointments.length === 0) {
+            tableBody.innerHTML = this.getEmptyStateHTML();
+            return;
         }
+
+        // Generate table rows
+        const rows = appointments.map(apt => this.generateTableRow(apt)).join('');
+        tableBody.innerHTML = rows;
+
+        // Attach row click handlers
+        this.attachRowClickHandlers();
+
+        console.log(`[AdminPatients] Rendered ${appointments.length} rows`);
     },
 
-    updateStats(appointments) {
-        // Simple client-side stats
-        const total = appointments.length;
-        const newAdmissions = appointments.filter(a => {
-            const date = new Date(a.createdAt || a.date); // Use whatever date exists
-            const now = new Date();
-            return (now - date) < (7 * 24 * 60 * 60 * 1000); // Last 7 days
-        }).length;
-        const active = appointments.filter(a => ['confirmed', 'pending'].includes(a.status)).length;
-        const discharged = appointments.filter(a => a.status === 'completed').length;
-
-        // Update DOM if elements exist
-        const statEls = document.querySelectorAll('.text-3xl.font-bold');
-        if (statEls.length >= 4) {
-            statEls[0].textContent = total;
-            statEls[1].textContent = newAdmissions;
-            statEls[2].textContent = active;
-            statEls[3].textContent = discharged;
-        }
-    },
-
-    openPatientModal(id) {
-        const appointment = this.state.appointments.find(a => a._id === id);
-        if (!appointment) return;
-
-        this.state.currentAppointment = appointment;
+    /**
+     * Generate HTML for a single table row
+     * 
+     * @private
+     * @param {Object} appointment - Appointment object
+     * @returns {string} HTML string for table row
+     */
+    generateTableRow(appointment) {
         const user = appointment.userId || {};
+        const statusColorClass = Formatters.getStatusColor(appointment.status);
 
-        let modal = document.getElementById('patient-modal');
-        if (!modal) {
-            this.createModalHTML();
-            modal = document.getElementById('patient-modal');
-        }
-
-        // Fill Data
-        document.getElementById('modal-patient-name').textContent = user.name || 'Unknown';
-        document.getElementById('modal-patient-id').textContent = `ID: ${appointment._id}`;
-        document.getElementById('modal-patient-age').textContent = `${user.age || 'N/A'} yrs, ${user.gender || 'N/A'}`;
-        document.getElementById('modal-patient-mobile').textContent = user.mobile || 'N/A';
-        document.getElementById('modal-appointment-date').textContent = new Date(appointment.date).toLocaleDateString();
-        // Use 'condition' if available, else 'reason'
-        document.getElementById('modal-condition').textContent = appointment.condition || appointment.reason || 'N/A';
-        document.getElementById('modal-description').textContent = appointment.description || 'No additional description provided.';
-
-        // Populate existing documents
-        const docsList = document.getElementById('modal-docs-list');
-        docsList.innerHTML = '';
-        if (appointment.documents && appointment.documents.length > 0) {
-            appointment.documents.forEach(doc => {
-                const li = document.createElement('li');
-                li.className = 'flex items-center justify-between text-sm p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-100 dark:border-gray-600';
-                li.innerHTML = `
+        return `
+            <tr class="appointment-row border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
+                data-appointment-id="${appointment._id}"
+                role="button"
+                tabindex="0"
+                aria-label="View details for ${appointment.patientName || user.name}">
+                
+                <!-- Patient ID -->
+                <td class="px-6 py-4">
+                    <span class="font-mono text-sm text-gray-600">${appointment._id}</span>
+                </td>
+                
+                <!-- Patient Name -->
+                <td class="px-6 py-4">
                     <div class="flex items-center gap-3">
-                        <div class="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600 dark:text-blue-400">
-                            <span class="material-icons-outlined text-lg">description</span>
+                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-700 font-semibold text-sm">
+                            ${this.getInitials(appointment.patientName || user.name)}
                         </div>
                         <div>
-                            <p class="font-medium text-gray-900 dark:text-white capitalize">${doc.type}</p>
-                            <p class="text-xs text-gray-500">${new Date(doc.uploadedAt).toLocaleDateString()}</p>
+                            <p class="font-semibold text-gray-900">
+                                ${Formatters.formatPatientName(appointment.patientName || user.name, user.gender)}
+                            </p>
+                            <p class="text-xs text-gray-500">${Formatters.formatABHA(appointment.abhaId || 'N/A')}</p>
                         </div>
                     </div>
-                    <a href="${doc.url}" target="_blank" class="text-primary hover:text-green-400 text-sm font-medium hover:underline">View</a>
-                `;
-                docsList.appendChild(li);
+                </td>
+                
+                <!-- Age -->
+                <td class="px-6 py-4">
+                    <span class="text-gray-700">${user.age || 'N/A'}</span>
+                </td>
+                
+                <!-- Department -->
+                <td class="px-6 py-4">
+                    <span class="rounded-full bg-purple-100 px-3 py-1 text-xs font-medium text-purple-800">
+                        ${appointment.specialty || appointment.department || 'General'}
+                    </span>
+                </td>
+                
+                <!-- Appointment Date -->
+                <td class="px-6 py-4">
+                    <div class="flex flex-col">
+                        <span class="font-medium text-gray-900">${Formatters.formatDate(appointment.date, 'short')}</span>
+                        <span class="text-xs text-gray-500">${Formatters.formatDate(appointment.date, 'time')}</span>
+                    </div>
+                </td>
+                
+                <!-- Status -->
+                <td class="px-6 py-4">
+                    ${Formatters.formatStatusBadge(appointment.status)}
+                </td>
+                
+                <!-- Actions -->
+                <td class="px-6 py-4">
+                    <button class="view-details-btn inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-50 transition-colors"
+                            data-appointment-id="${appointment._id}"
+                            aria-label="View details">
+                        <span class="material-icons-outlined text-sm">visibility</span>
+                        View
+                    </button>
+                </td>
+            </tr>
+        `;
+    },
+
+    /**
+     * Get initials from name for avatar
+     * 
+     * @private
+     * @param {string} name - Full name
+     * @returns {string} Initials (e.g., "JD" for "John Doe")
+     */
+    getInitials(name) {
+        if (!name) return '?';
+        const parts = name.trim().split(' ');
+        if (parts.length >= 2) {
+            return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        }
+        return name.substring(0, 2).toUpperCase();
+    },
+
+    /**
+     * Get empty state HTML when no appointments found
+     * 
+     * @private
+     * @returns {string} HTML string for empty state
+     */
+    getEmptyStateHTML() {
+        return `
+            <tr>
+                <td colspan="7" class="px-6 py-12">
+                    <div class="text-center">
+                        <span class="material-icons-outlined text-6xl text-gray-300 mb-4">inbox</span>
+                        <p class="text-gray-500 text-lg font-medium">No appointments found</p>
+                        <p class="text-gray-400 text-sm mt-1">
+                            ${this.state.filter ? 'Try changing the filter' : 'Appointments will appear here when patients book'}
+                        </p>
+                    </div>
+                </td>
+            </tr>
+        `;
+    },
+
+    /**
+     * Show loading state in table
+     * 
+     * @private
+     */
+    showLoadingState() {
+        const tableBody = document.getElementById('patients-table-body');
+        if (tableBody) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="px-6 py-12 text-center">
+                        <span class="material-icons-outlined text-4xl text-blue-500 animate-spin mb-3">refresh</span>
+                        <p class="text-gray-600 font-medium">Loading appointments...</p>
+                    </td>
+                </tr>
+            `;
+        }
+    },
+
+    /**
+     * Show error state in table
+     * 
+     * @private
+     */
+    showErrorState() {
+        const tableBody = document.getElementById('patients-table-body');
+        if (tableBody) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="px-6 py-12 text-center">
+                        <span class="material-icons-outlined text-4xl text-red-500 mb-3">error_outline</span>
+                        <p class="text-gray-600 font-medium">Failed to load appointments</p>
+                        <button onclick="AdminPatients.loadAppointments()" 
+                                class="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+                            Retry
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
+    },
+
+    /**
+     * Attach click handlers to table rows
+     * 
+     * @private
+     */
+    attachRowClickHandlers() {
+        document.querySelectorAll('.appointment-row').forEach(row => {
+            row.addEventListener('click', (e) => {
+                // Don't trigger if clicking on action button
+                if (e.target.closest('.view-details-btn')) return;
+
+                const appointmentId = row.dataset.appointmentId;
+                this.openDetailsModal(appointmentId);
             });
-        } else {
-            docsList.innerHTML = '<li class="text-gray-500 text-sm italic text-center py-4">No documents uploaded yet</li>';
+
+            // Keyboard support
+            row.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    const appointmentId = row.dataset.appointmentId;
+                    this.openDetailsModal(appointmentId);
+                }
+            });
+        });
+
+        // View details button handlers
+        document.querySelectorAll('.view-details-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const appointmentId = btn.dataset.appointmentId;
+                this.openDetailsModal(appointmentId);
+            });
+        });
+    },
+
+    /**
+     * Open patient details modal
+     * 
+     * @public
+     * @param {string} appointmentId - Appointment ID to display
+     */
+    openDetailsModal(appointmentId) {
+        const appointment = this.state.appointments.find(a => a._id === appointmentId);
+
+        if (!appointment) {
+            console.error('[AdminPatients] Appointment not found:', appointmentId);
+            Helpers.showToast('Appointment not found', 'error');
+            return;
         }
 
-        // Show Modal
-        modal.classList.remove('hidden');
+        // Set current appointment
+        this.setState({ currentAppointment: appointment });
+
+        // Update modal and open
+        if (this.modal) {
+            this.modal.setPatientData(appointment);
+            this.modal.open();
+        }
+
+        console.log('[AdminPatients] Opened details modal for:', appointmentId);
     },
 
-    closeModal() {
-        const modal = document.getElementById('patient-modal');
-        if (modal) modal.classList.add('hidden');
+    /**
+     * Handle status update from modal
+     * 
+     * @private
+     * @param {string} appointmentId - Appointment ID
+     * @param {string} newStatus - New status value
+     */
+    handleStatusUpdated(appointmentId, newStatus) {
+        // Update local state
+        const appointment = this.state.appointments.find(a => a._id === appointmentId);
+        if (appointment) {
+            appointment.status = newStatus;
+            this.renderTable();
+            this.updateStatistics();
+        }
+
+        console.log('[AdminPatients] Status updated:', appointmentId, newStatus);
     },
 
-    createModalHTML() {
-        const modal = document.createElement('div');
-        modal.id = 'patient-modal';
-        modal.className = 'fixed inset-0 z-[60] overflow-y-auto hidden'; // High z-index
-        modal.innerHTML = `
-            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-                    <div class="absolute inset-0 bg-gray-900 opacity-75 backdrop-blur-sm"></div>
-                </div>
-                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
-                    
-                    <div class="bg-white dark:bg-gray-800 px-6 pt-6 pb-4">
-                        <div class="flex items-start justify-between mb-6">
-                            <div>
-                                <h3 class="text-2xl font-bold text-gray-900 dark:text-white font-display" id="modal-patient-name">Patient Name</h3>
-                                <p class="text-sm text-primary font-medium mt-1" id="modal-patient-id">ID: 12345</p>
-                            </div>
-                            <button id="close-modal-x" class="text-gray-400 hover:text-gray-500 transition-colors">
-                                <span class="material-icons-outlined text-2xl">close</span>
-                            </button>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-6 mb-8">
-                            <div class="p-4 bg-gray-50 dark:bg-gray-700/30 rounded-xl border border-gray-100 dark:border-gray-700">
-                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Age & Gender</label>
-                                <p class="text-base font-semibold text-gray-900 dark:text-white" id="modal-patient-age">--</p>
-                            </div>
-                            <div class="p-4 bg-gray-50 dark:bg-gray-700/30 rounded-xl border border-gray-100 dark:border-gray-700">
-                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Contact</label>
-                                <p class="text-base font-semibold text-gray-900 dark:text-white" id="modal-patient-mobile">--</p>
-                            </div>
-                            <div class="col-span-2 p-4 bg-gray-50 dark:bg-gray-700/30 rounded-xl border border-gray-100 dark:border-gray-700">
-                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Condition</label>
-                                <p class="text-base font-semibold text-gray-900 dark:text-white" id="modal-condition">--</p>
-                            </div>
-                            <div class="col-span-2 p-4 bg-gray-50 dark:bg-gray-700/30 rounded-xl border border-gray-100 dark:border-gray-700">
-                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Description</label>
-                                <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed" id="modal-description">--</p>
-                            </div>
-                        </div>
+    /**
+     * Handle document upload from modal
+     * 
+     * @private
+     * @param {string} appointmentId - Appointment ID
+     */
+    handleDocumentUploaded(appointmentId) {
+        // Could refresh the appointment data here
+        console.log('[AdminPatients] Document uploaded for:', appointmentId);
+    },
 
-                        <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-                            <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                                <span class="material-icons-outlined text-primary">folder_open</span>
-                                Medical Documents
-                            </h4>
-                            <ul class="space-y-3 mb-6 max-h-48 overflow-y-auto pr-2" id="modal-docs-list"></ul>
-                            
-                            <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-3">Quick Actions</h4>
-                            <div class="grid grid-cols-2 gap-4">
-                                <button id="btn-upload-prescription" class="flex items-center justify-center gap-2 px-4 py-3 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-all border border-blue-200 dark:border-blue-800">
-                                    <span class="material-icons-outlined">medication</span>
-                                    Upload Prescription
-                                </button>
-                                <button id="btn-upload-report" class="flex items-center justify-center gap-2 px-4 py-3 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded-xl hover:bg-purple-100 dark:hover:bg-purple-900/40 transition-all border border-purple-200 dark:border-purple-800">
-                                    <span class="material-icons-outlined">science</span>
-                                    Upload Report
-                                </button>
-                            </div>
-                            <!-- Hidden File Input used by both buttons -->
-                            <input type="file" id="doc-file-input" class="hidden"/>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-50 dark:bg-gray-700/50 px-6 py-4 border-t border-gray-200 dark:border-gray-700">
-                        <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-3">Update Appointment Status</h4>
-                        <div class="grid grid-cols-3 gap-3 mb-4">
-                            <button type="button" id="mark-confirmed-btn" class="inline-flex justify-center items-center gap-2 rounded-lg border border-transparent shadow-sm px-4 py-2.5 bg-blue-600 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none transition-colors">
-                                <span class="material-icons-outlined text-lg">event_available</span>
-                                Confirmed
-                            </button>
-                            <button type="button" id="mark-rejected-btn" class="inline-flex justify-center items-center gap-2 rounded-lg border border-transparent shadow-sm px-4 py-2.5 bg-red-600 text-sm font-medium text-white hover:bg-red-700 focus:outline-none transition-colors">
-                                <span class="material-icons-outlined text-lg">cancel</span>
-                                Rejected
-                            </button>
-                            <button type="button" id="mark-completed-btn" class="inline-flex justify-center items-center gap-2 rounded-lg border border-transparent shadow-sm px-4 py-2.5 bg-green-600 text-sm font-medium text-white hover:bg-green-700 focus:outline-none transition-colors">
-                                <span class="material-icons-outlined text-lg">check_circle</span>
-                                Completed
-                            </button>
-                        </div>
-                        <button type="button" id="close-modal-btn" class="w-full inline-flex justify-center items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 shadow-sm px-5 py-2.5 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none transition-colors">
-                            Close
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-
-        // Bind Modal Events
-        const close = () => this.closeModal();
-        document.getElementById('close-modal-btn').addEventListener('click', close);
-        document.getElementById('close-modal-x').addEventListener('click', close);
-
-        // Status Update Buttons
-        document.getElementById('mark-confirmed-btn').addEventListener('click', async () => {
-            if (this.state.currentAppointment) {
-                await this.updateStatus(this.state.currentAppointment._id, 'confirmed');
-                this.closeModal();
-                this.fetchPatients(); // Refresh list
-            }
-        });
-
-        document.getElementById('mark-rejected-btn').addEventListener('click', async () => {
-            if (this.state.currentAppointment) {
-                await this.updateStatus(this.state.currentAppointment._id, 'cancelled'); // Using 'cancelled' to match existing status colors
-                this.closeModal();
-                this.fetchPatients(); // Refresh list
-            }
-        });
-
-        document.getElementById('mark-completed-btn').addEventListener('click', async () => {
-            if (this.state.currentAppointment) {
-                await this.updateStatus(this.state.currentAppointment._id, 'completed');
-                this.closeModal();
-                this.fetchPatients(); // Refresh list
-            }
-        });
-
-        // File Upload Logic
-        const fileInput = document.getElementById('doc-file-input');
-        let currentUploadType = 'report'; // Default
-
-        const handleUploadClick = (type) => {
-            currentUploadType = type;
-            fileInput.click();
+    /**
+     * Update statistics display
+     * Shows counts for different appointment statuses
+     * 
+     * @private
+     */
+    updateStatistics() {
+        const stats = {
+            total: this.state.appointments.length,
+            pending: 0,
+            confirmed: 0,
+            completed: 0,
+            cancelled: 0
         };
 
-        document.getElementById('btn-upload-prescription').addEventListener('click', () => handleUploadClick('prescription'));
-        document.getElementById('btn-upload-report').addEventListener('click', () => handleUploadClick('report'));
-
-        fileInput.addEventListener('change', async (e) => {
-            if (e.target.files.length > 0) {
-                // Simulate upload immediately upon selection
-                Helpers.showToast(`Uploading ${currentUploadType}...`, 'info');
-
-                setTimeout(async () => {
-                    try {
-                        await this.uploadDocument(this.state.currentAppointment._id, currentUploadType);
-                        this.openPatientModal(this.state.currentAppointment._id);
-                        Helpers.showToast(`${currentUploadType} uploaded!`, 'success');
-                        fileInput.value = ''; // Reset
-                    } catch (e) {
-                        // Error handled
-                    }
-                }, 1000);
-            }
+        // Count by status
+        this.state.appointments.forEach(apt => {
+            stats[apt.status] = (stats[apt.status] || 0) + 1;
         });
+
+        // Update DOM if stat elements exist
+        this.updateStatElement('total-patients', stats.total);
+        this.updateStatElement('pending-patients', stats.pending);
+        this.updateStatElement('confirmed-patients', stats.confirmed);
+        this.updateStatElement('completed-patients', stats.completed);
+
+        console.log('[AdminPatients] Statistics updated:', stats);
     },
 
-    async updateStatus(id, status) {
-        try {
-            const token = AuthService.currentUser?.token;
-            const userType = AuthService.currentUser?.type;
-
-            // For local/demo mode (no token or not admin), update localStorage
-            if (!token || userType !== 'admin' || id.startsWith('APT-') || id.startsWith('PT-')) {
-                console.log(`Updating status locally for ${id} to ${status}`);
-
-                // Update in state
-                const appt = this.state.appointments.find(a => a._id === id);
-                if (appt) {
-                    appt.status = status;
-                }
-
-                // Update in localStorage
-                const localAppointments = JSON.parse(localStorage.getItem('swasthya_appointments') || '[]');
-                const localAppt = localAppointments.find(a => a._id === id);
-                if (localAppt) {
-                    localAppt.status = status;
-                    localStorage.setItem('swasthya_appointments', JSON.stringify(localAppointments));
-                }
-
-                Helpers.showToast(`Appointment marked as ${status}`, 'success');
-                return;
-            }
-
-            // API call for real admin users
-            const apiBaseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-                ? 'http://localhost:5000/api'
-                : 'https://swasthyasetu-9y5l.onrender.com/api';
-
-            await fetch(`${apiBaseUrl}/appointments/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ status })
-            });
-            Helpers.showToast(`Appointment marked as ${status}`, 'success');
-        } catch (error) {
-            console.error(error);
-            Helpers.showToast('Failed to update status', 'error');
+    /**
+     * Update a single stat element
+     * 
+     * @private
+     * @param {string} elementId - Element ID
+     * @param {number} value - Stat value
+     */
+    updateStatElement(elementId, value) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.textContent = value;
         }
     },
 
-    async uploadDocument(id, type) {
-        try {
-            const token = AuthService.currentUser?.token;
+    /**
+     * Apply filter to appointments list
+     * 
+     * @private
+     * @param {string|null} filter - Filter value ('all', 'pending', 'confirmed', etc.)
+     */
+    applyFilter(filter) {
+        this.setState({ filter: filter === 'all' ? null : filter });
+        this.renderTable();
+        console.log('[AdminPatients] Filter applied:', filter);
+    },
 
-            const fileInput = document.getElementById('doc-file-input');
-            const file = fileInput.files[0];
-
-            if (!file) {
-                Helpers.showToast('Please select a file to upload', 'error');
-                return;
-            }
-
-            // SIMULATION: If we are effectively offline or using demo data, just update locally
-            const hostname = window.location.hostname;
-            const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
-
-            // If strictly demo (no token or using demo data explicitly), skip API
-            // Updated to support new manual appointments (APT-EXIST...)
-            if (!token || id.startsWith('APT-') || id.startsWith('PT-')) {
-                // Simulate delay
-                await new Promise(r => setTimeout(r, 800));
-
-                // Update local state
-                if (this.state.currentAppointment) {
-                    if (!this.state.currentAppointment.documents) {
-                        this.state.currentAppointment.documents = [];
-                    }
-                    this.state.currentAppointment.documents.push({
-                        type: type,
-                        url: '#', // specific dummy url
-                        uploadedAt: new Date().toISOString()
-                    });
-                }
-                return; // Success simulation
-            }
-
-            // Actual API Call (fallback if connected)
-            const apiBaseUrl = isLocal
-                ? 'http://localhost:5000/api'
-                : 'https://swasthyasetu-9y5l.onrender.com/api';
-
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('type', type);
-            formData.append('notes', 'Uploaded via Admin Dashboard');
-
-            const response = await fetch(`${apiBaseUrl}/appointments/${id}/documents`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                body: formData
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                // If API succeeds, we usually re-fetch, but let's update local state too if needed
-            } else {
-                throw new Error(data.message || 'Upload failed');
-            }
-
-        } catch (error) {
-            console.error(error);
-            // If it's a network error or fetch failed, we might want to fail gracefully or simulate
-            // For now, let's allow it to 'fail' if it's a real attempt, but if we are in demo mode we handled it above.
-            Helpers.showToast(error.message || 'Failed to upload document', 'error');
-            throw error; // Re-throw to be caught by the caller
+    /**
+     * Get filtered appointments based on current filter
+     * 
+     * @private
+     * @returns {Array} Filtered appointments
+     */
+    getFilteredAppointments() {
+        if (!this.state.filter) {
+            return this.state.appointments;
         }
+
+        return this.state.appointments.filter(apt =>
+            apt.status === this.state.filter
+        );
     },
 
-    setupEventListeners() {
-        // Event Delegation for View Details buttons
-        document.querySelector('tbody').addEventListener('click', (e) => {
-            const btn = e.target.closest('.view-btn');
-            if (btn) {
-                const id = btn.getAttribute('data-id');
-                this.openPatientModal(id);
-            }
+    /**
+     * Handle search input
+     * Filters appointments by patient name or ID
+     * 
+     * @private
+     * @param {string} query - Search query
+     */
+    handleSearch(query) {
+        if (!query || query.trim() === '') {
+            this.setState({ filter: null });
+            this.renderTable();
+            return;
+        }
+
+        const lowerQuery = query.toLowerCase();
+        const filtered = this.state.appointments.filter(apt => {
+            const name = (apt.patientName || apt.userId?.name || '').toLowerCase();
+            const id = apt._id.toLowerCase();
+            const abha = (apt.abhaId || '').toLowerCase();
+
+            return name.includes(lowerQuery) ||
+                id.includes(lowerQuery) ||
+                abha.includes(lowerQuery);
         });
+
+        // Temporarily update appointments to show filtered
+        const originalAppointments = this.state.appointments;
+        this.state.appointments = filtered;
+        this.renderTable();
+        this.state.appointments = originalAppointments;
     },
 
-    // Demo Fallback
-    renderDemoData() {
-        console.log('Rendering demo data...');
-        // 2. Hardcoded Existing Appointments (Rahul Kumar - from Screenshot)
-        // We keep variable name 'demoData' to minimize code changes below
-        const demoData = [
-            {
-                _id: 'APT-EXIST-001-' + Date.now(),
-                abhaId: '12-3456-7890-1234',
-                date: '2026-02-20T10:00:00', // 20 Feb 2026
-                status: 'pending',
-                specialty: 'General Medicine',
-                condition: 'General consultation',
-                description: 'Scheduled with Dr. Nair at Pushpa Kalyan Hospital.',
-                reason: 'General consultation',
-                userId: {
-                    name: 'Rahul Kumar',
-                    mobile: '9876543210',
-                    age: 34,
-                    gender: 'Male'
-                },
-                documents: []
-            },
-            {
-                _id: 'APT-EXIST-002-' + Date.now(),
-                abhaId: '12-3456-7890-1234',
-                date: '2026-02-14T10:00:00', // 14 Feb 2026
-                status: 'pending',
-                specialty: 'Cardiology',
-                condition: 'General consultation',
-                description: 'Scheduled with Dr. Gupta at Khan Shakir Ali Khan Aspataal.',
-                reason: 'General consultation',
-                userId: {
-                    name: 'Rahul Kumar',
-                    mobile: '9876543210',
-                    age: 34,
-                    gender: 'Male'
-                },
-                documents: []
-            }
-        ];
+    /**
+     * Handle add patient button click
+     * 
+     * @private
+     */
+    handleAddPatient() {
+        // This would open a form to manually add patient
+        Helpers.showToast('Add patient feature coming soon', 'info');
+    },
 
-        // Merge with LocalStorage data
-        const localAppointments = JSON.parse(localStorage.getItem('swasthya_appointments') || '[]');
-
-        // Combine: Local (newest) + Demo
-        const finalData = [...localAppointments, ...demoData];
-
-        this.state.appointments = finalData;
-        this.renderTable(finalData);
-        this.updateStats(finalData);
+    /**
+     * Refresh appointments from server
+     * 
+     * @public
+     * @returns {Promise<void>}
+     */
+    async refresh() {
+        await this.loadAppointments();
+        Helpers.showToast('Appointments refreshed', 'success');
     }
 };
 
+// Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
-    // Check Auth (Admin) - RELAXED FOR DEMO
-    const user = AuthService.getCurrentUser();
-    // Allow if admin OR if we just want to show the demo data regardless
-    if (user || Helpers.isLocal()) {
-        AdminPatients.init();
-    } else {
-        // Fallback init for purely local testing without login
-        AdminPatients.init();
-    }
+    console.log('[AdminPatients] DOM ready, initializing...');
+    AdminPatients.init();
 });
+
+// Export for use in other modules
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = AdminPatients;
+}
