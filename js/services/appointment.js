@@ -108,6 +108,13 @@ const AppointmentService = {
      * @private
      */
     getDemoAppointments() {
+        const STATUS = typeof APPOINTMENT_STATUS !== 'undefined' ? APPOINTMENT_STATUS : {
+            PENDING: 'pending',
+            CONFIRMED: 'confirmed',
+            CANCELLED: 'cancelled',
+            COMPLETED: 'completed'
+        };
+
         return [
             {
                 _id: 'APT-001',
@@ -115,7 +122,7 @@ const AppointmentService = {
                 patientName: 'Rahul Kumar',
                 abhaId: '12-3456-7890-1234',
                 date: '2026-02-20T10:00:00',
-                status: APPOINTMENT_STATUS.PENDING,
+                status: STATUS.PENDING,
                 specialty: 'General Medicine',
                 condition: 'Regular checkup',
                 description: 'Scheduled with Dr. Nair at Pushpa Kalyan Hospital.',
@@ -134,11 +141,49 @@ const AppointmentService = {
                 patientName: 'Rahul Kumar',
                 abhaId: '12-3456-7890-1234',
                 date: '2026-02-14T10:00:00',
-                status: APPOINTMENT_STATUS.CONFIRMED,
+                status: STATUS.CONFIRMED,
                 specialty: 'Cardiology',
                 condition: 'General consultation',
                 description: 'Scheduled with Dr. Gupta at Khan Shakir Ali Khan Aspataal.',
                 reason: 'Heart checkup',
+                userId: {
+                    name: 'Rahul Kumar',
+                    mobile: '9876543210',
+                    age: 34,
+                    gender: 'Male'
+                },
+                documents: []
+            },
+            {
+                _id: 'APT-003',
+                patientId: 'PT-001',
+                patientName: 'Rahul Kumar',
+                abhaId: '12-3456-7890-1234',
+                date: '2026-01-25T14:30:00',
+                status: STATUS.COMPLETED,
+                specialty: 'Orthopedics',
+                condition: 'Follow-up consultation',
+                description: 'Scheduled with Dr. Sharma at City Hospital.',
+                reason: 'Knee pain follow-up',
+                userId: {
+                    name: 'Rahul Kumar',
+                    mobile: '9876543210',
+                    age: 34,
+                    gender: 'Male'
+                },
+                documents: []
+            },
+            {
+                _id: 'APT-004',
+                patientId: 'PT-001',
+                patientName: 'Rahul Kumar',
+                abhaId: '12-3456-7890-1234',
+                date: '2026-03-05T11:00:00',
+                status: STATUS.PENDING,
+                specialty: 'Dermatology',
+                condition: 'Skin consultation',
+                description: 'Scheduled with Dr. Patel at Skin Care Clinic.',
+                reason: 'Skin rash check',
                 userId: {
                     name: 'Rahul Kumar',
                     mobile: '9876543210',
