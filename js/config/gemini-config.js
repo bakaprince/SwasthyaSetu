@@ -8,8 +8,8 @@ const GeminiConfig = {
     // Get your key from: https://makersuite.google.com/app/apikey
     apiKey: 'AIzaSyADjvknSiVO5hSfsevGj4noi5VKKVOu0H0',
 
-    // API endpoint
-    apiEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
+    // API endpoint - using stable v1 with gemini-1.5-flash
+    apiEndpoint: 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent',
 
     // Bot personality and behavior instructions
     systemPrompt: `You are **SwasthyaSetu Health Assistant**, an official AI-powered assistant for the SwasthyaSetu Government Health Portal.
