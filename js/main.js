@@ -19,10 +19,16 @@ document.addEventListener('DOMContentLoaded', function () {
         HealthAlertService.init();
     }
 
-    // Initialize Chatbot
-    if (typeof Chatbot !== 'undefined') {
-        new Chatbot();
-    }
+    // Initialize Chatbot with delay to ensure all dependencies loaded
+    setTimeout(() => {
+        if (typeof Chatbot !== 'undefined') {
+            window.chatbotInstance = new Chatbot();
+            console.log('Chatbot initialized successfully');
+        } else {
+            console.warn('Chatbot class not available');
+        }
+    }, 1000);
+
 
     // Add smooth scroll behavior to all anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -45,6 +45,7 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components/chatbot.css">
 </head>
 
 <body class="bg-[#fffefc] dark:bg-background-dark font-sans antialiased text-gray-800 dark:text-gray-100 min-h-screen">
@@ -378,6 +379,24 @@
                 }, 1000);
             });
         }
+    </script>
+
+    <!-- Chatbot Scripts -->
+    <script src="../js/config/gemini-config.js"></script>
+    <script src="../js/services/chatbot-context.js"></script>
+    <script src="../js/components/chatbot.js"></script>
+    <script>
+        // Initialize chatbot after all scripts load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (typeof Chatbot !== 'undefined') {
+                    window.chatbotInstance = new Chatbot();
+                    console.log('Chatbot initialized successfully');
+                } else {
+                    console.error('Chatbot class not found');
+                }
+            }, 500);
+        });
     </script>
 </body>
 
