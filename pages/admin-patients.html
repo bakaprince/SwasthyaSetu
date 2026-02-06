@@ -249,6 +249,13 @@
                 // DEMO MODE: Allow patient to view admin panel to verify their data
                 console.log('Allowing non-admin access for demo verification');
             }
+
+            // DIRECTLY LOAD PATIENT DATA
+            console.log('Forcing AdminPatients renderDemoData...');
+            if (typeof AdminPatients !== 'undefined' && AdminPatients.renderDemoData) {
+                AdminPatients.renderDemoData();
+            }
+
             document.getElementById('logout-btn').addEventListener('click', async () => {
                 await AuthService.logout();
                 Helpers.showToast('Logged out successfully', 'success');
