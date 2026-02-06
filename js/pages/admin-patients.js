@@ -12,11 +12,17 @@ const AdminPatients = {
     async init() {
         console.log('Initializing Admin Patients...');
 
-        // 1. Fetch Appointments (Patients)
-        await this.fetchPatients();
+        // 1. Create Modal HTML if needed
+        if (!document.getElementById('patient-modal')) {
+            console.log('Creating modal...');
+            this.createModalHTML();
+        }
 
         // 2. Setup Event Listeners
         this.setupEventListeners();
+
+        // 3. Fetch Appointments (Patients)
+        await this.fetchPatients();
     },
 
     async fetchPatients() {
