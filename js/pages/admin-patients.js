@@ -415,89 +415,39 @@ const AdminPatients = {
     // Demo Fallback
     renderDemoData() {
         console.log('Rendering demo data...');
-        // Sample data mimicking the structure
+        // 2. Hardcoded Existing Appointments (Rahul Kumar - from Screenshot)
+        // We keep variable name 'demoData' to minimize code changes below
         const demoData = [
             {
-                _id: 'PT-2024-001',
-                date: '2024-01-28',
+                _id: 'APT-EXIST-001-' + Date.now(),
+                abhaId: '12-3456-7890-1234',
+                date: '2026-02-20T10:00:00', // 20 Feb 2026
+                status: 'pending',
+                specialty: 'General Medicine',
+                condition: 'General consultation',
+                description: 'Scheduled with Dr. Nair at Pushpa Kalyan Hospital.',
+                reason: 'General consultation',
+                userId: {
+                    name: 'Rahul Kumar',
+                    mobile: '9876543210',
+                    age: 34,
+                    gender: 'Male'
+                },
+                documents: []
+            },
+            {
+                _id: 'APT-EXIST-002-' + Date.now(),
+                abhaId: '12-3456-7890-1234',
+                date: '2026-02-14T10:00:00', // 14 Feb 2026
                 status: 'pending',
                 specialty: 'Cardiology',
-                condition: 'Stable Angina',
-                description: 'Patient reports recurring chest pain during physical exertion. ECG shows mild abnormalities.',
-                reason: 'Chest pain and shortness of breath',
+                condition: 'General consultation',
+                description: 'Scheduled with Dr. Gupta at Khan Shakir Ali Khan Aspataal.',
+                reason: 'General consultation',
                 userId: {
-                    name: 'Rajesh Kumar',
+                    name: 'Rahul Kumar',
                     mobile: '9876543210',
-                    age: 45,
-                    gender: 'Male'
-                },
-                documents: [
-                    { type: 'prescription', url: '#', uploadedAt: '2024-01-28T10:00:00Z' }
-                ]
-            },
-            {
-                _id: 'PT-2024-002',
-                date: '2024-01-30',
-                status: 'confirmed',
-                specialty: 'General Medicine',
-                condition: 'Viral Fever',
-                description: 'High grade fever with chills and body ache. Tested negative for Malaria/Dengue.',
-                reason: 'High fever and fatigue',
-                userId: {
-                    name: 'Priya Sharma',
-                    mobile: '9876543211',
-                    age: 32,
-                    gender: 'Female'
-                },
-                documents: []
-            },
-            {
-                _id: 'PT-2024-003',
-                date: '2024-02-01',
-                status: 'completed',
-                specialty: 'Orthopedics',
-                condition: 'Humerus Fracture',
-                description: 'Post-cast removal checkup. X-rays indicate good bone healing.',
-                reason: 'Fracture follow-up',
-                userId: {
-                    name: 'Amit Verma',
-                    mobile: '9876543212',
-                    age: 58,
-                    gender: 'Male'
-                },
-                documents: [
-                    { type: 'report', url: '#', uploadedAt: '2024-02-01T09:30:00Z' },
-                    { type: 'X-ray', url: '#', uploadedAt: '2024-02-01T09:35:00Z' }
-                ]
-            },
-            {
-                _id: 'PT-2024-004',
-                date: '2024-02-02',
-                status: 'confirmed',
-                specialty: 'Neurology',
-                condition: 'Chronic Migraine',
-                description: 'Patient suffers from unilateral headaches with photophobia.',
-                reason: 'Migraine consultation',
-                userId: {
-                    name: 'Sunita Devi',
-                    mobile: '9876543213',
-                    age: 67,
-                    gender: 'Female'
-                },
-                documents: []
-            },
-            {
-                _id: 'PT-2024-005',
-                date: '2024-02-03',
-                status: 'cancelled',
-                specialty: 'Dermatology',
-                condition: 'Allergic Dermatitis',
-                description: 'Red itchy rash on forearms. Suspected contact allergy.',
-                reason: 'Skin rash',
-                userId: {
-                    name: 'Vikram Singh',
-                    mobile: '9876543214',
-                    age: 41,
+                    age: 34,
                     gender: 'Male'
                 },
                 documents: []
