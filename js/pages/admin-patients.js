@@ -76,7 +76,7 @@ const AdminPatients = {
             tr.className = 'hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors';
             // Store ID on the row or button
             tr.innerHTML = `
-                <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">${app._id.substring(app._id.length - 8).toUpperCase()}</td>
+                <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">${app.abhaId || app._id.substring(app._id.length - 8).toUpperCase()}</td>
                 <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
                     <div class="font-medium">${user.name || 'Unknown'}</div>
                     <div class="text-xs text-gray-500">${user.mobile || ''}</div>

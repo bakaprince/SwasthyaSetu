@@ -154,7 +154,8 @@ class BookingWizard {
     saveBooking() {
         // Create appointment object matching Admin schema
         const appt = {
-            _id: 'APT-' + Date.now(),
+            _id: this.bookingData.user.abhaId || 'APT-' + Date.now(), // Use ABHA ID as main ID if available
+            abhaId: this.bookingData.user.abhaId,
             date: new Date().toISOString(), // Current date as booking date
             status: 'pending',
             specialty: this.bookingData.department.name,
@@ -286,6 +287,12 @@ class BookingWizard {
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone</label>
                                 <input name="phone" type="tel" required class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-primary focus:border-primary">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 gap-4">
+                             <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">ABHA ID (Health ID)</label>
+                                <input name="abhaId" type="text" placeholder="12-3456-7890-1234" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-primary focus:border-primary">
                             </div>
                         </div>
                         <div class="pt-4 flex justify-end">
