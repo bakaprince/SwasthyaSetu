@@ -254,8 +254,8 @@ async function fetchHospitalsFromOverpassAPI(lat, lng) {
                     ventilatorsAvailable: Math.floor(Math.random() * 5)
                 },
                 contact: {
-                    phone: tags['contact:phone'] || tags['phone'] || "+91-11-23456789",
-                    emergency: "108"
+                    phone: tags['contact:phone'] || tags['phone'] || tags['phone:mobile'] || tags['contact:mobile'] || "Not Available",
+                    emergency: tags['emergency'] || tags['phone:emergency'] || "108"
                 },
                 isExternal: true
             };
@@ -359,10 +359,16 @@ function displayHospitals(hospitals) {
             <!-- Contact Info -->
             <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex flex-wrap gap-4 items-center justify-between">
                 <div class="flex gap-4 text-sm">
-                    <a href="tel:${hospital.contact.phone}" class="flex items-center gap-1 text-secondary dark:text-primary hover:underline">
-                        <span class="material-icons-outlined text-sm">phone</span>
-                        ${hospital.contact.phone}
-                    </a>
+                    ${hospital.contact.phone !== 'Not Available'
+            ? `<a href="tel:${hospital.contact.phone}" class="flex items-center gap-1 text-secondary dark:text-primary hover:underline">
+                            <span class="material-icons-outlined text-sm">phone</span>
+                            ${hospital.contact.phone}
+                        </a>`
+            : `<span class="flex items-center gap-1 text-gray-500 dark:text-gray-400">
+                            <span class="material-icons-outlined text-sm">phone</span>
+                            Contact Not Available
+                        </span>`
+        }
                     <a href="tel:${hospital.contact.emergency}" class="flex items-center gap-1 text-red-600 dark:text-red-400 hover:underline font-semibold">
                         <span class="material-icons-outlined text-sm">emergency</span>
                         Emergency: ${hospital.contact.emergency}
@@ -532,7 +538,14 @@ function openHospitalModal(hospitalId) {
     mapLink.href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(hospital.name + " " + hospital.address)}`;
 
     const callBtn = document.getElementById('modal-call-btn');
-    callBtn.onclick = () => window.open(`tel:${hospital.contact.phone}`);
+    if (hospital.contact.phone !== 'Not Available') {
+        callBtn.onclick = () => window.open(`tel:${hospital.contact.phone}`);
+        callBtn.disabled = false;
+        callBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+    } else {
+        callBtn.onclick = () => alert('Contact number not available for this hospital. Please visit the hospital or check their website.');
+        callBtn.classList.add('opacity-50');
+    }
 
     // Show Modal
     modal.classList.remove('hidden');
