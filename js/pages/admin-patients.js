@@ -23,7 +23,11 @@ const AdminPatients = {
         try {
             // Need a valid token
             const token = AuthService.currentUser?.token;
-            if (!token) return;
+            if (!token) {
+                console.warn('No token found, rendering local data...');
+                this.renderDemoData();
+                return;
+            }
 
             // Detect API URL based on environment (copied from auth.js logic)
             const hostname = window.location.hostname;
