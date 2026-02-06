@@ -257,12 +257,23 @@ const AdminPatients = {
                         </div>
                     </div>
 
-                    <div class="bg-gray-50 dark:bg-gray-700/50 px-6 py-4 flex gap-3 justify-end border-t border-gray-200 dark:border-gray-700">
-                         <button type="button" id="mark-completed-btn" class="inline-flex justify-center items-center gap-2 rounded-lg border border-transparent shadow-sm px-5 py-2.5 bg-green-600 text-sm font-medium text-white hover:bg-green-700 focus:outline-none transition-colors">
-                            <span class="material-icons-outlined text-lg">check_circle</span>
-                            Mark as Completed
-                        </button>
-                        <button type="button" id="close-modal-btn" class="inline-flex justify-center items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 shadow-sm px-5 py-2.5 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none transition-colors">
+                    <div class="bg-gray-50 dark:bg-gray-700/50 px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+                        <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-3">Update Appointment Status</h4>
+                        <div class="grid grid-cols-3 gap-3 mb-4">
+                            <button type="button" id="mark-confirmed-btn" class="inline-flex justify-center items-center gap-2 rounded-lg border border-transparent shadow-sm px-4 py-2.5 bg-blue-600 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none transition-colors">
+                                <span class="material-icons-outlined text-lg">event_available</span>
+                                Confirmed
+                            </button>
+                            <button type="button" id="mark-rejected-btn" class="inline-flex justify-center items-center gap-2 rounded-lg border border-transparent shadow-sm px-4 py-2.5 bg-red-600 text-sm font-medium text-white hover:bg-red-700 focus:outline-none transition-colors">
+                                <span class="material-icons-outlined text-lg">cancel</span>
+                                Rejected
+                            </button>
+                            <button type="button" id="mark-completed-btn" class="inline-flex justify-center items-center gap-2 rounded-lg border border-transparent shadow-sm px-4 py-2.5 bg-green-600 text-sm font-medium text-white hover:bg-green-700 focus:outline-none transition-colors">
+                                <span class="material-icons-outlined text-lg">check_circle</span>
+                                Completed
+                            </button>
+                        </div>
+                        <button type="button" id="close-modal-btn" class="w-full inline-flex justify-center items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 shadow-sm px-5 py-2.5 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none transition-colors">
                             Close
                         </button>
                     </div>
@@ -275,6 +286,23 @@ const AdminPatients = {
         const close = () => this.closeModal();
         document.getElementById('close-modal-btn').addEventListener('click', close);
         document.getElementById('close-modal-x').addEventListener('click', close);
+
+        // Status Update Buttons
+        document.getElementById('mark-confirmed-btn').addEventListener('click', async () => {
+            if (this.state.currentAppointment) {
+                await this.updateStatus(this.state.currentAppointment._id, 'confirmed');
+                this.closeModal();
+                this.fetchPatients(); // Refresh list
+            }
+        });
+
+        document.getElementById('mark-rejected-btn').addEventListener('click', async () => {
+            if (this.state.currentAppointment) {
+                await this.updateStatus(this.state.currentAppointment._id, 'cancelled'); // Using 'cancelled' to match existing status colors
+                this.closeModal();
+                this.fetchPatients(); // Refresh list
+            }
+        });
 
         document.getElementById('mark-completed-btn').addEventListener('click', async () => {
             if (this.state.currentAppointment) {
@@ -318,7 +346,31 @@ const AdminPatients = {
     async updateStatus(id, status) {
         try {
             const token = AuthService.currentUser?.token;
-            // Get URL similar to fetchPatients
+            const userType = AuthService.currentUser?.type;
+
+            // For local/demo mode (no token or not admin), update localStorage
+            if (!token || userType !== 'admin' || id.startsWith('APT-') || id.startsWith('PT-')) {
+                console.log(`Updating status locally for ${id} to ${status}`);
+
+                // Update in state
+                const appt = this.state.appointments.find(a => a._id === id);
+                if (appt) {
+                    appt.status = status;
+                }
+
+                // Update in localStorage
+                const localAppointments = JSON.parse(localStorage.getItem('swasthya_appointments') || '[]');
+                const localAppt = localAppointments.find(a => a._id === id);
+                if (localAppt) {
+                    localAppt.status = status;
+                    localStorage.setItem('swasthya_appointments', JSON.stringify(localAppointments));
+                }
+
+                Helpers.showToast(`Appointment marked as ${status}`, 'success');
+                return;
+            }
+
+            // API call for real admin users
             const apiBaseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
                 ? 'http://localhost:5000/api'
                 : 'https://swasthyasetu-9y5l.onrender.com/api';
