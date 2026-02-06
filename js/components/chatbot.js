@@ -1,7 +1,6 @@
 /**
- * Chatbot Component
- * Handles the floating chatbot widget logic, including toggling visibility,
- * displaying initial greetings, handling FAQ redirects, and contact menu.
+ * Enhanced Chatbot Component with Gemini AI Integration
+ * Handles the floating chatbot widget with AI-powered responses
  */
 
 class Chatbot {
@@ -9,11 +8,22 @@ class Chatbot {
         this.container = null;
         this.isOpen = false;
         this.isMenuOpen = false;
+        this.conversationHistory = [];
+        this.isTyping = false;
+        this.contextInitialized = false;
         this.init();
     }
 
-    init() {
-        console.log('Initializing Chatbot...');
+    async init() {
+        console.log('Initializing AI-Powered Chatbot...');
+
+        // Initialize context service
+        if (window.ChatbotContext) {
+            await window.ChatbotContext.initialize();
+            this.contextInitialized = true;
+            console.log('Chatbot context initialized');
+        }
+
         this.render();
         this.attachEventListeners();
     }
@@ -23,7 +33,6 @@ class Chatbot {
         this.container.id = 'chatbot-component';
         this.container.className = 'chatbot-container';
 
-        // Support email for mailto links
         const supportEmail = 'swasthyasetu.helpdesk@gmail.com';
 
         this.container.innerHTML = `
@@ -33,18 +42,32 @@ class Chatbot {
                     <h3>
                         <span class="material-icons-outlined">smart_toy</span>
                         Swasthya Assistant
+                        <span class="ai-badge">AI</span>
                     </h3>
                     <button class="chatbot-close-btn" id="chatbot-close-btn">
                         <span class="material-icons-outlined">close</span>
                     </button>
                 </div>
                 <div class="chatbot-messages" id="chatbot-messages"></div>
-                <div class="chatbot-footer">Powered by AI Health Assistant</div>
+                
+                <!-- Input Area -->
+                <div class="chatbot-input-area">
+                    <input 
+                        type="text" 
+                        id="chatbot-input" 
+                        placeholder="Type your question..." 
+                        autocomplete="off"
+                    />
+                    <button id="chatbot-send-btn" class="chatbot-send-btn">
+                        <span class="material-icons-outlined">send</span>
+                    </button>
+                </div>
+                
+                <div class="chatbot-footer">Powered by Gemini AI</div>
             </div>
 
             <!-- Contact Popup Menu -->
             <div class="contact-menu-container" id="contact-menu-container">
-                <!-- Main View -->
                 <div class="menu-view active" id="menu-main">
                     <button class="contact-menu-item" id="contact-whatsapp">
                         <span class="material-icons-outlined" style="color: #25D366;">chat</span>
@@ -56,7 +79,6 @@ class Chatbot {
                     </button>
                 </div>
 
-                <!-- Email Providers View -->
                 <div class="menu-view" id="menu-email">
                     <button class="contact-menu-item back-btn" id="email-back-btn">
                         <span class="material-icons-outlined" style="font-size: 16px;">arrow_back</span>
@@ -100,6 +122,8 @@ class Chatbot {
         const contactBtn = document.getElementById('chatbot-contact-btn');
         const closeBtn = document.getElementById('chatbot-close-btn');
         const whatsappBtn = document.getElementById('contact-whatsapp');
+        const sendBtn = document.getElementById('chatbot-send-btn');
+        const inputField = document.getElementById('chatbot-input');
 
         // Email Menu Logic
         const emailTriggerBtn = document.getElementById('contact-email-trigger');
@@ -130,12 +154,12 @@ class Chatbot {
         // WhatsApp
         if (whatsappBtn) {
             whatsappBtn.addEventListener('click', () => {
-                window.open('https://wa.me/911234567890', '_blank'); // Replace with actual number
+                window.open('https://wa.me/911234567890', '_blank');
                 this.closeContactMenu();
             });
         }
 
-        // Switch to Email View
+        // Email menu navigation
         if (emailTriggerBtn) {
             emailTriggerBtn.addEventListener('click', () => {
                 menuMain.classList.remove('active');
@@ -143,7 +167,6 @@ class Chatbot {
             });
         }
 
-        // Back to Main View
         if (emailBackBtn) {
             emailBackBtn.addEventListener('click', () => {
                 menuEmail.classList.remove('active');
@@ -151,14 +174,26 @@ class Chatbot {
             });
         }
 
-        // Close menu when clicking email links (optional - typically good UX)
         const emailLinks = menuEmail.querySelectorAll('a');
         emailLinks.forEach(link => {
             link.addEventListener('click', () => {
-                // Short delay to let the click register/open tab before closing menu
                 setTimeout(() => this.closeContactMenu(), 500);
             });
         });
+
+        // Send message handlers
+        if (sendBtn) {
+            sendBtn.addEventListener('click', () => this.handleSendMessage());
+        }
+
+        if (inputField) {
+            inputField.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    this.handleSendMessage();
+                }
+            });
+        }
 
         // Close when clicking outside
         document.addEventListener('click', (e) => {
@@ -182,9 +217,14 @@ class Chatbot {
             // If empty, add initial greeting
             const messagesContainer = document.getElementById('chatbot-messages');
             if (messagesContainer.children.length === 0) {
-                this.addBotMessage('Hi, How can I assist you?');
+                this.addBotMessage('Hi! I\'m your Swasthya Assistant. How can I help you today?');
                 this.showInitialOptions();
             }
+
+            // Focus input
+            setTimeout(() => {
+                document.getElementById('chatbot-input')?.focus();
+            }, 100);
         } else {
             windowEl.classList.remove('visible');
             toggleIcon.innerText = 'chat';
@@ -200,7 +240,6 @@ class Chatbot {
 
         if (this.isMenuOpen) {
             menuContainer.classList.add('visible');
-            // Reset to main view every time we open
             menuMain.classList.add('active');
             menuEmail.classList.remove('active');
         } else {
@@ -216,16 +255,128 @@ class Chatbot {
 
     showInitialOptions() {
         this.addOptions([
-            { text: 'How do I book an appointment?', action: 'faq-1' },
-            { text: 'What is ABHA ID?', action: 'faq-2' },
-            { text: 'How to find hospitals?', action: 'faq-3' }
+            { text: 'How do I book an appointment?', action: 'quick-ask' },
+            { text: 'What is ABHA ID?', action: 'quick-ask' },
+            { text: 'Find nearby hospitals', action: 'quick-ask' },
+            { text: 'Emergency help', action: 'emergency' }
         ]);
+    }
+
+    async handleSendMessage() {
+        const inputField = document.getElementById('chatbot-input');
+        const message = inputField.value.trim();
+
+        if (!message || this.isTyping) return;
+
+        // Add user message
+        this.addUserMessage(message);
+        inputField.value = '';
+
+        // Get AI response
+        await this.getAIResponse(message);
+    }
+
+    async getAIResponse(userMessage) {
+        // Check if API key is configured
+        if (!window.GeminiConfig || window.GeminiConfig.apiKey === 'YOUR_GEMINI_API_KEY_HERE') {
+            this.addBotMessage('⚠️ AI features are not configured yet. Please add your Gemini API key in gemini-config.js');
+            return;
+        }
+
+        this.showTypingIndicator();
+
+        try {
+            // Build conversation context with patient and hospital data
+            let contextString = window.GeminiConfig.systemPrompt;
+
+            // Add patient and hospital context if available
+            if (this.contextInitialized && window.ChatbotContext) {
+                contextString += window.ChatbotContext.getContextString();
+            }
+
+            // Add conversation history
+            contextString += '\n\n## CONVERSATION HISTORY:\n' +
+                this.conversationHistory.map(msg => `${msg.role}: ${msg.text}`).join('\n') +
+                `\nUser: ${userMessage}\nAssistant:`;
+
+            const response = await fetch(
+                `${window.GeminiConfig.apiEndpoint}?key=${window.GeminiConfig.apiKey}`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: contextString
+                            }]
+                        }],
+                        generationConfig: window.GeminiConfig.generationConfig,
+                        safetySettings: window.GeminiConfig.safetySettings
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            this.hideTypingIndicator();
+
+            if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+                const aiResponse = data.candidates[0].content.parts[0].text;
+
+                // Add to conversation history
+                this.conversationHistory.push({ role: 'User', text: userMessage });
+                this.conversationHistory.push({ role: 'Assistant', text: aiResponse });
+
+                // Keep only last 10 messages to avoid token limits
+                if (this.conversationHistory.length > 10) {
+                    this.conversationHistory = this.conversationHistory.slice(-10);
+                }
+
+                this.addBotMessage(aiResponse);
+            } else {
+                throw new Error('Invalid response from AI');
+            }
+        } catch (error) {
+            console.error('Gemini API Error:', error);
+            this.hideTypingIndicator();
+            this.addBotMessage('Sorry, I encountered an error. Please try again or contact support.');
+        }
+    }
+
+    showTypingIndicator() {
+        this.isTyping = true;
+        const messagesContainer = document.getElementById('chatbot-messages');
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'message bot typing-indicator';
+        typingDiv.id = 'typing-indicator';
+        typingDiv.innerHTML = '<span></span><span></span><span></span>';
+        messagesContainer.appendChild(typingDiv);
+        this.scrollToBottom();
+    }
+
+    hideTypingIndicator() {
+        this.isTyping = false;
+        const typingIndicator = document.getElementById('typing-indicator');
+        if (typingIndicator) {
+            typingIndicator.remove();
+        }
     }
 
     addBotMessage(text) {
         const messagesContainer = document.getElementById('chatbot-messages');
         const msgDiv = document.createElement('div');
         msgDiv.className = 'message bot';
+        msgDiv.innerText = text;
+        messagesContainer.appendChild(msgDiv);
+        this.scrollToBottom();
+    }
+
+    addUserMessage(text) {
+        const messagesContainer = document.getElementById('chatbot-messages');
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'message user';
         msgDiv.innerText = text;
         messagesContainer.appendChild(msgDiv);
         this.scrollToBottom();
@@ -248,41 +399,66 @@ class Chatbot {
         this.scrollToBottom();
     }
 
-    handleOptionClick(option) {
+    async handleOptionClick(option) {
         // Add user selection bubble
         this.addUserMessage(option.text);
 
-        setTimeout(() => {
-            switch (option.action) {
-                case 'faq-1':
-                    this.addBotMessage('You can book an appointment by logging into your Patient account, searching for a hospital or doctor, and selecting a preferred time slot.');
-                    break;
-                case 'faq-2':
-                    this.addBotMessage('Ayushman Bharat Health Account (ABHA) ID is a unique identifier that helps you access and share your health records digitally with your consent.');
-                    break;
-                case 'faq-3':
-                    this.addBotMessage('We use your device\'s location services to show hospitals near you. Ensure your location permissions are enabled.');
-                    break;
-            }
-            // Re-show options
-            setTimeout(() => this.showInitialOptions(), 1500);
-        }, 500);
-    }
+        if (option.action === 'emergency') {
+            this.addBotMessage('🚨 For medical emergencies, please call 108 immediately or use the Emergency Access button on the homepage.');
+            return;
+        }
 
-    addUserMessage(text) {
-        const messagesContainer = document.getElementById('chatbot-messages');
-        const msgDiv = document.createElement('div');
-        msgDiv.className = 'message user';
-        msgDiv.innerText = text;
-        messagesContainer.appendChild(msgDiv);
-        this.scrollToBottom();
+        if (option.action === 'quick-ask') {
+            // Use AI to answer
+            await this.getAIResponse(option.text);
+        }
     }
 
     scrollToBottom() {
         const messagesContainer = document.getElementById('chatbot-messages');
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
+
+    /**
+     * Show hospital search results
+     */
+    showHospitalResults(query) {
+        if (!window.ChatbotContext) return;
+
+        const results = window.ChatbotContext.searchHospitals(query);
+
+        if (results.length === 0) {
+            this.addBotMessage(`I couldn't find any hospitals matching "${query}". Try searching by city, department, or hospital name.`);
+            return;
+        }
+
+        let message = `Found ${results.length} hospital(s):\n\n`;
+        results.slice(0, 3).forEach((hospital, index) => {
+            message += `${index + 1}. **${hospital.name}** (${hospital.city})\n`;
+            message += `   📞 ${hospital.contact.phone}\n`;
+            message += `   🛏️ Beds: ${hospital.beds.available}/${hospital.beds.total}\n`;
+            message += `   🏥 Departments: ${hospital.departments.slice(0, 3).join(', ')}\n\n`;
+        });
+
+        if (results.length > 3) {
+            message += `\n...and ${results.length - 3} more. Visit the Hospitals page for full list.`;
+        }
+
+        this.addBotMessage(message);
+    }
+
+    /**
+     * Refresh context (useful after login/logout)
+     */
+    async refreshContext() {
+        if (window.ChatbotContext) {
+            await window.ChatbotContext.initialize();
+            this.contextInitialized = true;
+            console.log('Chatbot context refreshed');
+        }
+    }
 }
+
 
 // Make accessible globally
 window.Chatbot = Chatbot;
