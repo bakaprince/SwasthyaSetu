@@ -235,6 +235,8 @@ const AdminPatients = {
                                             <option value="prescription">Prescription</option>
                                             <option value="diagnosis">Diagnosis</option>
                                             <option value="report">Lab Report</option>
+                                            <option value="X-ray">X-ray</option>
+                                            <option value="MRI">MRI</option>
                                         </select>
                                         <button id="upload-doc-btn" class="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-sm">
                                             Upload File
@@ -275,10 +277,16 @@ const AdminPatients = {
             // Simulated file upload
             Helpers.showToast('Uploading document...', 'info');
             setTimeout(async () => {
-                await this.uploadDocument(this.state.currentAppointment._id, type);
-                this.closeModal(); // Or refresh modal data
-                Helpers.showToast('Document uploaded!', 'success');
-                this.fetchPatients();
+                try {
+                    await this.uploadDocument(this.state.currentAppointment._id, type);
+                    // Refresh modal view instead of closing to show result
+                    this.openPatientModal(this.state.currentAppointment._id);
+                    Helpers.showToast('Document uploaded!', 'success');
+                    // Clear input
+                    document.getElementById('doc-file-input').value = '';
+                } catch (e) {
+                    // Toast already shown
+                }
             }, 1000);
         });
     },
@@ -309,9 +317,6 @@ const AdminPatients = {
     async uploadDocument(id, type) {
         try {
             const token = AuthService.currentUser?.token;
-            const apiBaseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-                ? 'http://localhost:5000/api'
-                : 'https://swasthyasetu-9y5l.onrender.com/api';
 
             const fileInput = document.getElementById('doc-file-input');
             const file = fileInput.files[0];
@@ -320,6 +325,34 @@ const AdminPatients = {
                 Helpers.showToast('Please select a file to upload', 'error');
                 return;
             }
+
+            // SIMULATION: If we are effectively offline or using demo data, just update locally
+            const hostname = window.location.hostname;
+            const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+
+            // If strictly demo (no token or using demo data explicitly), skip API
+            if (!token && this.state.appointments[0]?._id === 'PT-2024-001') { // Simple check for demo data
+                // Simulate delay
+                await new Promise(r => setTimeout(r, 800));
+
+                // Update local state
+                if (this.state.currentAppointment) {
+                    if (!this.state.currentAppointment.documents) {
+                        this.state.currentAppointment.documents = [];
+                    }
+                    this.state.currentAppointment.documents.push({
+                        type: type,
+                        url: '#', // specific dummy url
+                        uploadedAt: new Date().toISOString()
+                    });
+                }
+                return; // Success simulation
+            }
+
+            // Actual API Call (fallback if connected)
+            const apiBaseUrl = isLocal
+                ? 'http://localhost:5000/api'
+                : 'https://swasthyasetu-9y5l.onrender.com/api';
 
             const formData = new FormData();
             formData.append('file', file);
@@ -330,7 +363,6 @@ const AdminPatients = {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
-                    // Content-Type is auto-set with FormData
                 },
                 body: formData
             });
@@ -338,16 +370,17 @@ const AdminPatients = {
             const data = await response.json();
 
             if (data.success) {
-                Helpers.showToast('Document uploaded successfully!', 'success');
-                this.closeModal();
-                this.fetchPatients();
+                // If API succeeds, we usually re-fetch, but let's update local state too if needed
             } else {
                 throw new Error(data.message || 'Upload failed');
             }
 
         } catch (error) {
             console.error(error);
+            // If it's a network error or fetch failed, we might want to fail gracefully or simulate
+            // For now, let's allow it to 'fail' if it's a real attempt, but if we are in demo mode we handled it above.
             Helpers.showToast(error.message || 'Failed to upload document', 'error');
+            throw error; // Re-throw to be caught by the caller
         }
     },
 
@@ -357,7 +390,89 @@ const AdminPatients = {
 
     // Demo Fallback
     renderDemoData() {
-        // ... (Optional: Could duplicate the HTML static rows into state)
+        console.log('Rendering demo data...');
+        // Sample data mimicking the structure
+        const demoData = [
+            {
+                _id: 'PT-2024-001',
+                date: '2024-01-28',
+                status: 'pending',
+                specialty: 'Cardiology',
+                reason: 'Chest pain and shortness of breath',
+                userId: {
+                    name: 'Rajesh Kumar',
+                    mobile: '9876543210',
+                    age: 45,
+                    gender: 'Male'
+                },
+                documents: [
+                    { type: 'prescription', url: '#', uploadedAt: '2024-01-28T10:00:00Z' }
+                ]
+            },
+            {
+                _id: 'PT-2024-002',
+                date: '2024-01-30',
+                status: 'confirmed',
+                specialty: 'General Medicine',
+                reason: 'High fever and fatigue',
+                userId: {
+                    name: 'Priya Sharma',
+                    mobile: '9876543211',
+                    age: 32,
+                    gender: 'Female'
+                },
+                documents: []
+            },
+            {
+                _id: 'PT-2024-003',
+                date: '2024-02-01',
+                status: 'completed',
+                specialty: 'Orthopedics',
+                reason: 'Fracture follow-up',
+                userId: {
+                    name: 'Amit Verma',
+                    mobile: '9876543212',
+                    age: 58,
+                    gender: 'Male'
+                },
+                documents: [
+                    { type: 'report', url: '#', uploadedAt: '2024-02-01T09:30:00Z' },
+                    { type: 'X-ray', url: '#', uploadedAt: '2024-02-01T09:35:00Z' }
+                ]
+            },
+            {
+                _id: 'PT-2024-004',
+                date: '2024-02-02',
+                status: 'confirmed',
+                specialty: 'Neurology',
+                reason: 'Migraine consultation',
+                userId: {
+                    name: 'Sunita Devi',
+                    mobile: '9876543213',
+                    age: 67,
+                    gender: 'Female'
+                },
+                documents: []
+            },
+            {
+                _id: 'PT-2024-005',
+                date: '2024-02-03',
+                status: 'cancelled',
+                specialty: 'Dermatology',
+                reason: 'Skin rash',
+                userId: {
+                    name: 'Vikram Singh',
+                    mobile: '9876543214',
+                    age: 41,
+                    gender: 'Male'
+                },
+                documents: []
+            }
+        ];
+
+        this.state.appointments = demoData;
+        this.renderTable(demoData);
+        this.updateStats(demoData);
     }
 };
 
