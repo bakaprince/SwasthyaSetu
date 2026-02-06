@@ -144,10 +144,38 @@ class BookingWizard {
                 this.renderStep();
             } else {
                 // Submit Booking
-                alert("Booking Confirmed! (This is a demo)");
+                this.saveBooking();
+                alert("Booking Confirmed! Your appointment has been sent to the hospital.");
                 this.close();
             }
         }
+    }
+
+    saveBooking() {
+        // Create appointment object matching Admin schema
+        const appt = {
+            _id: 'APT-' + Date.now(),
+            date: new Date().toISOString(), // Current date as booking date
+            status: 'pending',
+            specialty: this.bookingData.department.name,
+            condition: 'New Patient', // Default
+            description: 'Appointment booked via online portal.',
+            reason: `Consultation with ${this.bookingData.doctor.name}`,
+            userId: {
+                name: this.bookingData.user.name,
+                mobile: this.bookingData.user.phone,
+                age: this.bookingData.user.age,
+                gender: this.bookingData.user.gender
+            },
+            documents: []
+        };
+
+        // Save to LocalStorage
+        const deployments = JSON.parse(localStorage.getItem('swasthya_appointments') || '[]');
+        deployments.unshift(appt);
+        localStorage.setItem('swasthya_appointments', JSON.stringify(deployments));
+
+        console.log('Booking saved locally:', appt);
     }
 
     prevStep() {

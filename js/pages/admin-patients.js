@@ -504,9 +504,15 @@ const AdminPatients = {
             }
         ];
 
-        this.state.appointments = demoData;
-        this.renderTable(demoData);
-        this.updateStats(demoData);
+        // Merge with LocalStorage data
+        const localAppointments = JSON.parse(localStorage.getItem('swasthya_appointments') || '[]');
+
+        // Combine: Local (newest) + Demo
+        const finalData = [...localAppointments, ...demoData];
+
+        this.state.appointments = finalData;
+        this.renderTable(finalData);
+        this.updateStats(finalData);
     }
 };
 
