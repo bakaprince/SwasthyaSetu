@@ -21,10 +21,13 @@ const AdminPatients = {
 
     async fetchPatients() {
         try {
-            // Need a valid token
+            // Need a valid token AND admin role
             const token = AuthService.currentUser?.token;
-            if (!token) {
-                console.warn('No token found, rendering local data...');
+            const userType = AuthService.currentUser?.type;
+
+            // If no token OR not an admin, use local data
+            if (!token || userType !== 'admin') {
+                console.warn('No admin token found, rendering local data...');
                 this.renderDemoData();
                 return;
             }
