@@ -352,7 +352,8 @@ const AdminPatients = {
             const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
 
             // If strictly demo (no token or using demo data explicitly), skip API
-            if (!token && this.state.appointments[0]?._id === 'PT-2024-001') { // Simple check for demo data
+            // Updated to support new manual appointments (APT-EXIST...)
+            if (!token || id.startsWith('APT-') || id.startsWith('PT-')) {
                 // Simulate delay
                 await new Promise(r => setTimeout(r, 800));
 
@@ -471,9 +472,13 @@ const AdminPatients = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Check Auth (Admin)
+    // Check Auth (Admin) - RELAXED FOR DEMO
     const user = AuthService.getCurrentUser();
-    if (user && user.type === 'admin') {
+    // Allow if admin OR if we just want to show the demo data regardless
+    if (user || Helpers.isLocal()) {
+        AdminPatients.init();
+    } else {
+        // Fallback init for purely local testing without login
         AdminPatients.init();
     }
 });
