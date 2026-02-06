@@ -69,10 +69,12 @@ const AdminPatients = {
 
         appointments.forEach(app => {
             const user = app.userId || {}; // Populated user object
+            // Map demo 'reason' to 'condition' if needed, or just use reason.
             const statusColor = this.getStatusColor(app.status);
 
             const tr = document.createElement('tr');
             tr.className = 'hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors';
+            // Store ID on the row or button
             tr.innerHTML = `
                 <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">${app._id.substring(app._id.length - 8).toUpperCase()}</td>
                 <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
@@ -93,14 +95,6 @@ const AdminPatients = {
             `;
             tbody.appendChild(tr);
         });
-
-        // Re-attach listeners to new buttons
-        document.querySelectorAll('.view-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const id = e.target.getAttribute('data-id');
-                this.openPatientModal(id);
-            });
-        });
     },
 
     getStatusColor(status) {
@@ -117,7 +111,7 @@ const AdminPatients = {
         // Simple client-side stats
         const total = appointments.length;
         const newAdmissions = appointments.filter(a => {
-            const date = new Date(a.createdAt);
+            const date = new Date(a.createdAt || a.date); // Use whatever date exists
             const now = new Date();
             return (now - date) < (7 * 24 * 60 * 60 * 1000); // Last 7 days
         }).length;
@@ -141,12 +135,8 @@ const AdminPatients = {
         this.state.currentAppointment = appointment;
         const user = appointment.userId || {};
 
-        // Populate Modal Fields (We'll inject the modal HTML if not present, or assume it exists)
-        // For now, let's build a simple modal overlay safely
-
         let modal = document.getElementById('patient-modal');
         if (!modal) {
-            // Create modal if doesn't exist
             this.createModalHTML();
             modal = document.getElementById('patient-modal');
         }
@@ -157,7 +147,9 @@ const AdminPatients = {
         document.getElementById('modal-patient-age').textContent = `${user.age || 'N/A'} yrs, ${user.gender || 'N/A'}`;
         document.getElementById('modal-patient-mobile').textContent = user.mobile || 'N/A';
         document.getElementById('modal-appointment-date').textContent = new Date(appointment.date).toLocaleDateString();
-        document.getElementById('modal-appointment-reason').textContent = appointment.reason || 'N/A';
+        // Use 'condition' if available, else 'reason'
+        document.getElementById('modal-condition').textContent = appointment.condition || appointment.reason || 'N/A';
+        document.getElementById('modal-description').textContent = appointment.description || 'No additional description provided.';
 
         // Populate existing documents
         const docsList = document.getElementById('modal-docs-list');
@@ -165,18 +157,23 @@ const AdminPatients = {
         if (appointment.documents && appointment.documents.length > 0) {
             appointment.documents.forEach(doc => {
                 const li = document.createElement('li');
-                li.className = 'flex items-center justify-between text-sm p-2 bg-gray-50 dark:bg-gray-700 rounded';
+                li.className = 'flex items-center justify-between text-sm p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-100 dark:border-gray-600';
                 li.innerHTML = `
-                    <span class="flex items-center gap-2">
-                        <span class="material-icons-outlined text-gray-500">description</span>
-                        ${doc.type} - ${new Date(doc.uploadedAt).toLocaleDateString()}
-                    </span>
-                    <a href="${doc.url}" target="_blank" class="text-primary hover:underline">View</a>
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600 dark:text-blue-400">
+                            <span class="material-icons-outlined text-lg">description</span>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-900 dark:text-white capitalize">${doc.type}</p>
+                            <p class="text-xs text-gray-500">${new Date(doc.uploadedAt).toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                    <a href="${doc.url}" target="_blank" class="text-primary hover:text-green-400 text-sm font-medium hover:underline">View</a>
                 `;
                 docsList.appendChild(li);
             });
         } else {
-            docsList.innerHTML = '<li class="text-gray-500 text-sm">No documents uploaded</li>';
+            docsList.innerHTML = '<li class="text-gray-500 text-sm italic text-center py-4">No documents uploaded yet</li>';
         }
 
         // Show Modal
@@ -191,68 +188,74 @@ const AdminPatients = {
     createModalHTML() {
         const modal = document.createElement('div');
         modal.id = 'patient-modal';
-        modal.className = 'fixed inset-0 z-50 overflow-y-auto hidden';
+        modal.className = 'fixed inset-0 z-[60] overflow-y-auto hidden'; // High z-index
         modal.innerHTML = `
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
                 <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-                    <div class="absolute inset-0 bg-gray-900 opacity-75"></div>
+                    <div class="absolute inset-0 bg-gray-900 opacity-75 backdrop-blur-sm"></div>
                 </div>
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
                     
-                    <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                        <div class="sm:flex sm:items-start">
-                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white" id="modal-patient-name">Patient Name</h3>
-                                <p class="text-sm text-gray-500" id="modal-patient-id">ID: 12345</p>
-                                
-                                <div class="mt-4 grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-xs text-gray-500 uppercase">Age/Gender</label>
-                                        <p class="text-sm font-medium dark:text-gray-300" id="modal-patient-age">--</p>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs text-gray-500 uppercase">Mobile</label>
-                                        <p class="text-sm font-medium dark:text-gray-300" id="modal-patient-mobile">--</p>
-                                    </div>
-                                    <div class="col-span-2">
-                                        <label class="block text-xs text-gray-500 uppercase">Reason</label>
-                                        <p class="text-sm font-medium dark:text-gray-300" id="modal-appointment-reason">--</p>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs text-gray-500 uppercase">Date</label>
-                                        <p class="text-sm font-medium dark:text-gray-300" id="modal-appointment-date">--</p>
-                                    </div>
-                                </div>
-
-                                <div class="mt-6 border-t border-gray-200 dark:border-gray-700 pt-4">
-                                    <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-2">Documents</h4>
-                                    <ul class="space-y-2 mb-4" id="modal-docs-list"></ul>
-                                    
-                                    <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-2">Upload New</h4>
-                                    <div class="flex gap-2">
-                                        <select id="doc-type" class="text-sm border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                            <option value="prescription">Prescription</option>
-                                            <option value="diagnosis">Diagnosis</option>
-                                            <option value="report">Lab Report</option>
-                                            <option value="X-ray">X-ray</option>
-                                            <option value="MRI">MRI</option>
-                                        </select>
-                                        <button id="upload-doc-btn" class="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-sm">
-                                            Upload File
-                                        </button>
-                                    </div>
-                                    <input type="file" id="doc-file-input" class="mt-2 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
-                                </div>
+                    <div class="bg-white dark:bg-gray-800 px-6 pt-6 pb-4">
+                        <div class="flex items-start justify-between mb-6">
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-900 dark:text-white font-display" id="modal-patient-name">Patient Name</h3>
+                                <p class="text-sm text-primary font-medium mt-1" id="modal-patient-id">ID: 12345</p>
                             </div>
+                            <button id="close-modal-x" class="text-gray-400 hover:text-gray-500 transition-colors">
+                                <span class="material-icons-outlined text-2xl">close</span>
+                            </button>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-6 mb-8">
+                            <div class="p-4 bg-gray-50 dark:bg-gray-700/30 rounded-xl border border-gray-100 dark:border-gray-700">
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Age & Gender</label>
+                                <p class="text-base font-semibold text-gray-900 dark:text-white" id="modal-patient-age">--</p>
+                            </div>
+                            <div class="p-4 bg-gray-50 dark:bg-gray-700/30 rounded-xl border border-gray-100 dark:border-gray-700">
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Contact</label>
+                                <p class="text-base font-semibold text-gray-900 dark:text-white" id="modal-patient-mobile">--</p>
+                            </div>
+                            <div class="col-span-2 p-4 bg-gray-50 dark:bg-gray-700/30 rounded-xl border border-gray-100 dark:border-gray-700">
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Condition</label>
+                                <p class="text-base font-semibold text-gray-900 dark:text-white" id="modal-condition">--</p>
+                            </div>
+                            <div class="col-span-2 p-4 bg-gray-50 dark:bg-gray-700/30 rounded-xl border border-gray-100 dark:border-gray-700">
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Description</label>
+                                <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed" id="modal-description">--</p>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                            <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                                <span class="material-icons-outlined text-primary">folder_open</span>
+                                Medical Documents
+                            </h4>
+                            <ul class="space-y-3 mb-6 max-h-48 overflow-y-auto pr-2" id="modal-docs-list"></ul>
+                            
+                            <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-3">Quick Actions</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <button id="btn-upload-prescription" class="flex items-center justify-center gap-2 px-4 py-3 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-all border border-blue-200 dark:border-blue-800">
+                                    <span class="material-icons-outlined">medication</span>
+                                    Upload Prescription
+                                </button>
+                                <button id="btn-upload-report" class="flex items-center justify-center gap-2 px-4 py-3 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded-xl hover:bg-purple-100 dark:hover:bg-purple-900/40 transition-all border border-purple-200 dark:border-purple-800">
+                                    <span class="material-icons-outlined">science</span>
+                                    Upload Report
+                                </button>
+                            </div>
+                            <!-- Hidden File Input used by both buttons -->
+                            <input type="file" id="doc-file-input" class="hidden"/>
                         </div>
                     </div>
 
-                    <div class="bg-gray-50 dark:bg-gray-700/50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
-                         <button type="button" id="mark-completed-btn" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
-                            Mark Completed
+                    <div class="bg-gray-50 dark:bg-gray-700/50 px-6 py-4 flex gap-3 justify-end border-t border-gray-200 dark:border-gray-700">
+                         <button type="button" id="mark-completed-btn" class="inline-flex justify-center items-center gap-2 rounded-lg border border-transparent shadow-sm px-5 py-2.5 bg-green-600 text-sm font-medium text-white hover:bg-green-700 focus:outline-none transition-colors">
+                            <span class="material-icons-outlined text-lg">check_circle</span>
+                            Mark as Completed
                         </button>
-                        <button type="button" id="close-modal-btn" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        <button type="button" id="close-modal-btn" class="inline-flex justify-center items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 shadow-sm px-5 py-2.5 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none transition-colors">
                             Close
                         </button>
                     </div>
@@ -262,7 +265,9 @@ const AdminPatients = {
         document.body.appendChild(modal);
 
         // Bind Modal Events
-        document.getElementById('close-modal-btn').addEventListener('click', () => this.closeModal());
+        const close = () => this.closeModal();
+        document.getElementById('close-modal-btn').addEventListener('click', close);
+        document.getElementById('close-modal-x').addEventListener('click', close);
 
         document.getElementById('mark-completed-btn').addEventListener('click', async () => {
             if (this.state.currentAppointment) {
@@ -272,22 +277,34 @@ const AdminPatients = {
             }
         });
 
-        document.getElementById('upload-doc-btn').addEventListener('click', async () => {
-            const type = document.getElementById('doc-type').value;
-            // Simulated file upload
-            Helpers.showToast('Uploading document...', 'info');
-            setTimeout(async () => {
-                try {
-                    await this.uploadDocument(this.state.currentAppointment._id, type);
-                    // Refresh modal view instead of closing to show result
-                    this.openPatientModal(this.state.currentAppointment._id);
-                    Helpers.showToast('Document uploaded!', 'success');
-                    // Clear input
-                    document.getElementById('doc-file-input').value = '';
-                } catch (e) {
-                    // Toast already shown
-                }
-            }, 1000);
+        // File Upload Logic
+        const fileInput = document.getElementById('doc-file-input');
+        let currentUploadType = 'report'; // Default
+
+        const handleUploadClick = (type) => {
+            currentUploadType = type;
+            fileInput.click();
+        };
+
+        document.getElementById('btn-upload-prescription').addEventListener('click', () => handleUploadClick('prescription'));
+        document.getElementById('btn-upload-report').addEventListener('click', () => handleUploadClick('report'));
+
+        fileInput.addEventListener('change', async (e) => {
+            if (e.target.files.length > 0) {
+                // Simulate upload immediately upon selection
+                Helpers.showToast(`Uploading ${currentUploadType}...`, 'info');
+
+                setTimeout(async () => {
+                    try {
+                        await this.uploadDocument(this.state.currentAppointment._id, currentUploadType);
+                        this.openPatientModal(this.state.currentAppointment._id);
+                        Helpers.showToast(`${currentUploadType} uploaded!`, 'success');
+                        fileInput.value = ''; // Reset
+                    } catch (e) {
+                        // Error handled
+                    }
+                }, 1000);
+            }
         });
     },
 
@@ -385,7 +402,14 @@ const AdminPatients = {
     },
 
     setupEventListeners() {
-        // Nothing extra for now, buttons handled in render
+        // Event Delegation for View Details buttons
+        document.querySelector('tbody').addEventListener('click', (e) => {
+            const btn = e.target.closest('.view-btn');
+            if (btn) {
+                const id = btn.getAttribute('data-id');
+                this.openPatientModal(id);
+            }
+        });
     },
 
     // Demo Fallback
@@ -398,6 +422,8 @@ const AdminPatients = {
                 date: '2024-01-28',
                 status: 'pending',
                 specialty: 'Cardiology',
+                condition: 'Stable Angina',
+                description: 'Patient reports recurring chest pain during physical exertion. ECG shows mild abnormalities.',
                 reason: 'Chest pain and shortness of breath',
                 userId: {
                     name: 'Rajesh Kumar',
@@ -414,6 +440,8 @@ const AdminPatients = {
                 date: '2024-01-30',
                 status: 'confirmed',
                 specialty: 'General Medicine',
+                condition: 'Viral Fever',
+                description: 'High grade fever with chills and body ache. Tested negative for Malaria/Dengue.',
                 reason: 'High fever and fatigue',
                 userId: {
                     name: 'Priya Sharma',
@@ -428,6 +456,8 @@ const AdminPatients = {
                 date: '2024-02-01',
                 status: 'completed',
                 specialty: 'Orthopedics',
+                condition: 'Humerus Fracture',
+                description: 'Post-cast removal checkup. X-rays indicate good bone healing.',
                 reason: 'Fracture follow-up',
                 userId: {
                     name: 'Amit Verma',
@@ -445,6 +475,8 @@ const AdminPatients = {
                 date: '2024-02-02',
                 status: 'confirmed',
                 specialty: 'Neurology',
+                condition: 'Chronic Migraine',
+                description: 'Patient suffers from unilateral headaches with photophobia.',
                 reason: 'Migraine consultation',
                 userId: {
                     name: 'Sunita Devi',
@@ -459,6 +491,8 @@ const AdminPatients = {
                 date: '2024-02-03',
                 status: 'cancelled',
                 specialty: 'Dermatology',
+                condition: 'Allergic Dermatitis',
+                description: 'Red itchy rash on forearms. Suspected contact allergy.',
                 reason: 'Skin rash',
                 userId: {
                     name: 'Vikram Singh',
