@@ -300,18 +300,24 @@ class PatientDetailsModal extends BaseModal {
 
         return `
             <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
-                ${documents.map(doc => `
+                ${documents.map((doc, index) => `
                     <div class="flex items-center gap-3 rounded-lg border border-gray-200 p-3 hover:bg-gray-50 transition-colors">
                         <span class="material-icons-outlined text-blue-600">description</span>
                         <div class="flex-1 min-w-0">
-                            <p class="font-medium text-gray-900 truncate">${doc.name}</p>
+                            <p class="font-medium text-gray-900 truncate">${doc.name || 'Document'}</p>
                             <p class="text-xs text-gray-500">
-                                ${Formatters.formatFileSize(doc.size)} • ${Formatters.formatDate(doc.uploadedAt, 'relative')}
+                                ${doc.size ? Formatters.formatFileSize(doc.size) + ' • ' : ''}${doc.uploadedAt ? Formatters.formatDate(doc.uploadedAt, 'relative') : 'Just now'}
                             </p>
                         </div>
                         <span class="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
-                            ${Formatters.capitalizeWords(doc.type)}
+                            ${Formatters.capitalizeWords(doc.type || 'document')}
                         </span>
+                        <button type="button" 
+                                class="delete-doc-btn p-1.5 text-red-500 hover:bg-red-100 rounded-full transition-colors"
+                                data-doc-index="${index}"
+                                data-doc-id="${doc.id || doc._id || ''}">
+                            <span class="material-icons-outlined text-sm">delete</span>
+                        </button>
                     </div>
                 `).join('')}
             </div>
@@ -329,7 +335,7 @@ class PatientDetailsModal extends BaseModal {
 
         if (!bodyElement || !footerElement) return;
 
-        // Upload button handlers
+        // Upload button handlers - now uses popup modal
         bodyElement.querySelectorAll('.upload-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const documentType = btn.dataset.type;
@@ -337,26 +343,135 @@ class PatientDetailsModal extends BaseModal {
             });
         });
 
+        // Delete document button handlers
+        bodyElement.querySelectorAll('.delete-doc-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const docIndex = parseInt(btn.dataset.docIndex);
+                const docId = btn.dataset.docId;
+                await this.handleDeleteDocument(docIndex, docId);
+            });
+        });
+
         // Status update button handlers
         footerElement.querySelectorAll('.status-update-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 const newStatus = btn.dataset.status;
-                await this.handleStatusUpdate(newStatus);
+
+                // Special handling for cancellation - show popup for reason
+                if (newStatus === APPOINTMENT_STATUS.CANCELLED) {
+                    this.showCancellationPopup();
+                } else {
+                    await this.handleStatusUpdate(newStatus);
+                }
             });
         });
     }
 
     /**
-     * Trigger file upload dialog
+     * Trigger file upload popup modal
      * 
      * @param {string} documentType - Type of document to upload
      * @private
      */
     triggerFileUpload(documentType) {
-        if (!this.fileInput) return;
+        // Use the new FileUploadModal popup
+        if (typeof fileUploadModal !== 'undefined') {
+            fileUploadModal.show(documentType, async (file, type) => {
+                await this.handleFileUpload(file, type);
+            });
+        } else {
+            // Fallback to old method if modal not loaded
+            if (!this.fileInput) return;
+            this.fileInput.dataset.documentType = documentType;
+            this.fileInput.click();
+        }
+    }
 
-        this.fileInput.dataset.documentType = documentType;
-        this.fileInput.click();
+    /**
+     * Handle file upload from popup
+     * 
+     * @param {File} file - File to upload
+     * @param {string} documentType - Type of document
+     * @private
+     */
+    async handleFileUpload(file, documentType) {
+        if (!this.currentPatient) return;
+
+        try {
+            Helpers.showToast('Uploading document...', 'info');
+
+            // Upload document
+            await AppointmentService.uploadDocument(
+                this.currentPatient._id,
+                file,
+                documentType
+            );
+
+            Helpers.showToast(SUCCESS_MESSAGES.DOCUMENT_UPLOADED || 'Document uploaded successfully!', 'success');
+
+            // Call callback
+            if (typeof this.onDocumentUpload === 'function') {
+                this.onDocumentUpload(this.currentPatient._id);
+            }
+
+            // Refresh patient data
+            await this.refreshPatientData();
+
+        } catch (error) {
+            console.error('[PatientDetailsModal] Upload error:', error);
+            Helpers.showToast(ERROR_MESSAGES.FILE_UPLOAD_ERROR || 'Failed to upload document', 'error');
+        }
+    }
+
+    /**
+     * Show cancellation reason popup
+     * @private
+     */
+    showCancellationPopup() {
+        if (typeof cancellationReasonModal !== 'undefined') {
+            cancellationReasonModal.show(
+                async (reason) => {
+                    // User submitted cancellation with reason
+                    await this.handleStatusUpdate(APPOINTMENT_STATUS.CANCELLED, reason);
+                },
+                () => {
+                    // User cancelled the popup
+                    console.log('[PatientDetailsModal] Cancellation popup closed');
+                }
+            );
+        } else {
+            // Fallback - just cancel without reason
+            this.handleStatusUpdate(APPOINTMENT_STATUS.CANCELLED);
+        }
+    }
+
+    /**
+     * Handle document deletion
+     * 
+     * @param {number} docIndex - Index of document in array
+     * @param {string} docId - Document ID
+     * @private
+     */
+    async handleDeleteDocument(docIndex, docId) {
+        if (!this.currentPatient) return;
+
+        if (!confirm('Are you sure you want to delete this document?')) return;
+
+        try {
+            Helpers.showToast('Deleting document...', 'info');
+
+            // Delete via service
+            await AppointmentService.deleteDocument(this.currentPatient._id, docIndex, docId);
+
+            Helpers.showToast('Document deleted successfully', 'success');
+
+            // Refresh patient data
+            await this.refreshPatientData();
+
+        } catch (error) {
+            console.error('[PatientDetailsModal] Delete error:', error);
+            Helpers.showToast('Failed to delete document', 'error');
+        }
     }
 
     /**
@@ -365,21 +480,24 @@ class PatientDetailsModal extends BaseModal {
      * @param {string} newStatus - New status value
      * @private
      */
-    async handleStatusUpdate(newStatus) {
+    async handleStatusUpdate(newStatus, cancelReason = null) {
         if (!this.currentPatient) return;
 
         try {
             // Show loading state
             Helpers.showToast(`Updating status to ${newStatus}...`, 'info');
 
-            // Update status via service
-            await AppointmentService.updateStatus(this.currentPatient._id, newStatus);
+            // Update status via service (with optional cancel reason)
+            await AppointmentService.updateStatus(this.currentPatient._id, newStatus, cancelReason);
 
             // Show success
-            Helpers.showToast(SUCCESS_MESSAGES.APPOINTMENT_UPDATED, 'success');
+            Helpers.showToast(SUCCESS_MESSAGES.APPOINTMENT_UPDATED || 'Appointment updated!', 'success');
 
             // Update current patient data
             this.currentPatient.status = newStatus;
+            if (cancelReason) {
+                this.currentPatient.cancelReason = cancelReason;
+            }
 
             // Re-render to show updated status
             this.render();
@@ -387,6 +505,11 @@ class PatientDetailsModal extends BaseModal {
             // Call callback
             if (typeof this.onStatusUpdate === 'function') {
                 this.onStatusUpdate(this.currentPatient._id, newStatus);
+            }
+
+            // Close modal after cancellation
+            if (newStatus === APPOINTMENT_STATUS.CANCELLED) {
+                setTimeout(() => this.close(), 500);
             }
 
         } catch (error) {
