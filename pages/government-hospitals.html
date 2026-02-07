@@ -802,14 +802,18 @@
                 grid.appendChild(card);
             });
 
-            // Update overall stats
+            // Update overall stats - check if elements exist first (may be removed)
             const totalConnected = Object.values(stateData).reduce((sum, s) => sum + s.connected, 0);
             const totalPending = Object.values(stateData).reduce((sum, s) => sum + s.pending, 0);
             const totalOffline = Object.values(stateData).reduce((sum, s) => sum + s.offline, 0);
 
-            document.getElementById('total-connected').textContent = totalConnected.toLocaleString();
-            document.getElementById('total-pending').textContent = totalPending.toLocaleString();
-            document.getElementById('total-offline').textContent = totalOffline.toLocaleString();
+            const elConnected = document.getElementById('total-connected');
+            const elPending = document.getElementById('total-pending');
+            const elOffline = document.getElementById('total-offline');
+
+            if (elConnected) elConnected.textContent = totalConnected.toLocaleString();
+            if (elPending) elPending.textContent = totalPending.toLocaleString();
+            if (elOffline) elOffline.textContent = totalOffline.toLocaleString();
         }
 
         // Open state modal

@@ -321,3 +321,111 @@
         transform: translateY(0);
     }
 }
+
+/* ============================================ */
+/* CONTACT US FAB BUTTON & DROPDOWN            */
+/* ============================================ */
+
+.contact-fab-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.contact-fab {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    border: 2px solid #e2e8f0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.contact-fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.contact-fab:active {
+    transform: scale(0.95);
+}
+
+/* Contact Dropdown */
+.contact-dropdown {
+    position: absolute;
+    bottom: 4rem;
+    right: 0;
+    width: 220px;
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    opacity: 0;
+    transform: scale(0.9) translateY(10px);
+    pointer-events: none;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1001;
+}
+
+.contact-dropdown.visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    pointer-events: auto;
+}
+
+.contact-dropdown-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.contact-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    color: #374151;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.contact-option:last-child {
+    border-bottom: none;
+}
+
+.contact-option:hover {
+    background: #f0f9ff;
+    color: #2563eb;
+}
+
+/* Dark mode for contact dropdown */
+.dark .contact-dropdown {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+.dark .contact-option {
+    color: #e5e7eb;
+    border-color: #374151;
+}
+
+.dark .contact-option:hover {
+    background: #374151;
+    color: #60a5fa;
+}
