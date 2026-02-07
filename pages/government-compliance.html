@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link rel="icon" type="image/png" href="../assets/icons/favicon.png" />
+    <title>Compliance Monitor - Government Portal</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet" />
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#86efac",
+                        secondary: "#113841",
+                        "secondary-light": "#1d525e",
+                        "background-dark": "#0d2b32",
+                        "gov-gold": "#ffd700",
+                    },
+                    fontFamily: {
+                        display: ["Playfair Display", "serif"],
+                        sans: ["DM Sans", "sans-serif"],
+                    },
+                },
+            },
+        };
+    </script>
+
+    <style>
+        .nav-link {
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #86efac;
+        }
+
+        .nav-link.active {
+            color: #86efac;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #86efac;
+        }
+
+        .hero-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2386efac' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4v-4H4v4H0v2h4v4h2v-4h4v-2H6zM36 4v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .compliance-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: #e5e7eb;
+            overflow: hidden;
+        }
+
+        .compliance-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 dark:bg-background-dark font-sans antialiased">
+
+    <!-- Top Navigation -->
+    <nav class="bg-secondary dark:bg-secondary text-white border-b border-white/10">
+        <!-- Top Bar -->
+        <div class="px-8 py-4 flex items-center justify-between border-b border-white/10">
+            <a href="../index.html" class="flex items-center gap-3">
+                <img src="../assets/images/logo.png" alt="SwasthyaSetu Logo" class="h-8 w-auto">
+                <div class="flex flex-col">
+                    <span class="text-xs font-bold text-gov-gold tracking-widest uppercase">MoHFW Interop Portal</span>
+                    <span class="text-xs text-primary font-bold">GOVERNMENT</span>
+                </div>
+            </a>
+
+            <div class="flex items-center gap-4">
+                <div class="relative hidden lg:block">
+                    <input type="text" placeholder="Search compliance standards..."
+                        class="w-80 pl-10 pr-4 py-2 bg-secondary-light border border-white/20 rounded-lg text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <span class="material-icons-outlined absolute left-3 top-2.5 text-gray-400 text-sm">search</span>
+                </div>
+                <div class="flex items-center gap-3 ml-4 pl-4 border-l border-white/20">
+                    <img src="https://ui-avatars.com/api/?name=Gov+Admin&background=ffd700&color=113841" alt="User"
+                        class="w-8 h-8 rounded-full border border-gov-gold">
+                    <div>
+                        <p class="text-sm font-semibold" id="admin-name">Ministry Admin</p>
+                        <p class="text-xs text-gov-gold" id="admin-dept">National Health Authority</p>
+                    </div>
+                </div>
+                <button id="logout-btn"
+                    class="ml-4 px-4 py-2 bg-red-500/80 hover:bg-red-600 text-white rounded-lg text-sm font-semibold transition-colors">
+                    Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="px-8 py-0 flex items-center gap-8">
+            <a href="government-dashboard.html"
+                class="nav-link flex items-center gap-2 px-4 py-4 text-sm font-medium text-gray-300">
+                <span class="material-icons-outlined text-lg">insights</span>
+                National Dashboard
+            </a>
+            <a href="government-hospitals.html"
+                class="nav-link flex items-center gap-2 px-4 py-4 text-sm font-medium text-gray-300">
+                <span class="material-icons-outlined text-lg">domain</span>
+                Hospital Connectivity
+            </a>
+            <a href="government-logs.html"
+                class="nav-link flex items-center gap-2 px-4 py-4 text-sm font-medium text-gray-300">
+                <span class="material-icons-outlined text-lg">sync_alt</span>
+                Data Exchange Logs
+            </a>
+            <a href="#" class="nav-link active flex items-center gap-2 px-4 py-4 text-sm font-medium">
+                <span class="material-icons-outlined text-lg">policy</span>
+                Compliance Monitor
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="p-8 hero-pattern min-h-screen">
+
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-secondary dark:text-white mb-1 font-display">Compliance & Standards
+                Monitor</h1>
+            <p class="text-gray-600 dark:text-gray-400">Track adherence to HIPAA, ABDM, and national health data
+                standards across all facilities</p>
+        </div>
+
+        <!-- Overall Compliance Score -->
+        <div class="bg-gradient-to-br from-secondary to-secondary-light rounded-2xl p-8 mb-8 text-white">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold mb-2">National Compliance Score</h2>
+                    <p class="text-primary text-sm">Based on 3,012 registered facilities</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-5xl font-bold text-gov-gold mb-2">94.2%</div>
+                    <div class="flex items-center gap-2 justify-end">
+                        <span class="material-icons-outlined text-green-400">trending_up</span>
+                        <span class="text-sm text-green-400 font-semibold">+2.3% from last month</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white/10 rounded-xl p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="material-icons-outlined text-primary">security</span>
+                        <span class="text-sm font-semibold">HIPAA Compliance</span>
+                    </div>
+                    <div class="text-2xl font-bold">96.8%</div>
+                </div>
+                <div class="bg-white/10 rounded-xl p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="material-icons-outlined text-primary">verified_user</span>
+                        <span class="text-sm font-semibold">ABDM Standards</span>
+                    </div>
+                    <div class="text-2xl font-bold">93.5%</div>
+                </div>
+                <div class="bg-white/10 rounded-xl p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="material-icons-outlined text-primary">shield</span>
+                        <span class="text-sm font-semibold">Data Encryption</span>
+                    </div>
+                    <div class="text-2xl font-bold">98.1%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Compliance Categories -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Data Security Compliance -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                    <h3 class="text-xl font-bold text-secondary dark:text-white mb-6 font-display">Data Security
+                        Compliance</h3>
+
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">End-to-End
+                                    Encryption</span>
+                                <span class="text-sm font-bold text-green-600">98.5%</span>
+                            </div>
+                            <div class="compliance-bar">
+                                <div class="compliance-fill bg-green-500" style="width: 98.5%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">2,967 / 3,012 hospitals compliant</p>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Access Control &
+                                    Authentication</span>
+                                <span class="text-sm font-bold text-green-600">96.2%</span>
+                            </div>
+                            <div class="compliance-bar">
+                                <div class="compliance-fill bg-green-500" style="width: 96.2%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">2,898 / 3,012 hospitals compliant</p>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Audit
+                                    Logging</span>
+                                <span class="text-sm font-bold text-yellow-600">89.3%</span>
+                            </div>
+                            <div class="compliance-bar">
+                                <div class="compliance-fill bg-yellow-500" style="width: 89.3%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">2,690 / 3,012 hospitals compliant</p>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Data Backup &
+                                    Recovery</span>
+                                <span class="text-sm font-bold text-green-600">94.7%</span>
+                            </div>
+                            <div class="compliance-bar">
+                                <div class="compliance-fill bg-green-500" style="width: 94.7%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">2,852 / 3,012 hospitals compliant</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ABDM Standards -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                    <h3 class="text-xl font-bold text-secondary dark:text-white mb-6 font-display">ABDM Integration
+                        Standards</h3>
+
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">ABHA ID
+                                    Integration</span>
+                                <span class="text-sm font-bold text-green-600">97.1%</span>
+                            </div>
+                            <div class="compliance-bar">
+                                <div class="compliance-fill bg-green-500" style="width: 97.1%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">2,924 / 3,012 hospitals compliant</p>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Health Data
+                                    Exchange Protocol</span>
+                                <span class="text-sm font-bold text-green-600">92.8%</span>
+                            </div>
+                            <div class="compliance-bar">
+                                <div class="compliance-fill bg-green-500" style="width: 92.8%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">2,795 / 3,012 hospitals compliant</p>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Consent
+                                    Management</span>
+                                <span class="text-sm font-bold text-yellow-600">88.5%</span>
+                            </div>
+                            <div class="compliance-bar">
+                                <div class="compliance-fill bg-yellow-500" style="width: 88.5%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">2,666 / 3,012 hospitals compliant</p>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Digital Health
+                                    Records Format</span>
+                                <span class="text-sm font-bold text-green-600">95.3%</span>
+                            </div>
+                            <div class="compliance-bar">
+                                <div class="compliance-fill bg-green-500" style="width: 95.3%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">2,870 / 3,012 hospitals compliant</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Compliance Trends Chart -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                    <h3 class="text-xl font-bold text-secondary dark:text-white mb-6 font-display">Compliance Trends (6
+                        Months)</h3>
+                    <div class="h-64">
+                        <canvas id="complianceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts & Actions -->
+            <div class="space-y-6">
+                <!-- Critical Alerts -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-bold text-secondary dark:text-white mb-4 font-display">Critical Alerts</h3>
+
+                    <div class="space-y-4">
+                        <div class="p-4 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 rounded-r-lg">
+                            <div class="flex items-start gap-3">
+                                <span class="material-icons-outlined text-red-500 text-xl">error</span>
+                                <div>
+                                    <p class="text-sm font-bold text-red-800 dark:text-red-200">Encryption Failure</p>
+                                    <p class="text-xs text-red-700 dark:text-red-300 mt-1">Max Hospital (Delhi) - Data
+                                        transmission without encryption detected</p>
+                                    <p class="text-xs text-red-600 dark:text-red-400 mt-2 font-semibold">2 hours ago</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-500 rounded-r-lg">
+                            <div class="flex items-start gap-3">
+                                <span class="material-icons-outlined text-yellow-500 text-xl">warning</span>
+                                <div>
+                                    <p class="text-sm font-bold text-yellow-800 dark:text-yellow-200">Audit Log Gap</p>
+                                    <p class="text-xs text-yellow-700 dark:text-yellow-300 mt-1">Fortis Healthcare -
+                                        Missing audit logs for 6 hours</p>
+                                    <p class="text-xs text-yellow-600 dark:text-yellow-400 mt-2 font-semibold">5 hours
+                                        ago</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-orange-50 dark:bg-orange-900/20 border-l-4 border-orange-500 rounded-r-lg">
+                            <div class="flex items-start gap-3">
+                                <span class="material-icons-outlined text-orange-500 text-xl">info</span>
+                                <div>
+                                    <p class="text-sm font-bold text-orange-800 dark:text-orange-200">Consent Violation
+                                    </p>
+                                    <p class="text-xs text-orange-700 dark:text-orange-300 mt-1">Apollo Mumbai - Data
+                                        accessed without patient consent</p>
+                                    <p class="text-xs text-orange-600 dark:text-orange-400 mt-2 font-semibold">1 day ago
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button
+                        class="w-full mt-4 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white rounded-xl text-sm font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                        View All Alerts (23)
+                    </button>
+                </div>
+
+                <!-- Non-Compliant Facilities -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-bold text-secondary dark:text-white mb-4 font-display">Non-Compliant
+                        Facilities</h3>
+
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900 dark:text-white">City Hospital</p>
+                                <p class="text-xs text-gray-500">Mumbai, MH</p>
+                            </div>
+                            <span
+                                class="px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded text-xs font-bold">3
+                                Issues</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900 dark:text-white">Care Clinic</p>
+                                <p class="text-xs text-gray-500">Bangalore, KA</p>
+                            </div>
+                            <span
+                                class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded text-xs font-bold">2
+                                Issues</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900 dark:text-white">Metro Medical</p>
+                                <p class="text-xs text-gray-500">Delhi, DL</p>
+                            </div>
+                            <span
+                                class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded text-xs font-bold">1
+                                Issue</span>
+                        </div>
+                    </div>
+
+                    <button
+                        class="w-full mt-4 py-3 bg-secondary hover:bg-secondary-light text-white rounded-xl text-sm font-bold transition-colors">
+                        Generate Compliance Report
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JavaScript -->
+    <script src="../js/config/app-config.js"></script>
+    <script src="../js/utils/helpers.js"></script>
+    <script src="../js/utils/force-login.js"></script>
+    <script src="../js/services/auth.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize auth service
+            AuthService.init();
+
+            // Check authentication
+            const user = AuthService.getCurrentUser();
+            if (!AuthService.isAuthenticated()) {
+                window.location.href = '../index.html';
+                return;
+            }
+
+            // Fill user details
+            const adminName = document.getElementById('admin-name');
+            const adminDept = document.getElementById('admin-dept');
+
+            if (user) {
+                adminName.textContent = user.name || 'Ministry Admin';
+                if (user.department) adminDept.textContent = user.department;
+            }
+
+            // Logout handler
+            document.getElementById('logout-btn').addEventListener('click', async () => {
+                await AuthService.logout();
+                Helpers.showToast('Securely logged out', 'success');
+                setTimeout(() => {
+                    window.location.href = '../index.html';
+                }, 1000);
+            });
+
+            // Initialize compliance trends chart
+            const ctx = document.getElementById('complianceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [
+                        {
+                            label: 'HIPAA Compliance',
+                            data: [92, 93, 94, 95, 96, 96.8],
+                            borderColor: '#86efac',
+                            backgroundColor: 'rgba(134, 239, 172, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'ABDM Standards',
+                            data: [88, 89, 90, 91, 92, 93.5],
+                            borderColor: '#ffd700',
+                            backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Data Encryption',
+                            data: [94, 95, 96, 97, 97.5, 98.1],
+                            borderColor: '#113841',
+                            backgroundColor: 'rgba(17, 56, 65, 0.1)',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 85,
+                            max: 100,
+                            ticks: {
+                                callback: function (value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
