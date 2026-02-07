@@ -336,6 +336,259 @@
         </div>
     </div>
 
+    <!-- Hospital Detail Modal (Command Center View) -->
+    <div id="hospital-detail-modal" class="modal" style="z-index: 105;">
+        <div class="modal-content dark:bg-gray-800 w-[98%] max-w-[1600px] h-[95vh] flex flex-col">
+            <!-- Header -->
+            <div
+                class="bg-secondary text-white p-6 flex items-center justify-between border-b border-white/10 shrink-0">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center">
+                        <span class="material-icons-outlined text-3xl text-gov-gold">local_hospital</span>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold font-display flex items-center gap-3">
+                            <span id="detail-name">AIIMS Delhi</span>
+                            <span id="detail-status-badge"
+                                class="px-3 py-1 text-xs rounded-full bg-green-500/20 text-green-300 border border-green-500/30">Connected</span>
+                        </h2>
+                        <div class="flex items-center gap-4 text-sm text-gray-300 mt-1">
+                            <span class="flex items-center gap-1"><span
+                                    class="material-icons-outlined text-sm">fingerprint</span> ID: <span
+                                    id="detail-id">HOSP-001</span></span>
+                            <span class="flex items-center gap-1"><span
+                                    class="material-icons-outlined text-sm">location_on</span> <span
+                                    id="detail-location">New Delhi, DL</span></span>
+                            <span class="flex items-center gap-1"><span
+                                    class="material-icons-outlined text-sm">category</span> <span
+                                    id="detail-type">Government</span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button
+                        class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors">
+                        <span class="material-icons-outlined text-sm">article</span> View Logs
+                    </button>
+                    <button
+                        class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors">
+                        <span class="material-icons-outlined text-sm">settings_remote</span> Remote Diagnostics
+                    </button>
+                    <button onclick="closeHospitalDetail()"
+                        class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors">
+                        <span class="material-icons-outlined text-2xl">close</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="p-8 overflow-y-auto bg-gray-50 dark:bg-gray-900 grow">
+                <div class="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+                    <!-- Column 1: System Health -->
+                    <div class="space-y-6">
+                        <div
+                            class="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm">
+                            <h3
+                                class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4">
+                                Live System Health</h3>
+
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-gray-700 dark:text-gray-300">Server CPU Load</span>
+                                        <span class="font-bold text-secondary dark:text-white" id="stat-cpu">42%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                        <div class="bg-blue-500 h-2 rounded-full" style="width: 42%" id="bar-cpu"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-gray-700 dark:text-gray-300">Memory Usage</span>
+                                        <span class="font-bold text-secondary dark:text-white"
+                                            id="stat-memory">68%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                        <div class="bg-purple-500 h-2 rounded-full" style="width: 68%" id="bar-memory">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-gray-700 dark:text-gray-300">Storage</span>
+                                        <span class="font-bold text-secondary dark:text-white" id="stat-storage">89 TB /
+                                            100 TB</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                        <div class="bg-yellow-500 h-2 rounded-full" style="width: 89%" id="bar-storage">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700 grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-xs text-gray-500">Network Latency</p>
+                                    <p class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-1">
+                                        <span class="w-2 h-2 rounded-full bg-green-500"></span> <span
+                                            id="stat-latency">24ms</span>
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500">Last Backup</p>
+                                    <p class="text-sm font-bold text-gray-900 dark:text-white">2 hrs ago</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            class="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm">
+                            <h3
+                                class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4">
+                                Compliance Status</h3>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">ABDM
+                                    Integration</span>
+                                <span
+                                    class="px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-700 border border-green-200">VERIFIED</span>
+                            </div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">HIPAA Data
+                                    Privacy</span>
+                                <span
+                                    class="px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-700 border border-green-200">COMPLIANT</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Encryption
+                                    Standard</span>
+                                <span class="text-sm font-bold text-secondary dark:text-white">AES-256</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2 & 3: Resource Grid & Activity -->
+                    <div class="lg:col-span-2 xl:col-span-2 space-y-6">
+                        <!-- Resource Stats -->
+                        <div class="grid grid-cols-3 gap-4">
+                            <div
+                                class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 shadow-sm text-center">
+                                <div
+                                    class="w-10 h-10 mx-auto bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center mb-2">
+                                    <span class="material-icons-outlined text-blue-600 dark:text-blue-400">bed</span>
+                                </div>
+                                <h4 class="text-2xl font-bold text-gray-900 dark:text-white" id="res-beds">842</h4>
+                                <p class="text-xs text-gray-500">Available Beds</p>
+                            </div>
+                            <div
+                                class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 shadow-sm text-center">
+                                <div
+                                    class="w-10 h-10 mx-auto bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-2">
+                                    <span class="material-icons-outlined text-red-600 dark:text-red-400">favorite</span>
+                                </div>
+                                <h4 class="text-2xl font-bold text-gray-900 dark:text-white" id="res-icu">42</h4>
+                                <p class="text-xs text-gray-500">ICU Units</p>
+                            </div>
+                            <div
+                                class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 shadow-sm text-center">
+                                <div
+                                    class="w-10 h-10 mx-auto bg-teal-50 dark:bg-teal-900/20 rounded-full flex items-center justify-center mb-2">
+                                    <span
+                                        class="material-icons-outlined text-teal-600 dark:text-teal-400">medical_services</span>
+                                </div>
+                                <h4 class="text-2xl font-bold text-gray-900 dark:text-white" id="res-doctors">156</h4>
+                                <p class="text-xs text-gray-500">Active Doctors</p>
+                            </div>
+                        </div>
+
+                        <!-- Live Data Stream -->
+                        <div
+                            class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden h-96 flex flex-col">
+                            <div
+                                class="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                                <h3
+                                    class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+                                    Live Data Exchange</h3>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                    <span class="text-xs text-green-600 font-bold">Real-time</span>
+                                </div>
+                            </div>
+                            <div class="overflow-y-auto p-0 grow">
+                                <table class="w-full text-sm">
+                                    <tbody id="detail-logs" class="divide-y divide-gray-100 dark:divide-gray-700">
+                                        <!-- Logs generated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 4: Quick Actions & Contacts -->
+                    <div class="space-y-6">
+                        <div
+                            class="bg-gradient-to-br from-secondary to-secondary-light rounded-xl p-5 text-white shadow-lg">
+                            <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                                <span class="material-icons-outlined">admin_panel_settings</span> Admin Protocol
+                            </h3>
+                            <div class="space-y-3">
+                                <button
+                                    class="w-full py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm text-left px-3 flex items-center gap-3 transition-colors">
+                                    <span class="material-icons-outlined text-yellow-400">warning</span> Trigger
+                                    Emergency Alert
+                                </button>
+                                <button
+                                    class="w-full py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm text-left px-3 flex items-center gap-3 transition-colors">
+                                    <span class="material-icons-outlined text-blue-300">sync</span> Force Data Sync
+                                </button>
+                                <button
+                                    class="w-full py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm text-left px-3 flex items-center gap-3 transition-colors">
+                                    <span class="material-icons-outlined text-green-300">verified_user</span> Audit
+                                    Access Logs
+                                </button>
+                                <button
+                                    class="w-full py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm text-left px-3 flex items-center gap-3 transition-colors">
+                                    <span class="material-icons-outlined text-red-300">power_settings_new</span> Restart
+                                    Service
+                                </button>
+                            </div>
+                        </div>
+
+                        <div
+                            class="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm">
+                            <h3
+                                class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4">
+                                Key Contacts</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-3">
+                                    <img src="https://ui-avatars.com/api/?name=Medical+Director&background=random"
+                                        class="w-8 h-8 rounded-full">
+                                    <div>
+                                        <p class="text-sm font-bold text-gray-900 dark:text-white">Dr. R. K. Gupta</p>
+                                        <p class="text-xs text-gray-500">Medical Director</p>
+                                    </div>
+                                    <button class="ml-auto text-gray-400 hover:text-secondary"><span
+                                            class="material-icons-outlined">call</span></button>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <img src="https://ui-avatars.com/api/?name=IT+Head&background=random"
+                                        class="w-8 h-8 rounded-full">
+                                    <div>
+                                        <p class="text-sm font-bold text-gray-900 dark:text-white">Mr. Amit Singh</p>
+                                        <p class="text-xs text-gray-500">IT Administrator</p>
+                                    </div>
+                                    <button class="ml-auto text-gray-400 hover:text-secondary"><span
+                                            class="material-icons-outlined">call</span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript -->
     <script src="../js/config/app-config.js"></script>
     <script src="../js/utils/helpers.js"></script>
@@ -592,16 +845,21 @@
                 const color = statusColors[hospital.status] || 'gray';
 
                 const row = document.createElement('tr');
-                row.className = 'hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors';
+                row.className = 'hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer group';
+                row.onclick = () => openHospitalDetail(hospital); // Make row clickable
+
+                // Add hover effect style
+                row.style.transition = 'all 0.2s';
+
                 row.innerHTML = `
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center">
-                                <span class="material-icons-outlined text-secondary">local_hospital</span>
+                            <div class="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center group-hover:bg-secondary group-hover:text-white transition-colors">
+                                <span class="material-icons-outlined text-secondary group-hover:text-white">local_hospital</span>
                             </div>
                             <div>
-                                <p class="font-semibold text-gray-900 dark:text-white">${hospital.name}</p>
-                                <p class="text-xs text-gray-500">ID: HOSP-${Math.floor(Math.random() * 9000) + 1000}</p>
+                                <p class="font-semibold text-gray-900 dark:text-white group-hover:text-secondary dark:group-hover:text-primary transition-colors">${hospital.name}</p>
+                                <p class="text-xs text-gray-500">ID: ${hospital._id || 'HOSP-' + (Math.floor(Math.random() * 9000) + 1000)}</p>
                             </div>
                         </div>
                     </td>
@@ -617,13 +875,102 @@
                             <span class="text-sm font-semibold text-${color}-600 dark:text-${color}-400">${hospital.status}</span>
                         </div>
                     </td>
-                    <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">${hospital.lastSync}</td>
-                    <td class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">${hospital.uptime}%</td>
+                    <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">${hospital.lastSync || 'Never'}</td>
+                    <td class="px-6 py-4">
+                        <button class="flex items-center gap-1 text-xs font-bold text-secondary dark:text-primary hover:underline">
+                            VIEW <span class="material-icons-outlined text-sm">arrow_forward</span>
+                        </button>
+                    </td>
                 `;
                 tbody.appendChild(row);
             });
 
             document.getElementById('state-modal').classList.add('active');
+        }
+
+        // Open Hospital Detail Modal (Command Center)
+        function openHospitalDetail(hospital) {
+            // Update Header Info
+            document.getElementById('detail-name').textContent = hospital.name;
+            const id = hospital._id || 'HOSP-' + (Math.floor(Math.random() * 9000) + 1000);
+            document.getElementById('detail-id').textContent = id;
+            document.getElementById('detail-location').textContent = hospital.address || hospital.city || hospital.state;
+            document.getElementById('detail-type').textContent = hospital.type || 'General Hospital';
+
+            // Status Badge
+            const statusBadge = document.getElementById('detail-status-badge');
+            if (hospital.status === 'Connected') {
+                statusBadge.className = 'px-3 py-1 text-xs rounded-full bg-green-500/20 text-green-300 border border-green-500/30';
+                statusBadge.textContent = 'Connected • Real-time';
+            } else if (hospital.status === 'Pending') {
+                statusBadge.className = 'px-3 py-1 text-xs rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/30';
+                statusBadge.textContent = 'Integration Pending';
+            } else {
+                statusBadge.className = 'px-3 py-1 text-xs rounded-full bg-red-500/20 text-red-300 border border-red-500/30';
+                statusBadge.textContent = 'Offline • Action Required';
+            }
+
+            // Generate Realistic System Stats
+            const cpu = Math.floor(Math.random() * 60) + 20; // 20-80%
+            const memory = Math.floor(Math.random() * 50) + 30; // 30-80%
+            const storageUsed = Math.floor(Math.random() * 30) + 60; // 60-90 TB
+            const latency = hospital.status === 'Connected' ? Math.floor(Math.random() * 40) + 10 : Math.floor(Math.random() * 200) + 100;
+
+            document.getElementById('stat-cpu').textContent = cpu + '%';
+            document.getElementById('bar-cpu').style.width = cpu + '%';
+
+            document.getElementById('stat-memory').textContent = memory + '%';
+            document.getElementById('bar-memory').style.width = memory + '%';
+
+            document.getElementById('stat-storage').textContent = `${storageUsed} TB / 100 TB`;
+            document.getElementById('bar-storage').style.width = storageUsed + '%';
+
+            document.getElementById('stat-latency').textContent = latency + 'ms';
+            if (latency > 100) {
+                document.getElementById('stat-latency').className = 'text-red-500 font-bold';
+            } else {
+                document.getElementById('stat-latency').className = 'text-green-500 font-bold';
+            }
+
+            // Generate Resource Counts
+            const beds = Math.floor(Math.random() * 800) + 200;
+            const icu = Math.floor(Math.random() * beds * 0.15); // ~15% are ICU
+            const doctors = Math.floor(Math.random() * 200) + 50;
+
+            document.getElementById('res-beds').textContent = beds;
+            document.getElementById('res-icu').textContent = icu;
+            document.getElementById('res-doctors').textContent = doctors;
+
+            // Generate Fake Logs
+            const logBody = document.getElementById('detail-logs');
+            logBody.innerHTML = '';
+
+            const eventTypes = ['Patient Discharge', 'New Admission', 'Lab Report Sync', 'Inventory Update', 'Staff Shift Change', 'Emergency Protocol'];
+            const statuses = ['Success', 'Processing', 'Success', 'Success', 'Pending'];
+
+            for (let i = 0; i < 8; i++) {
+                const event = eventTypes[Math.floor(Math.random() * eventTypes.length)];
+                const status = statuses[Math.floor(Math.random() * statuses.length)];
+                const time = new Date(Date.now() - i * 1000 * 60 * Math.floor(Math.random() * 10)).toLocaleTimeString();
+
+                const logRow = document.createElement('tr');
+                logRow.className = 'hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors';
+                logRow.innerHTML = `
+                    <td class="px-4 py-3 text-secondary dark:text-white font-medium">${event}</td>
+                    <td class="px-4 py-3 text-gray-500 text-xs">${time}</td>
+                    <td class="px-4 py-3 text-right">
+                        <span class="text-xs font-bold ${status === 'Success' ? 'text-green-500' : 'text-yellow-500'}">${status.toUpperCase()}</span>
+                    </td>
+                `;
+                logBody.appendChild(logRow);
+            }
+
+            // Show Modal
+            document.getElementById('hospital-detail-modal').style.display = 'flex';
+        }
+
+        function closeHospitalDetail() {
+            document.getElementById('hospital-detail-modal').style.display = 'none';
         }
 
         // Close modal
@@ -633,9 +980,13 @@
 
         // Close modal on outside click
         window.onclick = function (event) {
-            const modal = document.getElementById('state-modal');
-            if (event.target === modal) {
+            const stateModal = document.getElementById('state-modal');
+            const detailModal = document.getElementById('hospital-detail-modal');
+            if (event.target === stateModal) {
                 closeModal();
+            }
+            if (event.target === detailModal) {
+                closeHospitalDetail();
             }
         }
 
