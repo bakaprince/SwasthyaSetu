@@ -354,6 +354,46 @@ const cancelAppointment = async (req, res, next) => {
     }
 };
 
+/**
+ * @desc    Delete document from appointment
+ * @route   DELETE /api/appointments/:id/documents/:docIndex
+ * @access  Private (Admin)
+ */
+const deleteDocument = async (req, res, next) => {
+    try {
+        const { id, docIndex } = req.params;
+
+        let appointment = await Appointment.findById(id);
+
+        if (!appointment) {
+            return res.status(404).json({ success: false, message: 'Appointment not found' });
+        }
+
+        // Authorization check
+        if (req.user.role !== 'admin' || appointment.hospitalId.toString() !== req.user.hospitalId.toString()) {
+            return res.status(403).json({ success: false, message: 'Not authorized' });
+        }
+
+        const index = parseInt(docIndex);
+        if (!appointment.documents || !appointment.documents[index]) {
+            return res.status(404).json({ success: false, message: 'Document not found' });
+        }
+
+        // Remove document at index
+        appointment.documents.splice(index, 1);
+        await appointment.save();
+
+        res.json({
+            success: true,
+            message: 'Document deleted successfully',
+            data: appointment.documents
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getAppointments,
     getHospitalAppointments,
@@ -361,5 +401,6 @@ module.exports = {
     updateAppointment,
     cancelAppointment,
     uploadDocument,
+    deleteDocument,
     handleTransfer
 };
