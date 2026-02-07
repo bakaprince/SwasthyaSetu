@@ -397,18 +397,52 @@
 
         // Process hospitals and assign to states
         function processHospitalData(hospitals) {
-            allHospitals = hospitals.map(hospital => ({
-                ...hospital,
-                status: generateRandomStatus(),
-                uptime: null,
-                lastSync: null
-            }));
+            console.log('Original hospital data from API:', hospitals);
+
+            // If hospitals don't have state info, distribute them across states
+            allHospitals = hospitals.map((hospital, index) => {
+                // Extract state from address or location string
+                let assignedState = null;
+
+                // Try to find state in various fields
+                if (hospital.state) {
+                    assignedState = hospital.state;
+                } else if (hospital.location) {
+                    // Try to match state from location string
+                    assignedState = findStateInString(hospital.location);
+                } else if (hospital.address) {
+                    assignedState = findStateInString(hospital.address);
+                } else if (hospital.city) {
+                    assignedState = mapCityToState(hospital.city);
+                }
+
+                // If still no state, randomly assign to major states (distribute evenly)
+                if (!assignedState || !indianStates.includes(assignedState)) {
+                    // Distribute across major states
+                    const majorStates = [
+                        'Delhi', 'Maharashtra', 'Karnataka', 'Tamil Nadu', 'Gujarat',
+                        'Uttar Pradesh', 'West Bengal', 'Rajasthan', 'Madhya Pradesh',
+                        'Kerala', 'Punjab', 'Haryana', 'Telangana', 'Bihar', 'Odisha'
+                    ];
+                    assignedState = majorStates[index % majorStates.length];
+                }
+
+                return {
+                    ...hospital,
+                    state: assignedState,
+                    status: generateRandomStatus(),
+                    uptime: null,
+                    lastSync: null
+                };
+            });
 
             // Assign uptime and last sync based on status
             allHospitals.forEach(h => {
                 h.uptime = generateRandomUptime(h.status);
                 h.lastSync = generateRandomLastSync(h.status);
             });
+
+            console.log('Processed hospitals with states:', allHospitals);
 
             // Group by state
             stateData = {};
@@ -423,7 +457,7 @@
             });
 
             allHospitals.forEach(hospital => {
-                const state = hospital.state || 'Delhi';
+                const state = hospital.state;
                 if (stateData[state]) {
                     stateData[state].hospitals.push(hospital);
                     stateData[state].total++;
@@ -434,7 +468,47 @@
                 }
             });
 
+            console.log('State-wise distribution:', stateData);
             return stateData;
+        }
+
+        // Helper function to find state name in a string
+        function findStateInString(str) {
+            if (!str) return null;
+            str = str.toLowerCase();
+
+            // Common state abbreviations and full names
+            const stateMap = {
+                'delhi': 'Delhi', 'dl': 'Delhi', 'new delhi': 'Delhi',
+                'mumbai': 'Maharashtra', 'maharashtra': 'Maharashtra', 'mh': 'Maharashtra', 'pune': 'Maharashtra',
+                'bangalore': 'Karnataka', 'karnataka': 'Karnataka', 'ka': 'Karnataka', 'bengaluru': 'Karnataka',
+                'chennai': 'Tamil Nadu', 'tamil nadu': 'Tamil Nadu', 'tn': 'Tamil Nadu',
+                'ahmedabad': 'Gujarat', 'gujarat': 'Gujarat', 'gj': 'Gujarat',
+                'kolkata': 'West Bengal', 'west bengal': 'West Bengal', 'wb': 'West Bengal',
+                'hyderabad': 'Telangana', 'telangana': 'Telangana', 'ts': 'Telangana',
+                'jaipur': 'Rajasthan', 'rajasthan': 'Rajasthan', 'rj': 'Rajasthan',
+                'lucknow': 'Uttar Pradesh', 'uttar pradesh': 'Uttar Pradesh', 'up': 'Uttar Pradesh',
+                'kochi': 'Kerala', 'kerala': 'Kerala', 'kl': 'Kerala', 'thiruvananthapuram': 'Kerala',
+                'chandigarh': 'Chandigarh', 'punjab': 'Punjab', 'pb': 'Punjab',
+                'haryana': 'Haryana', 'hr': 'Haryana', 'gurgaon': 'Haryana',
+                'bhopal': 'Madhya Pradesh', 'madhya pradesh': 'Madhya Pradesh', 'mp': 'Madhya Pradesh',
+                'patna': 'Bihar', 'bihar': 'Bihar', 'br': 'Bihar',
+                'bhubaneswar': 'Odisha', 'odisha': 'Odisha', 'or': 'Odisha'
+            };
+
+            for (const [key, state] of Object.entries(stateMap)) {
+                if (str.includes(key)) {
+                    return state;
+                }
+            }
+
+            return null;
+        }
+
+        // Map city names to states
+        function mapCityToState(city) {
+            if (!city) return null;
+            return findStateInString(city);
         }
 
         // Render state cards
@@ -597,8 +671,27 @@
 
             // Fetch hospital data
             try {
+                console.log('Fetching hospitals from API...');
                 const response = await APIService.getHospitals();
-                const hospitals = response.data || response || [];
+                console.log('API Response:', response);
+
+                // Handle different response formats
+                let hospitals = [];
+                if (Array.isArray(response)) {
+                    hospitals = response;
+                } else if (response.data && Array.isArray(response.data)) {
+                    hospitals = response.data;
+                } else if (response.hospitals && Array.isArray(response.hospitals)) {
+                    hospitals = response.hospitals;
+                } else if (response.success && response.data) {
+                    hospitals = Array.isArray(response.data) ? response.data : [response.data];
+                }
+
+                console.log(`Found ${hospitals.length} hospitals from API`);
+
+                if (hospitals.length === 0) {
+                    throw new Error('No hospitals returned from API');
+                }
 
                 processHospitalData(hospitals);
                 renderStateCards();
@@ -612,6 +705,7 @@
                         <span class="material-icons-outlined text-6xl text-red-500 mb-4">error</span>
                         <p class="text-gray-600 dark:text-gray-400 mb-2">Failed to load hospital data</p>
                         <p class="text-sm text-gray-500">${error.message}</p>
+                        <p class="text-xs text-gray-400 mt-2">Check browser console for details</p>
                         <button onclick="location.reload()" class="mt-4 px-6 py-2 bg-secondary text-white rounded-lg hover:bg-secondary-light transition-colors">
                             Retry
                         </button>
