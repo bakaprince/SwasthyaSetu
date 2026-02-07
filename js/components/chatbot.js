@@ -140,6 +140,36 @@ class HealthChatbot {
         this.container = document.createElement('div');
         this.container.className = 'chatbot-container';
         this.container.innerHTML = `
+            <!-- Contact Us Button (Above Chatbot) -->
+            <div class="contact-fab-container" id="contact-fab-container">
+                <button class="contact-fab" id="contact-fab" aria-label="Contact Us">
+                    <span class="material-icons-outlined" style="font-size: 24px;">mail</span>
+                </button>
+                <!-- Contact Dropdown Menu -->
+                <div class="contact-dropdown" id="contact-dropdown">
+                    <div class="contact-dropdown-header">
+                        <span class="material-icons-outlined">support_agent</span>
+                        Contact Us
+                    </div>
+                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=swasthyasetu.helpdesk@gmail.com&su=Support%20Request" target="_blank" class="contact-option">
+                        <img src="https://www.gstatic.com/images/branding/product/1x/gmail_2020q4_32dp.png" alt="Gmail" style="width:20px;height:20px;">
+                        Gmail
+                    </a>
+                    <a href="https://compose.mail.yahoo.com/?to=swasthyasetu.helpdesk@gmail.com&subject=Support%20Request" target="_blank" class="contact-option">
+                        <img src="https://s.yimg.com/nq/storm/assets/hailstorm/2024/07/mail-icon-touch-128.png" alt="Yahoo" style="width:20px;height:20px;">
+                        Yahoo Mail
+                    </a>
+                    <a href="https://outlook.live.com/mail/0/deeplink/compose?to=swasthyasetu.helpdesk@gmail.com&subject=Support%20Request" target="_blank" class="contact-option">
+                        <img src="https://img.icons8.com/color/48/microsoft-outlook-2019--v2.png" alt="Outlook" style="width:20px;height:20px;">
+                        Outlook
+                    </a>
+                    <a href="mailto:swasthyasetu.helpdesk@gmail.com?subject=Support%20Request" class="contact-option">
+                        <span class="material-icons-outlined" style="font-size:20px;color:#666;">email</span>
+                        Other / Default
+                    </a>
+                </div>
+            </div>
+
             <!-- FAB Button -->
             <button class="chatbot-fab" id="chatbot-fab" aria-label="Open Swasthya Saathi">
                 <span class="material-icons-outlined" style="font-size: 24px;">smart_toy</span>
@@ -204,6 +234,22 @@ class HealthChatbot {
         // Close button
         const closeBtn = this.container.querySelector('#chatbot-close');
         closeBtn.addEventListener('click', () => this.closeWindow());
+
+        // Contact FAB - toggle dropdown
+        const contactFab = this.container.querySelector('#contact-fab');
+        const contactDropdown = this.container.querySelector('#contact-dropdown');
+        if (contactFab && contactDropdown) {
+            contactFab.addEventListener('click', () => {
+                contactDropdown.classList.toggle('visible');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!contactFab.contains(e.target) && !contactDropdown.contains(e.target)) {
+                    contactDropdown.classList.remove('visible');
+                }
+            });
+        }
 
         // Delegate click events in messages area
         this.messagesEl.addEventListener('click', (e) => this.handleMessageClick(e));

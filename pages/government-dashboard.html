@@ -99,9 +99,32 @@
             display: none !important;
         }
 
+        /* LEAFLET MAP - FULLY TRANSPARENT, NO BACKGROUND */
+        #india-map {
+            background: transparent !important;
+        }
+
+        #india-map .leaflet-container {
+            background: transparent !important;
+        }
+
+        .leaflet-container {
+            background: transparent !important;
+        }
+
+        .leaflet-pane {
+            background: transparent !important;
+        }
+
         /* Cursor for interactive states */
         .leaflet-interactive {
             cursor: pointer !important;
+            transition: all 0.2s ease;
+        }
+
+        /* State hover animation */
+        .leaflet-interactive:hover {
+            filter: drop-shadow(0 0 8px rgba(255, 107, 53, 0.8));
         }
 
         /* State detail panel animation */
@@ -277,8 +300,9 @@
 
             <!-- LEFT SIDE: JUST THE MAP - NO BOX -->
             <div class="lg:col-span-1">
-                <!-- ONLY THE MAP - No container, no border, no title -->
-                <div id="india-map" class="w-full" style="height: 700px;"></div>
+                <!-- ONLY THE MAP - Transparent background, no tiles -->
+                <div id="india-map" class="w-full" style="height: 700px; background: transparent; cursor: pointer;">
+                </div>
             </div>
 
             <!-- RIGHT SIDE: Analytics Section -->
