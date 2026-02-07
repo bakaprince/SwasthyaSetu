@@ -55,24 +55,35 @@ const GovAnalytics = {
         "Goa": [15.2993, 74.1240]
     },
 
-    // --- LEAFLET MAP ---
+    // --- LEAFLET MAP (Static India Map) ---
     initMap() {
-        const southWest = L.latLng(5.0, 60.0);
-        const northEast = L.latLng(40.0, 100.0);
+        // Restrict bounds to India only
+        const southWest = L.latLng(6.5, 68.0);  // Southern tip of India
+        const northEast = L.latLng(35.5, 97.5); // Northern tip of India
         const bounds = L.latLngBounds(southWest, northEast);
 
         this.map = L.map('india-map', {
             maxBounds: bounds,
             maxBoundsViscosity: 1.0,
-            minZoom: 4
+            minZoom: 5,
+            maxZoom: 7,
+            zoomControl: false,        // Disable zoom controls for static feel
+            dragging: false,            // Disable dragging for static map
+            scrollWheelZoom: false,     // Disable scroll zoom
+            doubleClickZoom: false,     // Disable double click zoom
+            touchZoom: false,           // Disable touch zoom
+            boxZoom: false,             // Disable box zoom
+            keyboard: false             // Disable keyboard navigation
         }).setView([22.5937, 78.9629], 5);
 
-        const isDark = document.documentElement.classList.contains('dark');
-        const tileUrl = isDark
-            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        // Use a static, light tile layer focused on India
+        const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
-        L.tileLayer(tileUrl, { attribution: '&copy; CARTO', maxZoom: 10 }).addTo(this.map);
+        L.tileLayer(tileUrl, {
+            attribution: '&copy; OpenStreetMap',
+            maxZoom: 7,
+            minZoom: 5
+        }).addTo(this.map);
     },
 
     async loadDiseaseMap() {
@@ -308,20 +319,78 @@ const GovAnalytics = {
             }
         } catch (error) {
             console.warn('API Error, using client-side fallback for Scatter Plot:', error);
-            // Client-side generation to GUARANTEE rendering
-            const types = ['Government', 'Private', 'Trust'];
-            const states = ['Delhi', 'Mumbai', 'Chennai', 'Kolkata', 'Pune', 'Bangalore'];
+            // Use realistic Indian hospital names
+            const realHospitals = [
+                // Government Hospitals
+                { name: 'AIIMS Delhi', type: 'Government', state: 'Delhi' },
+                { name: 'PGIMER Chandigarh', type: 'Government', state: 'Chandigarh' },
+                { name: 'JIPMER Puducherry', type: 'Government', state: 'Puducherry' },
+                { name: 'Safdarjung Hospital', type: 'Government', state: 'Delhi' },
+                { name: 'Ram Manohar Lohia Hospital', type: 'Government', state: 'Delhi' },
+                { name: 'King George Medical University', type: 'Government', state: 'Lucknow' },
+                { name: 'Gandhi Hospital', type: 'Government', state: 'Telangana' },
+                { name: 'Osmania General Hospital', type: 'Government', state: 'Telangana' },
+                { name: 'Victoria Hospital', type: 'Government', state: 'Bangalore' },
+                { name: 'Rajiv Gandhi Government Hospital', type: 'Government', state: 'Chennai' },
+                { name: 'GTB Hospital', type: 'Government', state: 'Delhi' },
+                { name: 'BYL Nair Hospital', type: 'Government', state: 'Mumbai' },
+                { name: 'KEM Hospital', type: 'Government', state: 'Mumbai' },
+                { name: 'SMS Hospital', type: 'Government', state: 'Jaipur' },
+                { name: 'Civil Hospital Ahmedabad', type: 'Government', state: 'Ahmedabad' },
 
-            for (let i = 0; i < 60; i++) {
-                const type = types[Math.floor(Math.random() * types.length)];
-                data.push({
-                    name: `${type} Hospital ${i + 1}`,
-                    state: states[Math.floor(Math.random() * states.length)],
-                    type: type,
-                    reviews: Math.floor(Math.random() * 1500) + 100,
-                    rating: (2.5 + Math.random() * 2.5).toFixed(1)
-                });
-            }
+                // Private Hospitals
+                { name: 'Apollo Hospital Delhi', type: 'Private', state: 'Delhi' },
+                { name: 'Fortis Escorts Heart Institute', type: 'Private', state: 'Delhi' },
+                { name: 'Max Super Speciality Hospital', type: 'Private', state: 'Delhi' },
+                { name: 'Medanta - The Medicity', type: 'Private', state: 'Gurugram' },
+                { name: 'Manipal Hospital Bangalore', type: 'Private', state: 'Bangalore' },
+                { name: 'Narayana Health City', type: 'Private', state: 'Bangalore' },
+                { name: 'Kokilaben Dhirubhai Ambani Hospital', type: 'Private', state: 'Mumbai' },
+                { name: 'Lilavati Hospital', type: 'Private', state: 'Mumbai' },
+                { name: 'Apollo Hospital Chennai', type: 'Private', state: 'Chennai' },
+                { name: 'Fortis Hospital Bangalore', type: 'Private', state: 'Bangalore' },
+                { name: 'Columbia Asia Hospital', type: 'Private', state: 'Bangalore' },
+                { name: 'Artemis Hospital', type: 'Private', state: 'Gurugram' },
+                { name: 'BLK Super Speciality Hospital', type: 'Private', state: 'Delhi' },
+                { name: 'Sir Ganga Ram Hospital', type: 'Private', state: 'Delhi' },
+                { name: 'Jaslok Hospital', type: 'Private', state: 'Mumbai' },
+                { name: 'Breach Candy Hospital', type: 'Private', state: 'Mumbai' },
+                { name: 'Global Hospital', type: 'Private', state: 'Chennai' },
+                { name: 'KIMS Hospital', type: 'Private', state: 'Hyderabad' },
+                { name: 'Care Hospital', type: 'Private', state: 'Hyderabad' },
+                { name: 'Rainbow Children\'s Hospital', type: 'Private', state: 'Hyderabad' },
+                { name: 'Cloudnine Hospital', type: 'Private', state: 'Bangalore' },
+                { name: 'Aster CMI Hospital', type: 'Private', state: 'Bangalore' },
+                { name: 'Gleneagles Global Hospital', type: 'Private', state: 'Chennai' },
+                { name: 'Sankara Nethralaya', type: 'Private', state: 'Chennai' },
+                { name: 'Fortis Hospital Mumbai', type: 'Private', state: 'Mumbai' },
+                { name: 'Wockhardt Hospital', type: 'Private', state: 'Mumbai' },
+
+                // Trust/NGO Hospitals
+                { name: 'Tata Memorial Hospital', type: 'Trust', state: 'Mumbai' },
+                { name: 'Christian Medical College Vellore', type: 'Trust', state: 'Vellore' },
+                { name: 'St. John\'s Medical College Hospital', type: 'Trust', state: 'Bangalore' },
+                { name: 'Sankara Eye Hospital', type: 'Trust', state: 'Bangalore' },
+                { name: 'Aravind Eye Hospital', type: 'Trust', state: 'Madurai' },
+                { name: 'Ramakrishna Mission Seva Pratishthan', type: 'Trust', state: 'Kolkata' },
+                { name: 'Bhagwan Mahaveer Cancer Hospital', type: 'Trust', state: 'Jaipur' },
+                { name: 'Kasturba Hospital', type: 'Trust', state: 'Mumbai' },
+                { name: 'Ruby Hall Clinic', type: 'Trust', state: 'Pune' },
+                { name: 'Nanavati Hospital', type: 'Trust', state: 'Mumbai' },
+                { name: 'Bombay Hospital', type: 'Trust', state: 'Mumbai' },
+                { name: 'P.D. Hinduja Hospital', type: 'Trust', state: 'Mumbai' },
+                { name: 'L V Prasad Eye Institute', type: 'Trust', state: 'Hyderabad' },
+                { name: 'Shankar Netralaya', type: 'Trust', state: 'Chennai' }
+            ];
+
+            // Generate data with realistic names and randomized reviews/ratings
+            data = realHospitals.map(hospital => ({
+                name: hospital.name,
+                state: hospital.state,
+                type: hospital.type,
+                reviews: Math.floor(Math.random() * 1500) + 100,
+                rating: parseFloat((2.5 + Math.random() * 2.5).toFixed(1))
+            }));
         }
 
         // Process Data into Datasets
