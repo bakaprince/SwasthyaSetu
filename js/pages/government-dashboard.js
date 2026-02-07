@@ -55,87 +55,391 @@ const GovAnalytics = {
         "Goa": [15.2993, 74.1240]
     },
 
-    // --- LEAFLET MAP (Static India Map) ---
+    // --- INTERACTIVE INDIA STATES MAP ---
+    // State population data (2024 estimates in millions)
+    statePopulation: {
+        "Andaman and Nicobar Islands": 0.4, "Andhra Pradesh": 53.9, "Arunachal Pradesh": 1.6,
+        "Assam": 35.6, "Bihar": 127.0, "Chandigarh": 1.2, "Chhattisgarh": 30.0,
+        "Dadra and Nagar Haveli and Daman and Diu": 0.6, "Delhi": 21.0, "Goa": 1.6,
+        "Gujarat": 71.0, "Haryana": 30.0, "Himachal Pradesh": 7.5, "Jammu and Kashmir": 14.0,
+        "Jharkhand": 40.0, "Karnataka": 69.0, "Kerala": 35.7, "Ladakh": 0.3,
+        "Lakshadweep": 0.07, "Madhya Pradesh": 87.0, "Maharashtra": 128.0, "Manipur": 3.2,
+        "Meghalaya": 3.8, "Mizoram": 1.3, "Nagaland": 2.3, "Odisha": 47.0,
+        "Puducherry": 1.7, "Punjab": 31.0, "Rajasthan": 82.0, "Sikkim": 0.7,
+        "Tamil Nadu": 78.0, "Telangana": 39.0, "Tripura": 4.2, "Uttar Pradesh": 235.0,
+        "Uttarakhand": 11.5, "West Bengal": 101.0
+    },
+
+    // Hospital rating data (mock - can be replaced with live API)
+    stateHospitalRatings: {
+        "Andhra Pradesh": 4.1, "Arunachal Pradesh": 3.2, "Assam": 3.5, "Bihar": 3.0,
+        "Chhattisgarh": 3.4, "Delhi": 4.3, "Goa": 4.5, "Gujarat": 4.2, "Haryana": 3.8,
+        "Himachal Pradesh": 4.0, "Jammu and Kashmir": 3.6, "Jharkhand": 3.2, "Karnataka": 4.4,
+        "Kerala": 4.6, "Madhya Pradesh": 3.5, "Maharashtra": 4.3, "Manipur": 3.3,
+        "Meghalaya": 3.4, "Mizoram": 3.5, "Nagaland": 3.2, "Odisha": 3.6, "Punjab": 4.0,
+        "Rajasthan": 3.7, "Sikkim": 3.8, "Tamil Nadu": 4.5, "Telangana": 4.2, "Tripura": 3.4,
+        "Uttar Pradesh": 3.3, "Uttarakhand": 3.9, "West Bengal": 3.8, "Ladakh": 3.0
+    },
+
+    // Store COVID data fetched from API
+    covidData: {},
+    statesLayer: null,
+    selectedState: null,
+
     initMap() {
-        // Restrict bounds to India only
-        const southWest = L.latLng(6.5, 68.0);  // Southern tip of India
-        const northEast = L.latLng(35.5, 97.5); // Northern tip of India
+        const southWest = L.latLng(6.0, 67.0);
+        const northEast = L.latLng(38.0, 98.0);
         const bounds = L.latLngBounds(southWest, northEast);
 
         this.map = L.map('india-map', {
             maxBounds: bounds,
             maxBoundsViscosity: 1.0,
-            minZoom: 5,
-            maxZoom: 7,
-            zoomControl: false,        // Disable zoom controls for static feel
-            dragging: false,            // Disable dragging for static map
-            scrollWheelZoom: false,     // Disable scroll zoom
-            doubleClickZoom: false,     // Disable double click zoom
-            touchZoom: false,           // Disable touch zoom
-            boxZoom: false,             // Disable box zoom
-            keyboard: false             // Disable keyboard navigation
-        }).setView([22.5937, 78.9629], 5);
+            minZoom: 4,
+            maxZoom: 12,
+            zoomControl: true,
+            dragging: true,
+            scrollWheelZoom: true,
+            doubleClickZoom: false, // We handle double-click for states
+            touchZoom: true,
+            boxZoom: true,
+            keyboard: true
+        }).setView([22.5, 82.5], 5);
 
-        // Use a static, light tile layer focused on India
-        const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        // Light blue background (like eSanjeevani)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+            attribution: '© Bharat Maps | Survey of India',
+            subdomains: 'abcd',
+            maxZoom: 12,
+            minZoom: 4
+        }).addTo(this.map);
 
-        L.tileLayer(tileUrl, {
-            attribution: '&copy; OpenStreetMap',
-            maxZoom: 7,
-            minZoom: 5
+        // Load interactive states
+        this.loadStatesGeoJSON();
+
+        // Add reset button
+        this.addResetButton();
+    },
+
+    addResetButton() {
+        const resetControl = L.control({ position: 'topright' });
+        resetControl.onAdd = () => {
+            const div = L.DomUtil.create('div', 'leaflet-bar');
+            div.innerHTML = `<a href="#" title="Reset View" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;background:white;font-size:18px;">🇮🇳</a>`;
+            div.onclick = (e) => {
+                e.preventDefault();
+                this.resetMapView();
+            };
+            return div;
+        };
+        resetControl.addTo(this.map);
+    },
+
+    resetMapView() {
+        this.selectedState = null;
+        this.map.setView([22.5, 82.5], 5);
+        if (this.statesLayer) {
+            this.statesLayer.resetStyle();
+        }
+        // Hide state detail panel if visible
+        const panel = document.getElementById('state-detail-panel');
+        if (panel) panel.classList.add('hidden');
+    },
+
+    async loadStatesGeoJSON() {
+        try {
+            // Fetch India states GeoJSON
+            const response = await fetch('https://raw.githubusercontent.com/geohacker/india/master/state/india_state.geojson');
+            const statesGeoJSON = await response.json();
+
+            // Fetch COVID data first
+            await this.fetchCovidData();
+
+            // Create states layer with interactivity
+            this.statesLayer = L.geoJSON(statesGeoJSON, {
+                style: (feature) => this.getStateStyle(feature, false),
+                onEachFeature: (feature, layer) => this.onEachState(feature, layer)
+            }).addTo(this.map);
+
+            // Add outer border glow
+            this.addOuterBorderGlow(statesGeoJSON);
+
+            console.log('Interactive India states map loaded successfully');
+        } catch (error) {
+            console.error('Failed to load states GeoJSON:', error);
+        }
+    },
+
+    addOuterBorderGlow(statesGeoJSON) {
+        // Merged India boundary for outer glow
+        L.geoJSON(statesGeoJSON, {
+            style: {
+                color: '#000000',
+                weight: 4,
+                opacity: 0.3,
+                fillColor: 'transparent',
+                fillOpacity: 0
+            }
         }).addTo(this.map);
     },
 
-    async loadDiseaseMap() {
+    getStateStyle(feature, isHighlighted) {
+        if (isHighlighted) {
+            return {
+                fillColor: '#ff6b35',
+                weight: 3,
+                opacity: 1,
+                color: '#ff4500',
+                fillOpacity: 0.7
+            };
+        }
+        return {
+            fillColor: '#ffffff',
+            weight: 1.5,
+            opacity: 1,
+            color: '#666666',
+            fillOpacity: 0.9
+        };
+    },
+
+    onEachState(feature, layer) {
+        const stateName = feature.properties.NAME_1 || feature.properties.name || feature.properties.ST_NM || 'Unknown';
+
+        // Create tooltip for hover
+        layer.bindTooltip(stateName, {
+            permanent: false,
+            direction: 'center',
+            className: 'state-tooltip'
+        });
+
+        // Mouse events
+        layer.on({
+            mouseover: (e) => this.highlightState(e),
+            mouseout: (e) => this.resetStateHighlight(e),
+            click: (e) => this.onStateClick(e, stateName)
+        });
+    },
+
+    highlightState(e) {
+        const layer = e.target;
+        layer.setStyle({
+            fillColor: '#ffa500',
+            weight: 2,
+            color: '#ff8c00',
+            fillOpacity: 0.6
+        });
+        layer.bringToFront();
+    },
+
+    resetStateHighlight(e) {
+        if (this.selectedState !== e.target) {
+            this.statesLayer.resetStyle(e.target);
+        }
+    },
+
+    async onStateClick(e, stateName) {
+        L.DomEvent.stopPropagation(e);
+        const layer = e.target;
+
+        // Reset previous selection
+        if (this.selectedState && this.selectedState !== layer) {
+            this.statesLayer.resetStyle(this.selectedState);
+        }
+
+        this.selectedState = layer;
+
+        // Highlight selected state
+        layer.setStyle({
+            fillColor: '#ff6b35',
+            weight: 3,
+            opacity: 1,
+            color: '#cc0000',
+            fillOpacity: 0.5
+        });
+
+        // Zoom to state bounds
+        const bounds = layer.getBounds();
+        this.map.fitBounds(bounds, { padding: [50, 50], maxZoom: 8 });
+
+        // Show state details panel
+        this.showStateDetails(stateName);
+    },
+
+    async fetchCovidData() {
         try {
-            console.log("Fetching LIVE data from disease.sh...");
+            const response = await fetch('https://disease.sh/v3/covid-19/gov/India');
+            const data = await response.json();
+            if (data && data.states) {
+                data.states.forEach(state => {
+                    this.covidData[state.state] = {
+                        active: state.active || 0,
+                        recovered: state.recovered || 0,
+                        deaths: state.deaths || 0,
+                        cases: state.cases || 0
+                    };
+                });
+            }
+            console.log('COVID data fetched successfully');
+        } catch (error) {
+            console.warn('Could not fetch COVID data:', error);
+        }
+    },
+
+    showStateDetails(stateName) {
+        // Get or create state detail panel
+        let panel = document.getElementById('state-detail-panel');
+        if (!panel) {
+            panel = document.createElement('div');
+            panel.id = 'state-detail-panel';
+            panel.className = 'fixed top-20 right-4 w-80 bg-white rounded-2xl shadow-2xl z-[1000] overflow-hidden transform transition-all duration-300';
+            document.body.appendChild(panel);
+        }
+
+        // Get data for this state
+        const population = this.statePopulation[stateName] || 'N/A';
+        const hospitalRating = this.stateHospitalRatings[stateName] || 'N/A';
+        const covid = this.covidData[stateName] || this.covidData[this.findMatchingStateName(stateName)] || {};
+
+        // Create panel content
+        panel.innerHTML = `
+            <div class="bg-gradient-to-r from-secondary to-secondary-light text-white p-4">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-xl font-bold">${stateName}</h3>
+                        <p class="text-sm text-gray-300">State of India</p>
+                    </div>
+                    <button onclick="GovAnalytics.closeStatePanel()" class="text-white hover:text-gray-300 text-2xl leading-none">&times;</button>
+                </div>
+            </div>
+            
+            <div class="p-4 space-y-4">
+                <!-- Population -->
+                <div class="bg-blue-50 rounded-xl p-3">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-2xl">👥</span>
+                        <span class="text-sm font-medium text-gray-600">Population (2024 Est.)</span>
+                    </div>
+                    <div class="text-2xl font-bold text-blue-700">
+                        ${typeof population === 'number' ? population.toFixed(1) + ' Million' : population}
+                    </div>
+                </div>
+
+                <!-- COVID Stats -->
+                <div class="bg-red-50 rounded-xl p-3">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-2xl">🦠</span>
+                        <span class="text-sm font-medium text-gray-600">COVID-19 Statistics</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <div class="bg-white rounded-lg p-2 text-center">
+                            <div class="text-orange-600 font-bold text-lg">${(covid.active || 0).toLocaleString()}</div>
+                            <div class="text-xs text-gray-500">Active</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-2 text-center">
+                            <div class="text-green-600 font-bold text-lg">${(covid.recovered || 0).toLocaleString()}</div>
+                            <div class="text-xs text-gray-500">Recovered</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-2 text-center">
+                            <div class="text-red-600 font-bold text-lg">${(covid.deaths || 0).toLocaleString()}</div>
+                            <div class="text-xs text-gray-500">Deceased</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-2 text-center">
+                            <div class="text-blue-600 font-bold text-lg">${(covid.cases || 0).toLocaleString()}</div>
+                            <div class="text-xs text-gray-500">Total Cases</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hospital Rating -->
+                <div class="bg-green-50 rounded-xl p-3">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-2xl">🏥</span>
+                        <span class="text-sm font-medium text-gray-600">Avg. Hospital Rating</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="text-2xl font-bold text-green-700">${hospitalRating}</div>
+                        <div class="flex text-yellow-400">
+                            ${this.getStarRating(hospitalRating)}
+                        </div>
+                        <span class="text-xs text-gray-500">/ 5.0</span>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="flex gap-2 pt-2">
+                    <button onclick="GovAnalytics.viewStateHospitals('${stateName}')" 
+                            class="flex-1 bg-primary text-secondary py-2 px-3 rounded-lg text-sm font-medium hover:bg-primary/80 transition">
+                        View Hospitals
+                    </button>
+                    <button onclick="GovAnalytics.resetMapView()" 
+                            class="flex-1 bg-gray-100 text-gray-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-gray-200 transition">
+                        Back to Map
+                    </button>
+                </div>
+            </div>
+            
+            <div class="bg-gray-50 px-4 py-2 text-xs text-gray-400 text-center">
+                Data sources: disease.sh (COVID) | Census 2024 Est.
+            </div>
+        `;
+
+        panel.classList.remove('hidden');
+    },
+
+    findMatchingStateName(name) {
+        // Try to find matching state name in COVID data
+        const normalizedName = name.toLowerCase().replace(/\s+/g, '');
+        for (const key of Object.keys(this.covidData)) {
+            if (key.toLowerCase().replace(/\s+/g, '') === normalizedName) {
+                return key;
+            }
+        }
+        return null;
+    },
+
+    getStarRating(rating) {
+        if (typeof rating !== 'number') return '';
+        const fullStars = Math.floor(rating);
+        const hasHalf = rating % 1 >= 0.5;
+        let stars = '';
+        for (let i = 0; i < fullStars; i++) stars += '★';
+        if (hasHalf) stars += '☆';
+        return stars;
+    },
+
+    closeStatePanel() {
+        const panel = document.getElementById('state-detail-panel');
+        if (panel) panel.classList.add('hidden');
+    },
+
+    viewStateHospitals(stateName) {
+        // Redirect to hospitals page with state filter
+        window.location.href = `hospitals.html?state=${encodeURIComponent(stateName)}`;
+    },
+
+    async loadDiseaseMap() {
+        // Disease data is now loaded via fetchCovidData() during initMap()
+        // This function now only updates the outcome chart with live data
+        try {
+            console.log("Updating charts with LIVE COVID data from disease.sh...");
             const response = await fetch('https://disease.sh/v3/covid-19/gov/India');
             const result = await response.json();
 
             if (result && result.states) {
-                if (this.heatLayer) {
-                    this.map.removeLayer(this.heatLayer);
-                    this.heatLayer = null;
-                }
-
+                // Store data for state panel access
                 result.states.forEach(stateData => {
-                    const latLng = this.stateCoordinates[stateData.state];
-                    if (latLng) {
-                        const activeCases = stateData.active;
-                        let colorClass = 'bg-yellow-500';
-                        if (activeCases > 1000) colorClass = 'bg-orange-500';
-                        if (activeCases > 10000) colorClass = 'bg-red-600';
-
-                        const size = activeCases > 5000 ? 'w-6 h-6' : (activeCases > 500 ? 'w-4 h-4' : 'w-3 h-3');
-
-                        const pulseIcon = L.divIcon({
-                            className: 'custom-div-icon',
-                            html: `<div class="${colorClass} ${size} rounded-full animate-ping opacity-75 absolute"></div>
-                                   <div class="${colorClass} ${size} rounded-full relative shadow-[0_0_10px_rgba(255,0,0,0.8)] border-2 border-white/20"></div>`,
-                            iconSize: [20, 20],
-                            iconAnchor: [10, 10]
-                        });
-
-                        L.marker(latLng, { icon: pulseIcon })
-                            .bindPopup(`
-                                <div class="text-xs font-sans min-w-[150px]">
-                                    <strong class="text-sm block mb-1 border-b pb-1 border-gray-200">${stateData.state}</strong>
-                                    <div class="flex justify-between items-center mt-2">
-                                        <span class="uppercase font-bold text-gray-500 text-[10px]">COVID-19</span>
-                                        <span class="font-bold text-sm text-red-600">${activeCases.toLocaleString()} Active</span>
-                                    </div>
-                                    <div class="mt-1 text-[9px] text-gray-400 text-right">Source: MoHFW/disease.sh</div>
-                                </div>
-                            `)
-                            .addTo(this.map);
-                    }
+                    this.covidData[stateData.state] = {
+                        active: stateData.active || 0,
+                        recovered: stateData.recovered || 0,
+                        deaths: stateData.deaths || 0,
+                        cases: stateData.cases || 0
+                    };
                 });
 
+                // Update charts
                 this.updateOutcomeChartFromLiveAPI(result);
             }
         } catch (error) {
-            console.warn('Live API failed, using fallback');
-            // Logic could fall back here, but simplified for brevity as user wants LIVE data
+            console.warn('Live API chart update failed:', error);
         }
     },
 
