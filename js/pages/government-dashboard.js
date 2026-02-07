@@ -92,20 +92,20 @@ const GovAnalytics = {
         const northEast = L.latLng(37.5, 98.0);
         const bounds = L.latLngBounds(southWest, northEast);
 
-        // Create STATIC map (no scrolling/dragging for clean display)
+        // Create interactive map - BIGGER and with hover support
         this.map = L.map('india-map', {
             maxBounds: bounds,
             maxBoundsViscosity: 1.0,
             minZoom: 4,
-            maxZoom: 4,          // Lock zoom to show full India
-            zoomControl: false,  // Hide zoom buttons
-            dragging: false,     // No dragging
-            scrollWheelZoom: false,
+            maxZoom: 8,
+            zoomControl: true,
+            dragging: true,       // Allow dragging for interaction
+            scrollWheelZoom: true,
             doubleClickZoom: false,
-            touchZoom: false,
+            touchZoom: true,
             boxZoom: false,
-            keyboard: false
-        }).setView([22.0, 82.0], 4);  // Centered on India, zoom 4 for full view
+            keyboard: true
+        }).setView([22.5, 82.0], 5);  // Zoom level 5 for bigger India
 
         // Load interactive states
         this.loadStatesGeoJSON();
