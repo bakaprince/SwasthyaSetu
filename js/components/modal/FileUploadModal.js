@@ -18,7 +18,8 @@ class FileUploadModal extends BaseModal {
         super('file-upload-modal', 'Upload Document', {
             closeOnOverlayClick: true,
             closeOnEscape: true,
-            size: 'md'
+            size: 'md',
+            zIndex: 100
         });
 
         /** @private */

@@ -18,7 +18,8 @@ class CancellationReasonModal extends BaseModal {
         super('cancellation-reason-modal', 'Cancel Appointment', {
             closeOnOverlayClick: false,
             closeOnEscape: true,
-            size: 'md'
+            size: 'md',
+            zIndex: 100
         });
 
         /** @private */

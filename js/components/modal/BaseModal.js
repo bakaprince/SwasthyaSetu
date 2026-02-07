@@ -41,7 +41,8 @@ class BaseModal {
         this.options = {
             closeOnOverlayClick: options.closeOnOverlayClick ?? true,
             closeOnEscape: options.closeOnEscape ?? true,
-            size: options.size || 'lg'
+            size: options.size || 'lg',
+            zIndex: options.zIndex || 50
         };
 
         /** @private */
@@ -82,7 +83,8 @@ class BaseModal {
         // Create modal container
         const modal = document.createElement('div');
         modal.id = this.modalId;
-        modal.className = 'fixed inset-0 z-50 hidden overflow-y-auto';
+        modal.className = 'fixed inset-0 hidden overflow-y-auto';
+        modal.style.zIndex = this.options.zIndex;
         modal.setAttribute('role', 'dialog');
         modal.setAttribute('aria-modal', 'true');
         modal.setAttribute('aria-labelledby', `${this.modalId}-title`);
