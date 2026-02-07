@@ -92,20 +92,20 @@ const GovAnalytics = {
         const northEast = L.latLng(37.5, 98.0);
         const bounds = L.latLngBounds(southWest, northEast);
 
-        // Create STATIC map (no scrolling/dragging for clean display)
+        // Create interactive map - BIGGER and with hover support
         this.map = L.map('india-map', {
             maxBounds: bounds,
             maxBoundsViscosity: 1.0,
             minZoom: 4,
-            maxZoom: 4,          // Lock zoom to show full India
-            zoomControl: false,  // Hide zoom buttons
-            dragging: false,     // No dragging
-            scrollWheelZoom: false,
+            maxZoom: 8,
+            zoomControl: true,
+            dragging: true,       // Allow dragging for interaction
+            scrollWheelZoom: true,
             doubleClickZoom: false,
-            touchZoom: false,
+            touchZoom: true,
             boxZoom: false,
-            keyboard: false
-        }).setView([22.0, 82.0], 4);  // Centered on India, zoom 4 for full view
+            keyboard: true
+        }).setView([22.5, 82.0], 5);  // Zoom level 5 for bigger India
 
         // Load interactive states
         this.loadStatesGeoJSON();
@@ -177,18 +177,19 @@ const GovAnalytics = {
         if (isHighlighted) {
             return {
                 fillColor: '#ff6b35',
-                weight: 3,
+                weight: 4,
                 opacity: 1,
                 color: '#ff4500',
                 fillOpacity: 0.7
             };
         }
+        // Default style: white fill with thick BLACK borders
         return {
             fillColor: '#ffffff',
-            weight: 1.5,
+            weight: 2.5,          // Thicker borders
             opacity: 1,
-            color: '#666666',
-            fillOpacity: 0.9
+            color: '#1a1a1a',     // Near-black border
+            fillOpacity: 0.95
         };
     },
 
@@ -212,11 +213,12 @@ const GovAnalytics = {
 
     highlightState(e) {
         const layer = e.target;
+        // BRIGHT hover effect - very visible
         layer.setStyle({
-            fillColor: '#ffcc00',  // Bright yellow-orange
-            weight: 3,
+            fillColor: '#ffd700',  // Gold/Yellow - very visible
+            weight: 4,             // Thick border
             color: '#ff6600',      // Orange border
-            fillOpacity: 0.7
+            fillOpacity: 0.8       // Strong fill
         });
         // Don't bringToFront to avoid covering markers
     },
