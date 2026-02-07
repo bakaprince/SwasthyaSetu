@@ -272,13 +272,16 @@
             </button>
         </div>
 
-        <!-- Full Screen India Map - No Box -->
-        <div class="mb-8">
-            <div id="india-map" class="w-full rounded-2xl shadow-lg" style="height: 80vh; min-height: 600px;"></div>
-        </div>
-
+        <!-- Main Layout: Map on LEFT, Charts on RIGHT -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Analytics Section -->
+
+            <!-- LEFT SIDE: JUST THE MAP - NO BOX -->
+            <div class="lg:col-span-1">
+                <!-- ONLY THE MAP - No container, no border, no title -->
+                <div id="india-map" class="w-full" style="height: 700px;"></div>
+            </div>
+
+            <!-- RIGHT SIDE: Analytics Section -->
             <div class="lg:col-span-2 space-y-8">
 
                 <!-- Charts Section -->

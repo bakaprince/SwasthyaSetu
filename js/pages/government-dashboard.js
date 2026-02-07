@@ -92,20 +92,21 @@ const GovAnalytics = {
         const northEast = L.latLng(37.5, 98.0);
         const bounds = L.latLngBounds(southWest, northEast);
 
-        // Create interactive map - BIGGER and with hover support
+        // Create interactive map at zoom 5 for better visibility
         this.map = L.map('india-map', {
             maxBounds: bounds,
             maxBoundsViscosity: 1.0,
             minZoom: 4,
             maxZoom: 8,
-            zoomControl: true,
-            dragging: true,       // Allow dragging for interaction
-            scrollWheelZoom: true,
+            zoomControl: false,   // No zoom controls
+            dragging: false,      // No dragging
+            scrollWheelZoom: false,
             doubleClickZoom: false,
-            touchZoom: true,
+            touchZoom: false,
             boxZoom: false,
-            keyboard: true
-        }).setView([22.5, 82.0], 5);  // Zoom level 5 for bigger India
+            keyboard: false,
+            attributionControl: false
+        }).setView([22.5, 82.0], 5);  // Zoom level 5 for BIGGER India
 
         // Load interactive states
         this.loadStatesGeoJSON();
@@ -196,18 +197,23 @@ const GovAnalytics = {
     onEachState(feature, layer) {
         const stateName = feature.properties.NAME_1 || feature.properties.name || feature.properties.ST_NM || 'Unknown';
 
-        // Create tooltip for hover
+        // Create tooltip that shows on hover - visible state name
         layer.bindTooltip(stateName, {
             permanent: false,
             direction: 'center',
-            className: 'state-tooltip'
+            className: 'state-tooltip',
+            opacity: 1
         });
 
-        // Mouse events
-        layer.on({
-            mouseover: (e) => this.highlightState(e),
-            mouseout: (e) => this.resetStateHighlight(e),
-            click: (e) => this.onStateClick(e, stateName)
+        // Mouse events for hover and click
+        layer.on('mouseover', (e) => {
+            this.highlightState(e);
+        });
+        layer.on('mouseout', (e) => {
+            this.resetStateHighlight(e);
+        });
+        layer.on('click', (e) => {
+            this.onStateClick(e, stateName);
         });
     },
 
@@ -218,9 +224,12 @@ const GovAnalytics = {
             fillColor: '#ffd700',  // Gold/Yellow - very visible
             weight: 4,             // Thick border
             color: '#ff6600',      // Orange border
-            fillOpacity: 0.8       // Strong fill
+            fillOpacity: 0.85      // Strong fill
         });
-        // Don't bringToFront to avoid covering markers
+        // Bring to front for better hover
+        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+            layer.bringToFront();
+        }
     },
 
     resetStateHighlight(e) {
@@ -263,21 +272,29 @@ const GovAnalytics = {
         const existingModal = document.getElementById('state-modal');
         if (existingModal) existingModal.remove();
 
+        // Get state GeoJSON for cutout
+        const stateGeoJSON = layer.feature;
+
         // Create modal
         const modal = document.createElement('div');
         modal.id = 'state-modal';
         modal.className = 'fixed inset-0 z-[9999] flex items-center justify-center p-4';
         modal.innerHTML = `
-            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="GovAnalytics.closeStateModal()"></div>
-            <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transform transition-all animate-modal-in">
-                <!-- Header with state name -->
-                <div class="bg-gradient-to-r from-secondary to-secondary-light text-white p-5">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="text-2xl font-bold">${stateName}</h3>
-                            <p class="text-sm text-primary/80">State of India</p>
+            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="GovAnalytics.closeStateModal()"></div>
+            <div class="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden transform transition-all animate-modal-in">
+                <!-- Header with STATE CUTOUT -->
+                <div class="bg-gradient-to-br from-secondary via-secondary-light to-secondary text-white p-6">
+                    <div class="flex items-center gap-4">
+                        <!-- State Cutout Map -->
+                        <div id="state-cutout-map" class="w-28 h-28 bg-white/10 rounded-xl overflow-hidden border-2 border-white/30 flex-shrink-0"></div>
+                        <div class="flex-1">
+                            <h3 class="text-3xl font-bold">${stateName}</h3>
+                            <p class="text-primary text-sm mt-1">State of India</p>
+                            <div class="flex items-center gap-2 mt-2">
+                                <span class="bg-white/20 px-3 py-1 rounded-full text-xs">🗺️ Click to explore</span>
+                            </div>
                         </div>
-                        <button onclick="GovAnalytics.closeStateModal()" class="text-white/80 hover:text-white text-3xl leading-none">&times;</button>
+                        <button onclick="GovAnalytics.closeStateModal()" class="text-white/80 hover:text-white text-3xl leading-none self-start">&times;</button>
                     </div>
                 </div>
                 
@@ -355,11 +372,49 @@ const GovAnalytics = {
         `;
 
         document.body.appendChild(modal);
+
+        // Render state cutout in mini-map after modal is added to DOM
+        setTimeout(() => {
+            const cutoutContainer = document.getElementById('state-cutout-map');
+            if (cutoutContainer && stateGeoJSON) {
+                // Create mini-map for state cutout
+                const cutoutMap = L.map('state-cutout-map', {
+                    zoomControl: false,
+                    dragging: false,
+                    scrollWheelZoom: false,
+                    doubleClickZoom: false,
+                    touchZoom: false,
+                    attributionControl: false
+                });
+
+                // Add the state shape
+                const stateLayer = L.geoJSON(stateGeoJSON, {
+                    style: {
+                        fillColor: '#86efac',
+                        weight: 2,
+                        opacity: 1,
+                        color: '#113841',
+                        fillOpacity: 0.8
+                    }
+                }).addTo(cutoutMap);
+
+                // Fit to state bounds
+                cutoutMap.fitBounds(stateLayer.getBounds(), { padding: [5, 5] });
+
+                // Store reference for cleanup
+                this.cutoutMap = cutoutMap;
+            }
+        }, 100);
     },
 
     closeStateModal() {
         const modal = document.getElementById('state-modal');
         if (modal) {
+            // Clean up cutout map
+            if (this.cutoutMap) {
+                this.cutoutMap.remove();
+                this.cutoutMap = null;
+            }
             modal.remove();
         }
         // Reset selected state
