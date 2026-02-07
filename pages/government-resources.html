@@ -396,14 +396,81 @@
 
                 <!-- Logistics Map Placeholder -->
                 <!-- Live Logistics Map (Embedded) -->
+                <!-- National Stock Summary (Moved from Right) -->
+                <div class="bg-gradient-to-br from-secondary to-secondary-light text-white rounded-2xl p-6 shadow-lg">
+                    <h3 class="font-bold text-lg mb-6 flex items-center gap-2">
+                        <span class="material-icons-outlined text-gov-gold">inventory</span> National Stockpiles
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Oxygen -->
+                        <div
+                            class="bg-white/5 p-4 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-gray-300">Oxygen Reserves</span>
+                                <span class="font-bold text-green-300">85%</span>
+                            </div>
+                            <div class="w-full bg-white/10 rounded-full h-2">
+                                <div class="bg-green-400 h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Remdesivir -->
+                        <div
+                            class="bg-white/5 p-4 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-gray-300">Remdesivir</span>
+                                <span class="font-bold text-yellow-300">42%</span>
+                            </div>
+                            <div class="w-full bg-white/10 rounded-full h-2">
+                                <div class="bg-yellow-400 h-2 rounded-full" style="width: 42%"></div>
+                            </div>
+                            <p class="text-[10px] text-yellow-200 mt-2 flex items-center gap-1"><span
+                                    class="material-icons-outlined text-[10px]">warning</span> Low stock in Western
+                                Region</p>
+                        </div>
+
+                        <!-- PPE -->
+                        <div
+                            class="bg-white/5 p-4 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-gray-300">PPE Kits</span>
+                                <span class="font-bold text-blue-300">92%</span>
+                            </div>
+                            <div class="w-full bg-white/10 rounded-full h-2">
+                                <div class="bg-blue-400 h-2 rounded-full" style="width: 92%"></div>
+                            </div>
+                        </div>
+
+                        <!-- ICU Beds -->
+                        <div
+                            class="bg-white/5 p-4 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-gray-300">ICU Beds (Vacant)</span>
+                                <span class="font-bold text-red-300">12%</span>
+                            </div>
+                            <div class="w-full bg-white/10 rounded-full h-2">
+                                <div class="bg-red-400 h-2 rounded-full" style="width: 12%"></div>
+                            </div>
+                            <p class="text-[10px] text-red-200 mt-2 flex items-center gap-1"><span
+                                    class="material-icons-outlined text-[10px]">error_outline</span> Critical shortage
+                                in Delhi NCR</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: National Stockpile & Quick Actions -->
+            <div class="space-y-6">
+                <!-- National Stock Summary -->
+                <!-- Live Logistics Map (Embedded - Moved to Right) -->
                 <div
-                    class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm h-96 relative group">
+                    class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm h-[520px] relative group">
                     <!-- Map Header Overlay -->
                     <div
                         class="absolute top-4 left-4 z-[400] bg-white/90 dark:bg-gray-900/90 backdrop-blur px-3 py-1.5 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                         <h3 class="font-bold text-sm text-secondary dark:text-white flex items-center gap-2">
                             <span class="material-icons-outlined text-sm text-green-500">router</span> Live Logistics
-                            Network
                         </h3>
                     </div>
 
@@ -417,7 +484,7 @@
 
                     <!-- Legend -->
                     <div
-                        class="absolute bottom-4 left-4 z-[400] bg-white/95 dark:bg-gray-900/95 backdrop-blur px-3 py-2 rounded-lg shadow-sm text-[10px] font-bold uppercase tracking-wide border border-gray-200 dark:border-gray-700 flex gap-4 text-gray-600 dark:text-gray-300">
+                        class="absolute bottom-4 left-4 right-4 z-[400] bg-white/95 dark:bg-gray-900/95 backdrop-blur px-3 py-2 rounded-lg shadow-sm text-[10px] font-bold uppercase tracking-wide border border-gray-200 dark:border-gray-700 flex flex-wrap gap-2 text-gray-600 dark:text-gray-300 justify-center">
                         <div class="flex items-center gap-1.5"><span
                                 class="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
                             Normal</div>
@@ -427,60 +494,6 @@
                         <div class="flex items-center gap-1.5"><span
                                 class="w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)] animate-pulse"></span>
                             Critical</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Column: National Stockpile & Quick Actions -->
-            <div class="space-y-6">
-                <!-- National Stock Summary -->
-                <div class="bg-gradient-to-br from-secondary to-secondary-light text-white rounded-2xl p-6 shadow-lg">
-                    <h3 class="font-bold text-lg mb-6 flex items-center gap-2">
-                        <span class="material-icons-outlined text-gov-gold">inventory</span> National Stockpiles
-                    </h3>
-
-                    <div class="space-y-6">
-                        <div>
-                            <div class="flex justify-between text-sm mb-1">
-                                <span class="text-gray-300">Oxygen Reserves</span>
-                                <span class="font-bold text-green-300">85%</span>
-                            </div>
-                            <div class="w-full bg-white/10 rounded-full h-2">
-                                <div class="bg-green-400 h-2 rounded-full" style="width: 85%"></div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between text-sm mb-1">
-                                <span class="text-gray-300">Remdesivir</span>
-                                <span class="font-bold text-yellow-300">42%</span>
-                            </div>
-                            <div class="w-full bg-white/10 rounded-full h-2">
-                                <div class="bg-yellow-400 h-2 rounded-full" style="width: 42%"></div>
-                            </div>
-                            <p class="text-[10px] text-yellow-200 mt-1">Low stock in Western Region</p>
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between text-sm mb-1">
-                                <span class="text-gray-300">PPE Kits</span>
-                                <span class="font-bold text-blue-300">92%</span>
-                            </div>
-                            <div class="w-full bg-white/10 rounded-full h-2">
-                                <div class="bg-blue-400 h-2 rounded-full" style="width: 92%"></div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between text-sm mb-1">
-                                <span class="text-gray-300">ICU Beds (Vacant)</span>
-                                <span class="font-bold text-red-300">12%</span>
-                            </div>
-                            <div class="w-full bg-white/10 rounded-full h-2">
-                                <div class="bg-red-400 h-2 rounded-full" style="width: 12%"></div>
-                            </div>
-                            <p class="text-[10px] text-red-200 mt-1">Critical shortage in Delhi NCR</p>
-                        </div>
                     </div>
                 </div>
 
@@ -647,15 +660,31 @@
         let embeddedMapInstance = null; // Embedded Map
 
         // Mock Shipment Data
+        // Mock Shipment Data - Enhanced to reflect 12 Critical, 28 Pending, 45 Active
         const shipments = [
-            { lat: 28.6139, lng: 77.2090, type: 'Oxygen Tanker', dest: 'AIIMS Delhi', status: 'Critical' }, // Delhi
-            { lat: 19.0760, lng: 72.8777, type: 'Remdesivir Van', dest: 'KEM Mumbai', status: 'Pending' }, // Mumbai
-            { lat: 12.9716, lng: 77.5946, type: 'Ventilator Truck', dest: 'Victoria Blr', status: 'Normal' }, // Bangalore
-            { lat: 13.0827, lng: 80.2707, type: 'PPE Logistics', dest: 'Apollo Chennai', status: 'Normal' }, // Chennai
-            { lat: 22.5726, lng: 88.3639, type: 'Vaccine Drone', dest: 'Kolkata Med', status: 'Pending' }, // Kolkata
-            { lat: 26.8467, lng: 80.9462, type: 'Oxygen Tanker', dest: 'KGMU Lucknow', status: 'Critical' },  // Lucknow
-            { lat: 23.0225, lng: 72.5714, type: 'ICU Equipment', dest: 'Civil Hosp Ahmedabad', status: 'Normal' }, // Ahmedabad
-            { lat: 17.3850, lng: 78.4867, type: 'Plasma Kit', dest: 'Osmania Hyd', status: 'Pending' } // Hyderabad
+            // Critical Items (Representing 12)
+            { lat: 28.6139, lng: 77.2090, type: 'Oxygen Tanker', dest: 'AIIMS Delhi', status: 'Critical' },
+            { lat: 26.8467, lng: 80.9462, type: 'Oxygen Tanker', dest: 'KGMU Lucknow', status: 'Critical' },
+            { lat: 25.3176, lng: 82.9739, type: 'Ventilators', dest: 'IMS BHU', status: 'Critical' },
+            { lat: 22.5726, lng: 88.3639, type: 'Remdesivir', dest: 'Kolkata Med', status: 'Critical' },
+            { lat: 23.2599, lng: 77.4126, type: 'ICU Beds', dest: 'Bhopal Memorial', status: 'Critical' },
+
+            // Pending Items (Representing 28)
+            { lat: 19.0760, lng: 72.8777, type: 'Remdesivir Van', dest: 'KEM Mumbai', status: 'Pending' },
+            { lat: 18.5204, lng: 73.8567, type: 'Plasma Kit', dest: 'Sasoon Pune', status: 'Pending' },
+            { lat: 22.5726, lng: 88.3639, type: 'Vaccine Drone', dest: 'Kolkata Med', status: 'Pending' },
+            { lat: 17.3850, lng: 78.4867, type: 'Plasma Kit', dest: 'Osmania Hyd', status: 'Pending' },
+            { lat: 13.0827, lng: 80.2707, type: 'PPE Logistics', dest: 'Apollo Chennai', status: 'Pending' },
+            { lat: 21.1702, lng: 72.8311, type: 'Oxygen', dest: 'Surat Civil', status: 'Pending' },
+
+            // Normal/Active Items (Representing 45)
+            { lat: 12.9716, lng: 77.5946, type: 'Ventilator Truck', dest: 'Victoria Blr', status: 'Normal' },
+            { lat: 13.0827, lng: 80.2707, type: 'PPE Logistics', dest: 'Apollo Chennai', status: 'Normal' },
+            { lat: 23.0225, lng: 72.5714, type: 'ICU Equipment', dest: 'Civil Hosp Ahmedabad', status: 'Normal' },
+            { lat: 30.7333, lng: 76.7794, type: 'Vaccines', dest: 'PGIMER Chandigarh', status: 'Normal' },
+            { lat: 26.9124, lng: 75.7873, type: 'Masks', dest: 'SMS Jaipur', status: 'Normal' },
+            { lat: 15.2993, lng: 74.1240, type: 'Sanitizers', dest: 'Goa Med', status: 'Normal' },
+            { lat: 11.0168, lng: 76.9558, type: 'Gloves', dest: 'Coimbatore Med', status: 'Normal' }
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
