@@ -1,338 +1,288 @@
 /**
- * @fileoverview Gemini API Configuration
- * Configuration and helper functions for Google Gemini AI integration.
- * Used for symptom analysis and health recommendations.
+ * @fileoverview Gemini API Configuration for Symptom Analysis
+ * Provides AI-powered symptom analysis with local fallback.
  * 
  * @module config/gemini-config
  * @author SwasthyaSetu Team
- * @version 1.0.0
+ * @version 2.0.0
  */
 
 // =============================================================================
-// CONFIGURATION
+// API CONFIGURATION
 // =============================================================================
 
 /**
- * @constant {Object} GEMINI_CONFIG
- * @description Configuration for Gemini API
+ * Gemini API Configuration
+ * Replace API_KEY with your actual key to enable AI features
  */
 const GEMINI_CONFIG = {
-    // Note: In production, use environment variables or secure key management
-    // This is a placeholder - user should replace with their own API key
-    API_KEY: 'YOUR_GEMINI_API_KEY',
-
-    // API endpoint for Gemini Pro
+    API_KEY: '', // Add your Gemini API key here
     API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
-
-    // Fallback to local analysis if API unavailable
-    USE_FALLBACK: true,
-
-    // Maximum tokens for response
-    MAX_TOKENS: 1024,
-
-    // Temperature for response creativity (0-1)
+    MAX_TOKENS: 500,
     TEMPERATURE: 0.7
 };
 
 // =============================================================================
-// SYMPTOM ANALYSIS
+// MILD CONDITIONS DATABASE
+// Only common, mild conditions - no serious diseases
 // =============================================================================
 
 /**
- * Analyze symptoms using Gemini API or local fallback.
- * 
- * @async
- * @param {string} symptoms - Patient's described symptoms
- * @returns {Promise<Object>} Analysis result with diagnosis and remedies
- * 
- * @example
- * const result = await analyzeSymptoms('headache and fever for 2 days');
- * console.log(result.diagnosis);
- * console.log(result.remedies);
+ * Database of mild health conditions with remedies
+ * Intentionally excludes serious conditions
+ * @private
  */
-async function analyzeSymptoms(symptoms) {
-    // First try Gemini API
-    if (GEMINI_CONFIG.API_KEY && GEMINI_CONFIG.API_KEY !== 'YOUR_GEMINI_API_KEY') {
-        try {
-            return await callGeminiAPI(symptoms);
-        } catch (error) {
-            console.error('[Gemini] API error, using fallback:', error);
-        }
-    }
+const MILD_CONDITIONS = {
+    headache: {
+        keywords: ['headache', 'head pain', 'head hurts', 'head ache', 'head is paining'],
+        condition: 'Tension Headache',
+        severity: 'mild',
+        remedies: [
+            'Rest in a quiet, dark room',
+            'Apply a cold or warm compress to your forehead',
+            'Stay hydrated - drink plenty of water',
+            'Gentle neck and shoulder stretches',
+            'Take a break from screens'
+        ],
+        warningSigns: [
+            'Headache persists for more than 2 days'
+        ],
+        recommendation: 'Most headaches go away with rest. If it continues, consult a doctor.'
+    },
 
-    // Fallback to local symptom analysis
-    return localSymptomAnalysis(symptoms);
-}
+    cold: {
+        keywords: ['cold', 'runny nose', 'sneezing', 'blocked nose', 'stuffy nose', 'nasal congestion', 'cough', 'common cold'],
+        condition: 'Common Cold',
+        severity: 'mild',
+        remedies: [
+            'Get plenty of rest and sleep',
+            'Drink warm fluids like soup or tea with honey',
+            'Use steam inhalation to clear congestion',
+            'Gargle with warm salt water',
+            'Keep yourself warm and comfortable'
+        ],
+        warningSigns: [
+            'Symptoms last more than 10 days'
+        ],
+        recommendation: 'A cold usually clears up in 7-10 days. Stay warm and rest well.'
+    },
+
+    soreThroat: {
+        keywords: ['sore throat', 'throat pain', 'throat hurts', 'difficulty swallowing', 'scratchy throat', 'throat irritation'],
+        condition: 'Sore Throat',
+        severity: 'mild',
+        remedies: [
+            'Gargle with warm salt water (3-4 times daily)',
+            'Drink warm water with honey and lemon',
+            'Suck on lozenges or hard candy',
+            'Avoid cold drinks and ice cream',
+            'Rest your voice as much as possible'
+        ],
+        warningSigns: [
+            'Difficulty breathing or severe pain'
+        ],
+        recommendation: 'Sore throats usually heal within a week. Warm fluids help a lot.'
+    },
+
+    fever: {
+        keywords: ['fever', 'temperature', 'hot body', 'feeling hot', 'chills', 'body temperature high'],
+        condition: 'Mild Fever',
+        severity: 'mild',
+        remedies: [
+            'Rest and avoid physical exertion',
+            'Drink plenty of fluids to stay hydrated',
+            'Take a lukewarm sponge bath',
+            'Wear light, comfortable clothing',
+            'Keep the room well ventilated'
+        ],
+        warningSigns: [
+            'Fever above 103°F (39.4°C) or lasting more than 3 days'
+        ],
+        recommendation: 'Mild fever often resolves on its own. Stay hydrated and rest.'
+    },
+
+    stomachUpset: {
+        keywords: ['stomach pain', 'stomach ache', 'upset stomach', 'indigestion', 'acidity', 'gas', 'bloating', 'nausea', 'vomiting'],
+        condition: 'Stomach Upset',
+        severity: 'mild',
+        remedies: [
+            'Eat light, bland foods (rice, toast, bananas)',
+            'Drink ginger tea or jeera water',
+            'Avoid spicy, oily, and heavy foods',
+            'Take small sips of water frequently',
+            'Rest and avoid lying down right after eating'
+        ],
+        warningSigns: [
+            'Severe pain or blood in vomit/stool'
+        ],
+        recommendation: 'Stomach issues usually settle with light food and rest.'
+    },
+
+    tiredness: {
+        keywords: ['tired', 'fatigue', 'exhausted', 'no energy', 'weakness', 'feeling weak', 'lethargy', 'drowsy'],
+        condition: 'General Fatigue',
+        severity: 'mild',
+        remedies: [
+            'Get 7-8 hours of quality sleep',
+            'Stay hydrated throughout the day',
+            'Eat nutritious, balanced meals',
+            'Take short breaks during work',
+            'Light exercise or a short walk can help'
+        ],
+        warningSigns: [
+            'Fatigue persists for weeks despite rest'
+        ],
+        recommendation: 'Good sleep and nutrition usually help. Listen to your body.'
+    },
+
+    bodyPain: {
+        keywords: ['body pain', 'muscle pain', 'body ache', 'muscles hurt', 'back pain', 'joint pain', 'pain all over'],
+        condition: 'Muscle Aches',
+        severity: 'mild',
+        remedies: [
+            'Rest the affected area',
+            'Apply a warm compress or heating pad',
+            'Gentle stretching exercises',
+            'Take a warm bath with Epsom salt',
+            'Gentle massage can provide relief'
+        ],
+        warningSigns: [
+            'Severe pain or swelling that doesn\'t improve'
+        ],
+        recommendation: 'Rest and warmth usually help muscle pain. Avoid overexertion.'
+    },
+
+    stress: {
+        keywords: ['stress', 'anxious', 'worried', 'tense', 'overwhelmed', 'cannot sleep', 'insomnia', 'nervous'],
+        condition: 'Stress & Tension',
+        severity: 'mild',
+        remedies: [
+            'Practice deep breathing exercises',
+            'Take short walks in nature',
+            'Limit caffeine and screen time before bed',
+            'Talk to someone you trust',
+            'Try relaxation or meditation apps'
+        ],
+        warningSigns: [
+            'Feeling of hopelessness or persistent low mood'
+        ],
+        recommendation: 'Taking breaks and relaxation techniques help manage stress.'
+    },
+
+    skinIrritation: {
+        keywords: ['itching', 'rash', 'skin', 'itchy', 'hives', 'skin irritation', 'red skin'],
+        condition: 'Mild Skin Irritation',
+        severity: 'mild',
+        remedies: [
+            'Keep the area clean and dry',
+            'Apply a cold compress to reduce itching',
+            'Wear loose, cotton clothing',
+            'Avoid scratching the affected area',
+            'Use mild, fragrance-free soap'
+        ],
+        warningSigns: [
+            'Rash spreading rapidly or difficulty breathing'
+        ],
+        recommendation: 'Most mild rashes clear up on their own. Keep the skin clean.'
+    },
+
+    eyeStrain: {
+        keywords: ['eye strain', 'eyes hurt', 'tired eyes', 'dry eyes', 'eye pain', 'blurry vision', 'screen fatigue'],
+        condition: 'Digital Eye Strain',
+        severity: 'mild',
+        remedies: [
+            'Follow the 20-20-20 rule (every 20 min, look 20 feet away for 20 sec)',
+            'Blink frequently when using screens',
+            'Adjust screen brightness and position',
+            'Use artificial tears if eyes feel dry',
+            'Take regular breaks from screens'
+        ],
+        warningSigns: [
+            'Sudden vision changes or severe pain'
+        ],
+        recommendation: 'Regular screen breaks help. Consider an eye check-up if it persists.'
+    }
+};
+
+// =============================================================================
+// SYMPTOM ANALYSIS FUNCTION
+// =============================================================================
 
 /**
- * Call Gemini API for symptom analysis.
+ * Analyze symptoms and provide guidance
+ * Uses local analysis to avoid serious disease suggestions
  * 
- * @async
- * @private
- * @param {string} symptoms - Patient's symptoms
- * @returns {Promise<Object>} Gemini response
+ * @param {string} symptoms - User's symptom description
+ * @returns {Promise<Object>} Analysis result with condition, remedies, etc.
  */
-async function callGeminiAPI(symptoms) {
-    const prompt = `You are a helpful medical assistant. A patient describes these symptoms: "${symptoms}"
+async function analyzeSymptoms(symptoms) {
+    const symptomLower = symptoms.toLowerCase();
 
-Please provide:
-1. A possible condition this might be (focus on common, mild conditions like cold, headache, allergies)
-2. 3-4 home remedies they can try
-3. Warning signs that would require immediate medical attention
-4. A gentle recommendation to consult a doctor
+    // Try local analysis first (more controlled, avoids serious diseases)
+    const localResult = analyzeLocally(symptomLower);
 
-IMPORTANT: Always include a disclaimer that this is not medical advice and they should consult a healthcare professional.
-
-Format your response as JSON:
-{
-    "possibleCondition": "...",
-    "severity": "mild|moderate|severe",
-    "remedies": ["remedy1", "remedy2", "remedy3"],
-    "warningSigns": ["sign1", "sign2"],
-    "recommendation": "...",
-    "disclaimer": "..."
-}`;
-
-    const response = await fetch(`${GEMINI_CONFIG.API_URL}?key=${GEMINI_CONFIG.API_KEY}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            contents: [{
-                parts: [{ text: prompt }]
-            }],
-            generationConfig: {
-                temperature: GEMINI_CONFIG.TEMPERATURE,
-                maxOutputTokens: GEMINI_CONFIG.MAX_TOKENS
-            }
-        })
-    });
-
-    if (!response.ok) {
-        throw new Error(`Gemini API error: ${response.status}`);
+    if (localResult) {
+        return localResult;
     }
 
-    const data = await response.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-
-    // Try to parse JSON from response
-    try {
-        const jsonMatch = text.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-            return JSON.parse(jsonMatch[0]);
-        }
-    } catch (e) {
-        console.error('[Gemini] Failed to parse JSON response');
-    }
-
-    // Return text response if JSON parsing fails
+    // If no match found locally, return a generic helpful response
     return {
-        possibleCondition: 'Unable to determine',
-        severity: 'unknown',
-        remedies: ['Please consult a doctor for proper diagnosis'],
-        warningSigns: [],
-        recommendation: text,
-        disclaimer: 'This is not medical advice. Please consult a healthcare professional.'
+        possibleCondition: 'General Discomfort',
+        severity: 'mild',
+        remedies: [
+            'Get adequate rest and sleep',
+            'Stay well hydrated',
+            'Eat light, nutritious food',
+            'Monitor your symptoms',
+            'Take it easy for a day or two'
+        ],
+        warningSigns: [
+            'Symptoms worsen or new symptoms appear'
+        ],
+        recommendation: 'If symptoms persist or worsen, please consult a healthcare professional.',
+        disclaimer: 'This is general wellness guidance, not medical diagnosis. For accurate diagnosis, please visit a doctor.'
     };
 }
 
 /**
- * Local symptom analysis fallback.
- * Pattern-matches common symptoms to provide basic guidance.
- * 
+ * Analyze symptoms using local condition database
  * @private
- * @param {string} symptoms - Patient's symptoms (lowercase)
- * @returns {Object} Analysis result
+ * @param {string} symptomLower - Lowercase symptom text
+ * @returns {Object|null} Analysis result or null if no match
  */
-function localSymptomAnalysis(symptoms) {
-    const symptomLower = symptoms.toLowerCase();
+function analyzeLocally(symptomLower) {
+    // Find matching condition
+    for (const [key, condition] of Object.entries(MILD_CONDITIONS)) {
+        const hasMatch = condition.keywords.some(keyword =>
+            symptomLower.includes(keyword)
+        );
 
-    // Common symptom patterns
-    const patterns = [
-        {
-            keywords: ['headache', 'head pain', 'migraine'],
-            condition: 'Tension Headache / Migraine',
-            severity: 'mild',
-            remedies: [
-                'Rest in a quiet, dark room',
-                'Apply cold or warm compress to forehead',
-                'Stay hydrated - drink plenty of water',
-                'Take over-the-counter pain relief (paracetamol)',
-                'Practice deep breathing or meditation'
-            ],
-            warningSigns: [
-                'Sudden, severe headache (worst of your life)',
-                'Headache with fever and stiff neck',
-                'Vision changes or confusion',
-                'Headache after head injury'
-            ]
-        },
-        {
-            keywords: ['cold', 'runny nose', 'sneezing', 'congestion', 'stuffy'],
-            condition: 'Common Cold',
-            severity: 'mild',
-            remedies: [
-                'Get plenty of rest',
-                'Drink warm fluids (soup, tea, water)',
-                'Use saline nasal drops',
-                'Gargle with warm salt water',
-                'Steam inhalation for congestion'
-            ],
-            warningSigns: [
-                'High fever (above 103°F/39.4°C)',
-                'Symptoms lasting more than 10 days',
-                'Difficulty breathing',
-                'Severe sinus pain'
-            ]
-        },
-        {
-            keywords: ['cough', 'throat', 'sore throat'],
-            condition: 'Upper Respiratory Infection / Sore Throat',
-            severity: 'mild',
-            remedies: [
-                'Drink warm honey-lemon water',
-                'Gargle with salt water 3-4 times daily',
-                'Use throat lozenges',
-                'Stay hydrated',
-                'Rest your voice'
-            ],
-            warningSigns: [
-                'Difficulty swallowing or breathing',
-                'Blood in saliva or phlegm',
-                'Fever lasting more than 3 days',
-                'Severe throat swelling'
-            ]
-        },
-        {
-            keywords: ['fever', 'temperature', 'chills'],
-            condition: 'Viral Fever',
-            severity: 'mild',
-            remedies: [
-                'Take paracetamol for fever',
-                'Rest completely',
-                'Stay well hydrated',
-                'Use a cool damp cloth on forehead',
-                'Wear light, comfortable clothing'
-            ],
-            warningSigns: [
-                'Fever above 104°F (40°C)',
-                'Fever lasting more than 3 days',
-                'Rash appearing with fever',
-                'Severe headache or neck stiffness',
-                'Confusion or unusual behavior'
-            ]
-        },
-        {
-            keywords: ['stomach', 'nausea', 'vomiting', 'diarrhea', 'upset stomach'],
-            condition: 'Stomach Upset / Gastroenteritis',
-            severity: 'mild',
-            remedies: [
-                'Stay hydrated with ORS or clear fluids',
-                'Eat bland foods (rice, toast, bananas)',
-                'Avoid dairy, spicy, and fatty foods',
-                'Rest your stomach - eat small portions',
-                'Ginger tea can help with nausea'
-            ],
-            warningSigns: [
-                'Blood in vomit or stool',
-                'Signs of dehydration (dark urine, dizziness)',
-                'Severe abdominal pain',
-                'Vomiting lasting more than 24 hours'
-            ]
-        },
-        {
-            keywords: ['allergy', 'allergic', 'itching', 'rash', 'hives'],
-            condition: 'Allergic Reaction',
-            severity: 'mild',
-            remedies: [
-                'Take antihistamine medication',
-                'Apply cool compress to itchy areas',
-                'Avoid scratching',
-                'Identify and avoid the allergen',
-                'Use calamine lotion for skin relief'
-            ],
-            warningSigns: [
-                'Difficulty breathing',
-                'Swelling of face, lips, or tongue',
-                'Dizziness or fainting',
-                'Rapid heartbeat'
-            ]
-        },
-        {
-            keywords: ['tired', 'fatigue', 'exhausted', 'weakness', 'no energy'],
-            condition: 'General Fatigue',
-            severity: 'mild',
-            remedies: [
-                'Ensure 7-8 hours of quality sleep',
-                'Stay hydrated throughout the day',
-                'Eat balanced, nutritious meals',
-                'Take short breaks during work',
-                'Light exercise like walking'
-            ],
-            warningSigns: [
-                'Unexplained weight loss',
-                'Persistent fatigue for weeks',
-                'Shortness of breath',
-                'Chest pain'
-            ]
-        },
-        {
-            keywords: ['stress', 'anxiety', 'worried', 'tense', 'nervous'],
-            condition: 'Stress / Anxiety',
-            severity: 'mild',
-            remedies: [
-                'Practice deep breathing exercises',
-                'Try meditation or yoga',
-                'Get regular physical exercise',
-                'Maintain a regular sleep schedule',
-                'Talk to friends or family'
-            ],
-            warningSigns: [
-                'Thoughts of self-harm',
-                'Panic attacks',
-                'Unable to perform daily activities',
-                'Symptoms affecting work/relationships'
-            ]
-        }
-    ];
-
-    // Find matching pattern
-    for (const pattern of patterns) {
-        if (pattern.keywords.some(keyword => symptomLower.includes(keyword))) {
+        if (hasMatch) {
             return {
-                possibleCondition: pattern.condition,
-                severity: pattern.severity,
-                remedies: pattern.remedies,
-                warningSigns: pattern.warningSigns,
-                recommendation: 'If symptoms persist for more than 2-3 days or worsen, please consult a doctor.',
-                disclaimer: '⚠️ This is not medical advice. This is a general guidance system. Please consult a qualified healthcare professional for proper diagnosis and treatment.'
+                possibleCondition: condition.condition,
+                severity: condition.severity,
+                remedies: condition.remedies,
+                warningSigns: condition.warningSigns,
+                recommendation: condition.recommendation,
+                disclaimer: 'This is general wellness guidance, not a medical diagnosis. For persistent issues, consult a doctor.'
             };
         }
     }
 
-    // Default response if no pattern matches
-    return {
-        possibleCondition: 'Unable to determine specific condition',
-        severity: 'unknown',
-        remedies: [
-            'Monitor your symptoms',
-            'Get adequate rest',
-            'Stay hydrated',
-            'Maintain a healthy diet'
-        ],
-        warningSigns: [
-            'Symptoms getting worse',
-            'High fever',
-            'Difficulty breathing',
-            'Severe pain'
-        ],
-        recommendation: 'Since I cannot identify your specific condition, I recommend consulting a doctor for proper evaluation.',
-        disclaimer: '⚠️ This is not medical advice. Please consult a qualified healthcare professional for proper diagnosis and treatment.'
-    };
+    return null;
 }
 
-// Export for use in other modules
+// =============================================================================
+// EXPORTS
+// =============================================================================
+
+// Make available globally
+if (typeof window !== 'undefined') {
+    window.analyzeSymptoms = analyzeSymptoms;
+    window.GEMINI_CONFIG = GEMINI_CONFIG;
+}
+
+// CommonJS export
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { GEMINI_CONFIG, analyzeSymptoms, localSymptomAnalysis };
+    module.exports = { analyzeSymptoms, GEMINI_CONFIG };
 }

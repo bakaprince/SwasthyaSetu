@@ -50,6 +50,7 @@
     </script>
 
     <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components/chatbot.css">
 </head>
 
 <body class="bg-[#fffefc] dark:bg-background-dark font-sans antialiased text-gray-800 dark:text-gray-100 min-h-screen">
@@ -105,7 +106,7 @@
                     <span class="material-icons-outlined text-5xl text-secondary mb-4">chat</span>
                     <h3 class="font-display text-xl font-bold mb-3 text-secondary">Live Chat</h3>
                     <p class="text-gray-700 mb-4">Instant support for platform queries</p>
-                    <button
+                    <button onclick="if(typeof toggleChat === 'function') toggleChat();"
                         class="bg-secondary text-white px-6 py-2 rounded-full hover:bg-secondary-light transition-colors">Start
                         Chat</button>
                 </div>
@@ -121,7 +122,9 @@
         </div>
     </section>
 
-
+    <!-- Health Assistant Chatbot -->
+    <script src="../js/config/gemini-config.js"></script>
+    <script src="../js/components/chatbot.js"></script>
 
 </body>
 

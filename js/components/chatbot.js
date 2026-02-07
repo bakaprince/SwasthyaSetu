@@ -1,10 +1,10 @@
 /**
- * @fileoverview Health Assistant Chatbot Component
+ * @fileoverview Swasthya Saathi Chatbot Component
  * Interactive chatbot with FAQs, symptom checker, and doctor connect features.
  * 
  * @module components/chatbot
  * @author SwasthyaSetu Team
- * @version 1.0.0
+ * @version 2.0.0
  */
 
 // =============================================================================
@@ -12,7 +12,7 @@
 // =============================================================================
 
 /**
- * Health Assistant Chatbot
+ * Swasthya Saathi - Health Assistant Chatbot
  * Provides FAQ answers, symptom checking, and doctor connection.
  * 
  * @class
@@ -24,6 +24,9 @@ class HealthChatbot {
     constructor() {
         /** @private Current view state */
         this.currentView = 'menu'; // menu, faq, symptom, doctor, chat
+
+        /** @private Symptom chat history */
+        this.symptomHistory = [];
 
         /** @private Patient data for doctor connect */
         this.patientData = {
@@ -99,6 +102,23 @@ class HealthChatbot {
     }
 
     // =========================================================================
+    // AUTHENTICATION CHECK
+    // =========================================================================
+
+    /**
+     * Check if user is logged in
+     * @private
+     * @returns {boolean} True if logged in
+     */
+    isLoggedIn() {
+        // Check for auth token in localStorage
+        const token = localStorage.getItem('authToken') ||
+            localStorage.getItem('token') ||
+            sessionStorage.getItem('authToken');
+        return !!token;
+    }
+
+    // =========================================================================
     // INITIALIZATION
     // =========================================================================
 
@@ -109,7 +129,7 @@ class HealthChatbot {
     init() {
         this.createContainer();
         this.attachEventListeners();
-        console.log('[HealthChatbot] Initialized');
+        console.log('[SwasthyaSaathi] Initialized');
     }
 
     /**
@@ -122,7 +142,7 @@ class HealthChatbot {
         this.container.className = 'chatbot-container';
         this.container.innerHTML = `
             <!-- FAB Button -->
-            <button class="chatbot-fab" id="chatbot-fab" aria-label="Open Health Assistant">
+            <button class="chatbot-fab" id="chatbot-fab" aria-label="Open Swasthya Saathi">
                 <span class="material-icons-outlined" style="font-size: 24px;">smart_toy</span>
             </button>
 
@@ -132,7 +152,7 @@ class HealthChatbot {
                 <div class="chatbot-header">
                     <h3>
                         <span class="material-icons-outlined">health_and_safety</span>
-                        Health Assistant
+                        Swasthya Saathi
                     </h3>
                     <button class="chatbot-close-btn" id="chatbot-close" aria-label="Close">
                         <span class="material-icons-outlined">close</span>
@@ -144,9 +164,19 @@ class HealthChatbot {
                     <!-- Messages will be added here -->
                 </div>
 
+                <!-- Input Area (for chat mode) -->
+                <div class="chatbot-input-area" id="chatbot-input-area" style="display: none;">
+                    <input type="text" id="chatbot-input" placeholder="Type your symptoms..." 
+                        style="flex: 1; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; font-size: 0.9rem;">
+                    <button id="chatbot-send-btn" 
+                        style="padding: 0.75rem 1rem; background: #86efac; border: none; border-radius: 0.5rem; cursor: pointer;">
+                        <span class="material-icons-outlined" style="font-size: 20px;">send</span>
+                    </button>
+                </div>
+
                 <!-- Footer -->
                 <div class="chatbot-footer">
-                    Powered by SwasthyaSetu AI
+                    Powered by SwasthyaSetu
                 </div>
             </div>
         `;
@@ -156,6 +186,8 @@ class HealthChatbot {
         // Cache elements
         this.window = this.container.querySelector('#chatbot-window');
         this.messagesEl = this.container.querySelector('#chatbot-messages');
+        this.inputArea = this.container.querySelector('#chatbot-input-area');
+        this.inputEl = this.container.querySelector('#chatbot-input');
 
         // Show initial menu
         this.showMainMenu();
@@ -176,6 +208,17 @@ class HealthChatbot {
 
         // Delegate click events in messages area
         this.messagesEl.addEventListener('click', (e) => this.handleMessageClick(e));
+
+        // Send button for symptom chat
+        const sendBtn = this.container.querySelector('#chatbot-send-btn');
+        sendBtn.addEventListener('click', () => this.sendSymptomMessage());
+
+        // Enter key in input
+        this.inputEl.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.sendSymptomMessage();
+            }
+        });
     }
 
     /**
@@ -194,23 +237,25 @@ class HealthChatbot {
             if (action === 'faq') {
                 this.showFAQList();
             } else if (action === 'symptom') {
-                this.showSymptomChecker();
+                this.showSymptomChat();
             } else if (action === 'doctor') {
                 this.showDoctorConnect();
             } else if (action === 'back') {
+                this.hideInputArea();
                 this.showMainMenu();
             } else if (action === 'faq-item' && faqId) {
                 this.showFAQAnswer(parseInt(faqId));
+            } else if (action === 'login') {
+                // Redirect to login
+                window.location.href = window.location.pathname.includes('/pages/')
+                    ? '../index.html#login'
+                    : 'index.html#login';
+            } else if (action === 'book') {
+                // Redirect to booking page
+                window.location.href = window.location.pathname.includes('/pages/')
+                    ? 'book-appointment.html'
+                    : 'pages/book-appointment.html';
             }
-        }
-
-        // Form submission
-        if (target.id === 'symptom-submit-btn') {
-            this.handleSymptomSubmit();
-        }
-
-        if (target.id === 'doctor-submit-btn') {
-            this.handleDoctorSubmit();
         }
     }
 
@@ -241,6 +286,25 @@ class HealthChatbot {
      */
     closeWindow() {
         this.window.classList.remove('visible');
+    }
+
+    /**
+     * Show input area for chat
+     * @private
+     */
+    showInputArea() {
+        this.inputArea.style.display = 'flex';
+        this.inputArea.style.padding = '0.75rem';
+        this.inputArea.style.borderTop = '1px solid #e2e8f0';
+        this.inputArea.style.gap = '0.5rem';
+    }
+
+    /**
+     * Hide input area
+     * @private
+     */
+    hideInputArea() {
+        this.inputArea.style.display = 'none';
     }
 
     // =========================================================================
@@ -300,19 +364,28 @@ class HealthChatbot {
     showMainMenu() {
         this.currentView = 'menu';
         this.clearMessages();
+        this.hideInputArea();
+
+        // Check login status for different options
+        const isLoggedIn = this.isLoggedIn();
 
         this.addBotMessage(`
-            <p style="margin-bottom: 0.75rem;">👋 Hello! I'm your Health Assistant. How can I help you today?</p>
+            <p style="margin-bottom: 0.75rem;">🙏 Namaste! I'm <strong>Swasthya Saathi</strong>, your health companion. How can I help you today?</p>
             <div class="chatbot-options">
                 <button class="chatbot-option-btn" data-action="faq">
                     📋 Frequently Asked Questions
                 </button>
                 <button class="chatbot-option-btn" data-action="symptom">
-                    🩺 Check My Symptoms
+                    💬 Chat About Symptoms
                 </button>
                 <button class="chatbot-option-btn" data-action="doctor">
                     👨‍⚕️ Connect with a Doctor
                 </button>
+                ${isLoggedIn ? `
+                    <button class="chatbot-option-btn" data-action="book" style="background: #86efac; color: #1a202c;">
+                        📅 Book Appointment
+                    </button>
+                ` : ''}
             </div>
         `);
     }
@@ -374,152 +447,106 @@ class HealthChatbot {
     }
 
     // =========================================================================
-    // VIEW: SYMPTOM CHECKER
+    // VIEW: SYMPTOM CHAT
     // =========================================================================
 
     /**
-     * Show symptom checker form
+     * Show symptom chat interface
      */
-    showSymptomChecker() {
+    showSymptomChat() {
         this.currentView = 'symptom';
         this.clearMessages();
+        this.symptomHistory = [];
 
         this.addBotMessage(`
-            <p style="margin-bottom: 0.75rem;">🩺 <strong>Symptom Checker</strong></p>
-            <p style="margin-bottom: 1rem; font-size: 0.85rem; color: #666;">
-                Describe your symptoms and I'll provide general guidance. 
-                <em>This is not a substitute for professional medical advice.</em>
-            </p>
-            <div style="background: #f8fafc; border-radius: 0.5rem; padding: 1rem;">
-                <textarea 
-                    id="symptom-input" 
-                    placeholder="Example: I have had a headache and mild fever for 2 days..."
-                    style="width: 100%; min-height: 80px; border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 0.75rem; font-size: 0.9rem; resize: none; font-family: inherit;"
-                ></textarea>
-                <button 
-                    id="symptom-submit-btn"
-                    style="width: 100%; margin-top: 0.75rem; padding: 0.75rem; background: #86efac; color: #1a202c; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer;"
-                >
-                    Analyze Symptoms
-                </button>
-            </div>
-            <div class="chatbot-options" style="margin-top: 0.75rem;">
-                <button class="chatbot-option-btn" data-action="back" style="border-color: #ccc; color: #666;">
-                    ← Back to Menu
-                </button>
-            </div>
+            <p style="margin-bottom: 0.75rem;">💬 <strong>Symptom Chat</strong></p>
+            <p style="margin-bottom: 0.5rem; font-size: 0.9rem;">Tell me what you're feeling. I'll try to help with some suggestions.</p>
+            <p style="font-size: 0.8rem; color: #666; font-style: italic;">Example: "I have a headache" or "feeling tired"</p>
         `);
+
+        // Show input area for chatting
+        this.showInputArea();
+        this.inputEl.focus();
     }
 
     /**
-     * Handle symptom form submission
+     * Send symptom message from input
      * @private
      */
-    async handleSymptomSubmit() {
-        const input = this.messagesEl.querySelector('#symptom-input');
-        const symptoms = input?.value?.trim();
+    async sendSymptomMessage() {
+        const message = this.inputEl.value.trim();
+        if (!message) return;
 
-        if (!symptoms) {
-            this.addBotMessage(`<p style="color: #ef4444;">Please describe your symptoms.</p>`);
-            return;
-        }
+        // Clear input
+        this.inputEl.value = '';
 
-        this.addUserMessage(symptoms);
+        // Add user message
+        this.addUserMessage(message);
+        this.symptomHistory.push(message);
 
-        // Show loading
+        // Show typing indicator
         this.addBotMessage(`
-            <p style="display: flex; align-items: center; gap: 0.5rem;">
-                <span class="material-icons-outlined" style="animation: spin 1s linear infinite;">sync</span>
-                Analyzing your symptoms...
+            <p style="display: flex; align-items: center; gap: 0.5rem; color: #666;">
+                <span style="animation: pulse 1s infinite;">💭</span>
+                Thinking...
             </p>
-            <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
+            <style>@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }</style>
         `);
 
-        // Get analysis
+        // Analyze symptoms
         try {
-            const result = await analyzeSymptoms(symptoms);
-            this.showSymptomResult(result);
+            const result = await analyzeSymptoms(message);
+            this.showSymptomChatResult(result);
         } catch (error) {
             console.error('[Chatbot] Symptom analysis error:', error);
-            this.addBotMessage(`<p style="color: #ef4444;">Sorry, I couldn't analyze your symptoms. Please try again.</p>`);
+            // Remove loading message
+            const messages = this.messagesEl.querySelectorAll('.message.bot');
+            if (messages.length > 0) {
+                messages[messages.length - 1].remove();
+            }
+            this.addBotMessage(`<p style="color: #ef4444;">Sorry, I couldn't understand. Can you describe your symptoms differently?</p>`);
         }
     }
 
     /**
-     * Show symptom analysis result
+     * Show symptom chat result
      * @private
      * @param {Object} result - Analysis result
      */
-    showSymptomResult(result) {
+    showSymptomChatResult(result) {
         // Remove loading message
         const messages = this.messagesEl.querySelectorAll('.message.bot');
         if (messages.length > 0) {
             messages[messages.length - 1].remove();
         }
 
-        // Severity color
-        const severityColors = {
-            mild: '#22c55e',
-            moderate: '#f59e0b',
-            severe: '#ef4444',
-            unknown: '#6b7280'
-        };
-        const severityColor = severityColors[result.severity] || severityColors.unknown;
-
-        // Format remedies
-        const remediesHtml = result.remedies.map(r => `<li>${r}</li>`).join('');
-
-        // Format warning signs
-        const warningsHtml = result.warningSigns?.length
-            ? result.warningSigns.map(w => `<li>${w}</li>`).join('')
-            : '<li>Symptoms worsening significantly</li>';
+        // Format remedies as simple list
+        const remediesText = result.remedies.slice(0, 4).map(r => `• ${r}`).join('<br>');
 
         this.addBotMessage(`
-            <div style="space-y: 1rem;">
-                <!-- Possible Condition -->
-                <div style="background: #f0fdf4; border-left: 4px solid ${severityColor}; padding: 0.75rem; border-radius: 0.25rem; margin-bottom: 1rem;">
-                    <p style="font-weight: 600; margin-bottom: 0.25rem;">Possible Condition:</p>
-                    <p style="font-size: 1.1rem; color: #166534;">${result.possibleCondition}</p>
-                    <span style="display: inline-block; margin-top: 0.5rem; padding: 0.25rem 0.5rem; background: ${severityColor}20; color: ${severityColor}; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">
-                        ${result.severity} severity
-                    </span>
-                </div>
-                
-                <!-- Home Remedies -->
-                <div style="margin-bottom: 1rem;">
-                    <p style="font-weight: 600; margin-bottom: 0.5rem;">🏠 Suggested Remedies:</p>
-                    <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.9rem; line-height: 1.6;">
-                        ${remediesHtml}
-                    </ul>
-                </div>
-                
-                <!-- Warning Signs -->
-                <div style="background: #fef2f2; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem;">
-                    <p style="font-weight: 600; color: #dc2626; margin-bottom: 0.5rem;">⚠️ Seek Medical Help If:</p>
-                    <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.85rem; color: #7f1d1d;">
-                        ${warningsHtml}
-                    </ul>
-                </div>
-                
-                <!-- Recommendation -->
-                <div style="background: #eff6ff; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 0.75rem;">
-                    <p style="font-size: 0.9rem; color: #1e40af;">
-                        💡 ${result.recommendation}
-                    </p>
-                </div>
-                
-                <!-- Disclaimer -->
-                <p style="font-size: 0.75rem; color: #6b7280; font-style: italic;">
-                    ${result.disclaimer}
+            <div style="margin-bottom: 0.75rem;">
+                <p style="font-weight: 600; color: #166534; margin-bottom: 0.5rem;">
+                    This sounds like it could be: <strong>${result.possibleCondition}</strong>
                 </p>
+                <p style="font-size: 0.85rem; margin-bottom: 0.75rem;">
+                    <strong>You can try:</strong><br>
+                    ${remediesText}
+                </p>
+                ${result.warningSigns && result.warningSigns.length > 0 ? `
+                    <p style="font-size: 0.8rem; color: #dc2626; background: #fef2f2; padding: 0.5rem; border-radius: 0.25rem;">
+                        ⚠️ See a doctor if: ${result.warningSigns[0]}
+                    </p>
+                ` : ''}
             </div>
-            
-            <div class="chatbot-options" style="margin-top: 1rem;">
+            <p style="font-size: 0.75rem; color: #666; margin-bottom: 0.75rem;">
+                ${result.disclaimer || 'This is general guidance, not medical advice.'}
+            </p>
+            <p style="font-size: 0.85rem; color: #666;">
+                Tell me more symptoms, or:
+            </p>
+            <div class="chatbot-options" style="margin-top: 0.5rem;">
                 <button class="chatbot-option-btn" data-action="doctor">
-                    👨‍⚕️ Connect with Doctor
-                </button>
-                <button class="chatbot-option-btn" data-action="symptom">
-                    Check Other Symptoms
+                    👨‍⚕️ Talk to a Doctor
                 </button>
                 <button class="chatbot-option-btn" data-action="back" style="border-color: #ccc; color: #666;">
                     ← Back to Menu
@@ -533,126 +560,72 @@ class HealthChatbot {
     // =========================================================================
 
     /**
-     * Show doctor connect form
+     * Show doctor connect - requires login
      */
     showDoctorConnect() {
         this.currentView = 'doctor';
         this.clearMessages();
+        this.hideInputArea();
 
+        // Check if logged in
+        if (!this.isLoggedIn()) {
+            this.addBotMessage(`
+                <p style="margin-bottom: 0.75rem;">👨‍⚕️ <strong>Connect with a Doctor</strong></p>
+                <div style="background: #fef3c7; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                    <p style="font-size: 0.9rem; color: #92400e; display: flex; align-items: center; gap: 0.5rem;">
+                        <span class="material-icons-outlined" style="font-size: 20px;">info</span>
+                        Please log in first to connect with a doctor or book an appointment.
+                    </p>
+                </div>
+                <div class="chatbot-options">
+                    <button class="chatbot-option-btn" data-action="login" style="background: #3b82f6; color: white; border-color: #3b82f6;">
+                        🔐 Login / Register
+                    </button>
+                    <button class="chatbot-option-btn" data-action="back" style="border-color: #ccc; color: #666;">
+                        ← Back to Menu
+                    </button>
+                </div>
+            `);
+            return;
+        }
+
+        // User is logged in - show booking options
         this.addBotMessage(`
             <p style="margin-bottom: 0.75rem;">👨‍⚕️ <strong>Connect with a Doctor</strong></p>
-            <p style="margin-bottom: 1rem; font-size: 0.85rem; color: #666;">
-                Fill in your details and a healthcare professional will contact you.
+            <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #666;">
+                You can book an appointment with a doctor near you.
             </p>
-            <div style="background: #f8fafc; border-radius: 0.5rem; padding: 1rem;">
-                <div style="margin-bottom: 0.75rem;">
-                    <label style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.25rem;">Full Name *</label>
-                    <input type="text" id="doctor-name" placeholder="Enter your name" 
-                        style="width: 100%; padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 0.375rem; font-size: 0.9rem;">
-                </div>
-                <div style="margin-bottom: 0.75rem;">
-                    <label style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.25rem;">Age *</label>
-                    <input type="number" id="doctor-age" placeholder="Enter your age" min="1" max="120"
-                        style="width: 100%; padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 0.375rem; font-size: 0.9rem;">
-                </div>
-                <div style="margin-bottom: 0.75rem;">
-                    <label style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.25rem;">Contact (Phone/Email) *</label>
-                    <input type="text" id="doctor-contact" placeholder="Phone number or email" 
-                        style="width: 100%; padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 0.375rem; font-size: 0.9rem;">
-                </div>
-                <div style="margin-bottom: 0.75rem;">
-                    <label style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.25rem;">Describe Your Symptoms *</label>
-                    <textarea id="doctor-symptoms" placeholder="What symptoms are you experiencing?" rows="3"
-                        style="width: 100%; padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 0.375rem; font-size: 0.9rem; resize: none; font-family: inherit;"></textarea>
-                </div>
-                <button id="doctor-submit-btn"
-                    style="width: 100%; padding: 0.75rem; background: #3b82f6; color: white; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer;">
-                    Submit Request
-                </button>
+            <div style="background: #f0fdf4; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                <p style="font-size: 0.9rem; color: #166534; display: flex; align-items: center; gap: 0.5rem;">
+                    <span class="material-icons-outlined" style="font-size: 20px;">check_circle</span>
+                    You're logged in! Ready to book.
+                </p>
             </div>
-            <div class="chatbot-options" style="margin-top: 0.75rem;">
+            <div class="chatbot-options">
+                <button class="chatbot-option-btn" data-action="book" style="background: #86efac; color: #1a202c;">
+                    📅 Book Appointment Now
+                </button>
                 <button class="chatbot-option-btn" data-action="back" style="border-color: #ccc; color: #666;">
                     ← Back to Menu
                 </button>
             </div>
+            <p style="font-size: 0.8rem; color: #666; margin-top: 1rem;">
+                💡 For emergencies, call <strong>108</strong> immediately.
+            </p>
         `);
     }
+}
 
-    /**
-     * Handle doctor connect form submission
-     * @private
-     */
-    async handleDoctorSubmit() {
-        const name = this.messagesEl.querySelector('#doctor-name')?.value?.trim();
-        const age = this.messagesEl.querySelector('#doctor-age')?.value?.trim();
-        const contact = this.messagesEl.querySelector('#doctor-contact')?.value?.trim();
-        const symptoms = this.messagesEl.querySelector('#doctor-symptoms')?.value?.trim();
+// =============================================================================
+// GLOBAL TOGGLE FUNCTION
+// =============================================================================
 
-        // Validation
-        if (!name || !age || !contact || !symptoms) {
-            this.addBotMessage(`<p style="color: #ef4444;">Please fill in all required fields.</p>`);
-            return;
-        }
-
-        // Store patient data
-        this.patientData = { name, age, contact, symptoms };
-
-        this.addUserMessage(`Request submitted:\nName: ${name}\nAge: ${age}\nContact: ${contact}`);
-
-        // Show loading
-        this.addBotMessage(`
-            <p style="display: flex; align-items: center; gap: 0.5rem;">
-                <span class="material-icons-outlined" style="animation: spin 1s linear infinite;">sync</span>
-                Processing your request...
-            </p>
-        `);
-
-        // Simulate processing
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-        // Remove loading and show result
-        const messages = this.messagesEl.querySelectorAll('.message.bot');
-        if (messages.length > 0) {
-            messages[messages.length - 1].remove();
-        }
-
-        // Also analyze symptoms for quick guidance
-        let quickAnalysis = null;
-        try {
-            quickAnalysis = await analyzeSymptoms(symptoms);
-        } catch (e) {
-            console.error('[Chatbot] Quick analysis failed:', e);
-        }
-
-        this.addBotMessage(`
-            <div style="background: #f0fdf4; border: 1px solid #86efac; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
-                <p style="font-weight: 600; color: #166534; display: flex; align-items: center; gap: 0.5rem;">
-                    <span class="material-icons-outlined">check_circle</span>
-                    Request Submitted Successfully!
-                </p>
-                <p style="margin-top: 0.5rem; font-size: 0.9rem; color: #166534;">
-                    Your request has been received. A healthcare professional will contact you at <strong>${contact}</strong> within 24-48 hours.
-                </p>
-            </div>
-            
-            ${quickAnalysis ? `
-                <div style="background: #eff6ff; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem;">
-                    <p style="font-weight: 600; margin-bottom: 0.5rem;">💡 While You Wait:</p>
-                    <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">Based on your symptoms, this might be: <strong>${quickAnalysis.possibleCondition}</strong></p>
-                    <p style="font-size: 0.85rem; color: #1e40af;">${quickAnalysis.recommendation}</p>
-                </div>
-            ` : ''}
-            
-            <p style="font-size: 0.85rem; color: #6b7280;">
-                For emergencies, please call <strong>108</strong> or visit the nearest hospital.
-            </p>
-            
-            <div class="chatbot-options" style="margin-top: 1rem;">
-                <button class="chatbot-option-btn" data-action="back">
-                    ← Back to Menu
-                </button>
-            </div>
-        `);
+/**
+ * Global function to toggle chatbot (for external buttons)
+ */
+function toggleChat() {
+    if (window.healthChatbot) {
+        window.healthChatbot.toggleWindow();
     }
 }
 
