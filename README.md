@@ -98,7 +98,7 @@ SwasthyaSetu/
 7. **Open browser:**
    ```
    http://localhost:3000
-   ```
+   ``
 
 ### Demo Credentials
 
@@ -194,4 +194,4 @@ For issues and questions, please open an issue on GitHub.
 
 ---
 
-**Note:** This is a demonstration project. For production use, additional security measures and compliance with healthcare regulations (HIPAA, etc.) are required.
+**Note:** This is a demonstration project. For production use, additional security measures and compliance with healthcare regulations (HIPAA, etc.).
