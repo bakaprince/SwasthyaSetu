@@ -87,32 +87,28 @@ const GovAnalytics = {
     selectedState: null,
 
     initMap() {
-        const southWest = L.latLng(6.0, 67.0);
-        const northEast = L.latLng(38.0, 98.0);
+        // Bounds covering entire India
+        const southWest = L.latLng(5.5, 67.5);
+        const northEast = L.latLng(37.5, 98.0);
         const bounds = L.latLngBounds(southWest, northEast);
 
+        // Create STATIC map (no scrolling/dragging for clean display)
         this.map = L.map('india-map', {
             maxBounds: bounds,
             maxBoundsViscosity: 1.0,
             minZoom: 4,
-            maxZoom: 12,
-            zoomControl: true,
-            dragging: true,
-            scrollWheelZoom: true,
-            doubleClickZoom: false, // We handle double-click for states
-            touchZoom: true,
-            boxZoom: true,
-            keyboard: true
-        }).setView([22.5, 82.5], 5);
-
-        // No tile layer - only show India GeoJSON (clean white background)
-        // The map container background will be set via CSS
+            maxZoom: 4,          // Lock zoom to show full India
+            zoomControl: false,  // Hide zoom buttons
+            dragging: false,     // No dragging
+            scrollWheelZoom: false,
+            doubleClickZoom: false,
+            touchZoom: false,
+            boxZoom: false,
+            keyboard: false
+        }).setView([22.0, 82.0], 4);  // Centered on India, zoom 4 for full view
 
         // Load interactive states
         this.loadStatesGeoJSON();
-
-        // Add reset button
-        this.addResetButton();
     },
 
     addResetButton() {
@@ -217,12 +213,12 @@ const GovAnalytics = {
     highlightState(e) {
         const layer = e.target;
         layer.setStyle({
-            fillColor: '#ffa500',
-            weight: 2,
-            color: '#ff8c00',
-            fillOpacity: 0.6
+            fillColor: '#ffcc00',  // Bright yellow-orange
+            weight: 3,
+            color: '#ff6600',      // Orange border
+            fillOpacity: 0.7
         });
-        layer.bringToFront();
+        // Don't bringToFront to avoid covering markers
     },
 
     resetStateHighlight(e) {
@@ -242,62 +238,133 @@ const GovAnalytics = {
 
         this.selectedState = layer;
 
-        // Highlight selected state
+        // Highlight selected state in red
         layer.setStyle({
-            fillColor: '#ff6b35',
+            fillColor: '#ff4444',
             weight: 3,
             opacity: 1,
             color: '#cc0000',
-            fillOpacity: 0.5
+            fillOpacity: 0.6
         });
 
-        // Show popup instead of zoom
         // Get state data
         const population = this.statePopulation[stateName] || 'N/A';
         const hospitalRating = this.stateHospitalRatings[stateName] || 'N/A';
         const covid = this.covidData[stateName] || this.covidData[this.findMatchingStateName(stateName)] || {};
 
-        // Create popup content
-        const popupContent = `
-            <div class="min-w-[250px] p-2">
-                <h3 class="text-lg font-bold text-secondary border-b pb-2 mb-3">${stateName}</h3>
-                
-                <div class="space-y-2 text-sm">
-                    <div class="flex justify-between items-center bg-blue-50 p-2 rounded">
-                        <span class="font-medium">👥 Population</span>
-                        <span class="font-bold text-blue-700">${typeof population === 'number' ? population.toFixed(1) + 'M' : population}</span>
-                    </div>
-                    
-                    <div class="bg-red-50 p-2 rounded">
-                        <div class="font-medium mb-1">🦠 COVID-19</div>
-                        <div class="grid grid-cols-2 gap-1 text-xs">
-                            <span>Active: <b class="text-orange-600">${(covid.active || 0).toLocaleString()}</b></span>
-                            <span>Recovered: <b class="text-green-600">${(covid.recovered || 0).toLocaleString()}</b></span>
-                            <span>Deaths: <b class="text-red-600">${(covid.deaths || 0).toLocaleString()}</b></span>
-                            <span>Total: <b class="text-blue-600">${(covid.cases || 0).toLocaleString()}</b></span>
+        // Show modal popup
+        this.showStateModal(stateName, population, covid, hospitalRating, layer);
+    },
+
+    showStateModal(stateName, population, covid, hospitalRating, layer) {
+        // Remove existing modal
+        const existingModal = document.getElementById('state-modal');
+        if (existingModal) existingModal.remove();
+
+        // Create modal
+        const modal = document.createElement('div');
+        modal.id = 'state-modal';
+        modal.className = 'fixed inset-0 z-[9999] flex items-center justify-center p-4';
+        modal.innerHTML = `
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="GovAnalytics.closeStateModal()"></div>
+            <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transform transition-all animate-modal-in">
+                <!-- Header with state name -->
+                <div class="bg-gradient-to-r from-secondary to-secondary-light text-white p-5">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-2xl font-bold">${stateName}</h3>
+                            <p class="text-sm text-primary/80">State of India</p>
                         </div>
-                    </div>
-                    
-                    <div class="flex justify-between items-center bg-green-50 p-2 rounded">
-                        <span class="font-medium">🏥 Hospital Rating</span>
-                        <span class="font-bold text-green-700">${hospitalRating} ⭐</span>
+                        <button onclick="GovAnalytics.closeStateModal()" class="text-white/80 hover:text-white text-3xl leading-none">&times;</button>
                     </div>
                 </div>
                 
-                <div class="mt-3 text-center">
+                <!-- State Data -->
+                <div class="p-5 space-y-4">
+                    <!-- Population -->
+                    <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-4 flex items-center gap-4">
+                        <div class="bg-blue-500 text-white p-3 rounded-full">
+                            <span class="material-icons-outlined text-2xl">groups</span>
+                        </div>
+                        <div>
+                            <div class="text-sm text-gray-600">Population (2024 Est.)</div>
+                            <div class="text-2xl font-bold text-blue-700">${typeof population === 'number' ? population.toFixed(1) + ' Million' : population}</div>
+                        </div>
+                    </div>
+
+                    <!-- COVID Stats Grid -->
+                    <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-4">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="material-icons-outlined text-red-500">coronavirus</span>
+                            <span class="font-semibold text-gray-700">COVID-19 Statistics (Live)</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-white rounded-lg p-3 text-center shadow-sm">
+                                <div class="text-2xl font-bold text-orange-600">${(covid.active || 0).toLocaleString()}</div>
+                                <div class="text-xs text-gray-500">Active Cases</div>
+                            </div>
+                            <div class="bg-white rounded-lg p-3 text-center shadow-sm">
+                                <div class="text-2xl font-bold text-green-600">${(covid.recovered || 0).toLocaleString()}</div>
+                                <div class="text-xs text-gray-500">Recovered</div>
+                            </div>
+                            <div class="bg-white rounded-lg p-3 text-center shadow-sm">
+                                <div class="text-2xl font-bold text-red-600">${(covid.deaths || 0).toLocaleString()}</div>
+                                <div class="text-xs text-gray-500">Deceased</div>
+                            </div>
+                            <div class="bg-white rounded-lg p-3 text-center shadow-sm">
+                                <div class="text-2xl font-bold text-blue-600">${(covid.cases || 0).toLocaleString()}</div>
+                                <div class="text-xs text-gray-500">Total Cases</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hospital Rating -->
+                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 flex items-center gap-4">
+                        <div class="bg-green-500 text-white p-3 rounded-full">
+                            <span class="material-icons-outlined text-2xl">local_hospital</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-sm text-gray-600">Avg. Hospital Rating</div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-2xl font-bold text-green-700">${hospitalRating}</span>
+                                <span class="text-yellow-500 text-xl">${this.getStarRating(hospitalRating)}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Actions -->
+                <div class="bg-gray-50 px-5 py-4 flex gap-3">
                     <a href="hospitals.html?state=${encodeURIComponent(stateName)}" 
-                       class="inline-block bg-secondary text-white px-4 py-2 rounded-lg text-sm hover:bg-secondary-light">
-                        View Hospitals in ${stateName}
+                       class="flex-1 bg-secondary text-white py-3 px-4 rounded-xl text-center font-semibold hover:bg-secondary-light transition flex items-center justify-center gap-2">
+                        <span class="material-icons-outlined">local_hospital</span>
+                        View Hospitals
                     </a>
+                    <button onclick="GovAnalytics.closeStateModal()" 
+                            class="flex-1 bg-gray-200 text-gray-700 py-3 px-4 rounded-xl font-semibold hover:bg-gray-300 transition">
+                        Close
+                    </button>
+                </div>
+
+                <div class="bg-gray-100 px-5 py-2 text-xs text-gray-400 text-center">
+                    Data: disease.sh (COVID) | Census 2024 Estimates
                 </div>
             </div>
         `;
 
-        // Show popup at click location
-        L.popup()
-            .setLatLng(e.latlng)
-            .setContent(popupContent)
-            .openOn(this.map);
+        document.body.appendChild(modal);
+    },
+
+    closeStateModal() {
+        const modal = document.getElementById('state-modal');
+        if (modal) {
+            modal.remove();
+        }
+        // Reset selected state
+        if (this.selectedState) {
+            this.statesLayer.resetStyle(this.selectedState);
+            this.selectedState = null;
+        }
     },
 
     async fetchCovidData() {
