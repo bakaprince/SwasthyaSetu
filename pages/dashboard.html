@@ -256,31 +256,52 @@
 
             container.innerHTML = appointments.map(apt => {
                 const hasDocs = apt.documents && apt.documents.length > 0;
+                const isCancelled = apt.status === 'cancelled';
+
+                // Status badge styling
+                let statusBadgeClass = 'bg-yellow-100 text-yellow-700';
+                if (apt.status === 'confirmed') statusBadgeClass = 'bg-green-100 text-green-700';
+                if (apt.status === 'completed') statusBadgeClass = 'bg-blue-100 text-blue-700';
+                if (isCancelled) statusBadgeClass = 'bg-red-100 text-red-700';
+
                 return `
-                <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                            <span class="material-icons-outlined text-blue-600 dark:text-blue-300">event</span>
+                <div class="flex flex-col p-4 bg-gray-50 dark:bg-gray-700 rounded-lg ${isCancelled ? 'opacity-75' : ''}">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full ${isCancelled ? 'bg-red-100 dark:bg-red-900' : 'bg-blue-100 dark:bg-blue-900'} flex items-center justify-center">
+                                <span class="material-icons-outlined ${isCancelled ? 'text-red-600 dark:text-red-300' : 'text-blue-600 dark:text-blue-300'}">${isCancelled ? 'event_busy' : 'event'}</span>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-secondary dark:text-white">${apt.doctor}</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">${apt.specialty} - ${apt.hospital}</p>
+                                <p class="text-xs text-gray-500">${Helpers.formatDate(apt.date)} at ${apt.time}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p class="font-semibold text-secondary dark:text-white">${apt.doctor}</p>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">${apt.specialty} - ${apt.hospital}</p>
-                            <p class="text-xs text-gray-500">${Helpers.formatDate(apt.date)} at ${apt.time}</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        ${hasDocs ?
+                        <div class="flex items-center gap-2">
+                            ${hasDocs ?
                         `<button onclick="openDocsModal('${apt._id}')" class="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg text-xs font-semibold hover:bg-purple-200">
-                                View Docs
-                            </button>` : ''
+                                    View Docs
+                                </button>` : ''
                     }
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold ${apt.status === 'confirmed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">
-                            ${apt.status}
-                        </span>
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold ${apt.type === 'telemedicine' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'}">
-                            ${apt.type}
-                        </span>
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusBadgeClass}">
+                                ${apt.status}
+                            </span>
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold ${apt.type === 'telemedicine' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'}">
+                                ${apt.type}
+                            </span>
+                        </div>
                     </div>
+                    ${isCancelled && apt.cancelReason ? `
+                        <div class="mt-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                            <div class="flex items-start gap-2">
+                                <span class="material-icons-outlined text-red-500 text-sm mt-0.5">info</span>
+                                <div>
+                                    <p class="text-xs font-semibold text-red-700 dark:text-red-400">Cancellation Reason:</p>
+                                    <p class="text-sm text-red-600 dark:text-red-300">${apt.cancelReason}</p>
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
                 </div>
             `}).join('');
         }

@@ -240,11 +240,16 @@
                 }
 
                 const aptDate = new Date(`${dateStr} ${timeStr}`);
-                return aptDate <= now || apt.status === 'completed';
+                // Past appointments that are completed (not cancelled)
+                return (aptDate <= now || apt.status === 'completed') && apt.status !== 'cancelled';
             });
+
+            // Filter cancelled appointments
+            const cancelled = allAppointments.filter(apt => apt.status === 'cancelled');
 
             displayAppointmentList('upcoming-appointments', upcoming);
             displayAppointmentList('past-appointments', past);
+            displayCancelledAppointments('cancelled-appointments', cancelled);
         }
 
         function displayAppointmentList(containerId, appointments) {
@@ -337,6 +342,83 @@
                                         Book Again
                                     </button>
                                 ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function displayCancelledAppointments(containerId, appointments) {
+            const container = document.getElementById(containerId);
+
+            if (appointments.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-500 py-8">No cancelled appointments</p>';
+                return;
+            }
+
+            container.innerHTML = appointments.map(apt => {
+                const typeIcons = {
+                    'In-person': 'local_hospital',
+                    'Telemedicine': 'video_call'
+                };
+
+                return `
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-red-200 dark:border-red-800 p-6 opacity-80">
+                        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                            <!-- Appointment Info -->
+                            <div class="flex gap-4 flex-1">
+                                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center flex-shrink-0">
+                                    <span class="material-icons-outlined text-white text-3xl">event_busy</span>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <div>
+                                            <h3 class="font-display text-xl font-bold text-secondary dark:text-white">
+                                                ${apt.doctor}
+                                            </h3>
+                                            <p class="text-sm text-gray-600 dark:text-gray-400">${apt.specialty}</p>
+                                        </div>
+                                        <span class="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 rounded-full text-xs font-bold uppercase">
+                                            Cancelled
+                                        </span>
+                                    </div>
+
+                                    <div class="space-y-2 mt-3">
+                                        <div class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                                            <span class="material-icons-outlined text-sm text-gray-400">location_on</span>
+                                            ${apt.hospital}
+                                        </div>
+                                        <div class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                                            <span class="material-icons-outlined text-sm text-gray-400">calendar_today</span>
+                                            ${Helpers.formatDate(apt.date)} at ${apt.time}
+                                        </div>
+                                        <div class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                                            <span class="material-icons-outlined text-sm text-gray-400">${typeIcons[apt.type] || 'event'}</span>
+                                            ${apt.type}
+                                        </div>
+                                    </div>
+
+                                    ${apt.cancelReason ? `
+                                        <div class="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                                            <div class="flex items-start gap-2">
+                                                <span class="material-icons-outlined text-red-500 text-lg mt-0.5">info</span>
+                                                <div>
+                                                    <p class="text-sm font-semibold text-red-700 dark:text-red-400 mb-1">Cancellation Reason:</p>
+                                                    <p class="text-sm text-red-600 dark:text-red-300">${apt.cancelReason}</p>
+                                                    ${apt.cancelledAt ? `<p class="text-xs text-red-400 mt-2">Cancelled on: ${Helpers.formatDate(apt.cancelledAt)}</p>` : ''}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+
+                            <!-- Actions for cancelled -->
+                            <div class="flex md:flex-col gap-2 md:w-40">
+                                <button class="flex-1 bg-secondary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-secondary-light transition-colors">
+                                    Book Again
+                                </button>
                             </div>
                         </div>
                     </div>

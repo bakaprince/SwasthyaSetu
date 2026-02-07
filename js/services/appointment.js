@@ -220,7 +220,7 @@ const AppointmentService = {
      * @example
      * await AppointmentService.updateStatus('APT-001', 'confirmed');
      */
-    async updateStatus(appointmentId, newStatus) {
+    async updateStatus(appointmentId, newStatus, cancelReason = null) {
         try {
             // Validate status
             if (!Object.values(APPOINTMENT_STATUS).includes(newStatus)) {
@@ -233,18 +233,23 @@ const AppointmentService = {
             // For local/demo mode, update localStorage
             if (!token || userType !== 'admin' || appointmentId.startsWith('APT-') || appointmentId.startsWith('PT-')) {
                 console.log(`[AppointmentService] Updating status locally for ${appointmentId} to ${newStatus}`);
-                return this.updateStatusLocally(appointmentId, newStatus);
+                return this.updateStatusLocally(appointmentId, newStatus, cancelReason);
             }
 
             // API update for authenticated admin
             const apiBaseUrl = getApiBaseUrl();
+            const requestBody = { status: newStatus };
+            if (cancelReason) {
+                requestBody.cancelReason = cancelReason;
+            }
+
             const response = await fetch(`${apiBaseUrl}/appointments/${appointmentId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ status: newStatus })
+                body: JSON.stringify(requestBody)
             });
 
             if (!response.ok) {
@@ -255,7 +260,7 @@ const AppointmentService = {
             console.log('[AppointmentService] Status updated successfully via API');
 
             // Update local cache
-            this.updateStatusLocally(appointmentId, newStatus);
+            this.updateStatusLocally(appointmentId, newStatus, cancelReason);
 
             return updatedAppointment;
         } catch (error) {
@@ -272,7 +277,7 @@ const AppointmentService = {
      * @returns {Object} Updated appointment
      * @private
      */
-    updateStatusLocally(appointmentId, newStatus) {
+    updateStatusLocally(appointmentId, newStatus, cancelReason = null) {
         try {
             const appointments = this.getLocalAppointments();
             const appointment = appointments.find(a => a._id === appointmentId);
@@ -280,6 +285,12 @@ const AppointmentService = {
             if (appointment) {
                 appointment.status = newStatus;
                 appointment.updatedAt = new Date().toISOString();
+
+                // Store cancellation reason if provided
+                if (cancelReason && newStatus === APPOINTMENT_STATUS.CANCELLED) {
+                    appointment.cancelReason = cancelReason;
+                    appointment.cancelledAt = new Date().toISOString();
+                }
 
                 // Save back to localStorage
                 const stored = appointments.filter(a =>
@@ -489,6 +500,81 @@ const AppointmentService = {
         console.log('[AppointmentService] Appointment created locally');
 
         return newAppointment;
+    },
+
+    /**
+     * Delete document from appointment
+     * 
+     * @param {string} appointmentId - Appointment ID
+     * @param {number} docIndex - Index of document in array
+     * @param {string} docId - Document ID (optional, for API calls)
+     * @returns {Promise<Object>} Updated appointment
+     * @throws {Error} If deletion fails
+     * @example
+     * await AppointmentService.deleteDocument('APT-001', 0, 'DOC-123');
+     */
+    async deleteDocument(appointmentId, docIndex, docId = null) {
+        try {
+            const token = AuthService.currentUser?.token;
+
+            // For local/demo mode, delete from localStorage
+            if (!token || appointmentId.startsWith('APT-') || appointmentId.startsWith('PT-')) {
+                return this.deleteDocumentLocally(appointmentId, docIndex);
+            }
+
+            // API delete for authenticated users
+            const apiBaseUrl = getApiBaseUrl();
+            const response = await fetch(`${apiBaseUrl}/appointments/${appointmentId}/documents/${docIndex}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Delete failed: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('[AppointmentService] Document deleted via API');
+
+            // Also update local cache
+            this.deleteDocumentLocally(appointmentId, docIndex);
+
+            return result;
+        } catch (error) {
+            console.error('[AppointmentService] Error deleting document:', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Delete document locally
+     * 
+     * @param {string} appointmentId - Appointment ID
+     * @param {number} docIndex - Index of document in array
+     * @returns {Object} Updated appointment
+     * @private
+     */
+    deleteDocumentLocally(appointmentId, docIndex) {
+        const appointments = this.getLocalAppointments();
+        const appointment = appointments.find(a => a._id === appointmentId);
+
+        if (appointment && appointment.documents && appointment.documents[docIndex]) {
+            appointment.documents.splice(docIndex, 1);
+
+            // Update localStorage
+            const stored = appointments.filter(a =>
+                !a._id.startsWith('APT-DEMO')
+            );
+            localStorage.setItem(STORAGE_KEYS.APPOINTMENTS, JSON.stringify(stored));
+
+            console.log('[AppointmentService] Document deleted locally');
+            return appointment;
+        }
+
+        throw new Error('Document not found');
     }
 };
 

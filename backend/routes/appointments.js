@@ -9,6 +9,7 @@ const {
     updateAppointment,
     cancelAppointment,
     uploadDocument,
+    deleteDocument,
     handleTransfer
 } = require('../controllers/appointmentController');
 const { protect, authorize } = require('../middleware/auth');
@@ -51,6 +52,9 @@ router.put('/:id', protect, authorize('admin'), updateAppointment);
 
 // Document Upload Route (Admin Only)
 router.post('/:id/documents', protect, authorize('admin'), upload.single('file'), uploadDocument);
+
+// Document Delete Route (Admin Only)
+router.delete('/:id/documents/:docIndex', protect, authorize('admin'), deleteDocument);
 
 // Transfer Route (Admin Only)
 router.put('/:id/transfer', protect, authorize('admin'), handleTransfer);
