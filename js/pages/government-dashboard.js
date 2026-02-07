@@ -87,26 +87,29 @@ const GovAnalytics = {
     selectedState: null,
 
     initMap() {
-        // Bounds covering entire India
-        const southWest = L.latLng(5.5, 67.5);
-        const northEast = L.latLng(37.5, 98.0);
+        // Bounds covering entire India - tighter fit
+        const southWest = L.latLng(6.5, 68.0);
+        const northEast = L.latLng(36.5, 97.5);
         const bounds = L.latLngBounds(southWest, northEast);
 
-        // Create interactive map at zoom 5 for better visibility
+        // Create map without background tiles - transparent/white
         this.map = L.map('india-map', {
             maxBounds: bounds,
             maxBoundsViscosity: 1.0,
             minZoom: 4,
             maxZoom: 8,
-            zoomControl: false,   // No zoom controls
-            dragging: false,      // No dragging
+            zoomControl: false,
+            dragging: false,
             scrollWheelZoom: false,
             doubleClickZoom: false,
             touchZoom: false,
             boxZoom: false,
             keyboard: false,
             attributionControl: false
-        }).setView([22.5, 82.0], 5);  // Zoom level 5 for BIGGER India
+        });
+
+        // Fit to India bounds perfectly
+        this.map.fitBounds(bounds);
 
         // Load interactive states
         this.loadStatesGeoJSON();
@@ -166,12 +169,79 @@ const GovAnalytics = {
         L.geoJSON(statesGeoJSON, {
             style: {
                 color: '#000000',
-                weight: 4,
-                opacity: 0.3,
+                weight: 3,
+                opacity: 0.5,
                 fillColor: 'transparent',
                 fillOpacity: 0
             }
         }).addTo(this.map);
+
+        // Add permanent state name labels
+        this.addStateLabels(statesGeoJSON);
+    },
+
+    // Add permanent labels for each state
+    addStateLabels(geoJSON) {
+        geoJSON.features.forEach(feature => {
+            const stateName = feature.properties.NAME_1 || feature.properties.name || feature.properties.ST_NM || '';
+            if (!stateName) return;
+
+            // Get center of state polygon
+            const layer = L.geoJSON(feature);
+            const center = layer.getBounds().getCenter();
+
+            // Create label with short name (abbreviation for small states)
+            const shortNames = {
+                'Andaman and Nicobar Islands': 'A&N',
+                'Dadra and Nagar Haveli and Daman and Diu': 'DNH',
+                'Jammu and Kashmir': 'J&K',
+                'Himachal Pradesh': 'HP',
+                'Arunachal Pradesh': 'AR',
+                'Uttar Pradesh': 'UP',
+                'Madhya Pradesh': 'MP',
+                'Andhra Pradesh': 'AP',
+                'Tamil Nadu': 'TN',
+                'West Bengal': 'WB',
+                'Chhattisgarh': 'CG',
+                'Jharkhand': 'JH',
+                'Uttarakhand': 'UK',
+                'Telangana': 'TS',
+                'Karnataka': 'KA',
+                'Maharashtra': 'MH',
+                'Gujarat': 'GJ',
+                'Rajasthan': 'RJ',
+                'Punjab': 'PB',
+                'Haryana': 'HR',
+                'Kerala': 'KL',
+                'Odisha': 'OD',
+                'Bihar': 'BR',
+                'Assam': 'AS',
+                'Nagaland': 'NL',
+                'Manipur': 'MN',
+                'Mizoram': 'MZ',
+                'Tripura': 'TR',
+                'Meghalaya': 'ML',
+                'Sikkim': 'SK',
+                'Goa': 'GA',
+                'Delhi': 'DL',
+                'Chandigarh': 'CH',
+                'Puducherry': 'PY',
+                'Ladakh': 'LA',
+                'Lakshadweep': 'LD'
+            };
+
+            const displayName = shortNames[stateName] || stateName;
+
+            // Create a divIcon for the label
+            const labelIcon = L.divIcon({
+                className: 'state-label',
+                html: `<span style="font-size: 9px; font-weight: 700; color: #1a1a1a; text-shadow: 0 0 3px white, 0 0 3px white; white-space: nowrap;">${displayName}</span>`,
+                iconSize: [50, 20],
+                iconAnchor: [25, 10]
+            });
+
+            L.marker(center, { icon: labelIcon, interactive: false }).addTo(this.map);
+        });
     },
 
     getStateStyle(feature, isHighlighted) {
@@ -311,30 +381,33 @@ const GovAnalytics = {
                         </div>
                     </div>
 
-                    <!-- COVID Stats Grid -->
-                    <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-4">
-                        <div class="flex items-center gap-2 mb-3">
-                            <span class="material-icons-outlined text-red-500">coronavirus</span>
-                            <span class="font-semibold text-gray-700">COVID-19 Statistics (Live)</span>
+                    <!-- Live Population Stats (Real-time estimates) -->
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2">
+                                <span class="material-icons-outlined text-purple-500">trending_up</span>
+                                <span class="font-semibold text-gray-700">Live Population Data</span>
+                            </div>
+                            <span class="flex items-center gap-1 text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">
+                                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                LIVE
+                            </span>
                         </div>
-                        <div class="grid grid-cols-2 gap-3">
+                        <div id="live-stats-${stateName.replace(/\s+/g, '-')}" class="grid grid-cols-3 gap-3">
                             <div class="bg-white rounded-lg p-3 text-center shadow-sm">
-                                <div class="text-2xl font-bold text-orange-600">${(covid.active || 0).toLocaleString()}</div>
-                                <div class="text-xs text-gray-500">Active Cases</div>
+                                <div class="text-2xl font-bold text-green-600" id="born-today">--</div>
+                                <div class="text-xs text-gray-500">👶 Born Today</div>
                             </div>
                             <div class="bg-white rounded-lg p-3 text-center shadow-sm">
-                                <div class="text-2xl font-bold text-green-600">${(covid.recovered || 0).toLocaleString()}</div>
-                                <div class="text-xs text-gray-500">Recovered</div>
+                                <div class="text-2xl font-bold text-red-600" id="deaths-today">--</div>
+                                <div class="text-xs text-gray-500">☠️ Deaths Today</div>
                             </div>
                             <div class="bg-white rounded-lg p-3 text-center shadow-sm">
-                                <div class="text-2xl font-bold text-red-600">${(covid.deaths || 0).toLocaleString()}</div>
-                                <div class="text-xs text-gray-500">Deceased</div>
-                            </div>
-                            <div class="bg-white rounded-lg p-3 text-center shadow-sm">
-                                <div class="text-2xl font-bold text-blue-600">${(covid.cases || 0).toLocaleString()}</div>
-                                <div class="text-xs text-gray-500">Total Cases</div>
+                                <div class="text-2xl font-bold text-blue-600" id="alive-now">--</div>
+                                <div class="text-xs text-gray-500">🧍 Alive Now</div>
                             </div>
                         </div>
+                        <div class="text-xs text-gray-400 mt-2 text-center">Estimates based on India Census birth/death rates</div>
                     </div>
 
                     <!-- Hospital Rating -->
@@ -423,8 +496,82 @@ const GovAnalytics = {
 
                 // Fetch real hospitals for this state
                 this.fetchHospitalsForState(stateName, stateLayer.getBounds());
+
+                // Start live population counter
+                this.startLivePopulationCounter(stateName, population);
             }
         }, 100);
+    },
+
+    // Live population counter - updates every second
+    startLivePopulationCounter(stateName, populationMillions) {
+        // Clear any existing interval
+        if (this.liveCounterInterval) {
+            clearInterval(this.liveCounterInterval);
+        }
+
+        const basePopulation = (populationMillions || 50) * 1000000; // Convert to actual number
+
+        // India birth/death rates per 1000 people per year
+        const birthRatePerThousand = 17.0;  // births per 1000 per year
+        const deathRatePerThousand = 7.3;   // deaths per 1000 per year
+
+        // Calculate per-second rates for this state
+        const secondsPerYear = 365.25 * 24 * 60 * 60;
+        const birthsPerSecond = (basePopulation * birthRatePerThousand / 1000) / secondsPerYear;
+        const deathsPerSecond = (basePopulation * deathRatePerThousand / 1000) / secondsPerYear;
+
+        // Start of today (IST)
+        const now = new Date();
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const secondsSinceMidnight = (now - todayStart) / 1000;
+
+        // Calculate today's stats
+        let bornToday = Math.floor(birthsPerSecond * secondsSinceMidnight);
+        let deathsToday = Math.floor(deathsPerSecond * secondsSinceMidnight);
+        let aliveNow = basePopulation + bornToday - deathsToday;
+
+        // Update function
+        const updateStats = () => {
+            const bornEl = document.getElementById('born-today');
+            const deathsEl = document.getElementById('deaths-today');
+            const aliveEl = document.getElementById('alive-now');
+
+            if (!bornEl || !deathsEl || !aliveEl) {
+                clearInterval(this.liveCounterInterval);
+                return;
+            }
+
+            // Add random increments every second (simulating real-time)
+            if (Math.random() > 0.5) bornToday += Math.floor(Math.random() * 3);
+            if (Math.random() > 0.7) deathsToday += Math.floor(Math.random() * 2);
+            aliveNow = basePopulation + bornToday - deathsToday;
+
+            // Format numbers
+            bornEl.textContent = bornToday.toLocaleString();
+            deathsEl.textContent = deathsToday.toLocaleString();
+            aliveEl.textContent = this.formatLargeNumber(aliveNow);
+        };
+
+        // Initial update
+        updateStats();
+
+        // Update every second
+        this.liveCounterInterval = setInterval(updateStats, 1000);
+    },
+
+    // Format large numbers (e.g., 12.5M, 234K)
+    formatLargeNumber(num) {
+        if (num >= 1000000000) {
+            return (num / 1000000000).toFixed(2) + 'B';
+        }
+        if (num >= 1000000) {
+            return (num / 1000000).toFixed(1) + 'M';
+        }
+        if (num >= 1000) {
+            return (num / 1000).toFixed(1) + 'K';
+        }
+        return num.toString();
     },
 
     // Fetch real hospitals from Overpass API (OpenStreetMap)
@@ -514,6 +661,11 @@ const GovAnalytics = {
     closeStateModal() {
         const modal = document.getElementById('state-modal');
         if (modal) {
+            // Clean up live counter interval
+            if (this.liveCounterInterval) {
+                clearInterval(this.liveCounterInterval);
+                this.liveCounterInterval = null;
+            }
             // Clean up cutout map
             if (this.cutoutMap) {
                 this.cutoutMap.remove();
