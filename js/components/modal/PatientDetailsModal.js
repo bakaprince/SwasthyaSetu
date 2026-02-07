@@ -230,7 +230,7 @@ class PatientDetailsModal extends BaseModal {
                         <button type="button" 
                                 class="upload-btn inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors"
                                 data-type="${DOCUMENT_TYPES.REPORT}">
-                            <span class="material-icons-outlined text-sm">lab_research</span>
+                            <span class="material-icons-outlined text-sm">upload_file</span>
                             Upload Medical Report
                         </button>
                         <button type="button" 
