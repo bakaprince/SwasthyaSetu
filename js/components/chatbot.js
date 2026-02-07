@@ -111,11 +111,10 @@ class HealthChatbot {
      * @returns {boolean} True if logged in
      */
     isLoggedIn() {
-        // Check for auth token in localStorage
-        const token = localStorage.getItem('authToken') ||
-            localStorage.getItem('token') ||
-            sessionStorage.getItem('authToken');
-        return !!token;
+        // Check for the correct swasthya auth keys
+        const user = localStorage.getItem('swasthya_user');
+        const token = localStorage.getItem('swasthya_token');
+        return !!(user || token);
     }
 
     // =========================================================================
