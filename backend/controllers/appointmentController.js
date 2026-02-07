@@ -208,6 +208,13 @@ const updateAppointment = async (req, res, next) => {
             appointment.confirmedAt = Date.now();
         }
 
+        // Capture cancellation details
+        if (status === 'cancelled') {
+            appointment.cancelReason = req.body.cancelReason || 'No reason provided';
+            appointment.cancelledBy = req.user.id;
+            appointment.cancelledAt = Date.now();
+        }
+
         await appointment.save();
 
         // Populate details

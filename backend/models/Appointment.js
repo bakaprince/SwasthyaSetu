@@ -71,6 +71,17 @@ const appointmentSchema = new mongoose.Schema({
     },
     transferToHospital: {
         type: String // Hospital ID requesting transfer or destination
+    },
+    // Cancellation tracking
+    cancelReason: {
+        type: String // Reason for cancellation (entered by admin)
+    },
+    cancelledBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User' // Admin who cancelled
+    },
+    cancelledAt: {
+        type: Date
     }
 }, {
     timestamps: true
