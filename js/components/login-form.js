@@ -161,6 +161,19 @@ class LoginForm {
         idInput.value = '';
         passwordInput.value = '';
 
+        // PREFILL DEMO CREDENTIALS logic
+        if (typeof DemoCredentials !== 'undefined' && DemoCredentials.enabled) {
+            let userType = this.activeTab;
+            // Map 'patient' tab to 'patient' key, etc.
+            // Keys in DemoCredentials are: patient, admin, government
+            if (DemoCredentials[userType]) {
+                console.log(`✨ Prefilling demo credentials for ${userType}`);
+                idInput.value = DemoCredentials[userType].identifier;
+                passwordInput.value = DemoCredentials[userType].password;
+            }
+        }
+
+
         // Check if we have remembered credentials for this tab
         const remembered = AuthService.getRememberedCredentials();
         if (remembered && remembered.userType === this.activeTab) {
