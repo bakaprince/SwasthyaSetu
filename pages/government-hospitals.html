@@ -124,6 +124,16 @@
             animation: slideDown 0.3s ease;
         }
 
+        /* Force full screen for detail modal */
+        #hospital-detail-modal .modal-content {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: none !important;
+            max-height: none !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+        }
+
         @keyframes slideDown {
             from {
                 opacity: 0;
@@ -338,44 +348,48 @@
 
     <!-- Hospital Detail Modal (Command Center View) -->
     <div id="hospital-detail-modal" class="modal" style="z-index: 105;">
-        <div class="modal-content dark:bg-gray-800 w-[98%] max-w-[1600px] h-[95vh] flex flex-col">
+        <div class="modal-content dark:bg-gray-800 w-full h-full max-w-none max-h-none rounded-none m-0 flex flex-col">
             <!-- Header -->
             <div
-                class="bg-secondary text-white p-6 flex items-center justify-between border-b border-white/10 shrink-0">
-                <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center">
-                        <span class="material-icons-outlined text-3xl text-gov-gold">local_hospital</span>
+                class="bg-secondary text-white p-6 flex items-center justify-between border-b border-white/10 shrink-0 shadow-md">
+                <div class="flex items-center gap-6">
+                    <div
+                        class="w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center border border-white/10">
+                        <span class="material-icons-outlined text-4xl text-gov-gold">local_hospital</span>
                     </div>
                     <div>
-                        <h2 class="text-2xl font-bold font-display flex items-center gap-3">
-                            <span id="detail-name">AIIMS Delhi</span>
+                        <div class="flex items-center gap-4 mb-2">
+                            <h2 class="text-3xl font-bold font-display" id="detail-name">AIIMS Delhi</h2>
                             <span id="detail-status-badge"
-                                class="px-3 py-1 text-xs rounded-full bg-green-500/20 text-green-300 border border-green-500/30">Connected</span>
-                        </h2>
-                        <div class="flex items-center gap-4 text-sm text-gray-300 mt-1">
-                            <span class="flex items-center gap-1"><span
-                                    class="material-icons-outlined text-sm">fingerprint</span> ID: <span
-                                    id="detail-id">HOSP-001</span></span>
-                            <span class="flex items-center gap-1"><span
-                                    class="material-icons-outlined text-sm">location_on</span> <span
-                                    id="detail-location">New Delhi, DL</span></span>
-                            <span class="flex items-center gap-1"><span
-                                    class="material-icons-outlined text-sm">category</span> <span
+                                class="px-3 py-1 text-xs rounded-full bg-green-500/20 text-green-300 border border-green-500/30 font-semibold tracking-wide">Connected</span>
+                        </div>
+                        <div class="flex items-center gap-6 text-sm text-gray-300">
+                            <span
+                                class="flex items-center gap-2 bg-white/5 px-3 py-1 rounded-lg border border-white/5"><span
+                                    class="material-icons-outlined text-sm text-gov-gold">fingerprint</span> ID: <span
+                                    id="detail-id" class="font-mono ml-1">HOSP-001</span></span>
+                            <span
+                                class="flex items-center gap-2 bg-white/5 px-3 py-1 rounded-lg border border-white/5"><span
+                                    class="material-icons-outlined text-sm text-gov-gold">category</span> <span
                                     id="detail-type">Government</span></span>
+                            <span
+                                class="flex items-center gap-2 bg-white/5 px-3 py-1 rounded-lg border border-white/5"><span
+                                    class="material-icons-outlined text-sm text-gov-gold">place</span> <span
+                                    id="detail-address">Ansari Nagar, New Delhi, Delhi 110029</span></span>
                         </div>
                     </div>
                 </div>
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-4">
+                    <div class="text-right mr-4 border-r border-white/20 pr-6 hidden xl:block">
+                        <p class="text-xs text-gray-400 uppercase tracking-widest mb-1">Medical Superintendent</p>
+                        <p class="font-bold">Dr. R. K. Gupta</p>
+                    </div>
                     <button
-                        class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors">
-                        <span class="material-icons-outlined text-sm">article</span> View Logs
-                    </button>
-                    <button
-                        class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors">
-                        <span class="material-icons-outlined text-sm">settings_remote</span> Remote Diagnostics
+                        class="px-5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/10 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors">
+                        <span class="material-icons-outlined text-lg">print</span> Report
                     </button>
                     <button onclick="closeHospitalDetail()"
-                        class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors">
+                        class="w-12 h-12 flex items-center justify-center rounded-full bg-red-500/80 hover:bg-red-600 text-white transition-all shadow-lg hover:shadow-red-500/30">
                         <span class="material-icons-outlined text-2xl">close</span>
                     </button>
                 </div>
@@ -498,6 +512,19 @@
                                 </div>
                                 <h4 class="text-2xl font-bold text-gray-900 dark:text-white" id="res-doctors">156</h4>
                                 <p class="text-xs text-gray-500">Active Doctors</p>
+                            </div>
+                        </div>
+
+                        <!-- Most Common Cases -->
+                        <div
+                            class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 mb-6">
+                            <h3
+                                class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                <span class="material-icons-outlined text-sm">coronavirus</span> Most Active Cases (Last
+                                24h)
+                            </h3>
+                            <div class="space-y-4" id="top-cases-list">
+                                <!-- Dynamic content will go here -->
                             </div>
                         </div>
 
@@ -894,7 +921,16 @@
             document.getElementById('detail-name').textContent = hospital.name;
             const id = hospital._id || 'HOSP-' + (Math.floor(Math.random() * 9000) + 1000);
             document.getElementById('detail-id').textContent = id;
-            document.getElementById('detail-location').textContent = hospital.address || hospital.city || hospital.state;
+
+            // Detailed Address Generation
+            const area = `Sector ${Math.floor(Math.random() * 20) + 1}`;
+            const city = hospital.city || hospital.state || 'City Center';
+            const state = hospital.state || '';
+            const pincode = Math.floor(Math.random() * 100000) + 100000;
+            const fullAddress = hospital.address || `${area}, ${city}, ${state} ${pincode}, India`;
+            const elAddress = document.getElementById('detail-address');
+            if (elAddress) elAddress.textContent = fullAddress;
+
             document.getElementById('detail-type').textContent = hospital.type || 'General Hospital';
 
             // Status Badge
@@ -936,10 +972,52 @@
             const beds = Math.floor(Math.random() * 800) + 200;
             const icu = Math.floor(Math.random() * beds * 0.15); // ~15% are ICU
             const doctors = Math.floor(Math.random() * 200) + 50;
+            const ambulance = Math.floor(Math.random() * 15) + 2;
 
             document.getElementById('res-beds').textContent = beds;
             document.getElementById('res-icu').textContent = icu;
             document.getElementById('res-doctors').textContent = doctors;
+
+            const elAmbulance = document.getElementById('res-ambulance');
+            if (elAmbulance) elAmbulance.textContent = ambulance;
+
+            // Generate Top Active Cases
+            const diseases = [
+                { name: 'Viral Fever', icon: 'thermostat', color: 'orange' },
+                { name: 'Dengue / Malaria', icon: 'pest_control', color: 'red' },
+                { name: 'Respiratory (Flu)', icon: 'masks', color: 'blue' },
+                { name: 'Trauma / Accident', icon: 'local_hospital', color: 'purple' },
+                { name: 'Gastroenteritis', icon: 'restaurant', color: 'yellow' }
+            ];
+
+            const caseList = document.getElementById('top-cases-list');
+
+            if (caseList) {
+                // Shuffle array to make it dynamic
+                const shuffled = diseases.sort(() => 0.5 - Math.random());
+                caseList.innerHTML = '';
+                let remaining = 100;
+
+                for (let i = 0; i < 4; i++) {
+                    const disease = shuffled[i];
+                    const percentage = Math.floor(Math.random() * (remaining - 10)) + 5;
+                    remaining -= percentage;
+
+                    const caseItem = document.createElement('div');
+                    caseItem.innerHTML = `
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-medium">
+                                <span class="material-icons-outlined text-sm text-${disease.color}-500">${disease.icon}</span> ${disease.name}
+                            </span>
+                            <span class="font-bold text-gray-900 dark:text-white">${percentage}%</span>
+                        </div>
+                        <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2">
+                            <div class="bg-${disease.color}-500 h-2 rounded-full transition-all duration-1000" style="width: ${percentage}%"></div>
+                        </div>
+                    `;
+                    caseList.appendChild(caseItem);
+                }
+            }
 
             // Generate Fake Logs
             const logBody = document.getElementById('detail-logs');
