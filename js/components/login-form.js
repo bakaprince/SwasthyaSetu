@@ -64,7 +64,9 @@ class LoginForm {
         const tabButtons = document.querySelectorAll('.tab-button');
         tabButtons.forEach(button => {
             button.addEventListener('click', (e) => {
-                this.switchTab(e.target);
+                // Use the button element itself, not the clicked target
+                // This ensures clicks on text, icons, or any child elements work
+                this.switchTab(button);
             });
         });
     }
