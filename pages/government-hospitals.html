@@ -83,6 +83,77 @@
                 opacity: 0.7;
             }
         }
+
+        .state-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .state-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: auto;
+            padding: 0;
+            width: 95%;
+            max-width: 1400px;
+            max-height: 90vh;
+            border-radius: 16px;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #113841;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 
@@ -102,7 +173,7 @@
 
             <div class="flex items-center gap-4">
                 <div class="relative hidden lg:block">
-                    <input type="text" placeholder="Search hospital ID, name, state..."
+                    <input type="text" id="search-input" placeholder="Search state or hospital..."
                         class="w-80 pl-10 pr-4 py-2 bg-secondary-light border border-white/20 rounded-lg text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
                     <span class="material-icons-outlined absolute left-3 top-2.5 text-gray-400 text-sm">search</span>
                 </div>
@@ -128,7 +199,8 @@
                 <span class="material-icons-outlined text-lg">insights</span>
                 National Dashboard
             </a>
-            <a href="#" class="nav-link active flex items-center gap-2 px-4 py-4 text-sm font-medium">
+            <a href="government-hospitals.html"
+                class="nav-link active flex items-center gap-2 px-4 py-4 text-sm font-medium">
                 <span class="material-icons-outlined text-lg">domain</span>
                 Hospital Connectivity
             </a>
@@ -150,13 +222,13 @@
 
         <!-- Page Header -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-secondary dark:text-white mb-1 font-display">Hospital Connectivity Status
-            </h1>
-            <p class="text-gray-600 dark:text-gray-400">Monitor real-time connectivity and integration status of all
-                registered healthcare facilities</p>
+            <h1 class="text-3xl font-bold text-secondary dark:text-white mb-1 font-display">Hospital Connectivity -
+                State-wise View</h1>
+            <p class="text-gray-600 dark:text-gray-400">Monitor real-time connectivity across all states and union
+                territories</p>
         </div>
 
-        <!-- Stats Overview -->
+        <!-- Overall Stats -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
                 <div class="flex items-center justify-between mb-4">
@@ -164,7 +236,7 @@
                     <span
                         class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-xs font-bold">ACTIVE</span>
                 </div>
-                <h3 class="text-3xl font-bold text-secondary dark:text-white mb-1">2,847</h3>
+                <h3 class="text-3xl font-bold text-secondary dark:text-white mb-1" id="total-connected">-</h3>
                 <p class="text-sm text-gray-600 dark:text-gray-400">Connected Hospitals</p>
             </div>
 
@@ -174,7 +246,7 @@
                     <span
                         class="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded-full text-xs font-bold">PENDING</span>
                 </div>
-                <h3 class="text-3xl font-bold text-secondary dark:text-white mb-1">142</h3>
+                <h3 class="text-3xl font-bold text-secondary dark:text-white mb-1" id="total-pending">-</h3>
                 <p class="text-sm text-gray-600 dark:text-gray-400">Integration Pending</p>
             </div>
 
@@ -184,244 +256,317 @@
                     <span
                         class="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-full text-xs font-bold">OFFLINE</span>
                 </div>
-                <h3 class="text-3xl font-bold text-secondary dark:text-white mb-1">23</h3>
+                <h3 class="text-3xl font-bold text-secondary dark:text-white mb-1" id="total-offline">-</h3>
                 <p class="text-sm text-gray-600 dark:text-gray-400">Connection Issues</p>
             </div>
 
             <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
                 <div class="flex items-center justify-between mb-4">
-                    <span class="material-icons-outlined text-4xl text-blue-500">sync</span>
+                    <span class="material-icons-outlined text-4xl text-blue-500">location_on</span>
                     <span
-                        class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-bold">LIVE</span>
+                        class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-bold">STATES</span>
                 </div>
-                <h3 class="text-3xl font-bold text-secondary dark:text-white mb-1">98.7%</h3>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Uptime (30 days)</p>
+                <h3 class="text-3xl font-bold text-secondary dark:text-white mb-1" id="total-states">36</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">States & UTs</p>
             </div>
         </div>
 
-        <!-- Filters and Actions -->
-        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 mb-8">
-            <div class="flex flex-wrap items-center gap-4">
-                <select
-                    class="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-primary">
-                    <option>All States</option>
-                    <option>Maharashtra</option>
-                    <option>Delhi</option>
-                    <option>Karnataka</option>
-                    <option>Tamil Nadu</option>
-                </select>
-
-                <select
-                    class="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-primary">
-                    <option>All Status</option>
-                    <option>Connected</option>
-                    <option>Pending</option>
-                    <option>Offline</option>
-                </select>
-
-                <select
-                    class="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-primary">
-                    <option>All Types</option>
-                    <option>Government</option>
-                    <option>Private</option>
-                    <option>Trust</option>
-                </select>
-
-                <button
-                    class="ml-auto px-6 py-2 bg-secondary hover:bg-secondary-light text-white rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
-                    <span class="material-icons-outlined text-sm">download</span>
-                    Export Report
-                </button>
+        <!-- Loading State -->
+        <div id="loading-state" class="flex items-center justify-center py-20">
+            <div class="text-center">
+                <div class="loading-spinner mx-auto mb-4"></div>
+                <p class="text-gray-600 dark:text-gray-400">Loading hospital connectivity data...</p>
             </div>
         </div>
 
-        <!-- Hospital List -->
-        <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
-                        <tr>
-                            <th
-                                class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                                Hospital</th>
-                            <th
-                                class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                                Location</th>
-                            <th
-                                class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                                Type</th>
-                            <th
-                                class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                                Status</th>
-                            <th
-                                class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                                Last Sync</th>
-                            <th
-                                class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                                Uptime</th>
-                            <th
-                                class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                                Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center">
-                                        <span class="material-icons-outlined text-secondary">local_hospital</span>
-                                    </div>
-                                    <div>
-                                        <p class="font-semibold text-gray-900 dark:text-white">AIIMS Delhi</p>
-                                        <p class="text-xs text-gray-500">ID: HOSP-001</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">Delhi, DL</td>
-                            <td class="px-6 py-4">
-                                <span
-                                    class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-semibold">Government</span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-2">
-                                    <span class="w-2 h-2 bg-green-500 rounded-full status-badge"></span>
-                                    <span
-                                        class="text-sm font-semibold text-green-600 dark:text-green-400">Connected</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">2 mins ago</td>
-                            <td class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">99.8%</td>
-                            <td class="px-6 py-4">
-                                <button class="text-secondary hover:text-secondary-light">
-                                    <span class="material-icons-outlined">visibility</span>
-                                </button>
-                            </td>
-                        </tr>
-
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center">
-                                        <span class="material-icons-outlined text-secondary">local_hospital</span>
-                                    </div>
-                                    <div>
-                                        <p class="font-semibold text-gray-900 dark:text-white">Apollo Hospitals</p>
-                                        <p class="text-xs text-gray-500">ID: HOSP-045</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">Mumbai, MH</td>
-                            <td class="px-6 py-4">
-                                <span
-                                    class="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-xs font-semibold">Private</span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-2">
-                                    <span class="w-2 h-2 bg-green-500 rounded-full status-badge"></span>
-                                    <span
-                                        class="text-sm font-semibold text-green-600 dark:text-green-400">Connected</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">5 mins ago</td>
-                            <td class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">98.5%</td>
-                            <td class="px-6 py-4">
-                                <button class="text-secondary hover:text-secondary-light">
-                                    <span class="material-icons-outlined">visibility</span>
-                                </button>
-                            </td>
-                        </tr>
-
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center">
-                                        <span class="material-icons-outlined text-secondary">local_hospital</span>
-                                    </div>
-                                    <div>
-                                        <p class="font-semibold text-gray-900 dark:text-white">Fortis Healthcare</p>
-                                        <p class="text-xs text-gray-500">ID: HOSP-089</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">Bangalore, KA</td>
-                            <td class="px-6 py-4">
-                                <span
-                                    class="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-xs font-semibold">Private</span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-2">
-                                    <span class="w-2 h-2 bg-yellow-500 rounded-full status-badge"></span>
-                                    <span
-                                        class="text-sm font-semibold text-yellow-600 dark:text-yellow-400">Pending</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">2 hours ago</td>
-                            <td class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">95.2%</td>
-                            <td class="px-6 py-4">
-                                <button class="text-secondary hover:text-secondary-light">
-                                    <span class="material-icons-outlined">visibility</span>
-                                </button>
-                            </td>
-                        </tr>
-
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center">
-                                        <span class="material-icons-outlined text-secondary">local_hospital</span>
-                                    </div>
-                                    <div>
-                                        <p class="font-semibold text-gray-900 dark:text-white">Max Super Specialty</p>
-                                        <p class="text-xs text-gray-500">ID: HOSP-112</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">Delhi, DL</td>
-                            <td class="px-6 py-4">
-                                <span
-                                    class="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-xs font-semibold">Private</span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-2">
-                                    <span class="w-2 h-2 bg-red-500 rounded-full status-badge"></span>
-                                    <span class="text-sm font-semibold text-red-600 dark:text-red-400">Offline</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">1 day ago</td>
-                            <td class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">87.3%</td>
-                            <td class="px-6 py-4">
-                                <button class="text-secondary hover:text-secondary-light">
-                                    <span class="material-icons-outlined">visibility</span>
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Pagination -->
-            <div
-                class="px-6 py-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
-                <p class="text-sm text-gray-600 dark:text-gray-400">Showing 1-10 of 3,012 hospitals</p>
-                <div class="flex gap-2">
-                    <button
-                        class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Previous</button>
-                    <button
-                        class="px-4 py-2 bg-secondary text-white rounded-lg text-sm font-semibold hover:bg-secondary-light transition-colors">Next</button>
-                </div>
-            </div>
+        <!-- States Grid -->
+        <div id="states-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            style="display: none;">
+            <!-- State cards will be dynamically inserted here -->
         </div>
 
     </main>
+
+    <!-- State Detail Modal -->
+    <div id="state-modal" class="modal">
+        <div class="modal-content dark:bg-gray-800">
+            <div class="bg-secondary text-white p-6 flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold font-display" id="modal-state-name">-</h2>
+                    <p class="text-sm text-primary mt-1" id="modal-hospital-count">-</p>
+                </div>
+                <button onclick="closeModal()" class="text-white hover:text-primary transition-colors">
+                    <span class="material-icons-outlined text-3xl">close</span>
+                </button>
+            </div>
+
+            <div class="p-6 overflow-y-auto" style="max-height: calc(90vh - 100px);">
+                <!-- Hospital Table -->
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+                            <tr>
+                                <th
+                                    class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                    Hospital</th>
+                                <th
+                                    class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                    Location</th>
+                                <th
+                                    class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                    Type</th>
+                                <th
+                                    class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                    Status</th>
+                                <th
+                                    class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                    Last Sync</th>
+                                <th
+                                    class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                    Uptime</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modal-hospital-list" class="divide-y divide-gray-200 dark:divide-gray-700">
+                            <!-- Hospital rows will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- JavaScript -->
     <script src="../js/config/app-config.js"></script>
     <script src="../js/utils/helpers.js"></script>
     <script src="../js/utils/force-login.js"></script>
     <script src="../js/services/auth.js"></script>
+    <script src="../js/services/api.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        // State-wise hospital connectivity management
+        let allHospitals = [];
+        let stateData = {};
+
+        // Indian States and UTs
+        const indianStates = [
+            'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
+            'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand',
+            'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur',
+            'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab',
+            'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura',
+            'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+            'Andaman and Nicobar Islands', 'Chandigarh', 'Dadra and Nagar Haveli and Daman and Diu',
+            'Delhi', 'Jammu and Kashmir', 'Ladakh', 'Lakshadweep', 'Puducherry'
+        ];
+
+        // Generate random connection status
+        function generateRandomStatus() {
+            const statuses = ['Connected', 'Pending', 'Offline'];
+            const weights = [0.85, 0.10, 0.05]; // 85% connected, 10% pending, 5% offline
+
+            const random = Math.random();
+            let sum = 0;
+            for (let i = 0; i < weights.length; i++) {
+                sum += weights[i];
+                if (random <= sum) return statuses[i];
+            }
+            return 'Connected';
+        }
+
+        // Generate random uptime
+        function generateRandomUptime(status) {
+            if (status === 'Connected') return (95 + Math.random() * 5).toFixed(1);
+            if (status === 'Pending') return (85 + Math.random() * 10).toFixed(1);
+            return (75 + Math.random() * 15).toFixed(1);
+        }
+
+        // Generate random last sync time
+        function generateRandomLastSync(status) {
+            if (status === 'Connected') {
+                const minutes = Math.floor(Math.random() * 30);
+                return minutes === 0 ? 'Just now' : `${minutes} min${minutes > 1 ? 's' : ''} ago`;
+            }
+            if (status === 'Pending') {
+                const hours = Math.floor(Math.random() * 12) + 1;
+                return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+            }
+            const days = Math.floor(Math.random() * 5) + 1;
+            return `${days} day${days > 1 ? 's' : ''} ago`;
+        }
+
+        // Process hospitals and assign to states
+        function processHospitalData(hospitals) {
+            allHospitals = hospitals.map(hospital => ({
+                ...hospital,
+                status: generateRandomStatus(),
+                uptime: null,
+                lastSync: null
+            }));
+
+            // Assign uptime and last sync based on status
+            allHospitals.forEach(h => {
+                h.uptime = generateRandomUptime(h.status);
+                h.lastSync = generateRandomLastSync(h.status);
+            });
+
+            // Group by state
+            stateData = {};
+            indianStates.forEach(state => {
+                stateData[state] = {
+                    connected: 0,
+                    pending: 0,
+                    offline: 0,
+                    total: 0,
+                    hospitals: []
+                };
+            });
+
+            allHospitals.forEach(hospital => {
+                const state = hospital.state || 'Delhi';
+                if (stateData[state]) {
+                    stateData[state].hospitals.push(hospital);
+                    stateData[state].total++;
+
+                    if (hospital.status === 'Connected') stateData[state].connected++;
+                    else if (hospital.status === 'Pending') stateData[state].pending++;
+                    else if (hospital.status === 'Offline') stateData[state].offline++;
+                }
+            });
+
+            return stateData;
+        }
+
+        // Render state cards
+        function renderStateCards() {
+            const grid = document.getElementById('states-grid');
+            grid.innerHTML = '';
+
+            Object.entries(stateData).forEach(([state, data]) => {
+                if (data.total === 0) return; // Skip states with no hospitals
+
+                const connectivityRate = data.total > 0 ? ((data.connected / data.total) * 100).toFixed(1) : 0;
+
+                const card = document.createElement('div');
+                card.className = 'state-card bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700';
+                card.onclick = () => openStateModal(state, data);
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-secondary dark:text-white">${state}</h3>
+                            <p class="text-xs text-gray-500 mt-1">${data.total} hospital${data.total !== 1 ? 's' : ''}</p>
+                        </div>
+                        <div class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center">
+                            <span class="material-icons-outlined text-secondary">location_on</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between text-xs mb-2">
+                            <span class="font-semibold text-gray-700 dark:text-gray-300">Connectivity</span>
+                            <span class="font-bold ${connectivityRate >= 90 ? 'text-green-600' : connectivityRate >= 70 ? 'text-yellow-600' : 'text-red-600'}">${connectivityRate}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                            <div class="h-2 rounded-full ${connectivityRate >= 90 ? 'bg-green-500' : connectivityRate >= 70 ? 'bg-yellow-500' : 'bg-red-500'}" style="width: ${connectivityRate}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-2">
+                            <p class="text-lg font-bold text-green-600">${data.connected}</p>
+                            <p class="text-xs text-gray-600 dark:text-gray-400">Online</p>
+                        </div>
+                        <div class="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-2">
+                            <p class="text-lg font-bold text-yellow-600">${data.pending}</p>
+                            <p class="text-xs text-gray-600 dark:text-gray-400">Pending</p>
+                        </div>
+                        <div class="bg-red-50 dark:bg-red-900/20 rounded-lg p-2">
+                            <p class="text-lg font-bold text-red-600">${data.offline}</p>
+                            <p class="text-xs text-gray-600 dark:text-gray-400">Offline</p>
+                        </div>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+
+            // Update overall stats
+            const totalConnected = Object.values(stateData).reduce((sum, s) => sum + s.connected, 0);
+            const totalPending = Object.values(stateData).reduce((sum, s) => sum + s.pending, 0);
+            const totalOffline = Object.values(stateData).reduce((sum, s) => sum + s.offline, 0);
+
+            document.getElementById('total-connected').textContent = totalConnected.toLocaleString();
+            document.getElementById('total-pending').textContent = totalPending.toLocaleString();
+            document.getElementById('total-offline').textContent = totalOffline.toLocaleString();
+        }
+
+        // Open state modal
+        function openStateModal(stateName, data) {
+            document.getElementById('modal-state-name').textContent = stateName;
+            document.getElementById('modal-hospital-count').textContent = `${data.total} Registered Hospitals`;
+
+            const tbody = document.getElementById('modal-hospital-list');
+            tbody.innerHTML = '';
+
+            data.hospitals.forEach(hospital => {
+                const statusColors = {
+                    'Connected': 'green',
+                    'Pending': 'yellow',
+                    'Offline': 'red'
+                };
+                const color = statusColors[hospital.status] || 'gray';
+
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors';
+                row.innerHTML = `
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center">
+                                <span class="material-icons-outlined text-secondary">local_hospital</span>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-900 dark:text-white">${hospital.name}</p>
+                                <p class="text-xs text-gray-500">ID: HOSP-${Math.floor(Math.random() * 9000) + 1000}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">${hospital.address || hospital.city || stateName}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-semibold">
+                            ${hospital.type || 'General'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-${color}-500 rounded-full status-badge"></span>
+                            <span class="text-sm font-semibold text-${color}-600 dark:text-${color}-400">${hospital.status}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">${hospital.lastSync}</td>
+                    <td class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">${hospital.uptime}%</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            document.getElementById('state-modal').classList.add('active');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('state-modal').classList.remove('active');
+        }
+
+        // Close modal on outside click
+        window.onclick = function (event) {
+            const modal = document.getElementById('state-modal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
             // Initialize auth service
             AuthService.init();
 
@@ -448,6 +593,46 @@
                 setTimeout(() => {
                     window.location.href = '../index.html';
                 }, 1000);
+            });
+
+            // Fetch hospital data
+            try {
+                const response = await APIService.getHospitals();
+                const hospitals = response.data || response || [];
+
+                processHospitalData(hospitals);
+                renderStateCards();
+
+                document.getElementById('loading-state').style.display = 'none';
+                document.getElementById('states-grid').style.display = 'grid';
+            } catch (error) {
+                console.error('Error fetching hospitals:', error);
+                document.getElementById('loading-state').innerHTML = `
+                    <div class="text-center">
+                        <span class="material-icons-outlined text-6xl text-red-500 mb-4">error</span>
+                        <p class="text-gray-600 dark:text-gray-400 mb-2">Failed to load hospital data</p>
+                        <p class="text-sm text-gray-500">${error.message}</p>
+                        <button onclick="location.reload()" class="mt-4 px-6 py-2 bg-secondary text-white rounded-lg hover:bg-secondary-light transition-colors">
+                            Retry
+                        </button>
+                    </div>
+                `;
+            }
+
+            // Search functionality
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const cards = document.querySelectorAll('.state-card');
+
+                cards.forEach(card => {
+                    const stateName = card.querySelector('h3').textContent.toLowerCase();
+                    if (stateName.includes(query)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
             });
         });
     </script>
