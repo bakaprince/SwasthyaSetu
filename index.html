@@ -67,16 +67,56 @@
         <a href="index.html" class="flex items-center gap-2">
             <img src="assets/images/logo.png" alt="SwasthyaSetu Logo" class="h-8 w-auto">
         </a>
-        <div
-            class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300 absolute left-1/2 transform -translate-x-1/2">
-            <a class="hover:text-primary transition-colors text-primary" href="#">Home</a>
-            <a class="hover:text-primary transition-colors" href="pages/about.html">About Mission</a>
-            <a class="nav-auth-link hover:text-primary transition-colors hidden" href="pages/hospitals.html"
-                data-auth-required="true">Hospitals</a>
-            <a class="nav-auth-link hover:text-primary transition-colors hidden" href="pages/resources.html"
-                data-auth-required="true">Resources</a>
-            <a class="hover:text-primary transition-colors" href="pages/help.html">Help Desk</a>
+        <!-- Heart Rate Animation -->
+        <div class="hidden md:flex items-center absolute overflow-hidden ecg-container"
+            style="width: 60%; height: 50px; position: relative; left: 30%; transform: translateX(-50%);">
+            <div class="heartbeat-wrapper" style="display: flex; position: absolute;">
+                <svg width="600" height="50" viewBox="0 0 600 50" style="flex-shrink: 0;">
+                    <polyline fill="none" stroke="#0a2a30" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round"
+                        points="0,25 40,25 45,15 50,35 55,25 60,25 65,20 70,30 75,25 120,25 125,10 130,40 135,25 180,25 185,15 190,35 195,25 200,25 205,20 210,30 215,25 260,25 265,10 270,40 275,25 320,25 325,15 330,35 335,25 340,25 345,20 350,30 355,25 400,25 405,10 410,40 415,25 460,25 465,15 470,35 475,25 480,25 485,20 490,30 495,25 540,25 545,10 550,40 555,25 600,25" />
+                </svg>
+                <svg width="600" height="50" viewBox="0 0 600 50" style="flex-shrink: 0;">
+                    <polyline fill="none" stroke="#0a2a30" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round"
+                        points="0,25 40,25 45,15 50,35 55,25 60,25 65,20 70,30 75,25 120,25 125,10 130,40 135,25 180,25 185,15 190,35 195,25 200,25 205,20 210,30 215,25 260,25 265,10 270,40 275,25 320,25 325,15 330,35 335,25 340,25 345,20 350,30 355,25 400,25 405,10 410,40 415,25 460,25 465,15 470,35 475,25 480,25 485,20 490,30 495,25 540,25 545,10 550,40 555,25 600,25" />
+                </svg>
+                <svg width="600" height="50" viewBox="0 0 600 50" style="flex-shrink: 0;">
+                    <polyline fill="none" stroke="#0a2a30" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round"
+                        points="0,25 40,25 45,15 50,35 55,25 60,25 65,20 70,30 75,25 120,25 125,10 130,40 135,25 180,25 185,15 190,35 195,25 200,25 205,20 210,30 215,25 260,25 265,10 270,40 275,25 320,25 325,15 330,35 335,25 340,25 345,20 350,30 355,25 400,25 405,10 410,40 415,25 460,25 465,15 470,35 475,25 480,25 485,20 490,30 495,25 540,25 545,10 550,40 555,25 600,25" />
+                </svg>
+            </div>
+            <!-- Gradient fade on left edge -->
+            <div
+                style="position: absolute; left: 0; top: 0; width: 120px; height: 100%; background: linear-gradient(to right, #113841, rgba(17, 56, 65, 0)); pointer-events: none; z-index: 1;">
+            </div>
+            <!-- Gradient fade on right edge -->
+            <div
+                style="position: absolute; right: 0; top: 0; width: 120px; height: 100%; background: linear-gradient(to left, #113841, rgba(17, 56, 65, 0)); pointer-events: none; z-index: 1;">
+            </div>
         </div>
+
+        <style>
+            @keyframes ecg-scroll {
+                0% {
+                    transform: translateX(0);
+                }
+
+                100% {
+                    transform: translateX(-600px);
+                }
+            }
+
+            .heartbeat-wrapper {
+                animation: ecg-scroll 15s linear infinite;
+            }
+
+            .ecg-container {
+                mask-image: linear-gradient(to right, transparent, black 80px, black calc(100% - 80px), transparent);
+                -webkit-mask-image: linear-gradient(to right, transparent, black 80px, black calc(100% - 80px), transparent);
+            }
+        </style>
 
         <!-- Mobile Menu Button -->
         <button id="mobile-menu-btn" class="md:hidden text-white hover:text-primary transition-colors">
@@ -118,8 +158,8 @@
         </div>
 
         <div
-            class="relative z-10 max-w-7xl mx-auto px-6 py-4 md:py-8 grid lg:grid-cols-12 gap-12 items-start min-h-screen">
-            <div class="lg:col-span-7 space-y-8 text-white flex flex-col justify-center min-h-screen py-20">
+            class="relative z-10 max-w-7xl mx-auto px-6 py-4 md:py-8 grid lg:grid-cols-12 gap-12 items-center min-h-screen">
+            <div class="lg:col-span-7 space-y-8 text-white flex flex-col justify-center">
 
 
                 <h1 class="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
@@ -163,14 +203,14 @@
                                     class="tab-button flex-1 py-1.5 md:py-2.5 text-[10px] md:text-sm font-medium rounded-md transition-all duration-200 focus:outline-none flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 bg-white dark:bg-gray-700 text-secondary dark:text-white shadow-sm ring-1 ring-black/5"
                                     data-tab="patient">
                                     <span class="material-icons-outlined text-base md:text-lg">person</span>
-                                    <span>Patient / ABHA</span>
+                                    <span>Patient</span>
                                 </button>
                                 <button
                                     class="tab-button flex-1 py-1.5 md:py-2.5 text-[10px] md:text-sm font-medium rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-all duration-200 focus:outline-none flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 hover:bg-gray-50 dark:hover:bg-gray-700/50"
                                     data-tab="admin">
                                     <span
                                         class="material-icons-outlined text-base md:text-lg">admin_panel_settings</span>
-                                    <span>Hospital Admin</span>
+                                    <span>Hospital</span>
                                 </button>
                                 <button
                                     class="tab-button flex-1 py-1.5 md:py-2.5 text-[10px] md:text-sm font-medium rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-all duration-200 focus:outline-none flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 hover:bg-gray-50 dark:hover:bg-gray-700/50"
@@ -525,7 +565,8 @@
     </section>
 
     <!-- Features Section -->
-    <section class="bg-background-light dark:bg-background-dark py-12 md:py-16 px-6 relative z-20">
+    <section class="bg-background-light dark:bg-background-dark py-12 md:py-16 px-6 relative z-20 overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full dot-pattern pointer-events-none"></div>
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16">
                 <h2 class="font-display text-4xl font-bold text-secondary dark:text-white mb-4">Why use SwasthyaSetu?
@@ -602,15 +643,12 @@
 
 
     <!-- FAQ Carousel Section -->
-    <section class="py-16 bg-[#fffefc] dark:bg-gray-900">
+    <section class="py-16 bg-[#fffefc] dark:bg-gray-900 relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full dot-pattern pointer-events-none"></div>
         <div class="mb-12 flex items-center justify-center gap-6">
             <h3 class="font-display text-3xl font-bold text-center text-secondary dark:text-white">Frequently
                 Asked Questions</h3>
-            <button id="contact-support-btn"
-                class="bg-primary text-secondary font-bold py-3 px-8 rounded-full hover:bg-green-400 transition-all duration-300 text-base whitespace-nowrap flex items-center gap-2 hover:scale-105">
-                <span class="material-icons-outlined">touch_app</span>
-                Contact Support
-            </button>
+
         </div>
 
         <div class="w-full overflow-hidden">
@@ -809,6 +847,33 @@
             </div>
         </div>
         </div>
+
+        <div class="mt-20 flex items-center justify-center gap-6 flex-wrap">
+            <button id="contact-support-btn"
+                class="bg-[#99EBAD] text-secondary font-bold py-3 px-8 rounded-full hover:bg-green-400 transition-all duration-300 text-base whitespace-nowrap flex items-center gap-2 hover:scale-105">
+                <span class="material-icons-outlined">touch_app</span>
+                Contact Support
+            </button>
+
+            <!-- Quick Action Buttons -->
+            <button onclick="window.location.href='tel:102'" title="Emergency Helpline: 102"
+                class="bg-[#F4F8E8] text-secondary font-bold py-3 px-6 rounded-full hover:bg-[#E6EFCB] transition-all duration-300 text-base whitespace-nowrap flex items-center gap-2 hover:scale-105">
+                <span class="material-icons-outlined text-xl">call</span>
+                Emergency: 102
+            </button>
+
+            <button onclick="if(typeof toggleChat === 'function') toggleChat();" title="Live Chat"
+                class="bg-[#EDF6FA] text-secondary font-bold py-3 px-6 rounded-full hover:bg-[#D4EAF5] transition-all duration-300 text-base whitespace-nowrap flex items-center gap-2 hover:scale-105">
+                <span class="material-icons-outlined text-xl">chat</span>
+                Live Chat
+            </button>
+
+            <a href="mailto:support@medconnect.gov.in" title="Email Support"
+                class="bg-[#F4F1FA] text-secondary font-bold py-3 px-6 rounded-full hover:bg-[#E5DDF5] transition-all duration-300 text-base whitespace-nowrap flex items-center gap-2 hover:scale-105 no-underline">
+                <span class="material-icons-outlined text-xl">email</span>
+                Email Support
+            </a>
+        </div>
     </section>
 
     <!-- Contact Support Modal -->
@@ -832,37 +897,7 @@
             <!-- Form content with scroll -->
             <div class="p-8 overflow-y-auto max-h-[calc(90vh-120px)]">
 
-                <!-- Quick Help Cards -->
-                <div class="grid md:grid-cols-3 gap-4 mb-8">
-                    <div class="bg-accent-green rounded-2xl p-4 text-center">
-                        <span class="material-icons-outlined text-3xl text-secondary mb-2">call</span>
-                        <h3 class="font-display text-lg font-bold mb-1 text-secondary">Emergency</h3>
-                        <p class="text-xs text-gray-700 mb-2">24/7 medical assistance</p>
-                        <div class="text-xl font-bold text-secondary">102</div>
-                    </div>
-                    <div class="bg-accent-blue rounded-2xl p-4 text-center">
-                        <span class="material-icons-outlined text-3xl text-secondary mb-2">chat</span>
-                        <h3 class="font-display text-lg font-bold mb-1 text-secondary">Live Chat</h3>
-                        <p class="text-xs text-gray-700 mb-2">Instant support</p>
-                        <button
-                            onclick="document.getElementById('close-contact-modal').click(); if(typeof toggleChat === 'function') toggleChat();"
-                            class="bg-secondary text-white px-4 py-1.5 rounded-full hover:bg-secondary-light transition-colors text-xs">Start
-                            Chat</button>
-                    </div>
-                    <div class="bg-accent-purple rounded-2xl p-4 text-center">
-                        <span class="material-icons-outlined text-3xl text-secondary mb-2">email</span>
-                        <h3 class="font-display text-lg font-bold mb-1 text-secondary">Email</h3>
-                        <p class="text-xs text-gray-700 mb-2">Detailed assistance</p>
-                        <a href="mailto:support@medconnect.gov.in"
-                            class="text-xs font-bold text-secondary hover:underline">support@medconnect.gov.in</a>
-                    </div>
-                </div>
 
-                <div class="relative flex py-2 items-center mb-6">
-                    <div class="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
-                    <span class="flex-shrink-0 mx-4 text-gray-400 text-sm">Or send us a message</span>
-                    <div class="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
-                </div>
 
                 <form id="contact-support-form" class="space-y-6">
                     <div class="grid md:grid-cols-2 gap-6">
