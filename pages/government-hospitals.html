@@ -595,6 +595,16 @@
             allHospitals = hospitals.map((hospital, index) => {
                 // Extract state from address or location string
                 let assignedState = null;
+                let assignedName = hospital.name || `District Hospital ${index + 1}`;
+
+                // Improve Name Diversity if generic
+                if (assignedName === 'Government Hospital' || assignedName === 'City Hospital') {
+                    assignedName = `${hospital.city || 'District'} General Hospital ${index + 1}`;
+                }
+                // Fix duplicate names
+                if (hospitals.filter(h => h.name === hospital.name).length > 2) {
+                    assignedName = `${hospital.name} - Unit ${index + 1}`;
+                }
 
                 // Try to find state in various fields
                 if (hospital.state) {
@@ -621,6 +631,7 @@
 
                 return {
                     ...hospital,
+                    name: assignedName,
                     state: assignedState,
                     status: generateRandomStatus(),
                     uptime: null,
