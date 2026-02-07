@@ -65,16 +65,16 @@ const GovAnalytics = {
         this.map = L.map('india-map', {
             maxBounds: bounds,
             maxBoundsViscosity: 1.0,
-            minZoom: 5,
-            maxZoom: 8,
-            zoomControl: false,        // Disable zoom controls for static feel
-            dragging: false,            // Disable dragging for static map
-            scrollWheelZoom: false,     // Disable scroll zoom
-            doubleClickZoom: false,     // Disable double click zoom
-            touchZoom: false,           // Disable touch zoom
-            boxZoom: false,             // Disable box zoom
-            keyboard: false             // Disable keyboard navigation
-        }).setView([22.5937, 82.9629], 5);
+            minZoom: 4,
+            maxZoom: 10,
+            zoomControl: true,          // Enable zoom controls
+            dragging: true,             // Enable dragging to pan the map
+            scrollWheelZoom: true,      // Enable scroll zoom
+            doubleClickZoom: true,      // Enable double click zoom
+            touchZoom: true,            // Enable touch zoom for mobile
+            boxZoom: true,              // Enable box zoom
+            keyboard: true              // Enable keyboard navigation
+        }).setView([20.5937, 78.9629], 5);  // Centered on India
 
         // Use Bhuvan (ISRO) / Bharat Maps - Official Indian Government Map Service
         // This shows correct India boundaries including J&K, Ladakh, and Arunachal Pradesh
