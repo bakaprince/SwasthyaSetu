@@ -16,7 +16,7 @@ const { protect, authorize } = require('../middleware/auth');
 const { validateAppointment } = require('../middleware/validation');
 
 // --- Multer Configuration ---
-const storage = multer.diskStorage({
+const storisage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'uploads/reports/');
     },

@@ -1,6 +1,6 @@
 /**
  * Modern Interactive SVG India Map
- * Enhanced with animated popout, live data, and disease statistics
+ * Enhanced with grouped disease chart and hospitals popup
  */
 
 const IndiaMap = {
@@ -8,8 +8,10 @@ const IndiaMap = {
     svgElement: null,
     tooltip: null,
     modal: null,
+    hospitalsModal: null,
     diseaseChart: null,
     liveInterval: null,
+    currentState: null,
 
     // State population data (2024 Census projections in millions)
     statePopulation: {
@@ -55,7 +57,7 @@ const IndiaMap = {
         "Telangana": "#a8d5ba", "Ladakh": "#e8f4f8"
     },
 
-    // Short names for state labels
+    // State short names
     stateShortNames: {
         "Andaman and Nicobar": "A&N", "Andhra Pradesh": "AP", "Arunachal Pradesh": "AR",
         "Assam": "AS", "Bihar": "BR", "Chandigarh": "CH", "Chhattisgarh": "CG",
@@ -70,14 +72,14 @@ const IndiaMap = {
         "Uttarakhand": "UK", "Uttaranchal": "UK", "West Bengal": "WB", "Ladakh": "LA"
     },
 
-    // Disease statistics per state (estimates based on population)
-    diseaseDeathRates: {
-        "COVID-19": { base: 45, variance: 20 },
-        "Dengue": { base: 8, variance: 5 },
-        "Malaria": { base: 12, variance: 8 },
-        "Typhoid": { base: 6, variance: 3 },
-        "Tuberculosis": { base: 35, variance: 15 },
-        "Heart Disease": { base: 180, variance: 40 }
+    // Disease data - per million population rates
+    diseaseRates: {
+        "COVID-19": { active: 50, recovered: 2500, deceased: 45 },
+        "Dengue": { active: 15, recovered: 800, deceased: 8 },
+        "Malaria": { active: 20, recovered: 600, deceased: 12 },
+        "Typhoid": { active: 10, recovered: 400, deceased: 6 },
+        "Tuberculosis": { active: 80, recovered: 1500, deceased: 35 },
+        "Heart Disease": { active: 200, recovered: 3000, deceased: 180 }
     },
 
     async init() {
@@ -91,6 +93,7 @@ const IndiaMap = {
 
         this.createTooltip();
         this.createModal();
+        this.createHospitalsModal();
         await this.loadMap();
 
         console.log('[IndiaMap] Initialized successfully');
@@ -103,9 +106,9 @@ const IndiaMap = {
             position: fixed;
             background: #113841;
             color: #86efac;
-            padding: 10px 18px;
-            border-radius: 8px;
-            font-size: 15px;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 16px;
             font-weight: 600;
             pointer-events: none;
             opacity: 0;
@@ -117,7 +120,6 @@ const IndiaMap = {
         document.body.appendChild(this.tooltip);
     },
 
-    // Create enhanced modal with formal styling
     createModal() {
         this.modal = document.createElement('div');
         this.modal.id = 'state-detail-modal';
@@ -125,39 +127,41 @@ const IndiaMap = {
         this.modal.innerHTML = `
             <div class="popout-backdrop" onclick="IndiaMap.closeModal()"></div>
             <div class="popout-container">
-                <!-- Close Button -->
                 <button class="popout-close" onclick="IndiaMap.closeModal()">
                     <span class="material-icons-outlined">close</span>
                 </button>
 
-                <!-- Animated State Cutout in Center -->
+                <!-- State Visual -->
                 <div class="popout-state-visual">
                     <svg id="popout-state-svg" class="popout-svg" viewBox="0 0 200 200"></svg>
                     <div class="state-name-overlay" id="popout-state-name">State Name</div>
                 </div>
                 
-                <!-- Connection Lines with Data Boxes -->
+                <!-- Live Population Box - BIGGER -->
                 <div class="data-connector top-right">
                     <div class="connector-line"></div>
-                    <div class="data-box live-population-box">
+                    <div class="data-box live-population-box large">
                         <div class="data-box-header">
                             <span class="pulse-dot"></span>
                             Live Population
                         </div>
-                        <div class="data-box-value" id="popout-live-pop">--</div>
-                        <div class="data-box-sub">
-                            <span class="stat-item born">
-                                <span class="material-icons-outlined">child_care</span>
-                                <span id="popout-born">0</span>
-                            </span>
-                            <span class="stat-item died">
+                        <div class="data-box-value large" id="popout-live-pop">--</div>
+                        <div class="data-box-sub-grid">
+                            <div class="stat-row born">
+                                <span class="material-icons-outlined">trending_up</span>
+                                <span class="stat-label">Born Today</span>
+                                <span class="stat-number" id="popout-born">0</span>
+                            </div>
+                            <div class="stat-row died">
                                 <span class="material-icons-outlined">trending_down</span>
-                                <span id="popout-died">0</span>
-                            </span>
+                                <span class="stat-label">Died Today</span>
+                                <span class="stat-number" id="popout-died">0</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Hospital Rating Box -->
                 <div class="data-connector bottom-right">
                     <div class="connector-line"></div>
                     <div class="data-box hospital-rating-box">
@@ -167,12 +171,13 @@ const IndiaMap = {
                         </div>
                         <div class="data-box-value">
                             <span id="popout-rating">--</span>
-                            <span class="stars" id="popout-stars">★★★★☆</span>
+                            <span class="stars" id="popout-stars"></span>
                         </div>
-                        <div class="data-box-sub" id="popout-hospitals">-- hospitals</div>
+                        <div class="data-box-sub" id="popout-hospitals-count">-- hospitals</div>
                     </div>
                 </div>
 
+                <!-- Disease Statistics Box -->
                 <div class="data-connector left-side">
                     <div class="connector-line"></div>
                     <div class="data-box disease-box">
@@ -183,15 +188,15 @@ const IndiaMap = {
                         <div class="disease-stats-grid">
                             <div class="disease-stat active">
                                 <span class="disease-stat-value" id="popout-active">--</span>
-                                <span class="disease-stat-label">Active Cases</span>
+                                <span class="disease-stat-label">ACTIVE</span>
                             </div>
                             <div class="disease-stat recovered">
                                 <span class="disease-stat-value" id="popout-recovered">--</span>
-                                <span class="disease-stat-label">Recovered</span>
+                                <span class="disease-stat-label">RECOVERED</span>
                             </div>
                             <div class="disease-stat deceased">
                                 <span class="disease-stat-value" id="popout-deceased">--</span>
-                                <span class="disease-stat-label">Deceased</span>
+                                <span class="disease-stat-label">DECEASED</span>
                             </div>
                         </div>
                         <div class="disease-chart-container">
@@ -200,16 +205,45 @@ const IndiaMap = {
                     </div>
                 </div>
                 
-                <!-- View Hospitals Button - Fixed at bottom -->
+                <!-- Footer Button -->
                 <div class="popout-footer">
-                    <a href="#" id="popout-hospitals-link" class="popout-action-btn">
+                    <button onclick="IndiaMap.showHospitals()" class="popout-action-btn">
                         <span class="material-icons-outlined">local_hospital</span>
                         View All Hospitals
-                    </a>
+                    </button>
                 </div>
             </div>
         `;
         document.body.appendChild(this.modal);
+    },
+
+    // Create hospitals list modal
+    createHospitalsModal() {
+        this.hospitalsModal = document.createElement('div');
+        this.hospitalsModal.id = 'hospitals-list-modal';
+        this.hospitalsModal.className = 'hospitals-modal';
+        this.hospitalsModal.innerHTML = `
+            <div class="hospitals-backdrop" onclick="IndiaMap.closeHospitals()"></div>
+            <div class="hospitals-content">
+                <div class="hospitals-header">
+                    <h2 id="hospitals-title">Hospitals in State</h2>
+                    <button class="hospitals-close" onclick="IndiaMap.closeHospitals()">
+                        <span class="material-icons-outlined">close</span>
+                    </button>
+                </div>
+                <div class="hospitals-search">
+                    <span class="material-icons-outlined">search</span>
+                    <input type="text" id="hospital-search" placeholder="Search hospitals..." oninput="IndiaMap.filterHospitals()">
+                </div>
+                <div class="hospitals-list" id="hospitals-list">
+                    <div class="loading-hospitals">
+                        <div class="spinner"></div>
+                        <p>Loading hospitals...</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(this.hospitalsModal);
     },
 
     async loadMap() {
@@ -258,7 +292,10 @@ const IndiaMap = {
 
         const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
         defs.innerHTML = `
-            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <pattern id="grid-pattern" width="30" height="30" patternUnits="userSpaceOnUse">
+                <circle cx="15" cy="15" r="1" fill="rgba(17,56,65,0.08)"/>
+            </pattern>
+            <filter id="glow">
                 <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
                 <feMerge>
                     <feMergeNode in="coloredBlur"/>
@@ -267,6 +304,13 @@ const IndiaMap = {
             </filter>
         `;
         svg.appendChild(defs);
+
+        // Background pattern
+        const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        bg.setAttribute('width', '100%');
+        bg.setAttribute('height', '100%');
+        bg.setAttribute('fill', 'url(#grid-pattern)');
+        svg.appendChild(bg);
 
         const statesGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         statesGroup.setAttribute('class', 'states-group');
@@ -387,13 +431,12 @@ const IndiaMap = {
         this.tooltip.style.opacity = '0';
     },
 
-    // Enhanced click handler
     async onStateClick(e, stateName, pathData, stateColor) {
+        this.currentState = stateName;
         const population = this.statePopulation[stateName] || 50;
         const rating = this.stateHospitalRatings[stateName] || 3.5;
         const hospitals = Math.floor(population * 15 + Math.random() * 100);
 
-        // Get click position for animation origin
         const rect = e.target.getBoundingClientRect();
         const originX = rect.left + rect.width / 2;
         const originY = rect.top + rect.height / 2;
@@ -401,39 +444,112 @@ const IndiaMap = {
         this.modal.style.setProperty('--origin-x', `${originX}px`);
         this.modal.style.setProperty('--origin-y', `${originY}px`);
 
-        // Update content
         document.getElementById('popout-state-name').textContent = stateName;
         document.getElementById('popout-rating').textContent = rating.toFixed(1);
         document.getElementById('popout-stars').textContent = this.getStars(rating);
-        document.getElementById('popout-hospitals').textContent = `${hospitals} hospitals`;
-        document.getElementById('popout-hospitals-link').href = `hospitals.html?state=${encodeURIComponent(stateName)}`;
+        document.getElementById('popout-hospitals-count').textContent = `${hospitals} hospitals`;
 
-        // Render state cutout
         this.renderAnimatedCutout(pathData, stateColor);
-
-        // Start live population counter
         this.startLiveCounter(population);
+        this.calculateDiseaseStats(population);
+        this.createGroupedDiseaseChart(population);
 
-        // Fetch and display disease data
-        await this.fetchDiseaseData(stateName, population);
-
-        // Create disease death chart
-        this.createDiseaseChart(stateName, population);
-
-        // Show modal
         this.modal.classList.add('visible');
     },
 
-    // Fetch disease data from API or simulate
-    async fetchDiseaseData(stateName, populationMillions) {
-        // Simulate API data based on population (realistic estimates)
-        const baseActive = Math.floor(populationMillions * 50 + Math.random() * 1000);
-        const baseRecovered = Math.floor(populationMillions * 2500 + Math.random() * 5000);
-        const baseDeceased = Math.floor(populationMillions * 35 + Math.random() * 100);
+    calculateDiseaseStats(populationMillions) {
+        let totalActive = 0, totalRecovered = 0, totalDeceased = 0;
 
-        document.getElementById('popout-active').textContent = this.formatNumber(baseActive);
-        document.getElementById('popout-recovered').textContent = this.formatNumber(baseRecovered);
-        document.getElementById('popout-deceased').textContent = this.formatNumber(baseDeceased);
+        Object.values(this.diseaseRates).forEach(rate => {
+            totalActive += Math.floor((rate.active + (Math.random() - 0.5) * rate.active * 0.3) * populationMillions);
+            totalRecovered += Math.floor((rate.recovered + (Math.random() - 0.5) * rate.recovered * 0.2) * populationMillions);
+            totalDeceased += Math.floor((rate.deceased + (Math.random() - 0.5) * rate.deceased * 0.3) * populationMillions);
+        });
+
+        document.getElementById('popout-active').textContent = this.formatNumber(totalActive);
+        document.getElementById('popout-recovered').textContent = this.formatNumber(totalRecovered);
+        document.getElementById('popout-deceased').textContent = this.formatNumber(totalDeceased);
+    },
+
+    createGroupedDiseaseChart(populationMillions) {
+        const ctx = document.getElementById('popout-disease-chart');
+        if (!ctx) return;
+
+        if (this.diseaseChart) {
+            this.diseaseChart.destroy();
+        }
+
+        const diseases = Object.keys(this.diseaseRates);
+        const activeData = diseases.map(d => Math.floor(this.diseaseRates[d].active * populationMillions * (0.8 + Math.random() * 0.4)));
+        const recoveredData = diseases.map(d => Math.floor(this.diseaseRates[d].recovered * populationMillions * (0.8 + Math.random() * 0.4)));
+        const deceasedData = diseases.map(d => Math.floor(this.diseaseRates[d].deceased * populationMillions * (0.8 + Math.random() * 0.4)));
+
+        this.diseaseChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: diseases,
+                datasets: [
+                    {
+                        label: 'Active',
+                        data: activeData,
+                        backgroundColor: '#f97316',
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Recovered',
+                        data: recoveredData,
+                        backgroundColor: '#22c55e',
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Deceased',
+                        data: deceasedData,
+                        backgroundColor: '#ef4444',
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 10,
+                            font: { size: 11 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.x.toLocaleString()}`
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: false,
+                        grid: { display: false },
+                        ticks: {
+                            font: { size: 10 },
+                            callback: (val) => {
+                                if (val >= 1000000) return (val / 1000000).toFixed(1) + 'M';
+                                if (val >= 1000) return (val / 1000).toFixed(0) + 'K';
+                                return val;
+                            }
+                        }
+                    },
+                    y: {
+                        stacked: false,
+                        grid: { display: false },
+                        ticks: { font: { size: 11, weight: '500' } }
+                    }
+                }
+            }
+        });
     },
 
     renderAnimatedCutout(pathData, stateColor) {
@@ -503,71 +619,142 @@ const IndiaMap = {
         this.liveInterval = setInterval(update, 1000);
     },
 
-    createDiseaseChart(stateName, populationMillions) {
-        const ctx = document.getElementById('popout-disease-chart');
-        if (!ctx) return;
-
-        if (this.diseaseChart) {
-            this.diseaseChart.destroy();
-        }
-
-        const diseases = Object.keys(this.diseaseDeathRates);
-        const deathData = diseases.map(disease => {
-            const rate = this.diseaseDeathRates[disease];
-            const deaths = Math.floor((rate.base + (Math.random() - 0.5) * rate.variance) * populationMillions);
-            return deaths;
-        });
-
-        this.diseaseChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: diseases,
-                datasets: [{
-                    label: 'Deaths',
-                    data: deathData,
-                    backgroundColor: [
-                        '#ef4444', '#f97316', '#eab308',
-                        '#22c55e', '#3b82f6', '#8b5cf6'
-                    ],
-                    borderRadius: 6,
-                    borderSkipped: false
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: (ctx) => `${ctx.parsed.x.toLocaleString()} deaths`
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        type: 'logarithmic',
-                        grid: { display: false },
-                        ticks: {
-                            font: { size: 10 },
-                            callback: (val) => val >= 1000 ? (val / 1000) + 'k' : val
-                        }
-                    },
-                    y: {
-                        grid: { display: false },
-                        ticks: { font: { size: 11, weight: '500' } }
-                    }
-                }
-            }
-        });
-    },
-
     formatNumber(num) {
         if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
         if (num >= 1e6) return (num / 1e6).toFixed(1) + 'M';
         if (num >= 1e3) return (num / 1e3).toFixed(1) + 'K';
         return num.toLocaleString();
+    },
+
+    // Show hospitals popup
+    async showHospitals() {
+        if (!this.currentState) return;
+
+        document.getElementById('hospitals-title').textContent = `Hospitals in ${this.currentState}`;
+        this.hospitalsModal.classList.add('visible');
+
+        // Fetch hospitals
+        await this.fetchHospitals(this.currentState);
+    },
+
+    async fetchHospitals(stateName) {
+        const listContainer = document.getElementById('hospitals-list');
+        listContainer.innerHTML = `
+            <div class="loading-hospitals">
+                <div class="spinner"></div>
+                <p>Finding hospitals...</p>
+            </div>
+        `;
+
+        try {
+            // Get state coordinates (approximate center)
+            const stateCoords = {
+                "Uttar Pradesh": { lat: 26.8467, lng: 80.9462 },
+                "Maharashtra": { lat: 19.7515, lng: 75.7139 },
+                "Bihar": { lat: 25.0961, lng: 85.3131 },
+                "Rajasthan": { lat: 27.0238, lng: 74.2179 },
+                "Karnataka": { lat: 15.3173, lng: 75.7139 },
+                "Tamil Nadu": { lat: 11.1271, lng: 78.6569 },
+                "Gujarat": { lat: 22.2587, lng: 71.1924 },
+                "Kerala": { lat: 10.8505, lng: 76.2711 },
+                "Delhi": { lat: 28.7041, lng: 77.1025 },
+                "NCT of Delhi": { lat: 28.7041, lng: 77.1025 },
+                "West Bengal": { lat: 22.9868, lng: 87.8550 },
+                "Telangana": { lat: 18.1124, lng: 79.0193 },
+                "Andhra Pradesh": { lat: 15.9129, lng: 79.7400 },
+                "Madhya Pradesh": { lat: 22.9734, lng: 78.6569 },
+                "Punjab": { lat: 31.1471, lng: 75.3412 },
+                "Haryana": { lat: 29.0588, lng: 76.0856 },
+                "Odisha": { lat: 20.9517, lng: 85.0985 },
+                "Orissa": { lat: 20.9517, lng: 85.0985 },
+                "Jharkhand": { lat: 23.6102, lng: 85.2799 },
+                "Chhattisgarh": { lat: 21.2787, lng: 81.8661 },
+                "Assam": { lat: 26.2006, lng: 92.9376 },
+                "Jammu and Kashmir": { lat: 33.7782, lng: 76.5762 },
+                "Uttarakhand": { lat: 30.0668, lng: 79.0193 },
+                "Himachal Pradesh": { lat: 31.1048, lng: 77.1734 },
+                "Goa": { lat: 15.2993, lng: 74.1240 }
+            };
+
+            const coords = stateCoords[stateName] || { lat: 20.5937, lng: 78.9629 };
+
+            // Use Overpass API.to find hospitals
+            const query = `
+                [out:json][timeout:25];
+                (
+                    node["amenity"="hospital"](around:100000,${coords.lat},${coords.lng});
+                    way["amenity"="hospital"](around:100000,${coords.lat},${coords.lng});
+                );
+                out center 20;
+            `;
+
+            const response = await fetch('https://overpass-api.de/api/interpreter', {
+                method: 'POST',
+                body: query
+            });
+
+            const data = await response.json();
+            this.displayHospitals(data.elements || []);
+
+        } catch (error) {
+            console.error('Failed to fetch hospitals:', error);
+            this.displayHospitals([]);
+        }
+    },
+
+    displayHospitals(hospitals) {
+        const listContainer = document.getElementById('hospitals-list');
+
+        if (hospitals.length === 0) {
+            listContainer.innerHTML = `
+                <div class="no-hospitals">
+                    <span class="material-icons-outlined">info</span>
+                    <p>No hospitals found. Try searching manually.</p>
+                </div>
+            `;
+            return;
+        }
+
+        listContainer.innerHTML = hospitals.map((h, i) => {
+            const name = h.tags?.name || `Hospital ${i + 1}`;
+            const lat = h.lat || h.center?.lat;
+            const lng = h.lon || h.center?.lon;
+            const phone = h.tags?.phone || h.tags?.['contact:phone'] || '';
+            const address = h.tags?.['addr:full'] || h.tags?.['addr:street'] || '';
+
+            return `
+                <div class="hospital-card" data-name="${name.toLowerCase()}">
+                    <div class="hospital-icon">
+                        <span class="material-icons-outlined">local_hospital</span>
+                    </div>
+                    <div class="hospital-info">
+                        <h3>${name}</h3>
+                        ${address ? `<p class="hospital-address">${address}</p>` : ''}
+                        ${phone ? `<p class="hospital-phone">${phone}</p>` : ''}
+                    </div>
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" 
+                       target="_blank" 
+                       class="navigate-btn">
+                        <span class="material-icons-outlined">navigation</span>
+                        Navigate
+                    </a>
+                </div>
+            `;
+        }).join('');
+    },
+
+    filterHospitals() {
+        const query = document.getElementById('hospital-search').value.toLowerCase();
+        const cards = document.querySelectorAll('.hospital-card');
+
+        cards.forEach(card => {
+            const name = card.dataset.name;
+            card.style.display = name.includes(query) ? 'flex' : 'none';
+        });
+    },
+
+    closeHospitals() {
+        this.hospitalsModal.classList.remove('visible');
     },
 
     closeModal() {

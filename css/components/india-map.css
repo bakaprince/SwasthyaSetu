@@ -1,11 +1,14 @@
 /**
  * Modern Interactive India Map Styles
- * Enhanced with bigger elements and formal styling
+ * Enhanced with dot pattern background and bigger elements
  */
 
-/* Map Container - Full Width */
+/* Map Container - Full Width with Dot Pattern */
 #india-map {
-    background: linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%);
+    background:
+        radial-gradient(circle at 50% 50%, rgba(17, 56, 65, 0.03) 1px, transparent 1px),
+        linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%);
+    background-size: 25px 25px, 100% 100%;
     border-radius: 1.5rem;
     overflow: hidden;
     position: relative;
@@ -35,7 +38,7 @@
 
 /* State Labels */
 .state-label {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
     fill: #113841;
     pointer-events: none;
@@ -69,25 +72,25 @@
     backdrop-filter: blur(10px);
 }
 
-/* Main Container - Bigger */
+/* Main Container */
 .popout-container {
     position: relative;
     width: 95%;
-    max-width: 1100px;
-    min-height: 580px;
+    max-width: 1200px;
+    min-height: 620px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-bottom: 80px;
+    padding-bottom: 90px;
 }
 
-/* Central State Visual - Bigger */
+/* Central State Visual */
 .popout-state-visual {
     position: relative;
-    width: 320px;
-    height: 320px;
+    width: 340px;
+    height: 340px;
     background: linear-gradient(145deg, #113841 0%, #1d525e 100%);
-    border-radius: 1.75rem;
+    border-radius: 2rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -111,8 +114,8 @@
 }
 
 .popout-svg {
-    width: 240px;
-    height: 240px;
+    width: 260px;
+    height: 260px;
     filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.3));
 }
 
@@ -135,15 +138,15 @@
 
 .state-name-overlay {
     position: absolute;
-    bottom: -50px;
+    bottom: -55px;
     left: 50%;
     transform: translateX(-50%);
     background: white;
     color: #113841;
-    padding: 12px 32px;
+    padding: 14px 36px;
     border-radius: 2rem;
     font-weight: 700;
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
     white-space: nowrap;
     animation: fade-up 0.5s ease 0.4s both;
@@ -172,20 +175,20 @@
 }
 
 .data-connector.top-right {
-    top: 40px;
-    left: calc(50% + 160px);
+    top: 30px;
+    left: calc(50% + 170px);
     animation: connector-appear 0.6s ease 0.5s both;
 }
 
 .data-connector.bottom-right {
-    bottom: 120px;
-    left: calc(50% + 160px);
+    bottom: 130px;
+    left: calc(50% + 170px);
     animation: connector-appear 0.6s ease 0.6s both;
 }
 
 .data-connector.left-side {
     top: 50%;
-    right: calc(50% + 160px);
+    right: calc(50% + 170px);
     transform: translateY(-50%);
     flex-direction: row-reverse;
     animation: connector-appear 0.6s ease 0.7s both;
@@ -220,7 +223,7 @@
 }
 
 .connector-line {
-    width: 50px;
+    width: 55px;
     height: 3px;
     background: linear-gradient(90deg, #86efac, rgba(134, 239, 172, 0.3));
     position: relative;
@@ -232,11 +235,11 @@
     left: 0;
     top: 50%;
     transform: translateY(-50%);
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     background: #86efac;
     border-radius: 50%;
-    box-shadow: 0 0 12px #86efac;
+    box-shadow: 0 0 15px #86efac;
 }
 
 .data-connector.left-side .connector-line {
@@ -248,7 +251,7 @@
     right: 0;
 }
 
-/* Data Boxes - Bigger */
+/* Data Boxes */
 .data-box {
     background: white;
     border-radius: 1.25rem;
@@ -258,8 +261,14 @@
     border: 1px solid rgba(17, 56, 65, 0.1);
 }
 
+/* Live Population Box - LARGE */
+.data-box.large {
+    min-width: 280px;
+    padding: 1.5rem 2rem;
+}
+
 .data-box-header {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: #64748b;
     font-weight: 600;
     margin-bottom: 0.75rem;
@@ -269,13 +278,13 @@
 }
 
 .data-box-header .material-icons-outlined {
-    font-size: 18px;
+    font-size: 20px;
     color: #113841;
 }
 
 .pulse-dot {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     background: #22c55e;
     border-radius: 50%;
     animation: pulse-live 1.5s infinite;
@@ -304,6 +313,11 @@
     gap: 0.75rem;
 }
 
+.data-box-value.large {
+    font-size: 2.25rem;
+    margin-bottom: 0.75rem;
+}
+
 .data-box-value .stars {
     font-size: 1rem;
     color: #fbbf24;
@@ -313,26 +327,55 @@
     font-size: 0.85rem;
     color: #64748b;
     margin-top: 0.5rem;
-    display: flex;
-    gap: 1.25rem;
 }
 
-.stat-item {
+/* Born/Died Grid Layout */
+.data-box-sub-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.stat-row {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    background: #f8fafc;
+}
+
+.stat-row .material-icons-outlined {
+    font-size: 20px;
+}
+
+.stat-row .stat-label {
+    flex: 1;
+    font-size: 0.85rem;
     font-weight: 500;
+    color: #64748b;
 }
 
-.stat-item .material-icons-outlined {
-    font-size: 16px;
+.stat-row .stat-number {
+    font-size: 1rem;
+    font-weight: 700;
 }
 
-.stat-item.born {
+.stat-row.born {
+    background: #ecfdf5;
+}
+
+.stat-row.born .material-icons-outlined,
+.stat-row.born .stat-number {
     color: #22c55e;
 }
 
-.stat-item.died {
+.stat-row.died {
+    background: #fef2f2;
+}
+
+.stat-row.died .material-icons-outlined,
+.stat-row.died .stat-number {
     color: #ef4444;
 }
 
@@ -348,10 +391,10 @@
     border-color: #86efac;
 }
 
-/* Disease Box - Bigger */
+/* Disease Box */
 .disease-box {
-    min-width: 320px;
-    max-width: 350px;
+    min-width: 380px;
+    max-width: 420px;
 }
 
 /* Disease Stats Grid */
@@ -366,32 +409,45 @@
 
 .disease-stat {
     text-align: center;
-    padding: 0.75rem 0.5rem;
+    padding: 0.875rem 0.5rem;
     background: #f8fafc;
     border-radius: 0.75rem;
 }
 
 .disease-stat-value {
-    font-size: 1.1rem;
+    font-size: 1.25rem;
     font-weight: 700;
     display: block;
 }
 
 .disease-stat-label {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: #64748b;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-top: 2px;
+    margin-top: 4px;
     display: block;
+    font-weight: 600;
+}
+
+.disease-stat.active {
+    background: #fff7ed;
 }
 
 .disease-stat.active .disease-stat-value {
     color: #f97316;
 }
 
+.disease-stat.recovered {
+    background: #f0fdf4;
+}
+
 .disease-stat.recovered .disease-stat-value {
     color: #22c55e;
+}
+
+.disease-stat.deceased {
+    background: #fef2f2;
 }
 
 .disease-stat.deceased .disease-stat-value {
@@ -399,7 +455,7 @@
 }
 
 .disease-chart-container {
-    height: 200px;
+    height: 220px;
 }
 
 /* Close Button */
@@ -407,8 +463,8 @@
     position: absolute;
     top: 25px;
     right: 25px;
-    width: 50px;
-    height: 50px;
+    width: 54px;
+    height: 54px;
     background: rgba(255, 255, 255, 0.95);
     border: none;
     border-radius: 50%;
@@ -427,11 +483,11 @@
 }
 
 .popout-close .material-icons-outlined {
-    font-size: 28px;
+    font-size: 30px;
     color: #113841;
 }
 
-/* Footer with Action Button */
+/* Footer */
 .popout-footer {
     position: absolute;
     bottom: 0;
@@ -439,7 +495,7 @@
     right: 0;
     display: flex;
     justify-content: center;
-    padding: 20px;
+    padding: 25px;
     animation: fade-up 0.5s ease 0.8s both;
 }
 
@@ -449,11 +505,13 @@
     gap: 0.75rem;
     background: #113841;
     color: white;
-    padding: 1rem 2rem;
+    padding: 1.125rem 2.25rem;
     border-radius: 2rem;
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 1.1rem;
     text-decoration: none;
+    border: none;
+    cursor: pointer;
     box-shadow: 0 6px 20px rgba(17, 56, 65, 0.4);
     transition: all 0.2s;
 }
@@ -465,14 +523,243 @@
 }
 
 .popout-action-btn .material-icons-outlined {
-    font-size: 22px;
+    font-size: 24px;
+}
+
+/* ============================================ */
+/* HOSPITALS MODAL                             */
+/* ============================================ */
+
+.hospitals-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.hospitals-modal.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.hospitals-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.hospitals-content {
+    position: relative;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    background: white;
+    border-radius: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    animation: slide-up 0.3s ease;
+}
+
+@keyframes slide-up {
+    0% {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.hospitals-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.hospitals-header h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #113841;
+    margin: 0;
+}
+
+.hospitals-close {
+    width: 40px;
+    height: 40px;
+    background: #f1f5f9;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.hospitals-close:hover {
+    background: #e2e8f0;
+}
+
+.hospitals-search {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+.hospitals-search .material-icons-outlined {
+    color: #94a3b8;
+}
+
+.hospitals-search input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    outline: none;
+}
+
+.hospitals-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.loading-hospitals {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    color: #64748b;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e2e8f0;
+    border-top-color: #113841;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.no-hospitals {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem;
+    color: #64748b;
+    text-align: center;
+}
+
+.no-hospitals .material-icons-outlined {
+    font-size: 48px;
+    margin-bottom: 1rem;
+    color: #cbd5e1;
+}
+
+.hospital-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 1rem;
+    background: #f8fafc;
+    margin-bottom: 0.75rem;
+    transition: all 0.2s;
+}
+
+.hospital-card:hover {
+    background: #f1f5f9;
+}
+
+.hospital-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #113841, #1d525e);
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.hospital-icon .material-icons-outlined {
+    color: white;
+    font-size: 24px;
+}
+
+.hospital-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.hospital-info h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #113841;
+    margin: 0 0 4px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hospital-address,
+.hospital-phone {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin: 0;
+}
+
+.navigate-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    background: #113841;
+    color: white;
+    border-radius: 2rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    flex-shrink: 0;
+    transition: all 0.2s;
+}
+
+.navigate-btn:hover {
+    background: #1d525e;
+    transform: scale(1.05);
+}
+
+.navigate-btn .material-icons-outlined {
+    font-size: 18px;
 }
 
 /* ============================================ */
 /* RESPONSIVE                                  */
 /* ============================================ */
 
-@media (max-width: 1100px) {
+@media (max-width: 1200px) {
     .popout-container {
         flex-direction: column;
         height: auto;
@@ -498,17 +785,17 @@
     }
 
     .popout-state-visual {
-        width: 240px;
-        height: 240px;
+        width: 260px;
+        height: 260px;
         margin-bottom: 4rem;
     }
 
     .popout-svg {
-        width: 180px;
-        height: 180px;
+        width: 200px;
+        height: 200px;
     }
 
     .disease-box {
-        min-width: 280px;
+        min-width: 300px;
     }
 }
