@@ -15,14 +15,82 @@
         href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap"
         rel="stylesheet" />
 
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+
     <!-- Leaflet CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#86efac",
+                        secondary: "#113841",
+                        "secondary-light": "#1d525e",
+                        "background-dark": "#0d2b32",
+                        "gov-gold": "#ffd700",
+                    },
+                    fontFamily: {
+                        display: ["Playfair Display", "serif"],
+                        sans: ["DM Sans", "sans-serif"],
+                    },
+                },
+            },
+        };
+    </script>
+
     <style>
-        /* ... existing styles ... */
+        .nav-link {
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #86efac;
+        }
+
+        .nav-link.active {
+            color: #86efac;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #86efac;
+        }
+
+        .hero-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2386efac' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4v-4H4v4H0v2h4v4h2v-4h4v-2H6zM36 4v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -48,360 +116,12 @@
             width: 100%;
         }
 
-        /* Map Customization */
+        /* Leaflet Popup Customization */
         .leaflet-popup-content-wrapper {
             border-radius: 12px;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
         }
     </style>
-</head>
-
-<!-- ... body ... -->
-
-<!-- LOGISTICS TRACKER MODAL -->
-<div id="tracker-modal" class="modal">
-    <div
-        class="bg-white dark:bg-gray-800 w-[95%] h-[90%] rounded-2xl overflow-hidden flex flex-col shadow-2xl relative">
-        <!-- Map Header -->
-        <div class="bg-secondary text-white p-4 flex justify-between items-center z-10 shadow-md">
-            <div class="flex items-center gap-4">
-                <span class="material-icons-outlined text-gov-gold text-3xl">local_shipping</span>
-                <div>
-                    <h2 class="text-xl font-bold font-display">National Logistics Command</h2>
-                    <p class="text-xs text-gray-300">Live Tracking: <span id="active-shipments-count"
-                            class="font-bold text-green-400">18</span> Active Shipments</p>
-                </div>
-            </div>
-            <button onclick="closeTracker()"
-                class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
-                <span class="material-icons-outlined">close</span>
-            </button>
-        </div>
-
-        <!-- Map Container -->
-        <div id="map" class="flex-grow z-0"></div>
-
-        <!-- Tracking Overlay Panel -->
-        <div
-            class="absolute bottom-6 left-6 z-[1000] w-80 bg-white/95 dark:bg-gray-900/95 backdrop-blur rounded-xl p-4 shadow-xl border border-gray-200 dark:border-gray-700">
-            <h3 class="font-bold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Shipment Details
-            </h3>
-            <div id="shipment-info" class="space-y-3">
-                <p class="text-sm text-gray-500 italic">Select a vehicle on the map to view details.</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ACTION FORM MODAL (New Request / Allocation) -->
-<div id="action-modal" class="modal">
-    <div class="bg-white dark:bg-gray-800 w-full max-w-lg rounded-2xl p-6 m-4 shadow-2xl transform transition-all">
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="text-xl font-bold text-gray-900 dark:text-white" id="modal-title">Initiate Emergency Relief</h3>
-            <button onclick="closeActionModal()" class="text-gray-400 hover:text-gray-600"><span
-                    class="material-icons-outlined">close</span></button>
-        </div>
-
-        <form id="resource-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Target Hospital /
-                    Region</label>
-                <input type="text"
-                    class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-secondary"
-                    placeholder="Search hospital..." required>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Resource Type</label>
-                    <select
-                        class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg">
-                        <option>Liquid Oxygen</option>
-                        <option>Remdesivir</option>
-                        <option>ICU Ventilators</option>
-                        <option>PPE Kits</option>
-                        <option>Vaccines</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Quantity</label>
-                    <input type="number"
-                        class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
-                        placeholder="Amount" required>
-                </div>
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Priority Level</label>
-                <div class="flex gap-4">
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="priority" value="Normal" class="text-secondary" checked>
-                        <span class="text-sm">Normal</span>
-                    </label>
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="priority" value="High" class="text-orange-500">
-                        <span class="text-sm font-medium text-orange-600">High</span>
-                    </label>
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="priority" value="Critical" class="text-red-500">
-                        <span class="text-sm font-bold text-red-600">Critical</span>
-                    </label>
-                </div>
-            </div>
-
-            <div class="pt-4 flex justify-end gap-3">
-                <button type="button" onclick="closeActionModal()"
-                    class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-medium">Cancel</button>
-                <button type="submit"
-                    class="px-6 py-2 bg-secondary hover:bg-secondary-light text-white rounded-lg font-bold shadow-lg flex items-center gap-2">
-                    <span class="material-icons-outlined">send</span> Dispatch
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- JavaScript -->
-<script src="../js/config/app-config.js"></script>
-<!-- ... (other scripts) ... -->
-
-<script>
-    // Map Instance
-    let map = null;
-    let markers = [];
-
-    document.addEventListener('DOMContentLoaded', () => {
-        // ... (Auth Logic) ...
-
-        // setup buttons
-        setupInteractiveButtons();
-    });
-
-    function setupInteractiveButtons() {
-        // "Initiate Emergency Relief" Button
-        const emergencyBtn = document.querySelector('button.bg-red-600');
-        if (emergencyBtn) emergencyBtn.onclick = () => openActionModal('Initiate Emergency Relief');
-
-        // "Create Allocation Order" Button
-        const createBtn = document.querySelector('button span.material-icons-outlined:contains("add_task")')?.closest('button'); // Select by icon content logic (simplified below)
-        // Better selector:
-        const quickActions = document.querySelectorAll('.space-y-3 button');
-        if (quickActions[0]) quickActions[0].onclick = () => openActionModal('Create Allocation Order');
-        if (quickActions[1]) quickActions[1].onclick = () => Helpers.showToast('Audit Protocol Initiated: Retrieving hospital records...', 'info');
-        if (quickActions[2]) quickActions[2].onclick = () => Helpers.showToast('Alert Broadcast System: Enter message (Simulated)', 'warning');
-
-        // "Live Dispatch Tracker" Card Click
-        const trackerCard = document.querySelector('.bg-slate-100.cursor-pointer');
-        if (trackerCard) trackerCard.onclick = () => openTracker();
-
-        // Table Buttons ("Track", "Details", "Approve" logic already exists but lets refine)
-        const table = document.querySelector('table');
-        table.addEventListener('click', (e) => {
-            const btn = e.target.closest('button');
-            if (!btn) return;
-
-            const action = btn.textContent.trim();
-            const row = btn.closest('tr');
-            const hospName = row.querySelector('td:first-child .font-bold').textContent;
-
-            if (action === 'Track') {
-                openTracker(hospName);
-            } else if (action === 'Details') {
-                Helpers.showToast(`Showing details for ${hospName}`, 'info');
-            } else if (action === 'Approve') {
-                // Existing logic handles this mostly, just refined
-            }
-        });
-
-        // Filter/Sort Buttons
-        const filterBtns = document.querySelectorAll('.bg-gray-100.rounded-md'); // Header buttons
-        filterBtns.forEach(btn => {
-            btn.onclick = () => Helpers.showToast(`${btn.textContent} functionality active`, 'info');
-        });
-    }
-
-    // --- TRACKER LOGIC ---
-    function openTracker(focusTarget = null) {
-        const modal = document.getElementById('tracker-modal');
-        modal.classList.add('active');
-
-        // Initialize Map if not already done
-        if (!map) {
-            // Centered on India
-            map = L.map('map').setView([20.5937, 78.9629], 5);
-
-            // Dark Mode Map Tiles (CartoDB Dark Matter)
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-                subdomains: 'abcd',
-                maxZoom: 19
-            }).addTo(map);
-
-            // Add Mock Shipments
-            addMockShipments();
-        }
-
-        if (focusTarget) {
-            Helpers.showToast(`Tracking shipment to ${focusTarget}`, 'info');
-            // In a real app, we'd zoom to that coordinate.
-        }
-
-        // Resize map after modal opens (leaflet quirk)
-        setTimeout(() => { map.invalidateSize(); }, 200);
-    }
-
-    function closeTracker() {
-        document.getElementById('tracker-modal').classList.remove('active');
-    }
-
-    function addMockShipments() {
-        const shipments = [
-            { lat: 28.6139, lng: 77.2090, type: 'Oxygen Tanker', dest: 'AIIMS Delhi', status: 'Arriving' }, // Delhi
-            { lat: 19.0760, lng: 72.8777, type: 'Remdesivir Van', dest: 'KEM Mumbai', status: 'In Transit' }, // Mumbai
-            { lat: 12.9716, lng: 77.5946, type: 'Ventilator Truck', dest: 'Victoria Blr', status: 'Delayed' }, // Bangalore
-            { lat: 13.0827, lng: 80.2707, type: 'PPE Logistics', dest: 'Apollo Chennai', status: 'On Time' }, // Chennai
-            { lat: 22.5726, lng: 88.3639, type: 'Vaccine Drone', dest: 'Kolkata Med', status: 'In Transit' }, // Kolkata
-            { lat: 26.8467, lng: 80.9462, type: 'Oxygen Tanker', dest: 'KGMU Lucknow', status: 'Critical' }  // Lucknow
-        ];
-
-        const iconTruck = L.divIcon({
-            className: 'custom-div-icon',
-            html: "<div style='background-color:#3b82f6; width:12px; height:12px; border-radius:50%; border:2px solid white; box-shadow:0 0 10px #3b82f6;'></div>",
-            iconSize: [12, 12],
-            iconAnchor: [6, 6]
-        });
-
-        const iconCritical = L.divIcon({
-            className: 'custom-div-icon',
-            html: "<div style='background-color:#ef4444; width:14px; height:14px; border-radius:50%; border:2px solid white; box-shadow:0 0 15px #ef4444; animation: ping 1s infinite;'></div>",
-            iconSize: [14, 14],
-            iconAnchor: [7, 7]
-        });
-
-        shipments.forEach(s => {
-            const marker = L.marker([s.lat, s.lng], { icon: s.status === 'Critical' ? iconCritical : iconTruck }).addTo(map);
-            marker.bindPopup(`
-                    <div class="p-2">
-                        <h3 class="font-bold text-gray-900">${s.dest}</h3>
-                        <p class="text-xs text-gray-500">${s.type}</p>
-                        <span class="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold ${s.status === 'Critical' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}">${s.status}</span>
-                    </div>
-                `);
-            marker.on('click', () => {
-                document.getElementById('shipment-info').innerHTML = `
-                        <div class="flex justify-between items-start">
-                            <h4 class="font-bold text-lg text-gray-800 dark:text-white">${s.type}</h4>
-                            <span class="px-2 py-1 rounded text-xs font-bold ${s.status === 'Critical' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}">${s.status}</span>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4 text-sm mt-2">
-                            <div><p class="text-gray-500 text-xs">Destination</p><p class="font-medium dark:text-gray-200">${s.dest}</p></div>
-                            <div><p class="text-gray-500 text-xs">Speed</p><p class="font-medium dark:text-gray-200">65 km/h</p></div>
-                            <div><p class="text-gray-500 text-xs">Driver</p><p class="font-medium dark:text-gray-200">Rishabh K.</p></div>
-                            <div><p class="text-gray-500 text-xs">ETA</p><p class="font-medium dark:text-gray-200">2h 15m</p></div>
-                        </div>
-                        <div class="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-                             <button class="w-full py-1.5 bg-secondary text-white text-xs rounded hover:bg-secondary-light">Contact Driver</button>
-                        </div>
-                    `;
-            });
-            markers.push(marker);
-        });
-    }
-
-    // --- ACTION MODAL LOGIC ---
-    function openActionModal(title) {
-        document.getElementById('modal-title').textContent = title;
-        document.getElementById('action-modal').classList.add('active');
-    }
-
-    function closeActionModal() {
-        document.getElementById('action-modal').classList.remove('active');
-    }
-
-    function handleFormSubmit(e) {
-        e.preventDefault();
-        const btn = e.target.querySelector('button[type="submit"]');
-        const originalText = btn.innerHTML;
-
-        btn.innerHTML = '<span class="material-icons-outlined animate-spin">refresh</span> Dispatching...';
-        btn.disabled = true;
-
-        setTimeout(() => {
-            closeActionModal();
-            Helpers.showToast('Resource Allocation Order Dispatched Successfully!', 'success');
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-            e.target.reset();
-        }, 1500);
-    }
-
-</script>
-<script>
-    tailwind.config = {
-        darkMode: "class",
-        theme: {
-            extend: {
-                colors: {
-                    primary: "#86efac",
-                    secondary: "#113841",
-                    "secondary-light": "#1d525e",
-                    "background-dark": "#0d2b32",
-                    "gov-gold": "#ffd700",
-                },
-                fontFamily: {
-                    display: ["Playfair Display", "serif"],
-                    sans: ["DM Sans", "sans-serif"],
-                },
-            },
-        },
-    };
-</script>
-
-<style>
-    .nav-link {
-        transition: all 0.2s;
-        position: relative;
-    }
-
-    .nav-link:hover {
-        color: #86efac;
-    }
-
-    .nav-link.active {
-        color: #86efac;
-    }
-
-    .nav-link.active::after {
-        content: '';
-        position: absolute;
-        bottom: -1px;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: #86efac;
-    }
-
-    .hero-pattern {
-        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2386efac' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4v-4H4v4H0v2h4v4h2v-4h4v-2H6zM36 4v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    }
-
-    .fade-in {
-        animation: fadeIn 0.5s ease-out;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-</style>
 </head>
 
 <body class="bg-gray-50 dark:bg-background-dark font-sans antialiased text-gray-900 dark:text-gray-100">
@@ -470,7 +190,7 @@
                 <p class="text-gray-600 dark:text-gray-400">Manage critical medical supplies, logistics, and emergency
                     dispatch requests</p>
             </div>
-            <button
+            <button id="btn-emergency-relief"
                 class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold shadow-lg shadow-red-500/30 flex items-center gap-2 transition-all hover:scale-105 animate-pulse">
                 <span class="material-icons-outlined">medical_services</span> Initiate Emergency Relief
             </button>
@@ -579,7 +299,8 @@
                                     <th class="px-6 py-4 text-right">Action</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-100 dark:divide-gray-700 text-sm">
+                            <tbody id="request-table-body"
+                                class="divide-y divide-gray-100 dark:divide-gray-700 text-sm">
                                 <!-- Row 1 -->
                                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors group">
                                     <td class="px-6 py-4">
@@ -606,7 +327,7 @@
                                     </td>
                                     <td class="px-6 py-4 text-right">
                                         <button
-                                            class="text-primary hover:text-green-400 font-bold text-xs uppercase tracking-wide">Approve</button>
+                                            class="btn-approve text-primary hover:text-green-400 font-bold text-xs uppercase tracking-wide">Approve</button>
                                     </td>
                                 </tr>
                                 <!-- Row 2 -->
@@ -636,7 +357,7 @@
                                     </td>
                                     <td class="px-6 py-4 text-right">
                                         <button
-                                            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 font-bold text-xs uppercase tracking-wide">Track</button>
+                                            class="btn-track text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 font-bold text-xs uppercase tracking-wide">Track</button>
                                     </td>
                                 </tr>
                                 <!-- Row 3 -->
@@ -665,7 +386,7 @@
                                     </td>
                                     <td class="px-6 py-4 text-right">
                                         <button
-                                            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 font-bold text-xs uppercase tracking-wide">Details</button>
+                                            class="btn-details text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 font-bold text-xs uppercase tracking-wide">Details</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -674,14 +395,14 @@
                 </div>
 
                 <!-- Logistics Map Placeholder -->
-                <div
-                    class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm p-6">
+                <div id="card-live-tracker"
+                    class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm p-6 cursor-pointer">
                     <h3 class="font-bold text-lg text-secondary dark:text-white mb-4 flex items-center gap-2">
                         <span class="material-icons-outlined text-secondary dark:text-primary">map</span> Live Dispatch
                         Tracker
                     </h3>
                     <div
-                        class="bg-slate-100 dark:bg-slate-700/50 rounded-xl h-64 flex items-center justify-center relative overflow-hidden group cursor-pointer">
+                        class="bg-slate-100 dark:bg-slate-700/50 rounded-xl h-64 flex items-center justify-center relative overflow-hidden group">
                         <div
                             class="absolute inset-0 bg-[url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/India_statoids_blank_map.svg/1052px-India_statoids_blank_map.svg.png')] bg-contain bg-center bg-no-repeat opacity-30 dark:opacity-20 transition-opacity group-hover:opacity-40">
                         </div>
@@ -759,7 +480,7 @@
                     class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
                     <h3 class="font-bold text-sm text-gray-500 uppercase tracking-widest mb-4">Quick Actions</h3>
                     <div class="space-y-3">
-                        <button
+                        <button id="btn-allocation-order"
                             class="w-full py-3 px-4 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl flex items-center gap-3 transition-colors text-left group">
                             <span
                                 class="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-lg group-hover:bg-blue-200 transition-colors"><span
@@ -771,7 +492,7 @@
                             </div>
                         </button>
 
-                        <button
+                        <button id="btn-hospital-audit"
                             class="w-full py-3 px-4 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl flex items-center gap-3 transition-colors text-left group">
                             <span
                                 class="p-2 bg-purple-100 dark:bg-purple-900/30 text-purple-600 rounded-lg group-hover:bg-purple-200 transition-colors"><span
@@ -781,7 +502,7 @@
                             </div>
                         </button>
 
-                        <button
+                        <button id="btn-broadcast-alert"
                             class="w-full py-3 px-4 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl flex items-center gap-3 transition-colors text-left group">
                             <span
                                 class="p-2 bg-orange-100 dark:bg-orange-900/30 text-orange-600 rounded-lg group-hover:bg-orange-200 transition-colors"><span
@@ -797,6 +518,114 @@
 
     </main>
 
+    <!-- LOGISTICS TRACKER MODAL -->
+    <div id="tracker-modal" class="modal">
+        <div
+            class="bg-white dark:bg-gray-800 w-[95%] h-[90%] rounded-2xl overflow-hidden flex flex-col shadow-2xl relative">
+            <!-- Map Header -->
+            <div class="bg-secondary text-white p-4 flex justify-between items-center z-10 shadow-md">
+                <div class="flex items-center gap-4">
+                    <span class="material-icons-outlined text-gov-gold text-3xl">local_shipping</span>
+                    <div>
+                        <h2 class="text-xl font-bold font-display">National Logistics Command</h2>
+                        <p class="text-xs text-gray-300">Live Tracking: <span id="active-shipments-count"
+                                class="font-bold text-green-400">18</span> Active Shipments</p>
+                    </div>
+                </div>
+                <button onclick="closeTracker()"
+                    class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
+                    <span class="material-icons-outlined">close</span>
+                </button>
+            </div>
+
+            <!-- Map Container -->
+            <div id="map" class="flex-grow z-0"></div>
+
+            <!-- Tracking Overlay Panel -->
+            <div
+                class="absolute bottom-6 left-6 z-[1000] w-80 bg-white/95 dark:bg-gray-900/95 backdrop-blur rounded-xl p-4 shadow-xl border border-gray-200 dark:border-gray-700">
+                <h3 class="font-bold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Shipment Details
+                </h3>
+                <div id="shipment-info" class="space-y-3">
+                    <p class="text-sm text-gray-500 italic">Select a vehicle on the map to view details.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACTION FORM MODAL (New Request / Allocation) -->
+    <div id="action-modal" class="modal">
+        <div class="bg-white dark:bg-gray-800 w-full max-w-lg rounded-2xl p-6 m-4 shadow-2xl transform transition-all">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white" id="modal-title">Initiate Emergency Relief
+                </h3>
+                <button onclick="closeActionModal()" class="text-gray-400 hover:text-gray-600"><span
+                        class="material-icons-outlined">close</span></button>
+            </div>
+
+            <form id="resource-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Target Hospital /
+                        Region</label>
+                    <input type="text"
+                        class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-secondary"
+                        placeholder="Search hospital..." required>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Resource
+                            Type</label>
+                        <select
+                            class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg">
+                            <option>Liquid Oxygen</option>
+                            <option>Remdesivir</option>
+                            <option>ICU Ventilators</option>
+                            <option>PPE Kits</option>
+                            <option>Vaccines</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Quantity</label>
+                        <input type="number"
+                            class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
+                            placeholder="Amount" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Priority
+                        Level</label>
+                    <div class="flex gap-4">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="priority" value="Normal" class="text-secondary" checked>
+                            <span class="text-sm">Normal</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="priority" value="High" class="text-orange-500">
+                            <span class="text-sm font-medium text-orange-600">High</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="priority" value="Critical" class="text-red-500">
+                            <span class="text-sm font-bold text-red-600">Critical</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="pt-4 flex justify-end gap-3">
+                    <button type="button" onclick="closeActionModal()"
+                        class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-medium">Cancel</button>
+                    <button type="submit"
+                        class="px-6 py-2 bg-secondary hover:bg-secondary-light text-white rounded-lg font-bold shadow-lg flex items-center gap-2">
+                        <span class="material-icons-outlined">send</span> Dispatch
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
     <!-- JavaScript -->
     <script src="../js/config/app-config.js"></script>
     <script src="../js/utils/helpers.js"></script>
@@ -804,54 +633,232 @@
     <script src="../js/services/auth.js"></script>
 
     <script>
+        // Use Global Helper for Map to persist instance if needed, or simple global var
+        let map = null;
+        let markers = [];
+
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize auth service (Same as other pages)
-            AuthService.init();
-
-            // Check authentication
-            const user = AuthService.getCurrentUser();
-            if (!AuthService.isAuthenticated()) {
-                window.location.href = '../index.html';
-                return;
-            }
-
-            // Fill user details
-            const adminName = document.getElementById('admin-name');
-            const adminDept = document.getElementById('admin-dept');
-
-            if (user) {
-                adminName.textContent = user.name || 'Ministry Admin';
-                if (user.department) adminDept.textContent = user.department;
-            }
-
-            // Logout handler
-            document.getElementById('logout-btn').addEventListener('click', async () => {
-                await AuthService.logout();
-                Helpers.showToast('Securely logged out', 'success');
-                setTimeout(() => {
+            // Initialize auth service
+            if (typeof AuthService !== 'undefined') {
+                AuthService.init();
+                const user = AuthService.getCurrentUser();
+                if (!AuthService.isAuthenticated()) {
                     window.location.href = '../index.html';
-                }, 1000);
-            });
+                    return;
+                }
+                const adminName = document.getElementById('admin-name');
+                const adminDept = document.getElementById('admin-dept');
+                if (user) {
+                    adminName.textContent = user.name || 'Ministry Admin';
+                    if (user.department) adminDept.textContent = user.department;
+                }
+                const logoutBtn = document.getElementById('logout-btn');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', async () => {
+                        await AuthService.logout();
+                        window.location.href = '../index.html';
+                    });
+                }
+            }
 
-            // Interactive Mock: Approve Request
-            const approveBtns = document.querySelectorAll('button');
-            approveBtns.forEach(btn => {
-                if (btn.textContent.trim() === 'Approve') {
-                    btn.addEventListener('click', function () {
-                        const row = this.closest('tr');
+            // --- SETUP BUTTONS ---
+
+            // 1. Emergency Relief (Header Button)
+            const btnEmergency = document.getElementById('btn-emergency-relief');
+            if (btnEmergency) {
+                btnEmergency.addEventListener('click', () => openActionModal('Initiate Emergency Relief'));
+            }
+
+            // 2. Allocation Order (Quick Action)
+            const btnAllocation = document.getElementById('btn-allocation-order');
+            if (btnAllocation) {
+                btnAllocation.addEventListener('click', () => openActionModal('Create Allocation Order'));
+            }
+
+            // 3. Hospital Audit (Quick Action)
+            const btnAudit = document.getElementById('btn-hospital-audit');
+            if (btnAudit) {
+                btnAudit.addEventListener('click', () => {
+                    showToast('Audit Protocol Initiated: Retrieving hospital records...', 'info');
+                });
+            }
+
+            // 4. Broadcast Alert (Quick Action)
+            const btnAlert = document.getElementById('btn-broadcast-alert');
+            if (btnAlert) {
+                btnAlert.addEventListener('click', () => {
+                    showToast('Alert Broadcast System: Enter priority message...', 'warning');
+                });
+            }
+
+            // 5. Live Tracker (Card)
+            const cardTracker = document.getElementById('card-live-tracker');
+            if (cardTracker) {
+                cardTracker.addEventListener('click', () => openTracker());
+            }
+
+            // 6. Table Actions (Approve, Track, Details) - Event Delegation
+            const tableBody = document.getElementById('request-table-body');
+            if (tableBody) {
+                tableBody.addEventListener('click', (e) => {
+                    const btn = e.target.closest('button');
+                    if (!btn) return;
+
+                    const row = btn.closest('tr');
+                    const hospName = row.querySelector('.font-bold').textContent;
+
+                    if (btn.classList.contains('btn-approve')) {
+                        // Approve Action
                         const statusCell = row.querySelectorAll('td')[4];
                         statusCell.innerHTML = `
-                             <span class="flex items-center gap-1 text-green-600 dark:text-green-400 font-medium text-xs">
+                            <span class="flex items-center gap-1 text-green-600 dark:text-green-400 font-medium text-xs">
                                 <span class="w-2 h-2 rounded-full bg-green-500"></span> Approved
                             </span>
                         `;
-                        this.textContent = 'View';
-                        this.className = "text-gray-400 hover:text-gray-600 font-bold text-xs uppercase tracking-wide";
-                        Helpers.showToast('Request approved successfully', 'success');
-                    });
-                }
-            });
+                        btn.textContent = 'Approved';
+                        btn.classList.replace('text-primary', 'text-gray-400');
+                        btn.disabled = true;
+                        showToast(`Request from ${hospName} Approved`, 'success');
+
+                    } else if (btn.classList.contains('btn-track')) {
+                        // Track Action
+                        openTracker(hospName);
+
+                    } else if (btn.classList.contains('btn-details')) {
+                        // Details Action
+                        showToast(`Showing details for ${hospName}`, 'info');
+                    }
+                });
+            }
         });
+
+        // --- MAP FUNCTIONS ---
+
+        function openTracker(focusTarget = null) {
+            const modal = document.getElementById('tracker-modal');
+            modal.classList.add('active');
+
+            // Initialize Map on first open
+            if (!map) {
+                map = L.map('map').setView([20.5937, 78.9629], 5);
+
+                // Dark Matter Tiles
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; OpenStreetMap &copy; CARTO',
+                    subdomains: 'abcd',
+                    maxZoom: 19
+                }).addTo(map);
+
+                addMockShipments();
+            }
+
+            // Resize map (Important for modals!)
+            setTimeout(() => { map.invalidateSize(); }, 100);
+
+            if (focusTarget) {
+                showToast(`Tracking delivery for ${focusTarget}`, 'info');
+                // Optional: Find marker and zoom
+                // const targetMarker = markers.find(...)
+            }
+        }
+
+        window.closeTracker = function () {
+            document.getElementById('tracker-modal').classList.remove('active');
+        }
+
+        function addMockShipments() {
+            const shipments = [
+                { lat: 28.6139, lng: 77.2090, type: 'Oxygen Tanker', dest: 'AIIMS Delhi', status: 'Arriving' },
+                { lat: 19.0760, lng: 72.8777, type: 'Remdesivir Van', dest: 'KEM Mumbai', status: 'In Transit' },
+                { lat: 12.9716, lng: 77.5946, type: 'Ventilator Truck', dest: 'Victoria Blr', status: 'Delayed' },
+                { lat: 13.0827, lng: 80.2707, type: 'PPE Logistics', dest: 'Apollo Chennai', status: 'On Time' },
+                { lat: 22.5726, lng: 88.3639, type: 'Vaccine Drone', dest: 'Kolkata Med', status: 'In Transit' },
+                { lat: 26.8467, lng: 80.9462, type: 'Oxygen Tanker', dest: 'KGMU Lucknow', status: 'Critical' }
+            ];
+
+            const iconTruck = L.divIcon({
+                className: 'custom-div-icon',
+                html: "<div style='background-color:#3b82f6; width:12px; height:12px; border-radius:50%; border:2px solid white; box-shadow:0 0 10px #3b82f6;'></div>",
+                iconSize: [12, 12],
+                iconAnchor: [6, 6]
+            });
+
+            const iconCritical = L.divIcon({
+                className: 'custom-div-icon',
+                html: "<div style='background-color:#ef4444; width:14px; height:14px; border-radius:50%; border:2px solid white; box-shadow:0 0 15px #ef4444; animation: ping 1s infinite;'></div>",
+                iconSize: [14, 14],
+                iconAnchor: [7, 7]
+            });
+
+            shipments.forEach(s => {
+                const marker = L.marker([s.lat, s.lng], { icon: s.status === 'Critical' ? iconCritical : iconTruck }).addTo(map);
+                marker.bindPopup(`
+                    <div class="p-2">
+                        <h3 class="font-bold text-gray-900">${s.dest}</h3>
+                        <p class="text-xs text-gray-500">${s.type}</p>
+                        <span class="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold ${s.status === 'Critical' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}">${s.status}</span>
+                    </div>
+                `);
+
+                // Add click event for sidebar info
+                marker.on('click', () => {
+                    const infoPanel = document.getElementById('shipment-info');
+                    if (infoPanel) {
+                        infoPanel.innerHTML = `
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-lg text-gray-800 dark:text-white">${s.type}</h4>
+                                <span class="px-2 py-1 rounded text-xs font-bold ${s.status === 'Critical' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}">${s.status}</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 text-sm mt-2">
+                                <div><p class="text-gray-500 text-xs">Destination</p><p class="font-medium dark:text-gray-200">${s.dest}</p></div>
+                                <div><p class="text-gray-500 text-xs">Speed</p><p class="font-medium dark:text-gray-200">65 km/h</p></div>
+                                <div><p class="text-gray-500 text-xs">Driver</p><p class="font-medium dark:text-gray-200">Rishabh K.</p></div>
+                                <div><p class="text-gray-500 text-xs">ETA</p><p class="font-medium dark:text-gray-200">2h 15m</p></div>
+                            </div>
+                        `;
+                    }
+                });
+                markers.push(marker);
+            });
+        }
+
+        // --- ACTION MODAL FUNCTIONS ---
+
+        window.openActionModal = function (title) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('action-modal').classList.add('active');
+        }
+
+        window.closeActionModal = function () {
+            document.getElementById('action-modal').classList.remove('active');
+        }
+
+        window.handleFormSubmit = function (e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+
+            btn.innerHTML = '<span class="material-icons-outlined animate-spin">refresh</span> Dispatching...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                closeActionModal();
+                showToast('Resource Allocation Order Dispatched Successfully!', 'success');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                e.target.reset();
+            }, 1000);
+        }
+
+        // Helper Toast Function (if Helpers is not available, though it should be)
+        function showToast(message, type = 'info') {
+            if (typeof Helpers !== 'undefined' && Helpers.showToast) {
+                Helpers.showToast(message, type);
+            } else {
+                alert(message);
+            }
+        }
+
     </script>
 </body>
 
