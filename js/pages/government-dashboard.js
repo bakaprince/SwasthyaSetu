@@ -92,12 +92,12 @@ const GovAnalytics = {
         const northEast = L.latLng(37.5, 98.0);
         const bounds = L.latLngBounds(southWest, northEast);
 
-        // Create STATIC map - no zoom, no drag
+        // Create interactive map at zoom 5 for better visibility
         this.map = L.map('india-map', {
             maxBounds: bounds,
             maxBoundsViscosity: 1.0,
             minZoom: 4,
-            maxZoom: 4,           // Lock zoom
+            maxZoom: 8,
             zoomControl: false,   // No zoom controls
             dragging: false,      // No dragging
             scrollWheelZoom: false,
@@ -105,8 +105,8 @@ const GovAnalytics = {
             touchZoom: false,
             boxZoom: false,
             keyboard: false,
-            attributionControl: false  // Hide Leaflet attribution
-        }).setView([22.5, 82.0], 4);
+            attributionControl: false
+        }).setView([22.5, 82.0], 5);  // Zoom level 5 for BIGGER India
 
         // Load interactive states
         this.loadStatesGeoJSON();
@@ -197,18 +197,23 @@ const GovAnalytics = {
     onEachState(feature, layer) {
         const stateName = feature.properties.NAME_1 || feature.properties.name || feature.properties.ST_NM || 'Unknown';
 
-        // Create tooltip for hover
+        // Create tooltip that shows on hover - visible state name
         layer.bindTooltip(stateName, {
             permanent: false,
             direction: 'center',
-            className: 'state-tooltip'
+            className: 'state-tooltip',
+            opacity: 1
         });
 
-        // Mouse events
-        layer.on({
-            mouseover: (e) => this.highlightState(e),
-            mouseout: (e) => this.resetStateHighlight(e),
-            click: (e) => this.onStateClick(e, stateName)
+        // Mouse events for hover and click
+        layer.on('mouseover', (e) => {
+            this.highlightState(e);
+        });
+        layer.on('mouseout', (e) => {
+            this.resetStateHighlight(e);
+        });
+        layer.on('click', (e) => {
+            this.onStateClick(e, stateName);
         });
     },
 
@@ -219,9 +224,12 @@ const GovAnalytics = {
             fillColor: '#ffd700',  // Gold/Yellow - very visible
             weight: 4,             // Thick border
             color: '#ff6600',      // Orange border
-            fillOpacity: 0.8       // Strong fill
+            fillOpacity: 0.85      // Strong fill
         });
-        // Don't bringToFront to avoid covering markers
+        // Bring to front for better hover
+        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+            layer.bringToFront();
+        }
     },
 
     resetStateHighlight(e) {

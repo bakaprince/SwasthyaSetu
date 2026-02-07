@@ -275,15 +275,10 @@
         <!-- Main Layout: Map on LEFT, Charts on RIGHT -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-            <!-- LEFT SIDE: Static India Map -->
+            <!-- LEFT SIDE: JUST THE MAP - NO BOX -->
             <div class="lg:col-span-1">
-                <div
-                    class="bg-white dark:bg-gray-800 rounded-2xl p-4 border border-gray-200 dark:border-gray-700 sticky top-4">
-                    <h3 class="text-lg font-bold text-secondary dark:text-white mb-3 text-center">
-                        <span class="text-2xl">🇮🇳</span> Click any state
-                    </h3>
-                    <div id="india-map" class="w-full rounded-xl" style="height: 500px;"></div>
-                </div>
+                <!-- ONLY THE MAP - No container, no border, no title -->
+                <div id="india-map" class="w-full" style="height: 700px;"></div>
             </div>
 
             <!-- RIGHT SIDE: Analytics Section -->
