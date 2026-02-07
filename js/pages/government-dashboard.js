@@ -177,18 +177,19 @@ const GovAnalytics = {
         if (isHighlighted) {
             return {
                 fillColor: '#ff6b35',
-                weight: 3,
+                weight: 4,
                 opacity: 1,
                 color: '#ff4500',
                 fillOpacity: 0.7
             };
         }
+        // Default style: white fill with thick BLACK borders
         return {
             fillColor: '#ffffff',
-            weight: 1.5,
+            weight: 2.5,          // Thicker borders
             opacity: 1,
-            color: '#666666',
-            fillOpacity: 0.9
+            color: '#1a1a1a',     // Near-black border
+            fillOpacity: 0.95
         };
     },
 
@@ -212,11 +213,12 @@ const GovAnalytics = {
 
     highlightState(e) {
         const layer = e.target;
+        // BRIGHT hover effect - very visible
         layer.setStyle({
-            fillColor: '#ffcc00',  // Bright yellow-orange
-            weight: 3,
+            fillColor: '#ffd700',  // Gold/Yellow - very visible
+            weight: 4,             // Thick border
             color: '#ff6600',      // Orange border
-            fillOpacity: 0.7
+            fillOpacity: 0.8       // Strong fill
         });
         // Don't bringToFront to avoid covering markers
     },
