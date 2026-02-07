@@ -354,106 +354,151 @@
 
             <!-- Dashboard Grid -->
             <div class="p-8 overflow-y-auto bg-gray-50 dark:bg-gray-900 grow">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 
-                    <!-- Left: Infrastructure Status -->
+                    <!-- Column 1: System Health -->
                     <div class="space-y-6">
                         <div
-                            class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
+                            class="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm">
                             <h3
                                 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4">
-                                Infrastructure Status</h3>
-                            <div class="grid grid-cols-2 gap-4">
-                                <!-- Network Latency -->
-                                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                                    <p class="text-xs text-gray-500 mb-1">Network Latency</p>
-                                    <p class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                        <span class="w-3 h-3 rounded-full bg-green-500 animate-pulse"></span>
-                                        <span id="stat-latency">24ms</span>
-                                    </p>
-                                </div>
-                                <!-- Uptime -->
-                                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                                    <p class="text-xs text-gray-500 mb-1">System Uptime</p>
-                                    <p class="text-2xl font-bold text-purple-600 dark:text-purple-400">99.9%</p>
-                                </div>
-                            </div>
+                                Live System Health</h3>
 
-                            <!-- Minimal System Bars -->
-                            <div class="mt-6 space-y-4">
+                            <div class="space-y-4">
                                 <div>
-                                    <div class="flex justify-between text-xs mb-1 font-medium">
-                                        <span class="text-gray-500">Server Load</span>
-                                        <span class="text-gray-900 dark:text-white" id="stat-cpu">42%</span>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-gray-700 dark:text-gray-300">Server CPU Load</span>
+                                        <span class="font-bold text-secondary dark:text-white" id="stat-cpu">42%</span>
                                     </div>
-                                    <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-1.5">
-                                        <div class="bg-blue-500 h-1.5 rounded-full" style="width: 42%" id="bar-cpu">
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                        <div class="bg-blue-500 h-2 rounded-full" style="width: 42%" id="bar-cpu"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-gray-700 dark:text-gray-300">Memory Usage</span>
+                                        <span class="font-bold text-secondary dark:text-white"
+                                            id="stat-memory">68%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                        <div class="bg-purple-500 h-2 rounded-full" style="width: 68%" id="bar-memory">
                                         </div>
                                     </div>
                                 </div>
                                 <div>
-                                    <div class="flex justify-between text-xs mb-1 font-medium">
-                                        <span class="text-gray-500">Storage Used</span>
-                                        <span class="text-gray-900 dark:text-white" id="stat-storage">89%</span>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-gray-700 dark:text-gray-300">Storage</span>
+                                        <span class="font-bold text-secondary dark:text-white" id="stat-storage">89 TB /
+                                            100 TB</span>
                                     </div>
-                                    <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-1.5">
-                                        <div class="bg-yellow-500 h-1.5 rounded-full" style="width: 89%"
-                                            id="bar-storage"></div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                        <div class="bg-yellow-500 h-2 rounded-full" style="width: 89%" id="bar-storage">
+                                        </div>
                                     </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700 grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-xs text-gray-500">Network Latency</p>
+                                    <p class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-1">
+                                        <span class="w-2 h-2 rounded-full bg-green-500"></span> <span
+                                            id="stat-latency">24ms</span>
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500">Last Backup</p>
+                                    <p class="text-sm font-bold text-gray-900 dark:text-white">2 hrs ago</p>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Resource Quick View -->
                         <div
-                            class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
+                            class="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm">
                             <h3
                                 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4">
-                                Available Resources</h3>
-                            <div class="grid grid-cols-3 gap-4 text-center">
-                                <div>
-                                    <p class="text-2xl font-bold text-gray-900 dark:text-white" id="res-beds">842</p>
-                                    <p class="text-xs text-gray-500 mt-1">Beds</p>
-                                </div>
-                                <div>
-                                    <p class="text-2xl font-bold text-gray-900 dark:text-white" id="res-icu">42</p>
-                                    <p class="text-xs text-gray-500 mt-1">ICU</p>
-                                </div>
-                                <div>
-                                    <p class="text-2xl font-bold text-gray-900 dark:text-white" id="res-doctors">156</p>
-                                    <p class="text-xs text-gray-500 mt-1">Doctors</p>
-                                </div>
+                                Compliance Status</h3>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">ABDM
+                                    Integration</span>
+                                <span
+                                    class="px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-700 border border-green-200">VERIFIED</span>
+                            </div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">HIPAA Data
+                                    Privacy</span>
+                                <span
+                                    class="px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-700 border border-green-200">COMPLIANT</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Encryption
+                                    Standard</span>
+                                <span class="text-sm font-bold text-secondary dark:text-white">AES-256</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Right: Compliance & Logs -->
-                    <div class="space-y-6">
-                        <div
-                            class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
-                            <h3
-                                class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4">
-                                Compliance Check</h3>
-                            <div class="flex items-center gap-4">
-                                <span
-                                    class="flex items-center gap-2 px-3 py-1 bg-green-50 text-green-700 rounded-full text-xs font-bold">
-                                    <span class="material-icons-outlined text-sm">verified</span> ABDM Verified
-                                </span>
-                                <span
-                                    class="flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-bold">
-                                    <span class="material-icons-outlined text-sm">lock</span> HIPAA Compliant
-                                </span>
+                    <!-- Column 2 & 3: Resource Grid & Activity -->
+                    <div class="lg:col-span-2 xl:col-span-2 space-y-6">
+                        <!-- Resource Stats -->
+                        <div class="grid grid-cols-3 gap-4">
+                            <div
+                                class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 shadow-sm text-center">
+                                <div
+                                    class="w-10 h-10 mx-auto bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center mb-2">
+                                    <span class="material-icons-outlined text-blue-600 dark:text-blue-400">bed</span>
+                                </div>
+                                <h4 class="text-2xl font-bold text-gray-900 dark:text-white" id="res-beds">842</h4>
+                                <p class="text-xs text-gray-500">Available Beds</p>
+                            </div>
+                            <div
+                                class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 shadow-sm text-center">
+                                <div
+                                    class="w-10 h-10 mx-auto bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-2">
+                                    <span class="material-icons-outlined text-red-600 dark:text-red-400">favorite</span>
+                                </div>
+                                <h4 class="text-2xl font-bold text-gray-900 dark:text-white" id="res-icu">42</h4>
+                                <p class="text-xs text-gray-500">ICU Units</p>
+                            </div>
+                            <div
+                                class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 shadow-sm text-center">
+                                <div
+                                    class="w-10 h-10 mx-auto bg-teal-50 dark:bg-teal-900/20 rounded-full flex items-center justify-center mb-2">
+                                    <span
+                                        class="material-icons-outlined text-teal-600 dark:text-teal-400">medical_services</span>
+                                </div>
+                                <h4 class="text-2xl font-bold text-gray-900 dark:text-white" id="res-doctors">156</h4>
+                                <p class="text-xs text-gray-500">Active Doctors</p>
                             </div>
                         </div>
 
+                        <!-- Most Common Cases -->
                         <div
-                            class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col h-64">
-                            <div
-                                class="p-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
-                                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest">Recent Activity
-                                    Logs</h3>
+                            class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 mb-6">
+                            <h3
+                                class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                <span class="material-icons-outlined text-sm">coronavirus</span> Most Active Cases (Last
+                                24h)
+                            </h3>
+                            <div class="space-y-4" id="top-cases-list">
+                                <!-- Dynamic content will go here -->
                             </div>
-                            <div class="overflow-y-auto p-0 grow tool-scroll">
+                        </div>
+
+                        <!-- Live Data Stream -->
+                        <div
+                            class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden h-96 flex flex-col">
+                            <div
+                                class="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                                <h3
+                                    class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+                                    Live Data Exchange</h3>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                    <span class="text-xs text-green-600 font-bold">Real-time</span>
+                                </div>
+                            </div>
+                            <div class="overflow-y-auto p-0 grow">
                                 <table class="w-full text-sm">
                                     <tbody id="detail-logs" class="divide-y divide-gray-100 dark:divide-gray-700">
                                         <!-- Logs generated by JS -->
@@ -595,16 +640,6 @@
             allHospitals = hospitals.map((hospital, index) => {
                 // Extract state from address or location string
                 let assignedState = null;
-                let assignedName = hospital.name || `District Hospital ${index + 1}`;
-
-                // Improve Name Diversity if generic
-                if (assignedName === 'Government Hospital' || assignedName === 'City Hospital') {
-                    assignedName = `${hospital.city || 'District'} General Hospital ${index + 1}`;
-                }
-                // Fix duplicate names
-                if (hospitals.filter(h => h.name === hospital.name).length > 2) {
-                    assignedName = `${hospital.name} - Unit ${index + 1}`;
-                }
 
                 // Try to find state in various fields
                 if (hospital.state) {
@@ -631,7 +666,6 @@
 
                 return {
                     ...hospital,
-                    name: assignedName,
                     state: assignedState,
                     status: generateRandomStatus(),
                     uptime: null,
@@ -729,39 +763,39 @@
                 card.onclick = () => openStateModal(state, data);
 
                 card.innerHTML = `
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-secondary/5 dark:bg-white/5 rounded-full flex items-center justify-center">
-                                <span class="material-icons-outlined text-secondary dark:text-gray-300">domain</span>
-                            </div>
-                            <div>
-                                <h3 class="text-base font-bold text-gray-900 dark:text-white">${state}</h3>
-                                <p class="text-xs text-gray-500">${data.total} Unit${data.total !== 1 ? 's' : ''}</p>
-                            </div>
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-secondary dark:text-white">${state}</h3>
+                            <p class="text-xs text-gray-500 mt-1">${data.total} hospital${data.total !== 1 ? 's' : ''}</p>
                         </div>
-                        <span class="text-xs font-bold px-2 py-1 rounded bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300">${connectivityRate}%</span>
+                        <div class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center">
+                            <span class="material-icons-outlined text-secondary">location_on</span>
+                        </div>
                     </div>
                     
                     <div class="mb-4">
-                         <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-1.5 overflow-hidden flex">
-                            <div class="h-full bg-green-500" style="width: ${data.total ? (data.connected / data.total) * 100 : 0}%"></div>
-                            <div class="h-full bg-yellow-400" style="width: ${data.total ? (data.pending / data.total) * 100 : 0}%"></div>
-                            <div class="h-full bg-red-500" style="width: ${data.total ? (data.offline / data.total) * 100 : 0}%"></div>
+                        <div class="flex items-center justify-between text-xs mb-2">
+                            <span class="font-semibold text-gray-700 dark:text-gray-300">Connectivity</span>
+                            <span class="font-bold ${connectivityRate >= 90 ? 'text-green-600' : connectivityRate >= 70 ? 'text-yellow-600' : 'text-red-600'}">${connectivityRate}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                            <div class="h-2 rounded-full ${connectivityRate >= 90 ? 'bg-green-500' : connectivityRate >= 70 ? 'bg-yellow-500' : 'bg-red-500'}" style="width: ${connectivityRate}%"></div>
                         </div>
                     </div>
                     
-                    <div class="flex items-center justify-between text-xs">
-                        <div class="flex items-center gap-3">
-                            <span class="flex items-center gap-1 text-gray-600 dark:text-gray-400 font-medium">
-                                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> ${data.connected}
-                            </span>
-                             <span class="flex items-center gap-1 text-gray-400">
-                                <span class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span> ${data.pending}
-                            </span>
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-2">
+                            <p class="text-lg font-bold text-green-600">${data.connected}</p>
+                            <p class="text-xs text-gray-600 dark:text-gray-400">Online</p>
                         </div>
-                        <button class="text-secondary dark:text-primary font-bold hover:underline flex items-center gap-0.5">
-                            Details <span class="material-icons-outlined text-[10px]">arrow_forward</span>
-                        </button>
+                        <div class="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-2">
+                            <p class="text-lg font-bold text-yellow-600">${data.pending}</p>
+                            <p class="text-xs text-gray-600 dark:text-gray-400">Pending</p>
+                        </div>
+                        <div class="bg-red-50 dark:bg-red-900/20 rounded-lg p-2">
+                            <p class="text-lg font-bold text-red-600">${data.offline}</p>
+                            <p class="text-xs text-gray-600 dark:text-gray-400">Offline</p>
+                        </div>
                     </div>
                 `;
 
