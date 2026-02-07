@@ -105,13 +105,8 @@ const GovAnalytics = {
             keyboard: true
         }).setView([22.5, 82.5], 5);
 
-        // Light blue background (like eSanjeevani)
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
-            attribution: '© Bharat Maps | Survey of India',
-            subdomains: 'abcd',
-            maxZoom: 12,
-            minZoom: 4
-        }).addTo(this.map);
+        // No tile layer - only show India GeoJSON (clean white background)
+        // The map container background will be set via CSS
 
         // Load interactive states
         this.loadStatesGeoJSON();
@@ -256,12 +251,53 @@ const GovAnalytics = {
             fillOpacity: 0.5
         });
 
-        // Zoom to state bounds
-        const bounds = layer.getBounds();
-        this.map.fitBounds(bounds, { padding: [50, 50], maxZoom: 8 });
+        // Show popup instead of zoom
+        // Get state data
+        const population = this.statePopulation[stateName] || 'N/A';
+        const hospitalRating = this.stateHospitalRatings[stateName] || 'N/A';
+        const covid = this.covidData[stateName] || this.covidData[this.findMatchingStateName(stateName)] || {};
 
-        // Show state details panel
-        this.showStateDetails(stateName);
+        // Create popup content
+        const popupContent = `
+            <div class="min-w-[250px] p-2">
+                <h3 class="text-lg font-bold text-secondary border-b pb-2 mb-3">${stateName}</h3>
+                
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between items-center bg-blue-50 p-2 rounded">
+                        <span class="font-medium">👥 Population</span>
+                        <span class="font-bold text-blue-700">${typeof population === 'number' ? population.toFixed(1) + 'M' : population}</span>
+                    </div>
+                    
+                    <div class="bg-red-50 p-2 rounded">
+                        <div class="font-medium mb-1">🦠 COVID-19</div>
+                        <div class="grid grid-cols-2 gap-1 text-xs">
+                            <span>Active: <b class="text-orange-600">${(covid.active || 0).toLocaleString()}</b></span>
+                            <span>Recovered: <b class="text-green-600">${(covid.recovered || 0).toLocaleString()}</b></span>
+                            <span>Deaths: <b class="text-red-600">${(covid.deaths || 0).toLocaleString()}</b></span>
+                            <span>Total: <b class="text-blue-600">${(covid.cases || 0).toLocaleString()}</b></span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center bg-green-50 p-2 rounded">
+                        <span class="font-medium">🏥 Hospital Rating</span>
+                        <span class="font-bold text-green-700">${hospitalRating} ⭐</span>
+                    </div>
+                </div>
+                
+                <div class="mt-3 text-center">
+                    <a href="hospitals.html?state=${encodeURIComponent(stateName)}" 
+                       class="inline-block bg-secondary text-white px-4 py-2 rounded-lg text-sm hover:bg-secondary-light">
+                        View Hospitals in ${stateName}
+                    </a>
+                </div>
+            </div>
+        `;
+
+        // Show popup at click location
+        L.popup()
+            .setLatLng(e.latlng)
+            .setContent(popupContent)
+            .openOn(this.map);
     },
 
     async fetchCovidData() {
@@ -417,15 +453,13 @@ const GovAnalytics = {
     },
 
     async loadDiseaseMap() {
-        // Disease data is now loaded via fetchCovidData() during initMap()
-        // This function now only updates the outcome chart with live data
         try {
-            console.log("Updating charts with LIVE COVID data from disease.sh...");
+            console.log("Fetching LIVE COVID data from disease.sh...");
             const response = await fetch('https://disease.sh/v3/covid-19/gov/India');
             const result = await response.json();
 
             if (result && result.states) {
-                // Store data for state panel access
+                // Store data for state popups
                 result.states.forEach(stateData => {
                     this.covidData[stateData.state] = {
                         active: stateData.active || 0,
@@ -433,13 +467,54 @@ const GovAnalytics = {
                         deaths: stateData.deaths || 0,
                         cases: stateData.cases || 0
                     };
+
+                    // Add RED GLOWING MARKERS
+                    const latLng = this.stateCoordinates[stateData.state];
+                    if (latLng) {
+                        const activeCases = stateData.active;
+                        const size = activeCases > 5000 ? 20 : (activeCases > 500 ? 14 : 10);
+                        const glowSize = size + 6;
+
+                        const pulseIcon = L.divIcon({
+                            className: 'custom-div-icon',
+                            html: `
+                                <div style="position: relative; width: ${glowSize}px; height: ${glowSize}px;">
+                                    <div style="
+                                        position: absolute;
+                                        top: 50%; left: 50%;
+                                        transform: translate(-50%, -50%);
+                                        width: ${glowSize}px; height: ${glowSize}px;
+                                        background: radial-gradient(circle, rgba(255,0,0,0.5) 0%, transparent 70%);
+                                        border-radius: 50%;
+                                        animation: pulse-glow 1.5s ease-in-out infinite;
+                                    "></div>
+                                    <div style="
+                                        position: absolute;
+                                        top: 50%; left: 50%;
+                                        transform: translate(-50%, -50%);
+                                        width: ${size}px; height: ${size}px;
+                                        background: radial-gradient(circle at 30% 30%, #ff4444, #cc0000, #990000);
+                                        border-radius: 50%;
+                                        box-shadow: 0 0 ${size / 2}px rgba(255,0,0,0.8), 0 0 ${size}px rgba(255,0,0,0.4);
+                                        border: 1px solid rgba(255,255,255,0.3);
+                                    "></div>
+                                </div>
+                            `,
+                            iconSize: [glowSize, glowSize],
+                            iconAnchor: [glowSize / 2, glowSize / 2]
+                        });
+
+                        L.marker(latLng, { icon: pulseIcon })
+                            .bindPopup(`<b>${stateData.state}</b><br>Active: ${activeCases.toLocaleString()}`)
+                            .addTo(this.map);
+                    }
                 });
 
                 // Update charts
                 this.updateOutcomeChartFromLiveAPI(result);
             }
         } catch (error) {
-            console.warn('Live API chart update failed:', error);
+            console.warn('Live API failed:', error);
         }
     },
 
