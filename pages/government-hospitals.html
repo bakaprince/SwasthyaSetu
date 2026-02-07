@@ -214,10 +214,10 @@
                 <span class="material-icons-outlined text-lg">domain</span>
                 Hospital Connectivity
             </a>
-            <a href="government-logs.html"
+            <a href="government-resources.html"
                 class="nav-link flex items-center gap-2 px-4 py-4 text-sm font-medium text-gray-300">
-                <span class="material-icons-outlined text-lg">sync_alt</span>
-                Data Exchange Logs
+                <span class="material-icons-outlined text-lg">inventory_2</span>
+                Resource Allocation
             </a>
             <a href="government-compliance.html"
                 class="nav-link flex items-center gap-2 px-4 py-4 text-sm font-medium text-gray-300">
@@ -1118,18 +1118,65 @@
                 `;
             }
 
-            // Generate mock hospitals for simulation
+            // Generate realistic mock hospitals for simulation
             function generateMockHospitals(count) {
                 const mocks = [];
-                const types = ['Government', 'Private', 'Trust', 'Military'];
+                const types = ['Government', 'District', 'Medical College', 'General'];
+
+                // curated list of real major hospitals for simulation
+                const realHospitals = {
+                    'Delhi': ['AIIMS Delhi', 'Safdarjung Hospital', 'Lok Nayak Hospital', 'Dr. RML Hospital', 'GTB Hospital', 'Deen Dayal Upadhyay Hospital'],
+                    'Maharashtra': ['KEM Hospital', 'JJ Hospital', 'Sion Hospital', 'Nair Hospital', 'Tata Memorial Hospital', 'BJ Medical College', 'Cooper Hospital'],
+                    'Karnataka': ['Victoria Hospital', 'Bowring & Lady Curzon', 'NIMHANS', 'KC General Hospital', 'Kidwai Memorial', 'St. Johns Medical College'],
+                    'Tamil Nadu': ['Madras Medical College', 'Stanley Medical College', 'Kilpauk Medical College', 'Omandurar Govt Hospital', 'Rajiv Gandhi Govt General Hospital'],
+                    'West Bengal': ['SSKM Hospital', 'Calcutta Medical College', 'NRS Medical College', 'RG Kar Medical College', 'Chittaranjan National Cancer Institute'],
+                    'Uttar Pradesh': ['KGMU Lucknow', 'SGPGI Lucknow', 'BHU Hospital Varanasi', 'LLR Hospital Kanpur', 'SN Medical College Agra'],
+                    'Telangana': ['Osmania General Hospital', 'Gandhi Hospital', 'NIMS Hyderabad', 'King Koti District Hospital'],
+                    'Gujarat': ['Civil Hospital Ahmedabad', 'SSG Hospital Vadodara', 'New Civil Hospital Surat', 'PDU Medical College Rajkot'],
+                    'Kerala': ['Medical College Trivandrum', 'General Hospital Ernakulam', 'Medical College Calicut', 'Government TD Medical College Alappuzha'],
+                    'Rajasthan': ['SMS Hospital Jaipur', 'Jalan Hospital', 'MDM Hospital Jodhpur', 'PBM Hospital Bikaner'],
+                    'Madhya Pradesh': ['MY Hospital Indore', 'Hamidia Hospital Bhopal', 'Jaya Arogya Hospital Gwalior', 'Netaji Subhash Chandra Bose College'],
+                    'Bihar': ['PMCH Patna', 'NMCH Patna', 'SKMCH Muzaffarpur', 'DMCH Darbhanga', 'JLNMCH Bhagalpur'],
+                    'Punjab': ['PGIMER Chandigarh', 'Rajindra Hospital Patiala', 'Guru Nanak Dev Hopsital Amritsar', 'Civil Hospital Ludhiana'],
+                    'Haryana': ['Civil Hospital Gurgaon', 'PGIMS Rohtak', 'Civil Hospital Panchkula', 'Kalpana Chawla Govt Medical College'],
+                    'Andhra Pradesh': ['King George Hospital Visakhapatnam', 'GGH Vijayawada', 'GGH Guntur', 'SVRR Government General Hospital Tirupati'],
+                    'Odisha': ['SCB Medical College Cuttack', 'MKCG Medical College Berhampur', 'AIIMS Bhubaneswar', 'Capital Hospital Bhubaneswar'],
+                    'Assam': ['Guwahati Medical College', 'Assam Medical College Dibrugarh', 'Silchar Medical College', 'Jorhat Medical College'],
+                    'Jammu and Kashmir': ['SKIMS Srinagar', 'SMHS Hospital', 'GMC Jammu', 'Sher-i-Kashmir Hospital'],
+                    'Jharkhand': ['RIMS Ranchi', 'MGM Medical College Jamshedpur', 'Sadar Hospital Dhanbad'],
+                    'Chattisgarh': ['Dr. BR Ambedkar Memorial Hospital Raipur', 'CIMS Bilaspur', 'Late BR Kashyap Memorial Bastar'],
+                    'Uttarakhand': ['AIIMS Rishikesh', 'Doon Medical College', 'Sushila Tiwari Hospital Haldwani'],
+                    'Himachal Pradesh': ['IGMC Shimla', 'Dr. RPGMC Tanda', 'Regional Hospital Kullu'],
+                    'Goa': ['Goa Medical College', 'Asilo Hospital Mapusa', 'Hospicio Hospital Margao'],
+                    'Tripura': ['AGMC & GBP Hospital', 'Tripura Medical College'],
+                    'Manipur': ['RIMS Imphal', 'JNIMS Imphal'],
+                    'Meghalaya': ['Civil Hospital Shillong', 'NEIGRIHMS Shillong'],
+                    'Nagaland': ['Naga Hospital Authority Kohima', 'District Hospital Dimapur'],
+                    'Arunachal Pradesh': ['Tomo Riba Institute (TRIHMS)', 'General Hospital Pasighat'],
+                    'Mizoram': ['Civil Hospital Aizawl', 'State Referral Hospital Falkawn'],
+                    'Sikkim': ['STNM Hospital Gangtok', 'Central Referral Hospital Gangtok'],
+                    'Puducherry': ['JIPMER', 'Indira Gandhi Govt General Hospital'],
+                    'Chandigarh': ['GMCH Sector 32', 'GMSH Sector 16'],
+                    'Ladakh': ['SNM Hospital Leh', 'District Hospital Kargil'],
+                    'Andaman and Nicobar Islands': ['GB Pant Hospital Port Blair'],
+                    'Lakshadweep': ['Indira Gandhi Hospital Kavaratti'],
+                    'Dadra and Nagar Haveli and Daman and Diu': ['Vinoba Bhave Civil Hospital Silvassa', 'Government Hospital Marwad']
+                };
 
                 for (let i = 0; i < count; i++) {
                     const state = indianStates[Math.floor(Math.random() * indianStates.length)];
-                    const cities = ['City', 'General', 'District', 'Memorial', 'Public', 'Central'];
+                    let name;
+                    const stateHospitals = realHospitals[state];
+
+                    if (stateHospitals && stateHospitals.length > 0) {
+                        name = stateHospitals[Math.floor(Math.random() * stateHospitals.length)];
+                    } else {
+                        name = `${state} ${types[Math.floor(Math.random() * types.length)]} Hospital`;
+                    }
 
                     mocks.push({
-                        _id: `MOCK-${i}`,
-                        name: `${state} ${types[Math.floor(Math.random() * types.length)]} Hospital`,
+                        _id: `MOCK-${state.substring(0, 3).toUpperCase()}-${Math.floor(Math.random() * 10000)}`,
+                        name: name,
                         state: state,
                         city: `${state} City`,
                         type: types[Math.floor(Math.random() * types.length)],
