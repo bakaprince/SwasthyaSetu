@@ -832,6 +832,38 @@
             <!-- Form content with scroll -->
             <div class="p-8 overflow-y-auto max-h-[calc(90vh-120px)]">
 
+                <!-- Quick Help Cards -->
+                <div class="grid md:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-accent-green rounded-2xl p-4 text-center">
+                        <span class="material-icons-outlined text-3xl text-secondary mb-2">call</span>
+                        <h3 class="font-display text-lg font-bold mb-1 text-secondary">Emergency</h3>
+                        <p class="text-xs text-gray-700 mb-2">24/7 medical assistance</p>
+                        <div class="text-xl font-bold text-secondary">102</div>
+                    </div>
+                    <div class="bg-accent-blue rounded-2xl p-4 text-center">
+                        <span class="material-icons-outlined text-3xl text-secondary mb-2">chat</span>
+                        <h3 class="font-display text-lg font-bold mb-1 text-secondary">Live Chat</h3>
+                        <p class="text-xs text-gray-700 mb-2">Instant support</p>
+                        <button
+                            onclick="document.getElementById('close-contact-modal').click(); if(typeof toggleChat === 'function') toggleChat();"
+                            class="bg-secondary text-white px-4 py-1.5 rounded-full hover:bg-secondary-light transition-colors text-xs">Start
+                            Chat</button>
+                    </div>
+                    <div class="bg-accent-purple rounded-2xl p-4 text-center">
+                        <span class="material-icons-outlined text-3xl text-secondary mb-2">email</span>
+                        <h3 class="font-display text-lg font-bold mb-1 text-secondary">Email</h3>
+                        <p class="text-xs text-gray-700 mb-2">Detailed assistance</p>
+                        <a href="mailto:support@medconnect.gov.in"
+                            class="text-xs font-bold text-secondary hover:underline">support@medconnect.gov.in</a>
+                    </div>
+                </div>
+
+                <div class="relative flex py-2 items-center mb-6">
+                    <div class="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
+                    <span class="flex-shrink-0 mx-4 text-gray-400 text-sm">Or send us a message</span>
+                    <div class="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
+                </div>
+
                 <form id="contact-support-form" class="space-y-6">
                     <div class="grid md:grid-cols-2 gap-6">
                         <div>
