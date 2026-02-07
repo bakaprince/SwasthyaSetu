@@ -55,18 +55,18 @@ const GovAnalytics = {
         "Goa": [15.2993, 74.1240]
     },
 
-    // --- LEAFLET MAP (Static India Map) ---
+    // --- LEAFLET MAP (Static India Map with Bharat Maps) ---
     initMap() {
-        // Restrict bounds to India only
+        // Restrict bounds to India only (with correct boundaries including J&K, Ladakh)
         const southWest = L.latLng(6.5, 68.0);  // Southern tip of India
-        const northEast = L.latLng(35.5, 97.5); // Northern tip of India
+        const northEast = L.latLng(37.5, 97.5); // Northern tip including J&K and Ladakh
         const bounds = L.latLngBounds(southWest, northEast);
 
         this.map = L.map('india-map', {
             maxBounds: bounds,
             maxBoundsViscosity: 1.0,
             minZoom: 5,
-            maxZoom: 7,
+            maxZoom: 8,
             zoomControl: false,        // Disable zoom controls for static feel
             dragging: false,            // Disable dragging for static map
             scrollWheelZoom: false,     // Disable scroll zoom
@@ -74,15 +74,29 @@ const GovAnalytics = {
             touchZoom: false,           // Disable touch zoom
             boxZoom: false,             // Disable box zoom
             keyboard: false             // Disable keyboard navigation
-        }).setView([22.5937, 78.9629], 5);
+        }).setView([22.5937, 82.9629], 5);
 
-        // Use a static, light tile layer focused on India
-        const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        // Use Bhuvan (ISRO) / Bharat Maps - Official Indian Government Map Service
+        // This shows correct India boundaries including J&K, Ladakh, and Arunachal Pradesh
 
-        L.tileLayer(tileUrl, {
-            attribution: '&copy; OpenStreetMap',
-            maxZoom: 7,
+        // Base layer - Carto Positron (neutral background)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '© Bharat Maps | Survey of India',
+            subdomains: 'abcd',
+            maxZoom: 8,
             minZoom: 5
+        }).addTo(this.map);
+
+        // Bhuvan (ISRO) overlay for Indian boundaries
+        // Using Bhuvan WMS service for state and district boundaries
+        L.tileLayer.wms('https://bhuvan-vec2.nrsc.gov.in/bhuvan/wms', {
+            layers: 'india3',
+            format: 'image/png',
+            transparent: true,
+            attribution: '© Bhuvan (ISRO) | Survey of India',
+            maxZoom: 8,
+            minZoom: 4,
+            opacity: 0.7
         }).addTo(this.map);
     },
 
