@@ -190,10 +190,7 @@
                 <p class="text-gray-600 dark:text-gray-400">Manage critical medical supplies, logistics, and emergency
                     dispatch requests</p>
             </div>
-            <button id="btn-emergency-relief"
-                class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold shadow-lg shadow-red-500/30 flex items-center gap-2 transition-all hover:scale-105 animate-pulse">
-                <span class="material-icons-outlined">medical_services</span> Initiate Emergency Relief
-            </button>
+
         </div>
 
         <!-- Stats Overview -->
@@ -203,7 +200,7 @@
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Critical Requests</p>
-                        <h3 class="text-3xl font-bold text-gray-800 dark:text-white mt-1">12</h3>
+                        <h3 id="stat-critical" class="text-3xl font-bold text-gray-800 dark:text-white mt-1">--</h3>
                     </div>
                     <span class="p-2 bg-red-50 dark:bg-red-900/20 text-red-600 rounded-lg"><span
                             class="material-icons-outlined">priority_high</span></span>
@@ -218,7 +215,7 @@
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Active Dispatches</p>
-                        <h3 class="text-3xl font-bold text-gray-800 dark:text-white mt-1">45</h3>
+                        <h3 id="stat-active" class="text-3xl font-bold text-gray-800 dark:text-white mt-1">--</h3>
                     </div>
                     <span class="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded-lg"><span
                             class="material-icons-outlined">local_shipping</span></span>
@@ -233,7 +230,7 @@
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Pending Approvals</p>
-                        <h3 class="text-3xl font-bold text-gray-800 dark:text-white mt-1">28</h3>
+                        <h3 id="stat-pending" class="text-3xl font-bold text-gray-800 dark:text-white mt-1">--</h3>
                     </div>
                     <span class="p-2 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 rounded-lg"><span
                             class="material-icons-outlined">hourglass_empty</span></span>
@@ -301,94 +298,7 @@
                             </thead>
                             <tbody id="request-table-body"
                                 class="divide-y divide-gray-100 dark:divide-gray-700 text-sm">
-                                <!-- Row 1 -->
-                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors group">
-                                    <td class="px-6 py-4">
-                                        <div class="font-bold text-gray-900 dark:text-white">AIIMS Delhi</div>
-                                        <div class="text-xs text-gray-500">HOSP-DL-001</div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-2">
-                                            <span
-                                                class="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 flex items-center justify-center material-icons-outlined text-sm">air</span>
-                                            <span>Liquid Oxygen</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 font-mono">15,000 L</td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="px-2 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700 border border-red-200 animate-pulse">CRITICAL</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="flex items-center gap-1 text-yellow-600 dark:text-yellow-400 font-medium text-xs">
-                                            <span class="w-2 h-2 rounded-full bg-yellow-500"></span> Pending Review
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <button
-                                            class="btn-approve text-primary hover:text-green-400 font-bold text-xs uppercase tracking-wide">Approve</button>
-                                    </td>
-                                </tr>
-                                <!-- Row 2 -->
-                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
-                                    <td class="px-6 py-4">
-                                        <div class="font-bold text-gray-900 dark:text-white">KEM Mumbai</div>
-                                        <div class="text-xs text-gray-500">HOSP-MH-023</div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-2">
-                                            <span
-                                                class="w-8 h-8 rounded-full bg-purple-50 dark:bg-purple-900/20 text-purple-600 flex items-center justify-center material-icons-outlined text-sm">medication</span>
-                                            <span>Remdesivir</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 font-mono">500 Vials</td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="px-2 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-700 border border-orange-200">HIGH</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="flex items-center gap-1 text-blue-600 dark:text-blue-400 font-medium text-xs">
-                                            <span class="w-2 h-2 rounded-full bg-blue-500"></span> In Transit
-                                        </span>
-                                        <div class="text-[10px] text-gray-400 mt-1">ETA: 4h 30m</div>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <button
-                                            class="btn-track text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 font-bold text-xs uppercase tracking-wide">Track</button>
-                                    </td>
-                                </tr>
-                                <!-- Row 3 -->
-                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
-                                    <td class="px-6 py-4">
-                                        <div class="font-bold text-gray-900 dark:text-white">Victoria Blr</div>
-                                        <div class="text-xs text-gray-500">HOSP-KA-012</div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-2">
-                                            <span
-                                                class="w-8 h-8 rounded-full bg-teal-50 dark:bg-teal-900/20 text-teal-600 flex items-center justify-center material-icons-outlined text-sm">bedroom_child</span>
-                                            <span>ICU Ventilators</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 font-mono">10 Units</td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 border border-green-200">NORMAL</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="flex items-center gap-1 text-green-600 dark:text-green-400 font-medium text-xs">
-                                            <span class="w-2 h-2 rounded-full bg-green-500"></span> Fulfilled
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <button
-                                            class="btn-details text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 font-bold text-xs uppercase tracking-wide">Details</button>
-                                    </td>
-                                </tr>
+                                <!-- Populated by JS -->
                             </tbody>
                         </table>
                     </div>
@@ -467,12 +377,7 @@
                 <div
                     class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm h-[520px] relative group">
                     <!-- Map Header Overlay -->
-                    <div
-                        class="absolute top-4 left-4 z-[400] bg-white/90 dark:bg-gray-900/90 backdrop-blur px-3 py-1.5 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                        <h3 class="font-bold text-sm text-secondary dark:text-white flex items-center gap-2">
-                            <span class="material-icons-outlined text-sm text-green-500">router</span> Live Logistics
-                        </h3>
-                    </div>
+                    <!-- Map Header Removed -->
 
                     <button onclick="openTracker()"
                         class="absolute top-4 right-4 z-[400] bg-white dark:bg-gray-800 p-2 rounded-lg shadow-md hover:scale-110 transition-transform tooltip border border-gray-200 dark:border-gray-700"
@@ -497,44 +402,64 @@
                     </div>
                 </div>
 
-                <!-- Emergency Contact / Quick Actions -->
-                <div
-                    class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
-                    <h3 class="font-bold text-sm text-gray-500 uppercase tracking-widest mb-4">Quick Actions</h3>
-                    <div class="space-y-3">
-                        <button id="btn-allocation-order"
-                            class="w-full py-3 px-4 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl flex items-center gap-3 transition-colors text-left group">
-                            <span
-                                class="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-lg group-hover:bg-blue-200 transition-colors"><span
-                                    class="material-icons-outlined">add_task</span></span>
-                            <div>
-                                <p class="text-sm font-bold text-gray-800 dark:text-white">Create Allocation Order</p>
-                                <p class="text-xs text-gray-500 hidden group-hover:block fade-in">Assign resources to
-                                    hospitals</p>
-                            </div>
-                        </button>
+                <!-- Request Details Panel (Updates on Map Click) -->
+                <div id="request-details-panel"
+                    class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-300 min-h-[250px] flex flex-col justify-center mt-6">
+                    <!-- Placeholder State -->
+                    <div id="details-placeholder" class="text-center py-4 text-gray-500">
+                        <div class="animate-bounce mb-2 inline-block">
+                            <span class="material-icons-outlined text-3xl text-gray-300">touch_app</span>
+                        </div>
+                        <h4 class="font-bold text-gray-400 text-sm">Interactive Map</h4>
+                        <p class="text-xs mt-1">Select any location on the map to view request details.</p>
+                    </div>
 
-                        <button id="btn-hospital-audit"
-                            class="w-full py-3 px-4 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl flex items-center gap-3 transition-colors text-left group">
-                            <span
-                                class="p-2 bg-purple-100 dark:bg-purple-900/30 text-purple-600 rounded-lg group-hover:bg-purple-200 transition-colors"><span
-                                    class="material-icons-outlined">local_hospital</span></span>
-                            <div>
-                                <p class="text-sm font-bold text-gray-800 dark:text-white">Start Hospital Audit</p>
-                            </div>
-                        </button>
+                    <!-- Active Content State (Hidden by default) -->
+                    <div id="details-content" class="hidden space-y-4 w-full">
+                        <h3
+                            class="font-bold text-xs text-secondary dark:text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-2 border-b border-gray-100 dark:border-gray-700 pb-2">
+                            <span class="material-icons-outlined text-sm">info</span> Selected Request
+                        </h3>
 
-                        <button id="btn-broadcast-alert"
-                            class="w-full py-3 px-4 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl flex items-center gap-3 transition-colors text-left group">
-                            <span
-                                class="p-2 bg-orange-100 dark:bg-orange-900/30 text-orange-600 rounded-lg group-hover:bg-orange-200 transition-colors"><span
-                                    class="material-icons-outlined">warning</span></span>
+                        <div class="flex justify-between items-start">
                             <div>
-                                <p class="text-sm font-bold text-gray-800 dark:text-white">Broadcast Alert</p>
+                                <h2 id="detail-hospital"
+                                    class="text-lg font-bold text-gray-900 dark:text-white leading-tight"></h2>
+                                <p id="detail-id" class="text-xs text-gray-500 mt-1"></p>
                             </div>
-                        </button>
+                            <span id="detail-priority" class=""></span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-y-4 gap-x-2 py-2">
+                            <div>
+                                <p class="text-[10px] text-gray-500 uppercase font-bold">Resource</p>
+                                <p id="detail-resource" class="font-semibold text-gray-800 dark:text-gray-200 text-sm">
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-gray-500 uppercase font-bold">Quantity</p>
+                                <p id="detail-qty" class="font-semibold text-gray-800 dark:text-gray-200 text-sm"></p>
+                            </div>
+                            <div class="col-span-2">
+                                <p class="text-[10px] text-gray-500 uppercase font-bold">Current Status</p>
+                                <p id="detail-status" class="font-semibold text-sm"></p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3 pt-2">
+                            <button
+                                class="flex-1 py-2 bg-secondary hover:bg-secondary-light text-white rounded-lg font-bold shadow-md transition-colors text-xs uppercase tracking-wide flex items-center justify-center gap-2">
+                                <span class="material-icons-outlined text-sm">check_circle</span> Approve
+                            </button>
+                            <button
+                                class="flex-1 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 text-gray-700 dark:text-gray-300 rounded-lg font-bold transition-colors text-xs uppercase tracking-wide flex items-center justify-center gap-2">
+                                <span class="material-icons-outlined text-sm">call</span> Contact
+                            </button>
+                        </div>
                     </div>
                 </div>
+
+
             </div>
         </div>
 
@@ -659,32 +584,29 @@
         let mapInstance = null; // Fullscreen Map
         let embeddedMapInstance = null; // Embedded Map
 
-        // Mock Shipment Data
-        // Mock Shipment Data - Enhanced to reflect 12 Critical, 28 Pending, 45 Active
-        const shipments = [
-            // Critical Items (Representing 12)
-            { lat: 28.6139, lng: 77.2090, type: 'Oxygen Tanker', dest: 'AIIMS Delhi', status: 'Critical' },
-            { lat: 26.8467, lng: 80.9462, type: 'Oxygen Tanker', dest: 'KGMU Lucknow', status: 'Critical' },
-            { lat: 25.3176, lng: 82.9739, type: 'Ventilators', dest: 'IMS BHU', status: 'Critical' },
-            { lat: 22.5726, lng: 88.3639, type: 'Remdesivir', dest: 'Kolkata Med', status: 'Critical' },
-            { lat: 23.2599, lng: 77.4126, type: 'ICU Beds', dest: 'Bhopal Memorial', status: 'Critical' },
+        // Unified Data Source: Resource Requests (Table + Map)
+        const resourceRequests = [
+            // Critical Items
+            { id: 'HOSP-DL-001', hospital: 'AIIMS Delhi', lat: 28.6139, lng: 77.2090, resource: 'Liquid Oxygen', qty: '15,000 L', priority: 'Critical', status: 'Pending Review' },
+            { id: 'HOSP-UP-088', hospital: 'KGMU Lucknow', lat: 26.8467, lng: 80.9462, resource: 'Oxygen Tanker', qty: '8,000 L', priority: 'Critical', status: 'Pending Review' },
+            { id: 'HOSP-UP-102', hospital: 'IMS BHU Varanasi', lat: 25.3176, lng: 82.9739, resource: 'Ventilators', qty: '50 Units', priority: 'Critical', status: 'Pending Review' },
+            { id: 'HOSP-WB-045', hospital: 'Kolkata Med. College', lat: 22.5726, lng: 88.3639, resource: 'Remdesivir', qty: '200 Vials', priority: 'Critical', status: 'Pending Review' },
+            { id: 'HOSP-MP-012', hospital: 'Bhopal Memorial', lat: 23.2599, lng: 77.4126, resource: 'ICU Beds', qty: '15 Beds', priority: 'Critical', status: 'Pending Review' },
 
-            // Pending Items (Representing 28)
-            { lat: 19.0760, lng: 72.8777, type: 'Remdesivir Van', dest: 'KEM Mumbai', status: 'Pending' },
-            { lat: 18.5204, lng: 73.8567, type: 'Plasma Kit', dest: 'Sasoon Pune', status: 'Pending' },
-            { lat: 22.5726, lng: 88.3639, type: 'Vaccine Drone', dest: 'Kolkata Med', status: 'Pending' },
-            { lat: 17.3850, lng: 78.4867, type: 'Plasma Kit', dest: 'Osmania Hyd', status: 'Pending' },
-            { lat: 13.0827, lng: 80.2707, type: 'PPE Logistics', dest: 'Apollo Chennai', status: 'Pending' },
-            { lat: 21.1702, lng: 72.8311, type: 'Oxygen', dest: 'Surat Civil', status: 'Pending' },
+            // Pending/High Priority Items
+            { id: 'HOSP-MH-023', hospital: 'KEM Mumbai', lat: 19.0760, lng: 72.8777, resource: 'Remdesivir', qty: '500 Vials', priority: 'High', status: 'In Transit' },
+            { id: 'HOSP-MH-099', hospital: 'Sasoon Pune', lat: 18.5204, lng: 73.8567, resource: 'Plasma Kit', qty: '20 Kits', priority: 'High', status: 'Pending - Logistics' },
+            { id: 'HOSP-TG-055', hospital: 'Osmania Hyd', lat: 17.3850, lng: 78.4867, resource: 'N95 Masks', qty: '5000 Pcs', priority: 'High', status: 'Pending - Logistics' },
+            { id: 'HOSP-GJ-067', hospital: 'Surat Civil', lat: 21.1702, lng: 72.8311, resource: 'Oxygen Cylinders', qty: '200 Units', priority: 'High', status: 'Pending Review' },
 
-            // Normal/Active Items (Representing 45)
-            { lat: 12.9716, lng: 77.5946, type: 'Ventilator Truck', dest: 'Victoria Blr', status: 'Normal' },
-            { lat: 13.0827, lng: 80.2707, type: 'PPE Logistics', dest: 'Apollo Chennai', status: 'Normal' },
-            { lat: 23.0225, lng: 72.5714, type: 'ICU Equipment', dest: 'Civil Hosp Ahmedabad', status: 'Normal' },
-            { lat: 30.7333, lng: 76.7794, type: 'Vaccines', dest: 'PGIMER Chandigarh', status: 'Normal' },
-            { lat: 26.9124, lng: 75.7873, type: 'Masks', dest: 'SMS Jaipur', status: 'Normal' },
-            { lat: 15.2993, lng: 74.1240, type: 'Sanitizers', dest: 'Goa Med', status: 'Normal' },
-            { lat: 11.0168, lng: 76.9558, type: 'Gloves', dest: 'Coimbatore Med', status: 'Normal' }
+            // Normal/Fulfilled Items
+            { id: 'HOSP-KA-012', hospital: 'Victoria Blr', lat: 12.9716, lng: 77.5946, resource: 'ICU Ventilators', qty: '10 Units', priority: 'Normal', status: 'Fulfilled' },
+            { id: 'HOSP-TN-034', hospital: 'Apollo Chennai', lat: 13.0827, lng: 80.2707, resource: 'PPE Kits', qty: '2000 Units', priority: 'Normal', status: 'Fulfilled' },
+            { id: 'HOSP-GJ-001', hospital: 'Civil Hosp Ahmedabad', lat: 23.0225, lng: 72.5714, resource: 'ICU Monitors', qty: '25 Units', priority: 'Normal', status: 'Dispatched' },
+            { id: 'HOSP-CH-005', hospital: 'PGIMER Chandigarh', lat: 30.7333, lng: 76.7794, resource: 'Vaccines', qty: '10k Doses', priority: 'Normal', status: 'Dispatched' },
+            { id: 'HOSP-RJ-089', hospital: 'SMS Jaipur', lat: 26.9124, lng: 75.7873, resource: 'Surgical Masks', qty: '10k Pcs', priority: 'Normal', status: 'Fulfilled' },
+            { id: 'HOSP-GA-002', hospital: 'Goa Med College', lat: 15.2993, lng: 74.1240, resource: 'Sanitizers', qty: '500 L', priority: 'Normal', status: 'Fulfilled' },
+            { id: 'HOSP-TN-101', hospital: 'Coimbatore Med', lat: 11.0168, lng: 76.9558, resource: 'Gloves', qty: '5000 Pairs', priority: 'Normal', status: 'Fulfilled' }
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -713,33 +635,9 @@
 
             // --- SETUP BUTTONS ---
 
-            // 1. Emergency Relief (Header Button)
-            const btnEmergency = document.getElementById('btn-emergency-relief');
-            if (btnEmergency) {
-                btnEmergency.addEventListener('click', () => openActionModal('Initiate Emergency Relief'));
-            }
 
-            // 2. Allocation Order (Quick Action)
-            const btnAllocation = document.getElementById('btn-allocation-order');
-            if (btnAllocation) {
-                btnAllocation.addEventListener('click', () => openActionModal('Create Allocation Order'));
-            }
 
-            // 3. Hospital Audit (Quick Action)
-            const btnAudit = document.getElementById('btn-hospital-audit');
-            if (btnAudit) {
-                btnAudit.addEventListener('click', () => {
-                    showToast('Audit Protocol Initiated: Retrieving hospital records...', 'info');
-                });
-            }
 
-            // 4. Broadcast Alert (Quick Action)
-            const btnAlert = document.getElementById('btn-broadcast-alert');
-            if (btnAlert) {
-                btnAlert.addEventListener('click', () => {
-                    showToast('Alert Broadcast System: Enter priority message...', 'warning');
-                });
-            }
 
             // 5. Live Tracker (Card) - No longer needed as it's an embedded map now
             // const cardTracker = document.getElementById('card-live-tracker');
@@ -781,21 +679,78 @@
                 });
             }
 
-            // Initialize Embedded Map
+            // Initialize Page Content
+            // Initialize Page Content
+            populateTable();
+            updateDashboardStats();
             initEmbeddedMap();
         });
 
+        // --- POPULATE TABLE ---
+        function populateTable() {
+            const tbody = document.getElementById('request-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            resourceRequests.forEach(req => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors group';
+
+                // Helper to determine styles based on priority/status
+                let priorityClass = 'bg-gray-100 text-gray-700';
+                if (req.priority === 'Critical') priorityClass = 'bg-red-100 text-red-700 border border-red-200 animate-pulse';
+                else if (req.priority === 'High') priorityClass = 'bg-orange-100 text-orange-700 border border-orange-200';
+                else if (req.priority === 'Normal') priorityClass = 'bg-green-100 text-green-700 border border-green-200';
+
+                let statusColor = 'text-gray-600';
+                let statusDot = 'bg-gray-500';
+                if (req.status.includes('Pending')) { statusColor = 'text-yellow-600'; statusDot = 'bg-yellow-500'; }
+                else if (req.status === 'Fulfilled' || req.status === 'Approved') { statusColor = 'text-green-600'; statusDot = 'bg-green-500'; }
+                else if (req.status === 'In Transit' || req.status === 'Dispatched') { statusColor = 'text-blue-600'; statusDot = 'bg-blue-500'; }
+
+                let actionBtn = `<button class="btn-approve text-primary hover:text-green-400 font-bold text-xs uppercase tracking-wide">Approve</button>`;
+                if (req.status === 'In Transit' || req.status === 'Dispatched') actionBtn = `<button class="btn-track text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 font-bold text-xs uppercase tracking-wide">Track</button>`;
+                else if (req.status === 'Fulfilled') actionBtn = `<button class="btn-details text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 font-bold text-xs uppercase tracking-wide">Details</button>`;
+
+                tr.innerHTML = `
+                    <td class="px-6 py-4">
+                        <div class="font-bold text-gray-900 dark:text-white">${req.hospital}</div>
+                        <div class="text-xs text-gray-500">${req.id}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-2">
+                             <span class="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 flex items-center justify-center material-icons-outlined text-sm">inventory_2</span>
+                            <span>${req.resource}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 font-mono">${req.qty}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 rounded-full text-xs font-bold ${priorityClass}">${req.priority.toUpperCase()}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="flex items-center gap-1 ${statusColor} dark:${statusColor.replace('600', '400')} font-medium text-xs">
+                            <span class="w-2 h-2 rounded-full ${statusDot}"></span> ${req.status}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        ${actionBtn}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
         // --- MARKER LOGIC ---
-        function createCustomIcon(status) {
+        function createCustomIcon(priority) {
             let color = '#22c55e'; // green (Normal)
             let shadowColor = 'rgba(34,197,94,0.5)';
             let animationClass = '';
 
-            if (status === 'Critical') {
+            if (priority === 'Critical') {
                 color = '#ef4444'; // red
                 shadowColor = 'rgba(239,68,68,0.5)';
                 animationClass = 'animate-ping';
-            } else if (status === 'Pending') {
+            } else if (priority === 'High' || priority === 'Pending') {
                 color = '#facc15'; // yellow
                 shadowColor = 'rgba(250,204,21,0.5)';
             }
@@ -811,17 +766,65 @@
             });
         }
 
+        function updateDashboardStats() {
+            if (!document.getElementById('stat-critical')) return;
+
+            const criticalCount = resourceRequests.filter(r => r.priority === 'Critical').length;
+            // Active = In Transit or Dispatched
+            const activeCount = resourceRequests.filter(r => ['In Transit', 'Dispatched'].includes(r.status)).length;
+            // Pending = Status contains Pending
+            const pendingCount = resourceRequests.filter(r => r.status.includes('Pending')).length;
+
+            document.getElementById('stat-critical').textContent = criticalCount;
+            document.getElementById('stat-active').textContent = activeCount;
+            document.getElementById('stat-pending').textContent = pendingCount;
+        }
+
         function populateMap(targetMap) {
-            shipments.forEach(s => {
-                const marker = L.marker([s.lat, s.lng], { icon: createCustomIcon(s.status) }).addTo(targetMap);
+            resourceRequests.forEach(req => {
+                // Determine color for popup badge
+                let badgeClass = 'bg-blue-100 text-blue-600';
+                if (req.priority === 'Critical') badgeClass = 'bg-red-100 text-red-600';
+                else if (req.priority === 'High') badgeClass = 'bg-yellow-100 text-yellow-600';
+
+                const marker = L.marker([req.lat, req.lng], { icon: createCustomIcon(req.priority) }).addTo(targetMap);
+
+                // Add click listener to update the details panel for Embedded Map interactions
+                marker.on('click', () => {
+                    const detailsPanel = document.getElementById('request-details-panel');
+                    const placeholder = document.getElementById('details-placeholder');
+                    const content = document.getElementById('details-content');
+
+                    if (detailsPanel && placeholder && content) {
+                        placeholder.classList.add('hidden');
+                        content.classList.remove('hidden');
+
+                        // Update Content
+                        document.getElementById('detail-hospital').textContent = req.hospital;
+                        document.getElementById('detail-id').textContent = req.id;
+                        document.getElementById('detail-resource').textContent = req.resource;
+                        document.getElementById('detail-qty').textContent = req.qty;
+
+                        const statusEl = document.getElementById('detail-status');
+                        statusEl.textContent = req.status;
+                        statusEl.className = 'font-semibold ' + (req.status.includes('Pending') ? 'text-yellow-600' : 'text-green-600');
+
+                        const priorityEl = document.getElementById('detail-priority');
+                        priorityEl.textContent = req.priority.toUpperCase();
+                        priorityEl.className = 'px-2 py-1 rounded text-xs font-bold ' +
+                            (req.priority === 'Critical' ? 'bg-red-100 text-red-600 animate-pulse' :
+                                req.priority === 'High' ? 'bg-yellow-100 text-yellow-600' : 'bg-blue-100 text-blue-600');
+                    }
+                });
+
                 const popupContent = `
                     <div class="text-left">
                         <div class="flex items-center justify-between mb-1">
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500">${s.status}</span>
-                            <span class="text-xs text-blue-600 font-bold">ETA: 2h 15m</span>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500">${req.priority}</span>
+                            <span class="text-xs text-blue-600 font-bold">${req.status}</span>
                         </div>
-                        <h3 class="font-bold text-sm text-gray-900 leading-tight mb-1">${s.dest}</h3>
-                        <p class="text-xs text-gray-500">${s.type} Request</p>
+                        <h3 class="font-bold text-sm text-gray-900 leading-tight mb-1">${req.hospital}</h3>
+                        <p class="text-xs text-gray-500">${req.resource} • ${req.qty}</p>
                         <div class="mt-2 pt-2 border-t border-gray-100 flex gap-2">
                             <button class="flex-1 py-1 text-[10px] bg-secondary text-white rounded hover:bg-secondary-light transition-colors">Details</button>
                             <button class="flex-1 py-1 text-[10px] bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition-colors">Contact</button>
@@ -837,12 +840,6 @@
                         if (infoPanel) {
                             infoPanel.innerHTML = `
                                 <div class="flex justify-between items-start">
-                                    <h4 class="font-bold text-lg text-gray-800 dark:text-white">${s.type}</h4>
-                                    <span class="px-2 py-1 rounded text-xs font-bold ${s.status === 'Critical' ? 'bg-red-100 text-red-600' : s.status === 'Pending' ? 'bg-yellow-100 text-yellow-600' : 'bg-blue-100 text-blue-600'}">${s.status}</span>
-                                </div>
-                                <div class="grid grid-cols-2 gap-4 text-sm mt-2">
-                                    <div><p class="text-gray-500 text-xs">Destination</p><p class="font-medium dark:text-gray-200">${s.dest}</p></div>
-                                    <div><p class="text-gray-500 text-xs">Speed</p><p class="font-medium dark:text-gray-200">65 km/h</p></div>
                                     <div><p class="text-gray-500 text-xs">Driver</p><p class="font-medium dark:text-gray-200">Rishabh K.</p></div>
                                     <div><p class="text-gray-500 text-xs">ETA</p><p class="font-medium dark:text-gray-200">2h 15m</p></div>
                                 </div>
@@ -861,10 +858,10 @@
                 embeddedMapInstance = L.map('embedded-map', {
                     zoomControl: false,
                     attributionControl: false,
-                    scrollWheelZoom: false, // Disable scroll zoom for embedded map
-                    dragging: false, // Disable dragging for embedded map
-                    touchZoom: false, // Disable touch zoom for embedded map
-                    doubleClickZoom: false // Disable double click zoom for embedded map
+                    scrollWheelZoom: true,
+                    dragging: true,
+                    touchZoom: true,
+                    doubleClickZoom: true
                 }).setView([20.5937, 78.9629], 4);
 
                 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
