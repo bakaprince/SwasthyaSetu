@@ -264,45 +264,12 @@
             </button>
         </div>
 
-        <!-- Main Layout: Disease LEFT, Map CENTER, Ratings RIGHT -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-            <!-- LEFT SIDE: National Disease Outcomes -->
-            <div class="lg:col-span-3">
-                <div
-                    class="bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700 h-full">
-                    <h3 class="text-base font-bold text-secondary dark:text-white mb-4 flex items-center gap-2">
-                        <span class="material-icons-outlined text-lg">coronavirus</span>
-                        National Disease Outcomes
-                    </h3>
-                    <div class="h-80">
-                        <canvas id="outcomeChart"></canvas>
-                    </div>
-                    <p class="text-xs text-gray-400 mt-2 text-center">Live API + Estimates</p>
-                </div>
+        <!-- Full-Width Interactive India Map -->
+        <div class="w-full">
+            <div id="india-map" class="w-full rounded-2xl shadow-lg"
+                style="height: calc(100vh - 280px); min-height: 700px;">
             </div>
-
-            <!-- CENTER: THE BIG MAP -->
-            <div class="lg:col-span-6">
-                <div id="india-map" class="w-full" style="height: 800px; min-height: 600px;">
-                </div>
-            </div>
-
-            <!-- RIGHT SIDE: Hospital Service Ratings -->
-            <div class="lg:col-span-3">
-                <div
-                    class="bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700 h-full">
-                    <h3 class="text-base font-bold text-secondary dark:text-white mb-4 flex items-center gap-2">
-                        <span class="material-icons-outlined text-lg">local_hospital</span>
-                        Hospital Service Ratings
-                    </h3>
-                    <div class="h-80">
-                        <canvas id="performanceChart"></canvas>
-                    </div>
-                    <p class="text-xs text-gray-400 mt-2 text-center">Avg. ratings by state</p>
-                </div>
-            </div>
-
+            <p class="text-center text-sm text-gray-500 mt-4">Click on any state to view detailed statistics</p>
         </div>
 
         <!-- Real-time Audit Logs -->
