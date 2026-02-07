@@ -110,46 +110,46 @@ const GovAnalytics = {
             const response = await fetch('https://raw.githubusercontent.com/geohacker/india/master/country/india_outline.geojson');
             const indiaGeoJSON = await response.json();
 
-            // Create glowing effect with multiple layers
-            // Outer glow (largest, most transparent)
+            // Create glowing effect with multiple layers - BLACK GLOW
+            // Outer glow (largest, most transparent - dark gray)
             L.geoJSON(indiaGeoJSON, {
                 style: {
-                    color: '#00ff88',
-                    weight: 12,
-                    opacity: 0.15,
+                    color: '#333333',
+                    weight: 14,
+                    opacity: 0.2,
                     fillColor: 'transparent',
                     fillOpacity: 0
                 }
             }).addTo(this.map);
 
-            // Middle glow
+            // Middle glow - darker
             L.geoJSON(indiaGeoJSON, {
                 style: {
-                    color: '#00ff88',
+                    color: '#222222',
                     weight: 8,
-                    opacity: 0.25,
+                    opacity: 0.35,
                     fillColor: 'transparent',
                     fillOpacity: 0
                 }
             }).addTo(this.map);
 
-            // Inner glow
+            // Inner glow - near black
             L.geoJSON(indiaGeoJSON, {
                 style: {
-                    color: '#00cc66',
-                    weight: 4,
-                    opacity: 0.5,
+                    color: '#111111',
+                    weight: 5,
+                    opacity: 0.6,
                     fillColor: 'transparent',
                     fillOpacity: 0
                 }
             }).addTo(this.map);
 
-            // Main border (solid black with slight transparency)
+            // Main border (solid black)
             L.geoJSON(indiaGeoJSON, {
                 style: {
-                    color: '#1a1a1a',
+                    color: '#000000',
                     weight: 2.5,
-                    opacity: 0.9,
+                    opacity: 1,
                     fillColor: 'transparent',
                     fillOpacity: 0,
                     dashArray: null
@@ -179,18 +179,46 @@ const GovAnalytics = {
                     const latLng = this.stateCoordinates[stateData.state];
                     if (latLng) {
                         const activeCases = stateData.active;
-                        let colorClass = 'bg-yellow-500';
-                        if (activeCases > 1000) colorClass = 'bg-orange-500';
-                        if (activeCases > 10000) colorClass = 'bg-red-600';
 
-                        const size = activeCases > 5000 ? 'w-6 h-6' : (activeCases > 500 ? 'w-4 h-4' : 'w-3 h-3');
+                        // All markers are now GLOWING RED
+                        const size = activeCases > 5000 ? 24 : (activeCases > 500 ? 18 : 14);
+                        const glowSize = size + 8;
 
                         const pulseIcon = L.divIcon({
                             className: 'custom-div-icon',
-                            html: `<div class="${colorClass} ${size} rounded-full animate-ping opacity-75 absolute"></div>
-                                   <div class="${colorClass} ${size} rounded-full relative shadow-[0_0_10px_rgba(255,0,0,0.8)] border-2 border-white/20"></div>`,
-                            iconSize: [20, 20],
-                            iconAnchor: [10, 10]
+                            html: `
+                                <div style="position: relative; width: ${glowSize}px; height: ${glowSize}px;">
+                                    <!-- Outer pulsing glow -->
+                                    <div style="
+                                        position: absolute;
+                                        top: 50%; left: 50%;
+                                        transform: translate(-50%, -50%);
+                                        width: ${glowSize}px; height: ${glowSize}px;
+                                        background: radial-gradient(circle, rgba(255,0,0,0.6) 0%, rgba(255,0,0,0) 70%);
+                                        border-radius: 50%;
+                                        animation: pulse-glow 1.5s ease-in-out infinite;
+                                    "></div>
+                                    <!-- Main red dot -->
+                                    <div style="
+                                        position: absolute;
+                                        top: 50%; left: 50%;
+                                        transform: translate(-50%, -50%);
+                                        width: ${size}px; height: ${size}px;
+                                        background: radial-gradient(circle at 30% 30%, #ff4444, #cc0000, #990000);
+                                        border-radius: 50%;
+                                        box-shadow: 0 0 ${size / 2}px rgba(255,0,0,0.8), 0 0 ${size}px rgba(255,0,0,0.5), 0 0 ${size * 1.5}px rgba(255,0,0,0.3);
+                                        border: 2px solid rgba(255,255,255,0.3);
+                                    "></div>
+                                </div>
+                                <style>
+                                    @keyframes pulse-glow {
+                                        0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+                                        50% { transform: translate(-50%, -50%) scale(1.4); opacity: 0.3; }
+                                    }
+                                </style>
+                            `,
+                            iconSize: [glowSize, glowSize],
+                            iconAnchor: [glowSize / 2, glowSize / 2]
                         });
 
                         L.marker(latLng, { icon: pulseIcon })
