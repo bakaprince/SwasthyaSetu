@@ -1,6 +1,6 @@
 /**
  * Modern Interactive SVG India Map
- * Enhanced with grouped disease chart and hospitals popup
+ * With balanced disease chart, dark mode support, and enhanced popup
  */
 
 const IndiaMap = {
@@ -39,22 +39,22 @@ const IndiaMap = {
         "Uttaranchal": 3.9, "West Bengal": 3.8, "Ladakh": 3.0
     },
 
-    // Unique colors for each state
+    // Unique colors for each state (darker for better visibility)
     stateColors: {
-        "Jammu and Kashmir": "#a8d5ba", "Himachal Pradesh": "#ffd6a5", "Punjab": "#fdffb6",
-        "Chandigarh": "#caffbf", "Uttarakhand": "#9bf6ff", "Uttaranchal": "#9bf6ff",
-        "Haryana": "#a0c4ff", "Delhi": "#bdb2ff", "NCT of Delhi": "#bdb2ff",
-        "Rajasthan": "#ffc6ff", "Uttar Pradesh": "#ffadad", "Bihar": "#ffd6a5",
-        "Sikkim": "#caffbf", "Arunachal Pradesh": "#9bf6ff", "Nagaland": "#a0c4ff",
-        "Manipur": "#bdb2ff", "Mizoram": "#ffc6ff", "Tripura": "#ffadad",
-        "Meghalaya": "#fdffb6", "Assam": "#a8d5ba", "West Bengal": "#ffd6a5",
-        "Jharkhand": "#caffbf", "Odisha": "#9bf6ff", "Orissa": "#9bf6ff",
-        "Chhattisgarh": "#a0c4ff", "Madhya Pradesh": "#bdb2ff", "Gujarat": "#ffc6ff",
-        "Daman and Diu": "#ffadad", "Dadra and Nagar Haveli": "#fdffb6",
-        "Maharashtra": "#a8d5ba", "Andhra Pradesh": "#ffd6a5", "Karnataka": "#caffbf",
-        "Goa": "#9bf6ff", "Lakshadweep": "#a0c4ff", "Kerala": "#bdb2ff",
-        "Tamil Nadu": "#ffc6ff", "Puducherry": "#ffadad", "Andaman and Nicobar": "#fdffb6",
-        "Telangana": "#a8d5ba", "Ladakh": "#e8f4f8"
+        "Jammu and Kashmir": "#7ac9a3", "Himachal Pradesh": "#f5b97a", "Punjab": "#e8e895",
+        "Chandigarh": "#a8e6a3", "Uttarakhand": "#7dd3e8", "Uttaranchal": "#7dd3e8",
+        "Haryana": "#85b8f5", "Delhi": "#a899e6", "NCT of Delhi": "#a899e6",
+        "Rajasthan": "#f5a3d9", "Uttar Pradesh": "#f5918c", "Bihar": "#f5b97a",
+        "Sikkim": "#a8e6a3", "Arunachal Pradesh": "#7dd3e8", "Nagaland": "#85b8f5",
+        "Manipur": "#a899e6", "Mizoram": "#f5a3d9", "Tripura": "#f5918c",
+        "Meghalaya": "#e8e895", "Assam": "#7ac9a3", "West Bengal": "#f5b97a",
+        "Jharkhand": "#a8e6a3", "Odisha": "#7dd3e8", "Orissa": "#7dd3e8",
+        "Chhattisgarh": "#85b8f5", "Madhya Pradesh": "#a899e6", "Gujarat": "#f5a3d9",
+        "Daman and Diu": "#f5918c", "Dadra and Nagar Haveli": "#e8e895",
+        "Maharashtra": "#7ac9a3", "Andhra Pradesh": "#f5b97a", "Karnataka": "#a8e6a3",
+        "Goa": "#7dd3e8", "Lakshadweep": "#85b8f5", "Kerala": "#a899e6",
+        "Tamil Nadu": "#f5a3d9", "Puducherry": "#f5918c", "Andaman and Nicobar": "#e8e895",
+        "Telangana": "#7ac9a3", "Ladakh": "#c8dce8"
     },
 
     // State short names
@@ -72,14 +72,16 @@ const IndiaMap = {
         "Uttarakhand": "UK", "Uttaranchal": "UK", "West Bengal": "WB", "Ladakh": "LA"
     },
 
-    // Disease data - per million population rates
+    // Disease data with BALANCED values (active/deceased scaled up relative to recovered)
     diseaseRates: {
-        "COVID-19": { active: 50, recovered: 2500, deceased: 45 },
-        "Dengue": { active: 15, recovered: 800, deceased: 8 },
-        "Malaria": { active: 20, recovered: 600, deceased: 12 },
-        "Typhoid": { active: 10, recovered: 400, deceased: 6 },
-        "Tuberculosis": { active: 80, recovered: 1500, deceased: 35 },
-        "Heart Disease": { active: 200, recovered: 3000, deceased: 180 }
+        "COVID-19": { active: 80, recovered: 400, deceased: 60 },
+        "Dengue": { active: 40, recovered: 150, deceased: 15 },
+        "Malaria": { active: 35, recovered: 120, deceased: 18 },
+        "Typhoid": { active: 25, recovered: 90, deceased: 10 },
+        "Tuberculosis": { active: 100, recovered: 300, deceased: 50 },
+        "Diabetes": { active: 150, recovered: 500, deceased: 80 },
+        "Lung Disease": { active: 70, recovered: 200, deceased: 45 },
+        "Heart Disease": { active: 120, recovered: 350, deceased: 95 }
     },
 
     async init() {
@@ -131,13 +133,19 @@ const IndiaMap = {
                     <span class="material-icons-outlined">close</span>
                 </button>
 
-                <!-- State Visual -->
-                <div class="popout-state-visual">
-                    <svg id="popout-state-svg" class="popout-svg" viewBox="0 0 200 200"></svg>
+                <!-- State Visual with Button Below -->
+                <div class="popout-center-column">
+                    <div class="popout-state-visual">
+                        <svg id="popout-state-svg" class="popout-svg" viewBox="0 0 200 200"></svg>
+                    </div>
                     <div class="state-name-overlay" id="popout-state-name">State Name</div>
+                    <button onclick="IndiaMap.showHospitals()" class="popout-action-btn centered">
+                        <span class="material-icons-outlined">local_hospital</span>
+                        View All Hospitals
+                    </button>
                 </div>
                 
-                <!-- Live Population Box - BIGGER -->
+                <!-- Live Population Box -->
                 <div class="data-connector top-right">
                     <div class="connector-line"></div>
                     <div class="data-box live-population-box large">
@@ -204,20 +212,11 @@ const IndiaMap = {
                         </div>
                     </div>
                 </div>
-                
-                <!-- Footer Button -->
-                <div class="popout-footer">
-                    <button onclick="IndiaMap.showHospitals()" class="popout-action-btn">
-                        <span class="material-icons-outlined">local_hospital</span>
-                        View All Hospitals
-                    </button>
-                </div>
             </div>
         `;
         document.body.appendChild(this.modal);
     },
 
-    // Create hospitals list modal
     createHospitalsModal() {
         this.hospitalsModal = document.createElement('div');
         this.hospitalsModal.id = 'hospitals-list-modal';
@@ -293,7 +292,7 @@ const IndiaMap = {
         const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
         defs.innerHTML = `
             <pattern id="grid-pattern" width="30" height="30" patternUnits="userSpaceOnUse">
-                <circle cx="15" cy="15" r="1" fill="rgba(17,56,65,0.08)"/>
+                <circle cx="15" cy="15" r="1.5" fill="rgba(17,56,65,0.1)"/>
             </pattern>
             <filter id="glow">
                 <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
@@ -324,7 +323,7 @@ const IndiaMap = {
 
             if (!pathData) return;
 
-            const stateColor = this.stateColors[stateName] || '#f0f0f0';
+            const stateColor = this.stateColors[stateName] || '#d0d0d0';
 
             const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             path.setAttribute('d', pathData);
@@ -484,6 +483,10 @@ const IndiaMap = {
         const recoveredData = diseases.map(d => Math.floor(this.diseaseRates[d].recovered * populationMillions * (0.8 + Math.random() * 0.4)));
         const deceasedData = diseases.map(d => Math.floor(this.diseaseRates[d].deceased * populationMillions * (0.8 + Math.random() * 0.4)));
 
+        const isDark = document.documentElement.classList.contains('dark');
+        const textColor = isDark ? '#e2e8f0' : '#374151';
+        const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+
         this.diseaseChart = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -493,19 +496,25 @@ const IndiaMap = {
                         label: 'Active',
                         data: activeData,
                         backgroundColor: '#f97316',
-                        borderRadius: 4
+                        borderRadius: 3,
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.8
                     },
                     {
                         label: 'Recovered',
                         data: recoveredData,
                         backgroundColor: '#22c55e',
-                        borderRadius: 4
+                        borderRadius: 3,
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.8
                     },
                     {
                         label: 'Deceased',
                         data: deceasedData,
                         backgroundColor: '#ef4444',
-                        borderRadius: 4
+                        borderRadius: 3,
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.8
                     }
                 ]
             },
@@ -519,8 +528,9 @@ const IndiaMap = {
                         position: 'top',
                         labels: {
                             boxWidth: 12,
-                            padding: 10,
-                            font: { size: 11 }
+                            padding: 8,
+                            font: { size: 10 },
+                            color: textColor
                         }
                     },
                     tooltip: {
@@ -532,11 +542,12 @@ const IndiaMap = {
                 scales: {
                     x: {
                         stacked: false,
-                        grid: { display: false },
+                        grid: { color: gridColor },
                         ticks: {
-                            font: { size: 10 },
+                            font: { size: 9 },
+                            color: textColor,
                             callback: (val) => {
-                                if (val >= 1000000) return (val / 1000000).toFixed(1) + 'M';
+                                if (val >= 1000000) return (val / 1000000).toFixed(0) + 'M';
                                 if (val >= 1000) return (val / 1000).toFixed(0) + 'K';
                                 return val;
                             }
@@ -545,7 +556,10 @@ const IndiaMap = {
                     y: {
                         stacked: false,
                         grid: { display: false },
-                        ticks: { font: { size: 11, weight: '500' } }
+                        ticks: {
+                            font: { size: 10, weight: '500' },
+                            color: textColor
+                        }
                     }
                 }
             }
@@ -626,14 +640,12 @@ const IndiaMap = {
         return num.toLocaleString();
     },
 
-    // Show hospitals popup
     async showHospitals() {
         if (!this.currentState) return;
 
         document.getElementById('hospitals-title').textContent = `Hospitals in ${this.currentState}`;
         this.hospitalsModal.classList.add('visible');
 
-        // Fetch hospitals
         await this.fetchHospitals(this.currentState);
     },
 
@@ -647,7 +659,6 @@ const IndiaMap = {
         `;
 
         try {
-            // Get state coordinates (approximate center)
             const stateCoords = {
                 "Uttar Pradesh": { lat: 26.8467, lng: 80.9462 },
                 "Maharashtra": { lat: 19.7515, lng: 75.7139 },
@@ -678,7 +689,6 @@ const IndiaMap = {
 
             const coords = stateCoords[stateName] || { lat: 20.5937, lng: 78.9629 };
 
-            // Use Overpass API.to find hospitals
             const query = `
                 [out:json][timeout:25];
                 (

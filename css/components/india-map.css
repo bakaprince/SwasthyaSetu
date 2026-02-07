@@ -1,23 +1,35 @@
 /**
  * Modern Interactive India Map Styles
- * Enhanced with dot pattern background and bigger elements
+ * With full dark mode support
  */
 
-/* Map Container - Full Width with Dot Pattern */
+/* Map Container */
 #india-map {
     background:
-        radial-gradient(circle at 50% 50%, rgba(17, 56, 65, 0.03) 1px, transparent 1px),
+        radial-gradient(circle at 50% 50%, rgba(17, 56, 65, 0.08) 1px, transparent 1px),
         linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%);
-    background-size: 25px 25px, 100% 100%;
+    background-size: 30px 30px, 100% 100%;
     border-radius: 1.5rem;
     overflow: hidden;
     position: relative;
     box-shadow: 0 8px 30px rgba(17, 56, 65, 0.1);
 }
 
+/* Dark Mode Map */
+.dark #india-map {
+    background:
+        radial-gradient(circle at 50% 50%, rgba(134, 239, 172, 0.1) 1px, transparent 1px),
+        linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
 /* SVG Map */
 .india-svg-map {
     filter: drop-shadow(0 4px 25px rgba(17, 56, 65, 0.12));
+}
+
+.dark .india-svg-map {
+    filter: drop-shadow(0 4px 25px rgba(0, 0, 0, 0.3));
 }
 
 /* State Paths */
@@ -28,6 +40,11 @@
     transition: all 0.3s ease;
 }
 
+.dark .state-path {
+    stroke: #334155;
+    stroke-width: 0.8;
+}
+
 .state-path:hover,
 .state-path.hovered {
     stroke: #113841;
@@ -36,12 +53,22 @@
     transform: scale(1.01);
 }
 
+.dark .state-path:hover,
+.dark .state-path.hovered {
+    stroke: #86efac;
+    filter: brightness(1.1) drop-shadow(0 0 20px rgba(134, 239, 172, 0.4));
+}
+
 /* State Labels */
 .state-label {
     font-size: 11px;
     font-weight: 700;
     fill: #113841;
     pointer-events: none;
+}
+
+.dark .state-label {
+    fill: #e2e8f0;
 }
 
 /* ============================================ */
@@ -72,6 +99,10 @@
     backdrop-filter: blur(10px);
 }
 
+.dark .popout-backdrop {
+    background: rgba(0, 0, 0, 0.85);
+}
+
 /* Main Container */
 .popout-container {
     position: relative;
@@ -81,14 +112,21 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-bottom: 90px;
+}
+
+/* Center Column with State, Name, and Button */
+.popout-center-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
 }
 
 /* Central State Visual */
 .popout-state-visual {
     position: relative;
-    width: 340px;
-    height: 340px;
+    width: 300px;
+    height: 300px;
     background: linear-gradient(145deg, #113841 0%, #1d525e 100%);
     border-radius: 2rem;
     display: flex;
@@ -99,6 +137,13 @@
         0 0 0 1px rgba(134, 239, 172, 0.2),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
     animation: popout-enter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.dark .popout-state-visual {
+    background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+    box-shadow:
+        0 30px 60px -15px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(134, 239, 172, 0.3);
 }
 
 @keyframes popout-enter {
@@ -114,8 +159,8 @@
 }
 
 .popout-svg {
-    width: 260px;
-    height: 260px;
+    width: 220px;
+    height: 220px;
     filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.3));
 }
 
@@ -137,10 +182,6 @@
 }
 
 .state-name-overlay {
-    position: absolute;
-    bottom: -55px;
-    left: 50%;
-    transform: translateX(-50%);
     background: white;
     color: #113841;
     padding: 14px 36px;
@@ -149,18 +190,47 @@
     font-size: 1.35rem;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
     white-space: nowrap;
+    margin-top: 20px;
     animation: fade-up 0.5s ease 0.4s both;
+}
+
+.dark .state-name-overlay {
+    background: #1e293b;
+    color: #86efac;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
 
 @keyframes fade-up {
     0% {
         opacity: 0;
-        transform: translateX(-50%) translateY(15px);
+        transform: translateY(15px);
     }
 
     100% {
         opacity: 1;
-        transform: translateX(-50%) translateY(0);
+        transform: translateY(0);
+    }
+}
+
+/* Centered Action Button */
+.popout-action-btn.centered {
+    margin-top: 16px;
+    animation: button-bounce 0.6s ease 0.6s both;
+}
+
+@keyframes button-bounce {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.9);
+    }
+
+    60% {
+        transform: translateY(-5px) scale(1.02);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
     }
 }
 
@@ -175,20 +245,20 @@
 }
 
 .data-connector.top-right {
-    top: 30px;
-    left: calc(50% + 170px);
+    top: 40px;
+    left: calc(50% + 150px);
     animation: connector-appear 0.6s ease 0.5s both;
 }
 
 .data-connector.bottom-right {
-    bottom: 130px;
-    left: calc(50% + 170px);
+    bottom: 80px;
+    left: calc(50% + 150px);
     animation: connector-appear 0.6s ease 0.6s both;
 }
 
 .data-connector.left-side {
     top: 50%;
-    right: calc(50% + 170px);
+    right: calc(50% + 150px);
     transform: translateY(-50%);
     flex-direction: row-reverse;
     animation: connector-appear 0.6s ease 0.7s both;
@@ -261,6 +331,12 @@
     border: 1px solid rgba(17, 56, 65, 0.1);
 }
 
+.dark .data-box {
+    background: #1e293b;
+    border-color: rgba(134, 239, 172, 0.2);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
 /* Live Population Box - LARGE */
 .data-box.large {
     min-width: 280px;
@@ -277,9 +353,17 @@
     gap: 0.5rem;
 }
 
+.dark .data-box-header {
+    color: #94a3b8;
+}
+
 .data-box-header .material-icons-outlined {
     font-size: 20px;
     color: #113841;
+}
+
+.dark .data-box-header .material-icons-outlined {
+    color: #86efac;
 }
 
 .pulse-dot {
@@ -313,6 +397,10 @@
     gap: 0.75rem;
 }
 
+.dark .data-box-value {
+    color: #f1f5f9;
+}
+
 .data-box-value.large {
     font-size: 2.25rem;
     margin-bottom: 0.75rem;
@@ -329,7 +417,11 @@
     margin-top: 0.5rem;
 }
 
-/* Born/Died Grid Layout */
+.dark .data-box-sub {
+    color: #94a3b8;
+}
+
+/* Born/Died Grid */
 .data-box-sub-grid {
     display: flex;
     flex-direction: column;
@@ -345,6 +437,10 @@
     background: #f8fafc;
 }
 
+.dark .stat-row {
+    background: #334155;
+}
+
 .stat-row .material-icons-outlined {
     font-size: 20px;
 }
@@ -356,6 +452,10 @@
     color: #64748b;
 }
 
+.dark .stat-row .stat-label {
+    color: #94a3b8;
+}
+
 .stat-row .stat-number {
     font-size: 1rem;
     font-weight: 700;
@@ -363,6 +463,10 @@
 
 .stat-row.born {
     background: #ecfdf5;
+}
+
+.dark .stat-row.born {
+    background: rgba(34, 197, 94, 0.15);
 }
 
 .stat-row.born .material-icons-outlined,
@@ -374,15 +478,24 @@
     background: #fef2f2;
 }
 
+.dark .stat-row.died {
+    background: rgba(239, 68, 68, 0.15);
+}
+
 .stat-row.died .material-icons-outlined,
 .stat-row.died .stat-number {
     color: #ef4444;
 }
 
-/* Live Population Box */
+/* Population Box */
 .live-population-box {
     background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
     border-color: #86efac;
+}
+
+.dark .live-population-box {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.05) 100%);
+    border-color: rgba(134, 239, 172, 0.3);
 }
 
 /* Hospital Rating Box */
@@ -391,10 +504,15 @@
     border-color: #86efac;
 }
 
+.dark .hospital-rating-box {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(34, 197, 94, 0.03) 100%);
+    border-color: rgba(134, 239, 172, 0.3);
+}
+
 /* Disease Box */
 .disease-box {
-    min-width: 380px;
-    max-width: 420px;
+    min-width: 400px;
+    max-width: 450px;
 }
 
 /* Disease Stats Grid */
@@ -407,11 +525,19 @@
     border-bottom: 1px solid #e2e8f0;
 }
 
+.dark .disease-stats-grid {
+    border-bottom-color: #334155;
+}
+
 .disease-stat {
     text-align: center;
     padding: 0.875rem 0.5rem;
     background: #f8fafc;
     border-radius: 0.75rem;
+}
+
+.dark .disease-stat {
+    background: #334155;
 }
 
 .disease-stat-value {
@@ -430,8 +556,16 @@
     font-weight: 600;
 }
 
+.dark .disease-stat-label {
+    color: #94a3b8;
+}
+
 .disease-stat.active {
     background: #fff7ed;
+}
+
+.dark .disease-stat.active {
+    background: rgba(249, 115, 22, 0.15);
 }
 
 .disease-stat.active .disease-stat-value {
@@ -442,6 +576,10 @@
     background: #f0fdf4;
 }
 
+.dark .disease-stat.recovered {
+    background: rgba(34, 197, 94, 0.15);
+}
+
 .disease-stat.recovered .disease-stat-value {
     color: #22c55e;
 }
@@ -450,12 +588,16 @@
     background: #fef2f2;
 }
 
+.dark .disease-stat.deceased {
+    background: rgba(239, 68, 68, 0.15);
+}
+
 .disease-stat.deceased .disease-stat-value {
     color: #ef4444;
 }
 
 .disease-chart-container {
-    height: 220px;
+    height: 280px;
 }
 
 /* Close Button */
@@ -477,8 +619,11 @@
     z-index: 10;
 }
 
+.dark .popout-close {
+    background: #1e293b;
+}
+
 .popout-close:hover {
-    background: white;
     transform: scale(1.1);
 }
 
@@ -487,43 +632,46 @@
     color: #113841;
 }
 
-/* Footer */
-.popout-footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    padding: 25px;
-    animation: fade-up 0.5s ease 0.8s both;
+.dark .popout-close .material-icons-outlined {
+    color: #e2e8f0;
 }
 
+/* Action Button */
 .popout-action-btn {
     display: flex;
     align-items: center;
     gap: 0.75rem;
     background: #113841;
     color: white;
-    padding: 1.125rem 2.25rem;
+    padding: 1rem 2rem;
     border-radius: 2rem;
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 1rem;
     text-decoration: none;
     border: none;
     cursor: pointer;
     box-shadow: 0 6px 20px rgba(17, 56, 65, 0.4);
-    transition: all 0.2s;
+    transition: all 0.25s;
+}
+
+.dark .popout-action-btn {
+    background: #86efac;
+    color: #113841;
+    box-shadow: 0 6px 20px rgba(134, 239, 172, 0.3);
 }
 
 .popout-action-btn:hover {
-    background: #1d525e;
-    transform: translateY(-4px);
+    transform: translateY(-4px) scale(1.02);
     box-shadow: 0 10px 30px rgba(17, 56, 65, 0.5);
 }
 
+.dark .popout-action-btn:hover {
+    background: #a7f3d0;
+    box-shadow: 0 10px 30px rgba(134, 239, 172, 0.4);
+}
+
 .popout-action-btn .material-icons-outlined {
-    font-size: 24px;
+    font-size: 22px;
 }
 
 /* ============================================ */
@@ -567,6 +715,10 @@
     animation: slide-up 0.3s ease;
 }
 
+.dark .hospitals-content {
+    background: #1e293b;
+}
+
 @keyframes slide-up {
     0% {
         transform: translateY(30px);
@@ -587,11 +739,19 @@
     border-bottom: 1px solid #e2e8f0;
 }
 
+.dark .hospitals-header {
+    border-bottom-color: #334155;
+}
+
 .hospitals-header h2 {
     font-size: 1.25rem;
     font-weight: 700;
     color: #113841;
     margin: 0;
+}
+
+.dark .hospitals-header h2 {
+    color: #f1f5f9;
 }
 
 .hospitals-close {
@@ -607,8 +767,17 @@
     transition: all 0.2s;
 }
 
+.dark .hospitals-close {
+    background: #334155;
+    color: #e2e8f0;
+}
+
 .hospitals-close:hover {
     background: #e2e8f0;
+}
+
+.dark .hospitals-close:hover {
+    background: #475569;
 }
 
 .hospitals-search {
@@ -618,6 +787,11 @@
     padding: 1rem 2rem;
     border-bottom: 1px solid #e2e8f0;
     background: #f8fafc;
+}
+
+.dark .hospitals-search {
+    background: #0f172a;
+    border-bottom-color: #334155;
 }
 
 .hospitals-search .material-icons-outlined {
@@ -630,6 +804,11 @@
     background: transparent;
     font-size: 1rem;
     outline: none;
+    color: #113841;
+}
+
+.dark .hospitals-search input {
+    color: #e2e8f0;
 }
 
 .hospitals-list {
@@ -647,6 +826,10 @@
     color: #64748b;
 }
 
+.dark .loading-hospitals {
+    color: #94a3b8;
+}
+
 .spinner {
     width: 40px;
     height: 40px;
@@ -655,6 +838,11 @@
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin-bottom: 1rem;
+}
+
+.dark .spinner {
+    border-color: #334155;
+    border-top-color: #86efac;
 }
 
 @keyframes spin {
@@ -689,8 +877,16 @@
     transition: all 0.2s;
 }
 
+.dark .hospital-card {
+    background: #334155;
+}
+
 .hospital-card:hover {
     background: #f1f5f9;
+}
+
+.dark .hospital-card:hover {
+    background: #475569;
 }
 
 .hospital-icon {
@@ -704,9 +900,17 @@
     flex-shrink: 0;
 }
 
+.dark .hospital-icon {
+    background: linear-gradient(135deg, #86efac, #22c55e);
+}
+
 .hospital-icon .material-icons-outlined {
     color: white;
     font-size: 24px;
+}
+
+.dark .hospital-icon .material-icons-outlined {
+    color: #113841;
 }
 
 .hospital-info {
@@ -724,11 +928,20 @@
     text-overflow: ellipsis;
 }
 
+.dark .hospital-info h3 {
+    color: #f1f5f9;
+}
+
 .hospital-address,
 .hospital-phone {
     font-size: 0.8rem;
     color: #64748b;
     margin: 0;
+}
+
+.dark .hospital-address,
+.dark .hospital-phone {
+    color: #94a3b8;
 }
 
 .navigate-btn {
@@ -746,8 +959,12 @@
     transition: all 0.2s;
 }
 
+.dark .navigate-btn {
+    background: #86efac;
+    color: #113841;
+}
+
 .navigate-btn:hover {
-    background: #1d525e;
     transform: scale(1.05);
 }
 
@@ -765,9 +982,12 @@
         height: auto;
         min-height: auto;
         padding: 2rem;
-        padding-bottom: 100px;
         max-height: 90vh;
         overflow-y: auto;
+    }
+
+    .popout-center-column {
+        margin-bottom: 2rem;
     }
 
     .data-connector {
@@ -785,14 +1005,13 @@
     }
 
     .popout-state-visual {
-        width: 260px;
-        height: 260px;
-        margin-bottom: 4rem;
+        width: 220px;
+        height: 220px;
     }
 
     .popout-svg {
-        width: 200px;
-        height: 200px;
+        width: 160px;
+        height: 160px;
     }
 
     .disease-box {
