@@ -337,10 +337,10 @@
     width: 3.5rem;
     height: 3.5rem;
     border-radius: 50%;
-    border: 2px solid #e2e8f0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    border: none;
+    background: #113841;
+    color: #86efac;
+    box-shadow: 0 4px 15px rgba(17, 56, 65, 0.4);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -351,7 +351,8 @@
 
 .contact-fab:hover {
     transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    background: #1d525e;
+    box-shadow: 0 6px 20px rgba(17, 56, 65, 0.5);
 }
 
 .contact-fab:active {
@@ -387,8 +388,8 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.75rem 1rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: #113841;
+    color: #86efac;
     font-weight: 600;
     font-size: 0.9rem;
 }
@@ -410,8 +411,8 @@
 }
 
 .contact-option:hover {
-    background: #f0f9ff;
-    color: #2563eb;
+    background: #e6f0c2;
+    color: #113841;
 }
 
 /* Dark mode for contact dropdown */
@@ -426,6 +427,6 @@
 }
 
 .dark .contact-option:hover {
-    background: #374151;
-    color: #60a5fa;
+    background: #113841;
+    color: #86efac;
 }

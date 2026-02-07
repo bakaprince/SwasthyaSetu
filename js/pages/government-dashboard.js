@@ -14,8 +14,7 @@ const GovAnalytics = {
         // Auth check is handled in HTML to avoid race conditions
         // if (!AuthService.isAuthenticated()) { ... }
 
-        // Initialize Components
-        this.initMap();
+        // Initialize Charts (map is handled by IndiaMap component separately)
         this.initCharts();
 
         // Load Data

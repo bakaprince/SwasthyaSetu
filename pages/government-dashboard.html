@@ -18,16 +18,11 @@
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
 
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+
+    <!-- India Map Component CSS -->
+    <link rel="stylesheet" href="../css/components/india-map.css">
 
     <!-- Tailwind Configuration -->
     <script>
@@ -99,32 +94,11 @@
             display: none !important;
         }
 
-        /* LEAFLET MAP - FULLY TRANSPARENT, NO BACKGROUND */
+        /* Modern SVG India Map Container */
         #india-map {
-            background: transparent !important;
-        }
-
-        #india-map .leaflet-container {
-            background: transparent !important;
-        }
-
-        .leaflet-container {
-            background: transparent !important;
-        }
-
-        .leaflet-pane {
-            background: transparent !important;
-        }
-
-        /* Cursor for interactive states */
-        .leaflet-interactive {
-            cursor: pointer !important;
-            transition: all 0.2s ease;
-        }
-
-        /* State hover animation */
-        .leaflet-interactive:hover {
-            filter: drop-shadow(0 0 8px rgba(255, 107, 53, 0.8));
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 1rem;
+            overflow: hidden;
         }
 
         /* State detail panel animation */
@@ -142,11 +116,6 @@
                 transform: translateX(0);
                 opacity: 1;
             }
-        }
-
-        /* Map container - light gray background so India (white) stands out */
-        #india-map {
-            background-color: #e8e8e8 !important;
         }
 
         .leaflet-container {
@@ -383,6 +352,8 @@
     <!-- FIX: Force correct user state to prevent logout loop -->
     <script src="../js/utils/force-login.js"></script>
     <script src="../js/services/auth.js"></script>
+    <!-- New Interactive SVG India Map -->
+    <script src="../js/components/india-map.js"></script>
     <script src="../js/pages/government-dashboard.js"></script>
 
     <script>
