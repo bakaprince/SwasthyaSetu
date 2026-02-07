@@ -247,6 +247,15 @@
             // Filter cancelled appointments
             const cancelled = allAppointments.filter(apt => apt.status === 'cancelled');
 
+            // Debug logging
+            console.log('[Appointments] Total:', allAppointments.length);
+            console.log('[Appointments] Upcoming:', upcoming.length);
+            console.log('[Appointments] Past:', past.length);
+            console.log('[Appointments] Cancelled:', cancelled.length);
+            if (cancelled.length > 0) {
+                console.log('[Appointments] Cancelled details:', cancelled);
+            }
+
             displayAppointmentList('upcoming-appointments', upcoming);
             displayAppointmentList('past-appointments', past);
             displayCancelledAppointments('cancelled-appointments', cancelled);
@@ -273,13 +282,15 @@
                     'Telemedicine': 'video_call'
                 };
 
+                const hasDocs = apt.documents && apt.documents.length > 0;
+
                 return `
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg transition-shadow">
                         <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                             <!-- Appointment Info -->
                             <div class="flex gap-4 flex-1">
                                 <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-secondary to-secondary-light flex items-center justify-center flex-shrink-0">
-                                    <span class="material-icons-outlined text-primary text-3xl">${typeIcons[apt.type]}</span>
+                                    <span class="material-icons-outlined text-primary text-3xl">${typeIcons[apt.type] || 'event'}</span>
                                 </div>
                                 <div class="flex-1">
                                     <div class="flex items-start justify-between mb-2">
@@ -289,8 +300,8 @@
                                             </h3>
                                             <p class="text-sm text-gray-600 dark:text-gray-400">${apt.specialty}</p>
                                         </div>
-                                        <span class="px-3 py-1 ${statusColors[apt.status]} rounded-full text-xs font-bold uppercase">
-                                            ${apt.status}
+                                        <span class="px-3 py-1 ${statusColors[apt.status] || statusColors.pending} rounded-full text-xs font-bold uppercase">
+                                            ${apt.status || 'pending'}
                                         </span>
                                     </div>
 
@@ -304,7 +315,7 @@
                                             ${Helpers.formatDate(apt.date)} at ${apt.time}
                                         </div>
                                         <div class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-                                            <span class="material-icons-outlined text-sm text-gray-400">${typeIcons[apt.type]}</span>
+                                            <span class="material-icons-outlined text-sm text-gray-400">${typeIcons[apt.type] || 'event'}</span>
                                             ${apt.type}
                                         </div>
                                     </div>
@@ -314,6 +325,24 @@
                                             <p class="text-sm text-gray-700 dark:text-gray-300">
                                                 <span class="font-semibold">Reason:</span> ${apt.reason}
                                             </p>
+                                        </div>
+                                    ` : ''}
+
+                                    ${hasDocs ? `
+                                        <div class="mt-4 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                                            <p class="text-sm font-semibold text-purple-700 dark:text-purple-300 mb-2 flex items-center gap-1">
+                                                <span class="material-icons-outlined text-sm">folder</span>
+                                                Documents (${apt.documents.length})
+                                            </p>
+                                            <div class="space-y-1">
+                                                ${apt.documents.map((doc, idx) => `
+                                                    <div class="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-300 cursor-pointer hover:underline" 
+                                                         onclick="openDocument('${doc.url || doc.data || ''}', '${doc.name || 'Document'}')">
+                                                        <span class="material-icons-outlined text-sm">description</span>
+                                                        ${doc.name || 'Document ' + (idx + 1)}
+                                                    </div>
+                                                `).join('')}
+                                            </div>
                                         </div>
                                     ` : ''}
                                 </div>
@@ -335,9 +364,12 @@
                                         Cancel
                                     </button>
                                 ` : apt.status === 'completed' ? `
-                                    <button class="flex-1 bg-secondary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-secondary-light transition-colors">
+                                    ${hasDocs ? `
+                                    <button onclick="openDocument('${apt.documents[0]?.url || apt.documents[0]?.data || ''}', '${apt.documents[0]?.name || 'Document'}')" 
+                                            class="flex-1 bg-secondary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-secondary-light transition-colors">
                                         View Report
                                     </button>
+                                    ` : ''}
                                     <button class="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
                                         Book Again
                                     </button>
@@ -362,6 +394,8 @@
                     'In-person': 'local_hospital',
                     'Telemedicine': 'video_call'
                 };
+
+                const hasDocs = apt.documents && apt.documents.length > 0;
 
                 return `
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-red-200 dark:border-red-800 p-6 opacity-80">
@@ -408,6 +442,24 @@
                                                     <p class="text-sm text-red-600 dark:text-red-300">${apt.cancelReason}</p>
                                                     ${apt.cancelledAt ? `<p class="text-xs text-red-400 mt-2">Cancelled on: ${Helpers.formatDate(apt.cancelledAt)}</p>` : ''}
                                                 </div>
+                                            </div>
+                                        </div>
+                                    ` : ''}
+
+                                    ${hasDocs ? `
+                                        <div class="mt-4 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                                            <p class="text-sm font-semibold text-purple-700 dark:text-purple-300 mb-2 flex items-center gap-1">
+                                                <span class="material-icons-outlined text-sm">folder</span>
+                                                Documents (${apt.documents.length})
+                                            </p>
+                                            <div class="space-y-1">
+                                                ${apt.documents.map((doc, idx) => `
+                                                    <div class="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-300 cursor-pointer hover:underline" 
+                                                         onclick="openDocument('${doc.url || doc.data || ''}', '${doc.name || 'Document'}')">
+                                                        <span class="material-icons-outlined text-sm">description</span>
+                                                        ${doc.name || 'Document ' + (idx + 1)}
+                                                    </div>
+                                                `).join('')}
                                             </div>
                                         </div>
                                     ` : ''}
@@ -460,6 +512,34 @@
                     window.location.href = '../index.html';
                 }, 1000);
             });
+        }
+
+        // Open document in new window
+        function openDocument(docUrl, docName) {
+            if (!docUrl || docUrl === '') {
+                Helpers.showToast('Document not available', 'error');
+                return;
+            }
+
+            if (docUrl.startsWith('data:')) {
+                // For base64 data URLs, open in new window with embedded iframe
+                const newWindow = window.open('', '_blank');
+                if (newWindow) {
+                    newWindow.document.title = docName || 'Document';
+                    newWindow.document.body.style.margin = '0';
+                    newWindow.document.body.innerHTML = `
+                        <iframe src="${docUrl}" 
+                                style="width:100%;height:100vh;border:none;" 
+                                title="${docName}">
+                        </iframe>
+                    `;
+                } else {
+                    Helpers.showToast('Popup blocked. Please allow popups.', 'error');
+                }
+            } else {
+                // Regular URL
+                window.open(docUrl, '_blank');
+            }
         }
     </script>
 
