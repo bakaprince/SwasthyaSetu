@@ -301,10 +301,12 @@ class PatientDetailsModal extends BaseModal {
         return `
             <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
                 ${documents.map((doc, index) => `
-                    <div class="flex items-center gap-3 rounded-lg border border-gray-200 p-3 hover:bg-gray-50 transition-colors">
+                    <div class="doc-item flex items-center gap-3 rounded-lg border border-gray-200 p-3 hover:bg-gray-50 transition-colors cursor-pointer group"
+                         data-doc-url="${doc.url || doc.data || ''}"
+                         data-doc-index="${index}">
                         <span class="material-icons-outlined text-blue-600">description</span>
                         <div class="flex-1 min-w-0">
-                            <p class="font-medium text-gray-900 truncate">${doc.name || 'Document'}</p>
+                            <p class="font-medium text-gray-900 truncate group-hover:text-blue-600">${doc.name || 'Document'}</p>
                             <p class="text-xs text-gray-500">
                                 ${doc.size ? Formatters.formatFileSize(doc.size) + ' • ' : ''}${doc.uploadedAt ? Formatters.formatDate(doc.uploadedAt, 'relative') : 'Just now'}
                             </p>
@@ -345,10 +347,36 @@ class PatientDetailsModal extends BaseModal {
 
         // Delete document button handlers
         bodyElement.querySelectorAll('.delete-doc-btn').forEach(btn => {
-            btn.addEventListener('click', async () => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation(); // Prevent doc item click
                 const docIndex = parseInt(btn.dataset.docIndex);
                 const docId = btn.dataset.docId;
                 await this.handleDeleteDocument(docIndex, docId);
+            });
+        });
+
+        // Document item click handlers - open document
+        bodyElement.querySelectorAll('.doc-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                // Don't open if clicking delete button
+                if (e.target.closest('.delete-doc-btn')) return;
+
+                const docUrl = item.dataset.docUrl;
+                if (docUrl && docUrl !== '') {
+                    // Handle base64 data URLs or regular URLs
+                    if (docUrl.startsWith('data:')) {
+                        // For base64, open in new window
+                        const newWindow = window.open();
+                        if (newWindow) {
+                            newWindow.document.write(`<iframe src="${docUrl}" frameborder="0" style="width:100%;height:100%;border:none;"></iframe>`);
+                        }
+                    } else {
+                        // Regular URL
+                        window.open(docUrl, '_blank');
+                    }
+                } else {
+                    Helpers.showToast('Document preview not available', 'info');
+                }
             });
         });
 

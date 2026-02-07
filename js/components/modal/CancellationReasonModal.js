@@ -18,7 +18,8 @@ class CancellationReasonModal extends BaseModal {
         super('cancellation-reason-modal', 'Cancel Appointment', {
             closeOnOverlayClick: false,
             closeOnEscape: true,
-            size: 'md'
+            size: 'md',
+            zIndex: 100
         });
 
         /** @private */
@@ -98,21 +99,32 @@ class CancellationReasonModal extends BaseModal {
         const footerElement = this.getFooterElement();
         if (!footerElement) return;
 
-        // Back button
-        const backBtn = footerElement.querySelector('#cancel-reason-back-btn');
-        if (backBtn) {
-            backBtn.addEventListener('click', () => {
+        // Close (X) button - explicitly handle in case parent handler isn't working
+        const closeBtn = this.modalElement?.querySelector('.modal-close-btn');
+        if (closeBtn) {
+            closeBtn.onclick = () => {
                 this.close();
                 if (typeof this.onCancel === 'function') {
                     this.onCancel();
                 }
-            });
+            };
+        }
+
+        // Back button
+        const backBtn = footerElement.querySelector('#cancel-reason-back-btn');
+        if (backBtn) {
+            backBtn.onclick = () => {
+                this.close();
+                if (typeof this.onCancel === 'function') {
+                    this.onCancel();
+                }
+            };
         }
 
         // Submit button
         const submitBtn = footerElement.querySelector('#cancel-reason-submit-btn');
         if (submitBtn) {
-            submitBtn.addEventListener('click', () => {
+            submitBtn.onclick = () => {
                 const textarea = document.getElementById('cancel-reason-input');
                 const reason = textarea?.value?.trim();
 
@@ -126,7 +138,7 @@ class CancellationReasonModal extends BaseModal {
                 if (typeof this.onSubmit === 'function') {
                     this.onSubmit(reason);
                 }
-            });
+            };
         }
     }
 }
