@@ -94,10 +94,73 @@ const GovAnalytics = {
             format: 'image/png',
             transparent: true,
             attribution: '© Bhuvan (ISRO) | Survey of India',
-            maxZoom: 8,
+            maxZoom: 10,
             minZoom: 4,
-            opacity: 0.7
+            opacity: 0.5
         }).addTo(this.map);
+
+        // Add glowing border around India
+        this.addIndiaBorder();
+    },
+
+    // Add glowing border effect around India
+    async addIndiaBorder() {
+        try {
+            // Fetch India GeoJSON boundary
+            const response = await fetch('https://raw.githubusercontent.com/geohacker/india/master/country/india_outline.geojson');
+            const indiaGeoJSON = await response.json();
+
+            // Create glowing effect with multiple layers
+            // Outer glow (largest, most transparent)
+            L.geoJSON(indiaGeoJSON, {
+                style: {
+                    color: '#00ff88',
+                    weight: 12,
+                    opacity: 0.15,
+                    fillColor: 'transparent',
+                    fillOpacity: 0
+                }
+            }).addTo(this.map);
+
+            // Middle glow
+            L.geoJSON(indiaGeoJSON, {
+                style: {
+                    color: '#00ff88',
+                    weight: 8,
+                    opacity: 0.25,
+                    fillColor: 'transparent',
+                    fillOpacity: 0
+                }
+            }).addTo(this.map);
+
+            // Inner glow
+            L.geoJSON(indiaGeoJSON, {
+                style: {
+                    color: '#00cc66',
+                    weight: 4,
+                    opacity: 0.5,
+                    fillColor: 'transparent',
+                    fillOpacity: 0
+                }
+            }).addTo(this.map);
+
+            // Main border (solid black with slight transparency)
+            L.geoJSON(indiaGeoJSON, {
+                style: {
+                    color: '#1a1a1a',
+                    weight: 2.5,
+                    opacity: 0.9,
+                    fillColor: 'transparent',
+                    fillOpacity: 0,
+                    dashArray: null
+                }
+            }).addTo(this.map);
+
+            console.log('India border with glow effect added successfully');
+        } catch (error) {
+            console.warn('Could not load India border GeoJSON:', error);
+            // Fallback: Add a simple rectangular indicator
+        }
     },
 
     async loadDiseaseMap() {
