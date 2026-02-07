@@ -264,85 +264,89 @@
             </button>
         </div>
 
-        <!-- Main Layout: Map on LEFT, Charts on RIGHT -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Layout: Disease LEFT, Map CENTER, Ratings RIGHT -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-            <!-- LEFT SIDE: JUST THE MAP - NO BOX -->
-            <div class="lg:col-span-1">
-                <!-- ONLY THE MAP - Transparent background, no tiles -->
-                <div id="india-map" class="w-full" style="height: 700px; background: transparent; cursor: pointer;">
+            <!-- LEFT SIDE: National Disease Outcomes -->
+            <div class="lg:col-span-3">
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700 h-full">
+                    <h3 class="text-base font-bold text-secondary dark:text-white mb-4 flex items-center gap-2">
+                        <span class="material-icons-outlined text-lg">coronavirus</span>
+                        National Disease Outcomes
+                    </h3>
+                    <div class="h-80">
+                        <canvas id="outcomeChart"></canvas>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-2 text-center">Live API + Estimates</p>
                 </div>
             </div>
 
-            <!-- RIGHT SIDE: Analytics Section -->
-            <div class="lg:col-span-2 space-y-8">
+            <!-- CENTER: THE BIG MAP -->
+            <div class="lg:col-span-6">
+                <div id="india-map" class="w-full" style="height: 800px; min-height: 600px;">
+                </div>
+            </div>
 
-                <!-- Charts Section -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Outcome Chart -->
-                    <div
-                        class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 h-96 relative">
-                        <h3 class="text-lg font-bold text-secondary dark:text-white mb-4">National Disease Outcomes
-                            (Live API + Estimates)</h3>
-                        <div class="h-[calc(100%-2rem)] w-full">
-                            <canvas id="outcomeChart"></canvas>
-                        </div>
+            <!-- RIGHT SIDE: Hospital Service Ratings -->
+            <div class="lg:col-span-3">
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700 h-full">
+                    <h3 class="text-base font-bold text-secondary dark:text-white mb-4 flex items-center gap-2">
+                        <span class="material-icons-outlined text-lg">local_hospital</span>
+                        Hospital Service Ratings
+                    </h3>
+                    <div class="h-80">
+                        <canvas id="performanceChart"></canvas>
                     </div>
+                    <p class="text-xs text-gray-400 mt-2 text-center">Avg. ratings by state</p>
+                </div>
+            </div>
 
-                    <!-- Hospital Performance Chart -->
-                    <div
-                        class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 h-96 relative">
-                        <h3 class="text-lg font-bold text-secondary dark:text-white mb-4">Hospital Service Ratings</h3>
-                        <div class="h-[calc(100%-2rem)] w-full">
-                            <canvas id="performanceChart"></canvas>
-                        </div>
+        </div>
+
+        <!-- Real-time Audit Logs -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
+            <h3 class="text-xl font-bold text-secondary dark:text-white font-display mb-8">Audit logs (Interop)</h3>
+
+            <div class="space-y-6">
+                <div class="flex gap-4">
+                    <div class="w-2 h-12 bg-green-500 rounded-full flex-shrink-0"></div>
+                    <div>
+                        <p class="text-sm font-bold text-gray-900 dark:text-white">Record Linkage Success</p>
+                        <p class="text-xs text-gray-500 mt-1">Patient 'Rahul S.' (ABHA id: ....34) successfully
+                            linked from Apollo to AIIMS.</p>
+                        <p class="text-[10px] text-primary font-bold mt-2 uppercase">10:45 AM • SUCCESS</p>
                     </div>
                 </div>
 
-            </div>
-
-            <!-- Real-time Audit Logs -->
-            <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
-                <h3 class="text-xl font-bold text-secondary dark:text-white font-display mb-8">Audit logs (Interop)</h3>
-
-                <div class="space-y-6">
-                    <div class="flex gap-4">
-                        <div class="w-2 h-12 bg-green-500 rounded-full flex-shrink-0"></div>
-                        <div>
-                            <p class="text-sm font-bold text-gray-900 dark:text-white">Record Linkage Success</p>
-                            <p class="text-xs text-gray-500 mt-1">Patient 'Rahul S.' (ABHA id: ....34) successfully
-                                linked from Apollo to AIIMS.</p>
-                            <p class="text-[10px] text-primary font-bold mt-2 uppercase">10:45 AM • SUCCESS</p>
-                        </div>
+                <div class="flex gap-4">
+                    <div class="w-2 h-12 bg-blue-500 rounded-full flex-shrink-0"></div>
+                    <div>
+                        <p class="text-sm font-bold text-gray-900 dark:text-white">Encrypted Request Received</p>
+                        <p class="text-xs text-gray-500 mt-1">Central Drug Repository queried for Vaccination
+                            verification (State: MH).</p>
+                        <p class="text-[10px] text-blue-500 font-bold mt-2 uppercase">10:42 AM • AUTH_VERIFIED</p>
                     </div>
-
-                    <div class="flex gap-4">
-                        <div class="w-2 h-12 bg-blue-500 rounded-full flex-shrink-0"></div>
-                        <div>
-                            <p class="text-sm font-bold text-gray-900 dark:text-white">Encrypted Request Received</p>
-                            <p class="text-xs text-gray-500 mt-1">Central Drug Repository queried for Vaccination
-                                verification (State: MH).</p>
-                            <p class="text-[10px] text-blue-500 font-bold mt-2 uppercase">10:42 AM • AUTH_VERIFIED</p>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-4">
-                        <div class="w-2 h-12 bg-health-orange rounded-full flex-shrink-0"></div>
-                        <div>
-                            <p class="text-sm font-bold text-gray-900 dark:text-white">Protocol Update</p>
-                            <p class="text-xs text-gray-500 mt-1">System policy updated to V3.2 (Enhanced
-                                HIPAA-Compliance Layer).</p>
-                            <p class="text-[10px] text-health-orange font-bold mt-2 uppercase">09:15 AM • SYSTEM_EVENT
-                            </p>
-                        </div>
-                    </div>
-
-                    <button
-                        class="w-full mt-4 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white rounded-xl text-sm font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-                        View Full Activity Logs
-                    </button>
                 </div>
+
+                <div class="flex gap-4">
+                    <div class="w-2 h-12 bg-health-orange rounded-full flex-shrink-0"></div>
+                    <div>
+                        <p class="text-sm font-bold text-gray-900 dark:text-white">Protocol Update</p>
+                        <p class="text-xs text-gray-500 mt-1">System policy updated to V3.2 (Enhanced
+                            HIPAA-Compliance Layer).</p>
+                        <p class="text-[10px] text-health-orange font-bold mt-2 uppercase">09:15 AM • SYSTEM_EVENT
+                        </p>
+                    </div>
+                </div>
+
+                <button
+                    class="w-full mt-4 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white rounded-xl text-sm font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                    View Full Activity Logs
+                </button>
             </div>
+        </div>
         </div>
     </main>
 

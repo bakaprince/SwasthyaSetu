@@ -36,6 +36,39 @@ const IndiaMap = {
         "Uttaranchal": 3.9, "West Bengal": 3.8, "Ladakh": 3.0
     },
 
+    // Unique colors for each state (pastel/soft tones)
+    stateColors: {
+        "Jammu and Kashmir": "#a8d5ba", "Himachal Pradesh": "#ffd6a5", "Punjab": "#fdffb6",
+        "Chandigarh": "#caffbf", "Uttarakhand": "#9bf6ff", "Uttaranchal": "#9bf6ff",
+        "Haryana": "#a0c4ff", "Delhi": "#bdb2ff", "NCT of Delhi": "#bdb2ff",
+        "Rajasthan": "#ffc6ff", "Uttar Pradesh": "#ffadad", "Bihar": "#ffd6a5",
+        "Sikkim": "#caffbf", "Arunachal Pradesh": "#9bf6ff", "Nagaland": "#a0c4ff",
+        "Manipur": "#bdb2ff", "Mizoram": "#ffc6ff", "Tripura": "#ffadad",
+        "Meghalaya": "#fdffb6", "Assam": "#a8d5ba", "West Bengal": "#ffd6a5",
+        "Jharkhand": "#caffbf", "Odisha": "#9bf6ff", "Orissa": "#9bf6ff",
+        "Chhattisgarh": "#a0c4ff", "Madhya Pradesh": "#bdb2ff", "Gujarat": "#ffc6ff",
+        "Daman and Diu": "#ffadad", "Dadra and Nagar Haveli": "#fdffb6",
+        "Maharashtra": "#a8d5ba", "Andhra Pradesh": "#ffd6a5", "Karnataka": "#caffbf",
+        "Goa": "#9bf6ff", "Lakshadweep": "#a0c4ff", "Kerala": "#bdb2ff",
+        "Tamil Nadu": "#ffc6ff", "Puducherry": "#ffadad", "Andaman and Nicobar": "#fdffb6",
+        "Telangana": "#a8d5ba", "Ladakh": "#e8f4f8"
+    },
+
+    // Short names for state labels
+    stateShortNames: {
+        "Andaman and Nicobar": "A&N", "Andhra Pradesh": "AP", "Arunachal Pradesh": "AR",
+        "Assam": "AS", "Bihar": "BR", "Chandigarh": "CH", "Chhattisgarh": "CG",
+        "Dadra and Nagar Haveli": "DNH", "Daman and Diu": "DD", "Delhi": "DL",
+        "NCT of Delhi": "DL", "Goa": "GA", "Gujarat": "GJ", "Haryana": "HR",
+        "Himachal Pradesh": "HP", "Jammu and Kashmir": "JK", "Jharkhand": "JH",
+        "Karnataka": "KA", "Kerala": "KL", "Lakshadweep": "LD", "Madhya Pradesh": "MP",
+        "Maharashtra": "MH", "Manipur": "MN", "Meghalaya": "ML", "Mizoram": "MZ",
+        "Nagaland": "NL", "Odisha": "OD", "Orissa": "OD", "Puducherry": "PY",
+        "Punjab": "PB", "Rajasthan": "RJ", "Sikkim": "SK", "Tamil Nadu": "TN",
+        "Telangana": "TS", "Tripura": "TR", "Uttar Pradesh": "UP",
+        "Uttarakhand": "UK", "Uttaranchal": "UK", "West Bengal": "WB", "Ladakh": "LA"
+    },
+
     // Initialize the map
     async init() {
         console.log('[IndiaMap] Initializing...');
@@ -224,28 +257,60 @@ const IndiaMap = {
         statesGroup.setAttribute('class', 'states-group');
 
         // Render each state
+        const labelGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        labelGroup.setAttribute('class', 'labels-group');
+
         geoJSON.features.forEach(feature => {
             const stateName = feature.properties.NAME_1 || feature.properties.name || feature.properties.ST_NM || 'Unknown';
             const pathData = this.geoToPath(feature.geometry, scaleX, scaleY);
 
             if (!pathData) return;
 
+            // Get state color
+            const stateColor = this.stateColors[stateName] || '#f0f0f0';
+
             const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             path.setAttribute('d', pathData);
             path.setAttribute('class', 'state-path');
             path.setAttribute('data-state', stateName);
             path.setAttribute('data-original-path', pathData);
+            path.setAttribute('data-color', stateColor);
+            path.style.fill = stateColor;
 
             // Mouse events
             path.addEventListener('mouseenter', (e) => this.onStateHover(e, stateName, path));
             path.addEventListener('mousemove', (e) => this.moveTooltip(e));
             path.addEventListener('mouseleave', () => this.onStateLeave(path));
-            path.addEventListener('click', () => this.onStateClick(stateName, pathData));
+            path.addEventListener('click', () => this.onStateClick(stateName, pathData, stateColor));
 
             statesGroup.appendChild(path);
+
+            // Calculate center of state for label
+            const coords = this.getAllCoords(feature.geometry);
+            if (coords.length > 0) {
+                let sumX = 0, sumY = 0;
+                coords.forEach(([lon, lat]) => {
+                    sumX += scaleX(lon);
+                    sumY += scaleY(lat);
+                });
+                const centerX = sumX / coords.length;
+                const centerY = sumY / coords.length;
+
+                // Create label
+                const shortName = this.stateShortNames[stateName] || stateName.substring(0, 2).toUpperCase();
+                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                label.setAttribute('x', centerX);
+                label.setAttribute('y', centerY);
+                label.setAttribute('class', 'state-label');
+                label.setAttribute('text-anchor', 'middle');
+                label.setAttribute('dominant-baseline', 'middle');
+                label.textContent = shortName;
+                labelGroup.appendChild(label);
+            }
         });
 
         svg.appendChild(statesGroup);
+        svg.appendChild(labelGroup);
 
         // Clear container and add SVG
         this.container.innerHTML = '';
@@ -318,7 +383,7 @@ const IndiaMap = {
     },
 
     // Click to show state details
-    onStateClick(stateName, pathData) {
+    onStateClick(stateName, pathData, stateColor) {
         const population = this.statePopulation[stateName] || 50;
         const rating = this.stateHospitalRatings[stateName] || 3.5;
 
@@ -329,8 +394,8 @@ const IndiaMap = {
         document.getElementById('modal-stars').textContent = this.getStars(rating);
         document.getElementById('modal-hospitals-link').href = `hospitals.html?state=${encodeURIComponent(stateName)}`;
 
-        // Render state cutout
-        this.renderStateCutout(pathData);
+        // Render state cutout with its color
+        this.renderStateCutout(pathData, stateColor);
 
         // Start live counter
         this.startLiveCounter(population);
@@ -340,7 +405,7 @@ const IndiaMap = {
     },
 
     // Render state cutout in modal
-    renderStateCutout(pathData) {
+    renderStateCutout(pathData, stateColor = '#113841') {
         const cutoutSvg = document.getElementById('state-cutout-svg');
 
         // Parse path to get bounds
@@ -360,7 +425,7 @@ const IndiaMap = {
 
         cutoutSvg.setAttribute('viewBox', viewBox);
         cutoutSvg.innerHTML = `
-            <path d="${pathData}" fill="#113841" stroke="#86efac" stroke-width="2"/>
+            <path d="${pathData}" fill="${stateColor}" stroke="#113841" stroke-width="2"/>
         `;
     },
 
