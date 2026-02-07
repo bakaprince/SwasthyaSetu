@@ -1,15 +1,14 @@
 /**
  * Modern Interactive India Map Styles
- * Clean, elegant design matching SwasthyaSetu theme
+ * Enhanced with animated popout and connector lines
  */
 
 /* Map Container */
 #india-map {
-    background: transparent;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 1rem;
+    overflow: hidden;
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 /* SVG Map */
@@ -29,11 +28,8 @@
 .state-path.hovered {
     stroke: #113841;
     stroke-width: 1.5;
-    filter: brightness(0.9) drop-shadow(0 0 8px rgba(17, 56, 65, 0.5));
-}
-
-.state-path:active {
-    filter: brightness(0.85);
+    filter: brightness(0.9) drop-shadow(0 0 12px rgba(17, 56, 65, 0.6));
+    transform: scale(1.02);
 }
 
 /* State Labels */
@@ -42,214 +38,244 @@
     font-weight: 700;
     fill: #113841;
     pointer-events: none;
-    text-shadow: 0 0 3px white, 0 0 3px white;
-}
-
-/* Tooltip */
-.india-map-tooltip {
-    font-family: 'DM Sans', sans-serif;
 }
 
 /* ============================================ */
-/* STATE DETAIL MODAL                          */
+/* ANIMATED POPOUT MODAL                       */
 /* ============================================ */
 
-.state-detail-modal {
+.state-popout-modal {
     position: fixed;
     inset: 0;
     z-index: 9999;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
 }
 
-.state-detail-modal.visible {
+.state-popout-modal.visible {
     opacity: 1;
     visibility: visible;
 }
 
-.state-detail-modal .modal-backdrop {
+.popout-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
 }
 
-.state-detail-modal .modal-content {
+/* Main Container */
+.popout-container {
     position: relative;
-    background: white;
-    border-radius: 1.5rem;
-    width: 100%;
-    max-width: 420px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    overflow: hidden;
-    transform: scale(0.9) translateY(20px);
-    transition: transform 0.3s ease;
-}
-
-.state-detail-modal.visible .modal-content {
-    transform: scale(1) translateY(0);
-}
-
-/* Modal Header */
-.state-detail-modal .modal-header {
-    background: linear-gradient(135deg, #113841 0%, #1d525e 100%);
-    color: white;
-    padding: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.state-detail-modal .state-cutout-container {
-    width: 80px;
-    height: 80px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 1rem;
-    padding: 0.5rem;
-    flex-shrink: 0;
-}
-
-.state-detail-modal .state-cutout-container svg {
-    width: 100%;
-    height: 100%;
-}
-
-.state-detail-modal .state-info {
-    flex: 1;
-}
-
-.state-detail-modal .state-info h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0 0 0.25rem 0;
-    font-family: 'Playfair Display', serif;
-}
-
-.state-detail-modal .state-subtitle {
-    font-size: 0.85rem;
-    color: #86efac;
-    margin: 0;
-}
-
-.state-detail-modal .modal-close {
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
+    width: 90%;
+    max-width: 900px;
+    height: 500px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    cursor: pointer;
-    transition: background 0.2s;
 }
 
-.state-detail-modal .modal-close:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-/* Modal Body */
-.state-detail-modal .modal-body {
-    padding: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-/* Stat Cards */
-.state-detail-modal .stat-card {
+/* Central State Visual */
+.popout-state-visual {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    background: linear-gradient(145deg, #113841 0%, #1d525e 100%);
+    border-radius: 1.5rem;
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    border-radius: 1rem;
-    background: #f8fafc;
+    justify-content: center;
+    box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(134, 239, 172, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    animation: popout-enter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    transform-origin: var(--origin-x, 50%) var(--origin-y, 50%);
 }
 
-.state-detail-modal .stat-card>.material-icons-outlined {
-    font-size: 2rem;
+@keyframes popout-enter {
+    0% {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.popout-svg {
+    width: 200px;
+    height: 200px;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+}
+
+.state-cutout-path {
+    animation: path-draw 0.8s ease-out 0.3s both;
+}
+
+@keyframes path-draw {
+    0% {
+        opacity: 0;
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 1000;
+    }
+
+    100% {
+        opacity: 1;
+        stroke-dashoffset: 0;
+    }
+}
+
+.state-name-overlay {
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
     background: white;
-    padding: 0.75rem;
-    border-radius: 0.75rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.state-detail-modal .stat-card.population {
-    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-}
-
-.state-detail-modal .stat-card.population>.material-icons-outlined {
-    color: #2563eb;
-}
-
-.state-detail-modal .stat-card.rating {
-    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-}
-
-.state-detail-modal .stat-card.rating>.material-icons-outlined {
-    color: #16a34a;
-}
-
-.state-detail-modal .stat-content {
-    flex: 1;
-}
-
-.state-detail-modal .stat-label {
-    display: block;
-    font-size: 0.8rem;
-    color: #64748b;
-    margin-bottom: 0.25rem;
-}
-
-.state-detail-modal .stat-value {
-    font-size: 1.5rem;
+    color: #113841;
+    padding: 8px 24px;
+    border-radius: 2rem;
     font-weight: 700;
-    color: #1e293b;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    white-space: nowrap;
+    animation: fade-up 0.5s ease 0.4s both;
 }
 
-.state-detail-modal .rating-display {
+@keyframes fade-up {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* ============================================ */
+/* DATA CONNECTORS & BOXES                     */
+/* ============================================ */
+
+.data-connector {
+    position: absolute;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
 }
 
-.state-detail-modal .stars {
-    color: #fbbf24;
-    font-size: 1rem;
+.data-connector.top-right {
+    top: 50px;
+    left: calc(50% + 140px);
+    animation: connector-appear 0.6s ease 0.5s both;
 }
 
-/* Live Stats Card */
-.state-detail-modal .stat-card.live-stats {
-    background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%);
-    flex-direction: column;
-    align-items: stretch;
+.data-connector.bottom-right {
+    bottom: 80px;
+    left: calc(50% + 140px);
+    animation: connector-appear 0.6s ease 0.6s both;
 }
 
-.state-detail-modal .live-indicator {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #16a34a;
-    margin-bottom: 0.75rem;
+.data-connector.left-side {
+    top: 50%;
+    right: calc(50% + 140px);
+    transform: translateY(-50%);
+    flex-direction: row-reverse;
+    animation: connector-appear 0.6s ease 0.7s both;
 }
 
-.state-detail-modal .live-indicator .pulse {
+@keyframes connector-appear {
+    0% {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.data-connector.left-side {
+    animation-name: connector-appear-left;
+}
+
+@keyframes connector-appear-left {
+    0% {
+        opacity: 0;
+        transform: translateY(-50%) translateX(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(-50%) translateX(0);
+    }
+}
+
+.connector-line {
+    width: 40px;
+    height: 2px;
+    background: linear-gradient(90deg, #86efac, rgba(134, 239, 172, 0.3));
+    position: relative;
+}
+
+.connector-line::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
     width: 8px;
     height: 8px;
-    background: #16a34a;
+    background: #86efac;
     border-radius: 50%;
-    animation: pulse 1.5s infinite;
+    box-shadow: 0 0 10px #86efac;
 }
 
-@keyframes pulse {
+.data-connector.left-side .connector-line {
+    background: linear-gradient(-90deg, #86efac, rgba(134, 239, 172, 0.3));
+}
+
+.data-connector.left-side .connector-line::before {
+    left: auto;
+    right: 0;
+}
+
+/* Data Boxes */
+.data-box {
+    background: white;
+    border-radius: 1rem;
+    padding: 1rem 1.25rem;
+    min-width: 180px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(17, 56, 65, 0.1);
+}
+
+.data-box-header {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background: #22c55e;
+    border-radius: 50%;
+    animation: pulse-live 1.5s infinite;
+}
+
+@keyframes pulse-live {
 
     0%,
     100% {
@@ -259,114 +285,156 @@
 
     50% {
         opacity: 0.5;
-        transform: scale(1.2);
+        transform: scale(1.3);
     }
 }
 
-.state-detail-modal .live-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
-}
-
-.state-detail-modal .live-item {
-    background: white;
-    border-radius: 0.75rem;
-    padding: 0.75rem;
-    text-align: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.state-detail-modal .live-value {
-    display: block;
-    font-size: 1.1rem;
+.data-box-value {
+    font-size: 1.5rem;
     font-weight: 700;
-    color: #16a34a;
-}
-
-.state-detail-modal .live-value.deaths {
-    color: #dc2626;
-}
-
-.state-detail-modal .live-value.alive {
-    color: #2563eb;
-}
-
-.state-detail-modal .live-label {
-    display: block;
-    font-size: 0.7rem;
-    color: #64748b;
-    margin-top: 0.25rem;
-}
-
-/* Modal Footer */
-.state-detail-modal .modal-footer {
-    padding: 1rem 1.25rem 1.25rem;
+    color: #113841;
     display: flex;
-    gap: 0.75rem;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.state-detail-modal .btn-primary {
-    flex: 1;
+.data-box-value .stars {
+    font-size: 0.9rem;
+    color: #fbbf24;
+}
+
+.data-box-sub {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 0.25rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.data-box-sub .born {
+    color: #22c55e;
+}
+
+.data-box-sub .died {
+    color: #ef4444;
+}
+
+/* Live Population Box */
+.live-population-box {
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    border-color: #86efac;
+}
+
+/* Hospital Rating Box */
+.hospital-rating-box {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border-color: #86efac;
+}
+
+/* Disease Box */
+.disease-box {
+    min-width: 250px;
+    max-width: 280px;
+}
+
+.disease-chart-container {
+    height: 180px;
+    margin-top: 0.5rem;
+}
+
+/* Close Button */
+.popout-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+.popout-close:hover {
+    background: white;
+    transform: scale(1.1);
+}
+
+.popout-close .material-icons-outlined {
+    font-size: 24px;
+    color: #113841;
+}
+
+/* Action Button */
+.popout-action-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
     gap: 0.5rem;
     background: #113841;
     color: white;
-    padding: 0.875rem 1rem;
-    border-radius: 0.75rem;
+    padding: 0.875rem 1.5rem;
+    border-radius: 2rem;
     font-weight: 600;
     text-decoration: none;
+    box-shadow: 0 4px 15px rgba(17, 56, 65, 0.4);
     transition: all 0.2s;
+    animation: fade-up 0.5s ease 0.8s both;
 }
 
-.state-detail-modal .btn-primary:hover {
+.popout-action-btn:hover {
     background: #1d525e;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(17, 56, 65, 0.3);
+    transform: translateX(-50%) translateY(-3px);
+    box-shadow: 0 8px 25px rgba(17, 56, 65, 0.5);
 }
 
-.state-detail-modal .btn-secondary {
-    flex: 1;
-    background: #f1f5f9;
-    color: #475569;
-    padding: 0.875rem 1rem;
-    border: none;
-    border-radius: 0.75rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
+/* Tooltip */
+.india-map-tooltip {
+    font-family: 'DM Sans', sans-serif;
 }
 
-.state-detail-modal .btn-secondary:hover {
-    background: #e2e8f0;
-}
+/* ============================================ */
+/* RESPONSIVE                                  */
+/* ============================================ */
 
-/* Dark Mode */
-.dark .state-detail-modal .modal-content {
-    background: #1f2937;
-}
+@media (max-width: 900px) {
+    .popout-container {
+        flex-direction: column;
+        height: auto;
+        padding: 2rem;
+    }
 
-.dark .state-detail-modal .stat-card {
-    background: #374151;
-}
+    .data-connector {
+        position: relative !important;
+        top: auto !important;
+        bottom: auto !important;
+        left: auto !important;
+        right: auto !important;
+        transform: none !important;
+        margin: 1rem 0;
+    }
 
-.dark .state-detail-modal .stat-label {
-    color: #9ca3af;
-}
+    .connector-line {
+        display: none;
+    }
 
-.dark .state-detail-modal .stat-value {
-    color: #f3f4f6;
-}
+    .popout-state-visual {
+        width: 200px;
+        height: 200px;
+        margin-bottom: 3rem;
+    }
 
-.dark .state-path {
-    fill: #1f2937;
-    stroke: #4b5563;
-}
-
-.dark .state-path:hover,
-.dark .state-path.hovered {
-    fill: #113841;
-    stroke: #86efac;
+    .popout-svg {
+        width: 140px;
+        height: 140px;
+    }
 }
