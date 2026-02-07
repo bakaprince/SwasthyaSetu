@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link rel="icon" type="image/png" href="../assets/icons/favicon.png" />
+    <title>Hospital Connectivity - Government Portal</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet" />
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#86efac",
+                        secondary: "#113841",
+                        "secondary-light": "#1d525e",
+                        "background-dark": "#0d2b32",
+                        "gov-gold": "#ffd700",
+                    },
+                    fontFamily: {
+                        display: ["Playfair Display", "serif"],
+                        sans: ["DM Sans", "sans-serif"],
+                    },
+                },
+            },
+        };
+    </script>
+
+    <style>
+        .nav-link {
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #86efac;
+        }
+
+        .nav-link.active {
+            color: #86efac;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #86efac;
+        }
+
+        .hero-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2386efac' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4v-4H4v4H0v2h4v4h2v-4h4v-2H6zM36 4v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .status-badge {
+            animation: pulse-soft 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-soft {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 dark:bg-background-dark font-sans antialiased">
+
+    <!-- Top Navigation -->
+    <nav class="bg-secondary dark:bg-secondary text-white border-b border-white/10">
+        <!-- Top Bar -->
+        <div class="px-8 py-4 flex items-center justify-between border-b border-white/10">
+            <a href="../index.html" class="flex items-center gap-3">
+                <img src="../assets/images/logo.png" alt="SwasthyaSetu Logo" class="h-8 w-auto">
+                <div class="flex flex-col">
+                    <span class="text-xs font-bold text-gov-gold tracking-widest uppercase">MoHFW Interop Portal</span>
+                    <span class="text-xs text-primary font-bold">GOVERNMENT</span>
+                </div>
+            </a>
+
+            <div class="flex items-center gap-4">
+                <div class="relative hidden lg:block">
+                    <input type="text" placeholder="Search hospital ID, name, state..."
+                        class="w-80 pl-10 pr-4 py-2 bg-secondary-light border border-white/20 rounded-lg text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <span class="material-icons-outlined absolute left-3 top-2.5 text-gray-400 text-sm">search</span>
+                </div>
+                <div class="flex items-center gap-3 ml-4 pl-4 border-l border-white/20">
+                    <img src="https://ui-avatars.com/api/?name=Gov+Admin&background=ffd700&color=113841" alt="User"
+                        class="w-8 h-8 rounded-full border border-gov-gold">
+                    <div>
+                        <p class="text-sm font-semibold" id="admin-name">Ministry Admin</p>
+                        <p class="text-xs text-gov-gold" id="admin-dept">National Health Authority</p>
+                    </div>
+                </div>
+                <button id="logout-btn"
+                    class="ml-4 px-4 py-2 bg-red-500/80 hover:bg-red-600 text-white rounded-lg text-sm font-semibold transition-colors">
+                    Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="px-8 py-0 flex items-center gap-8">
+            <a href="government-dashboard.html"
+                class="nav-link flex items-center gap-2 px-4 py-4 text-sm font-medium text-gray-300">
+                <span class="material-icons-outlined text-lg">insights</span>
+                National Dashboard
+            </a>
+            <a href="#" class="nav-link active flex items-center gap-2 px-4 py-4 text-sm font-medium">
+                <span class="material-icons-outlined text-lg">domain</span>
+                Hospital Connectivity
+            </a>
+            <a href="government-logs.html"
+                class="nav-link flex items-center gap-2 px-4 py-4 text-sm font-medium text-gray-300">
+                <span class="material-icons-outlined text-lg">sync_alt</span>
+                Data Exchange Logs
+            </a>
+            <a href="government-compliance.html"
+                class="nav-link flex items-center gap-2 px-4 py-4 text-sm font-medium text-gray-300">
+                <span class="material-icons-outlined text-lg">policy</span>
+                Compliance Monitor
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="p-8 hero-pattern min-h-screen">
+
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-secondary dark:text-white mb-1 font-display">Hospital Connectivity Status
+            </h1>
+            <p class="text-gray-600 dark:text-gray-400">Monitor real-time connectivity and integration status of all
+                registered healthcare facilities</p>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="material-icons-outlined text-4xl text-green-500">check_circle</span>
+                    <span
+                        class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-xs font-bold">ACTIVE</span>
+                </div>
+                <h3 class="text-3xl font-bold text-secondary dark:text-white mb-1">2,847</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Connected Hospitals</p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="material-icons-outlined text-4xl text-yellow-500">warning</span>
+                    <span
+                        class="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded-full text-xs font-bold">PENDING</span>
+                </div>
+                <h3 class="text-3xl font-bold text-secondary dark:text-white mb-1">142</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Integration Pending</p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="material-icons-outlined text-4xl text-red-500">error</span>
+                    <span
+                        class="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-full text-xs font-bold">OFFLINE</span>
+                </div>
+                <h3 class="text-3xl font-bold text-secondary dark:text-white mb-1">23</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Connection Issues</p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="material-icons-outlined text-4xl text-blue-500">sync</span>
+                    <span
+                        class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-bold">LIVE</span>
+                </div>
+                <h3 class="text-3xl font-bold text-secondary dark:text-white mb-1">98.7%</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Uptime (30 days)</p>
+            </div>
+        </div>
+
+        <!-- Filters and Actions -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 mb-8">
+            <div class="flex flex-wrap items-center gap-4">
+                <select
+                    class="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-primary">
+                    <option>All States</option>
+                    <option>Maharashtra</option>
+                    <option>Delhi</option>
+                    <option>Karnataka</option>
+                    <option>Tamil Nadu</option>
+                </select>
+
+                <select
+                    class="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-primary">
+                    <option>All Status</option>
+                    <option>Connected</option>
+                    <option>Pending</option>
+                    <option>Offline</option>
+                </select>
+
+                <select
+                    class="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-primary">
+                    <option>All Types</option>
+                    <option>Government</option>
+                    <option>Private</option>
+                    <option>Trust</option>
+                </select>
+
+                <button
+                    class="ml-auto px-6 py-2 bg-secondary hover:bg-secondary-light text-white rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
+                    <span class="material-icons-outlined text-sm">download</span>
+                    Export Report
+                </button>
+            </div>
+        </div>
+
+        <!-- Hospital List -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+                        <tr>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                Hospital</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                Location</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                Type</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                Status</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                Last Sync</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                Uptime</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center">
+                                        <span class="material-icons-outlined text-secondary">local_hospital</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-900 dark:text-white">AIIMS Delhi</p>
+                                        <p class="text-xs text-gray-500">ID: HOSP-001</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">Delhi, DL</td>
+                            <td class="px-6 py-4">
+                                <span
+                                    class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-semibold">Government</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 bg-green-500 rounded-full status-badge"></span>
+                                    <span
+                                        class="text-sm font-semibold text-green-600 dark:text-green-400">Connected</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">2 mins ago</td>
+                            <td class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">99.8%</td>
+                            <td class="px-6 py-4">
+                                <button class="text-secondary hover:text-secondary-light">
+                                    <span class="material-icons-outlined">visibility</span>
+                                </button>
+                            </td>
+                        </tr>
+
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center">
+                                        <span class="material-icons-outlined text-secondary">local_hospital</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-900 dark:text-white">Apollo Hospitals</p>
+                                        <p class="text-xs text-gray-500">ID: HOSP-045</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">Mumbai, MH</td>
+                            <td class="px-6 py-4">
+                                <span
+                                    class="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-xs font-semibold">Private</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 bg-green-500 rounded-full status-badge"></span>
+                                    <span
+                                        class="text-sm font-semibold text-green-600 dark:text-green-400">Connected</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">5 mins ago</td>
+                            <td class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">98.5%</td>
+                            <td class="px-6 py-4">
+                                <button class="text-secondary hover:text-secondary-light">
+                                    <span class="material-icons-outlined">visibility</span>
+                                </button>
+                            </td>
+                        </tr>
+
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center">
+                                        <span class="material-icons-outlined text-secondary">local_hospital</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-900 dark:text-white">Fortis Healthcare</p>
+                                        <p class="text-xs text-gray-500">ID: HOSP-089</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">Bangalore, KA</td>
+                            <td class="px-6 py-4">
+                                <span
+                                    class="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-xs font-semibold">Private</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 bg-yellow-500 rounded-full status-badge"></span>
+                                    <span
+                                        class="text-sm font-semibold text-yellow-600 dark:text-yellow-400">Pending</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">2 hours ago</td>
+                            <td class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">95.2%</td>
+                            <td class="px-6 py-4">
+                                <button class="text-secondary hover:text-secondary-light">
+                                    <span class="material-icons-outlined">visibility</span>
+                                </button>
+                            </td>
+                        </tr>
+
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center">
+                                        <span class="material-icons-outlined text-secondary">local_hospital</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-900 dark:text-white">Max Super Specialty</p>
+                                        <p class="text-xs text-gray-500">ID: HOSP-112</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">Delhi, DL</td>
+                            <td class="px-6 py-4">
+                                <span
+                                    class="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-xs font-semibold">Private</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 bg-red-500 rounded-full status-badge"></span>
+                                    <span class="text-sm font-semibold text-red-600 dark:text-red-400">Offline</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">1 day ago</td>
+                            <td class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">87.3%</td>
+                            <td class="px-6 py-4">
+                                <button class="text-secondary hover:text-secondary-light">
+                                    <span class="material-icons-outlined">visibility</span>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div
+                class="px-6 py-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                <p class="text-sm text-gray-600 dark:text-gray-400">Showing 1-10 of 3,012 hospitals</p>
+                <div class="flex gap-2">
+                    <button
+                        class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Previous</button>
+                    <button
+                        class="px-4 py-2 bg-secondary text-white rounded-lg text-sm font-semibold hover:bg-secondary-light transition-colors">Next</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JavaScript -->
+    <script src="../js/config/app-config.js"></script>
+    <script src="../js/utils/helpers.js"></script>
+    <script src="../js/utils/force-login.js"></script>
+    <script src="../js/services/auth.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize auth service
+            AuthService.init();
+
+            // Check authentication
+            const user = AuthService.getCurrentUser();
+            if (!AuthService.isAuthenticated()) {
+                window.location.href = '../index.html';
+                return;
+            }
+
+            // Fill user details
+            const adminName = document.getElementById('admin-name');
+            const adminDept = document.getElementById('admin-dept');
+
+            if (user) {
+                adminName.textContent = user.name || 'Ministry Admin';
+                if (user.department) adminDept.textContent = user.department;
+            }
+
+            // Logout handler
+            document.getElementById('logout-btn').addEventListener('click', async () => {
+                await AuthService.logout();
+                Helpers.showToast('Securely logged out', 'success');
+                setTimeout(() => {
+                    window.location.href = '../index.html';
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+
+</html>
