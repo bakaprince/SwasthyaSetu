@@ -177,6 +177,17 @@ const IndiaMap = {
         this.modal.querySelector('.popout-close').addEventListener('click', () => this.closeModal());
         this.modal.querySelector('.popout-backdrop').addEventListener('click', () => this.closeModal());
 
+        // Data Box Toggle Logic
+        const dataBoxes = this.modal.querySelectorAll('.data-box');
+        dataBoxes.forEach(box => {
+            box.addEventListener('click', () => {
+                // Remove active from all
+                dataBoxes.forEach(b => b.classList.remove('active'));
+                // Add to clicked
+                box.classList.add('active');
+            });
+        });
+
         this.hospitalsModal.querySelector('.hospitals-close').addEventListener('click', () => {
             this.hospitalsModal.classList.remove('visible');
         });
@@ -447,6 +458,12 @@ const IndiaMap = {
 
         document.getElementById('modal-born').textContent = Math.floor(Math.random() * 500);
         document.getElementById('modal-died').textContent = Math.floor(Math.random() * 200);
+
+        // Reset Active State (Default: Total Population)
+        const dataBoxes = this.modal.querySelectorAll('.data-box');
+        dataBoxes.forEach(b => b.classList.remove('active'));
+        // Set first box (Population) as active by default
+        if (dataBoxes[0]) dataBoxes[0].classList.add('active');
 
         // Start Charts
         this.renderDiseaseChart();
