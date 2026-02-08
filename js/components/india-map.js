@@ -52,15 +52,10 @@ const IndiaMap = {
         "west bengal": "#ec4899"
     },
 
-    // Manual Path Overrides in Latitude/Longitude
-    // Using Lon/Lat ensures they scale and align perfectly with dynamic GeoJSON features
-    manualPaths: {
-        "jammu and kashmir": [
-            [73.5, 37.1], [74.8, 37.3], [75.6, 37.1], [76.5, 36.8], [77.2, 36.9], [78.1, 36.4],
-            [79.2, 35.8], [80.3, 35.5], [79.8, 34.2], [79.1, 33.1], [78.4, 32.5], [77.5, 32.7],
-            [76.3, 32.1], [74.5, 32.2], [73.8, 33.5], [73.5, 34.8], [73.5, 37.1]
-        ]
-    },
+
+    // Manual Path Overrides removed - all states now use GeoJSON geometry
+    // This ensures consistent projection and proper MultiPolygon support
+    manualPaths: {},
 
     init() {
         this.container = document.getElementById('india-map');
@@ -250,23 +245,10 @@ const IndiaMap = {
             const rawName = feature.properties.NAME_1 || feature.properties.ST_NM || feature.properties.name || "Unknown";
             const normalizedName = this.normalizeName(rawName);
 
-            // DETACHED FRAGMENT FIX: Skip "Ladakh" if it exists as a separate feature
-            // since our manual J&K override already covers the full crown.
-            if (normalizedName === "ladakh") return;
-
             const color = this.getColor(normalizedName);
-            let pathData = "";
 
-            // Check for Manual Override (now expected as Lon/Lat array)
-            const manualCoords = this.manualPaths[normalizedName];
-            if (manualCoords && Array.isArray(manualCoords)) {
-                pathData = manualCoords.map((coord, i) => {
-                    const p = project(coord[0], coord[1]);
-                    return `${i === 0 ? 'M' : 'L'}${p.x.toFixed(2)},${p.y.toFixed(2)}`;
-                }).join(' ') + 'Z';
-            } else {
-                pathData = this.generatePathData(feature.geometry, project);
-            }
+            // Generate path data from GeoJSON geometry
+            const pathData = this.generatePathData(feature.geometry, project);
 
             if (!pathData || pathData.length < 10) return; // Skip broken geometries
 
@@ -292,7 +274,7 @@ const IndiaMap = {
         this.container.appendChild(svg);
     },
 
-    // Calculate Bounding Box of GeoJSON and Manual Overrides
+    // Calculate Bounding Box from GeoJSON FeatureCollection
     getBounds(geoJSON) {
         let minLon = Infinity, minLat = Infinity, maxLon = -Infinity, maxLat = -Infinity;
 
@@ -301,6 +283,9 @@ const IndiaMap = {
             ring.forEach(coord => {
                 if (!Array.isArray(coord) || coord.length < 2) return;
                 const [lon, lat] = coord;
+                if (typeof lon !== 'number' || typeof lat !== 'number') return;
+                if (isNaN(lon) || isNaN(lat)) return;
+
                 if (lon < minLon) minLon = lon;
                 if (lat < minLat) minLat = lat;
                 if (lon > maxLon) maxLon = lon;
@@ -308,10 +293,11 @@ const IndiaMap = {
             });
         };
 
-        // Process GeoJSON features
+        // Process all GeoJSON features to find bounds
         geoJSON.features.forEach(feature => {
             if (!feature.geometry) return;
             const geom = feature.geometry;
+
             if (geom.type === 'Polygon') {
                 geom.coordinates.forEach(ring => processRing(ring));
             } else if (geom.type === 'MultiPolygon') {
@@ -321,43 +307,65 @@ const IndiaMap = {
             }
         });
 
-        // Process Manual Overrides (Include their coordinates in bounds)
-        Object.values(this.manualPaths).forEach(coords => {
-            if (Array.isArray(coords)) processRing(coords);
-        });
-
-        // Safety fallback
-        if (minLon === Infinity) return { minLon: 68, minLat: 6, maxLon: 98, maxLat: 38 };
+        // Safety fallback for India's approximate bounds
+        if (minLon === Infinity || maxLon === -Infinity || minLat === Infinity || maxLat === -Infinity) {
+            return { minLon: 68, minLat: 6, maxLon: 98, maxLat: 38 };
+        }
 
         return { minLon, minLat, maxLon, maxLat };
     },
 
-    // Convert Geometry to SVG Path String with Artifact Filtering
+    // Convert Geometry to SVG Path String with proper MultiPolygon support
     generatePathData(geometry, project) {
-        const processRing = (ring) => {
-            // ARTIFACT FILTER: Remove rings with fewer than 3 points (lines/points) or effectively zero area
-            // This removes "detached fragments" often found in low-quality GeoJSON conversions
-            if (!ring || ring.length < 3) return '';
+        if (!geometry || !geometry.type) return '';
 
-            return ring.map((coord, i) => {
+        const processRing = (ring) => {
+            // Filter out invalid rings: must have at least 3 coordinates
+            // and coordinates must be valid numbers
+            if (!Array.isArray(ring) || ring.length < 3) return '';
+
+            // Validate that coordinates are valid
+            const validCoords = ring.filter(coord =>
+                Array.isArray(coord) &&
+                coord.length >= 2 &&
+                typeof coord[0] === 'number' &&
+                typeof coord[1] === 'number' &&
+                !isNaN(coord[0]) &&
+                !isNaN(coord[1])
+            );
+
+            if (validCoords.length < 3) return '';
+
+            // Project all coordinates and build path
+            const pathCommands = validCoords.map((coord, i) => {
                 const p = project(coord[0], coord[1]);
                 return `${i === 0 ? 'M' : 'L'}${p.x.toFixed(2)},${p.y.toFixed(2)}`;
-            }).join(' ') + 'Z';
+            });
+
+            return pathCommands.join(' ') + 'Z';
         };
 
         let paths = [];
 
         if (geometry.type === 'Polygon') {
-            paths = geometry.coordinates.map(processRing);
+            // Process all rings in the polygon (exterior + holes)
+            geometry.coordinates.forEach(ring => {
+                const ringPath = processRing(ring);
+                if (ringPath) paths.push(ringPath);
+            });
         } else if (geometry.type === 'MultiPolygon') {
-            // Properly flatten MultiPolygons
+            // Process each polygon in the MultiPolygon
             geometry.coordinates.forEach(polygon => {
-                const polyPaths = polygon.map(processRing);
-                paths.push(...polyPaths);
+                // Each polygon can have multiple rings (exterior + holes)
+                polygon.forEach(ring => {
+                    const ringPath = processRing(ring);
+                    if (ringPath) paths.push(ringPath);
+                });
             });
         }
 
-        // Join valid paths, filtering out empty strings from artifacts
+        // Join all valid paths into a single SVG path string
+        // This creates one continuous path that can include multiple disconnected regions
         return paths.filter(p => p.length > 5).join(' ');
     },
 
