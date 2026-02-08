@@ -520,45 +520,45 @@ const IndiaMap = {
 
         // Animate Numbers
         this.animateNumber('modal-population', liveStats.population);
-        
+
         // Use Fixed Review Score
         const reviewScore = (data.reviewScore || 4.2).toFixed(1);
         document.getElementById('modal-live-users').innerText = `${reviewScore}/5`;
-        
+
         // Populate stats for animation but hide them (since we moved to chart only top)
         // OR reuse the stats boxes for top 3 diseases? 
         // User requested chart updates. Let's update the text above the chart.
         const topDiseases = Object.keys(data.diseases);
-        
+
         // Update stats breakdown boxes (repurposed for top 3 counts? 
         // No, the HTML structure has 'active', 'malaria', 'covid'. 
         // Let's dynamically update the labels and values based on the specific top 3 diseases of that state.
-        
+
         const statBoxes = document.querySelectorAll('.disease-stat');
-        if(statBoxes.length >= 3) {
-             const d1 = topDiseases[0] || "Dengue";
-             const d2 = topDiseases[1] || "Malaria";
-             const d3 = topDiseases[2] || "Flu";
-             
-             // Update Labels
-             statBoxes[0].querySelector('.disease-stat-label').textContent = d1;
-             statBoxes[1].querySelector('.disease-stat-label').textContent = d2;
-             statBoxes[2].querySelector('.disease-stat-label').textContent = d3;
+        if (statBoxes.length >= 3) {
+            const d1 = topDiseases[0] || "Dengue";
+            const d2 = topDiseases[1] || "Malaria";
+            const d3 = topDiseases[2] || "Flu";
 
-             // Calculate Counts relative to population (mock logic)
-             const scale = liveStats.population / 10000; 
-             const v1 = Math.floor((data.diseases[d1] / 100) * scale * 0.8);
-             const v2 = Math.floor((data.diseases[d2] / 100) * scale * 0.8);
-             const v3 = Math.floor((data.diseases[d3] / 100) * scale * 0.8);
+            // Update Labels
+            statBoxes[0].querySelector('.disease-stat-label').textContent = d1;
+            statBoxes[1].querySelector('.disease-stat-label').textContent = d2;
+            statBoxes[2].querySelector('.disease-stat-label').textContent = d3;
 
-             statBoxes[0].querySelector('.disease-stat-value').textContent = "0"; // Reset for anim
-             this.animateNumberElement(statBoxes[0].querySelector('.disease-stat-value'), v1);
+            // Calculate Counts relative to population (mock logic)
+            const scale = liveStats.population / 10000;
+            const v1 = Math.floor((data.diseases[d1] / 100) * scale * 0.8);
+            const v2 = Math.floor((data.diseases[d2] / 100) * scale * 0.8);
+            const v3 = Math.floor((data.diseases[d3] / 100) * scale * 0.8);
 
-             statBoxes[1].querySelector('.disease-stat-value').textContent = "0";
-             this.animateNumberElement(statBoxes[1].querySelector('.disease-stat-value'), v2);
-             
-             statBoxes[2].querySelector('.disease-stat-value').textContent = "0";
-             this.animateNumberElement(statBoxes[2].querySelector('.disease-stat-value'), v3);
+            statBoxes[0].querySelector('.disease-stat-value').textContent = "0"; // Reset for anim
+            this.animateNumberElement(statBoxes[0].querySelector('.disease-stat-value'), v1);
+
+            statBoxes[1].querySelector('.disease-stat-value').textContent = "0";
+            this.animateNumberElement(statBoxes[1].querySelector('.disease-stat-value'), v2);
+
+            statBoxes[2].querySelector('.disease-stat-value').textContent = "0";
+            this.animateNumberElement(statBoxes[2].querySelector('.disease-stat-value'), v3);
         }
 
         document.getElementById('modal-born').textContent = liveStats.born;
@@ -570,8 +570,8 @@ const IndiaMap = {
         // Set first box (Population) as active by default
         if (dataBoxes[0]) dataBoxes[0].classList.add('active');
 
-        // Start Charts
-        this.renderDiseaseChart();
+        // Start Charts with state-specific disease data
+        this.renderDiseaseChart(data.diseases);
     },
 
     closeModal() {
@@ -619,6 +619,27 @@ const IndiaMap = {
 
     animateNumber(id, finalValue) {
         const el = document.getElementById(id);
+        if (!el) return;
+        const duration = 1500;
+        const start = 0;
+        const end = Math.floor(finalValue);
+        const startTime = performance.now();
+
+        const update = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const ease = 1 - Math.pow(1 - progress, 3); // Cubic ease out
+
+            el.textContent = Math.floor(start + (end - start) * ease).toLocaleString();
+
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            }
+        };
+        requestAnimationFrame(update);
+    },
+
+    animateNumberElement(el, finalValue) {
         if (!el) return;
         const duration = 1500;
         const start = 0;
