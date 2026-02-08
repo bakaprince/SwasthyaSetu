@@ -23,53 +23,7 @@
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
 }
 
-/* SVG Map */
-.india-svg-map {
-    filter: drop-shadow(0 4px 25px rgba(17, 56, 65, 0.12));
-}
-
-.dark .india-svg-map {
-    filter: drop-shadow(0 4px 25px rgba(0, 0, 0, 0.3));
-}
-
-/* State Paths */
-.state-path {
-    stroke: #113841;
-    stroke-width: 1;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.dark .state-path {
-    stroke: #334155;
-    stroke-width: 0.8;
-}
-
-.state-path:hover,
-.state-path.hovered {
-    stroke: #113841;
-    stroke-width: 2;
-    filter: brightness(0.92) drop-shadow(0 0 15px rgba(17, 56, 65, 0.5));
-    transform: scale(1.01);
-}
-
-.dark .state-path:hover,
-.dark .state-path.hovered {
-    stroke: #86efac;
-    filter: brightness(1.1) drop-shadow(0 0 20px rgba(134, 239, 172, 0.4));
-}
-
-/* State Labels */
-.state-label {
-    font-size: 11px;
-    font-weight: 700;
-    fill: #113841;
-    pointer-events: none;
-}
-
-.dark .state-label {
-    fill: #e2e8f0;
-}
+/* SVG Map Styles Removed (Replaced by ECharts) */
 
 /* ============================================ */
 /* ANIMATED POPOUT MODAL                       */
