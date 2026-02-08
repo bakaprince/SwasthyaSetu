@@ -18,23 +18,25 @@ const AdminConnectivity = {
     },
 
     loadMockData() {
-        // Mock Nearby Hospitals
+        // Mock Nearby Hospitals (Delhi Specific)
         this.state.nearbyHospitals = [
-            { id: 101, name: "City General Hospital", distance: "2.5 km", beds: { icu: 2, gen: 15 }, oxygen: "Stable", blood: { "O+": "High", "A-": "Low" }, lat: 28.6139, lng: 77.2090 },
-            { id: 102, name: "St. Mary's Trauma Center", distance: "4.1 km", beds: { icu: 0, gen: 4 }, oxygen: "Critical", blood: { "O+": "Low", "AB+": "None" }, lat: 28.6200, lng: 77.2100 },
-            { id: 103, name: "Max Super Speciality", distance: "6.8 km", beds: { icu: 8, gen: 45 }, oxygen: "Stable", blood: { "O+": "High", "A-": "High" }, lat: 28.6300, lng: 77.2200 },
+            { id: 101, name: "Safdarjung Hospital", distance: "2.5 km", type: "Government", beds: { icu: 12, gen: 45 }, oxygen: "Stable", blood: { "O+": "High", "A-": "Low" }, connectivity: 98, online: true },
+            { id: 102, name: "Max Super Speciality, Saket", distance: "8.2 km", type: "Private", beds: { icu: 5, gen: 12 }, oxygen: "Stable", blood: { "O+": "Low", "AB+": "None" }, connectivity: 95, online: true },
+            { id: 103, name: "Indraprastha Apollo", distance: "12.5 km", type: "Private", beds: { icu: 18, gen: 60 }, oxygen: "High", blood: { "O+": "High", "A-": "High" }, connectivity: 92, online: true },
+            { id: 104, name: "Sir Ganga Ram Hospital", distance: "14.1 km", type: "Private", beds: { icu: 0, gen: 8 }, oxygen: "Critical", blood: { "Any": "Critical" }, connectivity: 88, online: false },
+            { id: 105, name: "RML Hospital", distance: "6.5 km", type: "Government", beds: { icu: 4, gen: 20 }, oxygen: "Stable", blood: { "B+": "High" }, connectivity: 90, online: true },
         ];
 
         // Mock Active Requests
         this.state.activeRequests = [
-            { id: 'REQ-8821', type: 'blood', urgency: 'critical', details: "2 Units O-Negative for urgent surgery", from: "St. Mary's Trauma Center", to: "active_broadcast", status: "pending", time: "10 mins ago" },
-            { id: 'REQ-8820', type: 'bed', urgency: 'high', details: "ICU Bed with Ventilator transfer", from: "You", to: "City General Hospital", status: "accepted", time: "25 mins ago" },
+            { id: 'REQ-8821', type: 'blood', urgency: 'critical', details: "2 Units O-Negative for urgent surgery", from: "Safdarjung Hospital", to: "active_broadcast", status: "pending", time: "10 mins ago" },
+            { id: 'REQ-8820', type: 'bed', urgency: 'high', details: "ICU Bed with Ventilator transfer", from: "You", to: "Max Saket", status: "accepted", time: "25 mins ago" },
         ];
 
         // Mock Logs
         this.state.transferLogs = [
-            { id: 'LOG-102', action: "Received", item: "5 Oxygen Cylinders", from: "Max Super Speciality", time: "2 hours ago", status: "completed" },
-            { id: 'LOG-101', action: "Sent", item: "Cardiologist Dr. Sharma", to: "St. Mary's Trauma Center", time: "Yesterday", status: "completed" },
+            { id: 'LOG-102', action: "Received", item: "5 Oxygen Cylinders", from: "Indraprastha Apollo", time: "2 hours ago", status: "completed" },
+            { id: 'LOG-101', action: "Sent", item: "Cardiologist Dr. Sharma", to: "Safdarjung Hospital", time: "Yesterday", status: "completed" },
         ];
     },
 
@@ -45,6 +47,7 @@ const AdminConnectivity = {
     },
 
     renderActiveRequests() {
+        // ... (Existing code for active requests, ensure names match new data if needed, but logic is generic)
         const container = document.getElementById('active-requests-container');
         if (!container) return;
 
@@ -109,22 +112,49 @@ const AdminConnectivity = {
         if (!container) return;
 
         container.innerHTML = this.state.nearbyHospitals.map(hosp => `
-            <div class="p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-white dark:hover:bg-gray-700 cursor-pointer transition-colors group">
-                <div class="flex justify-between items-start">
-                    <h4 class="font-bold text-sm text-secondary dark:text-white group-hover:text-primary transition-colors">${hosp.name}</h4>
-                    <span class="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">${hosp.distance}</span>
-                </div>
+            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 shadow-sm hover:shadow-md transition-all flex flex-col gap-4">
                 
-                <div class="mt-3 grid grid-cols-2 gap-2">
-                    <div class="text-xs bg-blue-50 dark:bg-blue-900/20 p-1.5 rounded border border-blue-100 dark:border-blue-800">
-                        <div class="text-gray-500 mb-0.5 text-[10px]">ICU Beds</div>
-                        <div class="font-bold text-blue-700 dark:text-blue-300">${hosp.beds.icu} <span class="text-gray-400 font-normal">/ ${hosp.beds.icu + 2}</span></div>
+                <!-- Header -->
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <h4 class="font-bold text-lg text-secondary dark:text-white">${hosp.name}</h4>
+                            ${hosp.online ?
+                '<span class="flex h-2 w-2 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span></span>' :
+                '<span class="h-2 w-2 rounded-full bg-gray-400"></span>'}
+                        </div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                            <span class="material-icons-outlined text-[14px]">near_me</span> ${hosp.distance} • ${hosp.type}
+                        </p>
                     </div>
-                    <div class="text-xs bg-${hosp.oxygen === 'Critical' ? 'red' : 'green'}-50 dark:bg-green-900/20 p-1.5 rounded border border-${hosp.oxygen === 'Critical' ? 'red' : 'green'}-100">
-                        <div class="text-gray-500 mb-0.5 text-[10px]">Oxygen</div>
-                        <div class="font-bold text-${hosp.oxygen === 'Critical' ? 'red' : 'green'}-700">${hosp.oxygen}</div>
+                    <div class="text-right">
+                         <div class="text-xs font-bold ${hosp.connectivity > 90 ? 'text-green-600' : 'text-yellow-600'}">${hosp.connectivity}%</div>
+                         <div class="text-[10px] text-gray-400">Connectivity</div>
                     </div>
                 </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-blue-50 dark:bg-blue-900/10 p-3 rounded-lg border border-blue-100 dark:border-blue-800">
+                        <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">ICU Beds</div>
+                        <div class="font-bold text-blue-700 dark:text-blue-300 text-lg">${hosp.beds.icu} <span class="text-xs font-normal text-gray-400">/ ${hosp.beds.icu + 5}</span></div>
+                    </div>
+                    <div class="bg-${hosp.oxygen === 'Critical' ? 'red' : 'green'}-50 dark:bg-green-900/10 p-3 rounded-lg border border-${hosp.oxygen === 'Critical' ? 'red' : 'green'}-100">
+                        <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">Oxygen</div>
+                        <div class="font-bold text-${hosp.oxygen === 'Critical' ? 'red' : 'green'}-700 dark:text-green-300 text-lg">${hosp.oxygen}</div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="grid grid-cols-2 gap-3 mt-auto">
+                    <button onclick="AdminConnectivity.openRequestModal()" class="w-full py-2 bg-secondary hover:bg-secondary-light text-white text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-1">
+                        <span class="material-icons-outlined text-[16px]">swap_horiz</span> Exchange
+                    </button>
+                    <button class="w-full py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 text-gray-700 dark:text-gray-200 text-xs font-bold rounded-lg transition-colors">
+                        More Info
+                    </button>
+                </div>
+
             </div>
         `).join('');
     },
