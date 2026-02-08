@@ -478,8 +478,7 @@
 
 .data-box-header {
     font-size: 0.9rem;
-    color: #113841;
-    /* Dark text for visibility */
+    color: #64748b;
     font-weight: 600;
     margin-bottom: 0.75rem;
     display: flex;
@@ -525,8 +524,8 @@
 .data-box-value {
     font-size: 1.75rem;
     font-weight: 700;
-    color: #113841;
-    /* FORCE DARK for visibility on light bg */
+    color: #ffffff;
+    /* FORCE WHITE for all cards */
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -548,8 +547,7 @@
 
 .data-box-sub {
     font-size: 0.85rem;
-    color: #113841;
-    /* Dark text */
+    color: #64748b;
     margin-top: 0.5rem;
 }
 
