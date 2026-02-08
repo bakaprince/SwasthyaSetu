@@ -501,8 +501,8 @@ function updateSeasonalHealthUI(data) {
             }
         }
 
-        // Add prediction disclaimer if it's a prediction
-        if (health.dengue.isPrediction) {
+        // Add prediction disclaimer if it's a generic prediction (not a regional alert)
+        if (health.dengue.isPrediction && !health.dengue.isRegionalAlert) {
             addPredictionDisclaimer('dengue');
         }
     }
