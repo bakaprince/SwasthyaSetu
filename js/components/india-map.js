@@ -23,7 +23,9 @@ const IndiaMap = {
         "Madhya Pradesh": "#60a5fa", "Gujarat": "#fb923c", "Maharashtra": "#818cf8",
         "Andhra Pradesh": "#34d399", "Telangana": "#f472b6", "Karnataka": "#22d3ee",
         "Goa": "#facc15", "Kerala": "#f87171", "Tamil Nadu": "#a3e635",
-        "Delhi": "#ef4444", "Puducherry": "#8b5cf6"
+        "Delhi": "#ef4444", "Puducherry": "#8b5cf6",
+        "Andaman and Nicobar": "#2dd4bf", "Chandigarh": "#f472b6",
+        "Dadra and Nagar Haveli and Daman and Diu": "#fbbf24", "Lakshadweep": "#38bdf8"
     },
 
     // State Population Data (Projected)
