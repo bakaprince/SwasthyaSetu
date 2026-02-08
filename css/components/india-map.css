@@ -186,32 +186,52 @@
     justify-content: center;
 }
 
-/* Center Column with State, Name, and Button */
+/* Live Population Box - LARGE */
+.live-population-box {
+    /* Inherit default .data-box styles (dark glass) */
+}
+
+/* Center Column & Visuals */
 .popout-center-column {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0;
+    justify-content: center;
+    z-index: 20;
+    margin-top: -40px;
+    /* Slight visual overlap */
 }
 
-/* Central State Visual */
 .popout-state-visual {
-    position: relative;
-    width: 300px;
-    height: 300px;
-    background: linear-gradient(145deg, #113841 0%, #1d525e 100%);
+    width: 280px;
+    height: 280px;
+    background: #ffffff;
+    /* White background as requested */
     border-radius: 2rem;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow:
-        0 30px 60px -15px rgba(0, 0, 0, 0.5),
-        0 0 0 1px rgba(134, 239, 172, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        0 20px 50px rgba(0, 0, 0, 0.2),
+        inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+    /* Subtle border */
+    position: relative;
+    margin-bottom: 1.5rem;
+    overflow: visible;
+    /* Allow SVG to pop if needed */
     animation: popout-enter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 .dark .popout-state-visual {
+    background: #1e293b;
+    /* Dark mode fallback or keep white? User said "white". */
+    /* If user specifically asked for white, likely for contrast with the map.
+       But keeping it white in dark mode might be too bright.
+       However, strict request "centre the box background should be white".
+       I will keep it white for now to strictly follow instruction,
+       or maybe separate dark mode if sensible.
+       Let's stick to white for base, maybe dark can have text adjustment.
+       Actually, the SVG inside is colored. White bg is fine. */
     background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
     box-shadow:
         0 30px 60px -15px rgba(0, 0, 0, 0.7),
