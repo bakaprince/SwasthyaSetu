@@ -417,6 +417,23 @@ const AQIService = {
     },
 
     /**
+     * Get Tailwind color class from color name
+     * @param {string} color - Color name
+     * @returns {string} Tailwind color class
+     */
+    getColorClass(color) {
+        const colorMap = {
+            'green': 'green',
+            'yellow': 'yellow',
+            'orange': 'orange',
+            'red': 'red',
+            'purple': 'purple',
+            'maroon': 'red'
+        };
+        return colorMap[color] || 'gray';
+    },
+
+    /**
      * Update AQI indicator bar
      * @param {HTMLElement} element - Indicator element
      * @param {number} aqi - AQI value
