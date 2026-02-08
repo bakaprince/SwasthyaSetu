@@ -164,7 +164,7 @@
 
     <!-- JavaScript -->
     <script src="../js/config/app-config.js"></script>
-    <script src="../js/utils/helpers.js"></script>
+    <script src="../js/utils/app-utils.js"></script>
     <script src="../js/services/api.js"></script>
     <script src="../js/services/auth.js"></script>
     <script src="../js/components/navigation.js"></script>
@@ -336,7 +336,7 @@
                                             </p>
                                             <div class="space-y-1">
                                                 ${apt.documents.map((doc, idx) => `
-                                                    <div class="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-300 cursor-pointer hover:underline" 
+                                                    <div class="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-300 cursor-pointer hover:underline"
                                                          onclick="openDocument('${doc.url || doc.data || ''}', '${doc.name || 'Document'}')">
                                                         <span class="material-icons-outlined text-sm">description</span>
                                                         ${doc.name || 'Document ' + (idx + 1)}
@@ -365,7 +365,7 @@
                                     </button>
                                 ` : apt.status === 'completed' ? `
                                     ${hasDocs ? `
-                                    <button onclick="openDocument('${apt.documents[0]?.url || apt.documents[0]?.data || ''}', '${apt.documents[0]?.name || 'Document'}')" 
+                                    <button onclick="openDocument('${apt.documents[0]?.url || apt.documents[0]?.data || ''}', '${apt.documents[0]?.name || 'Document'}')"
                                             class="flex-1 bg-secondary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-secondary-light transition-colors">
                                         View Report
                                     </button>
@@ -454,7 +454,7 @@
                                             </p>
                                             <div class="space-y-1">
                                                 ${apt.documents.map((doc, idx) => `
-                                                    <div class="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-300 cursor-pointer hover:underline" 
+                                                    <div class="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-300 cursor-pointer hover:underline"
                                                          onclick="openDocument('${doc.url || doc.data || ''}', '${doc.name || 'Document'}')">
                                                         <span class="material-icons-outlined text-sm">description</span>
                                                         ${doc.name || 'Document ' + (idx + 1)}
@@ -528,8 +528,8 @@
                     newWindow.document.title = docName || 'Document';
                     newWindow.document.body.style.margin = '0';
                     newWindow.document.body.innerHTML = `
-                        <iframe src="${docUrl}" 
-                                style="width:100%;height:100vh;border:none;" 
+                        <iframe src="${docUrl}"
+                                style="width:100%;height:100vh;border:none;"
                                 title="${docName}">
                         </iframe>
                     `;
