@@ -85,7 +85,7 @@ const IndiaMap = {
         try {
             // Fetch GeoJSON with full J&K boundaries (PoK + Aksai Chin)
             // Using a reliable source for full India map
-            const response = await fetch('https://raw.githubusercontent.com/Subahoni/india-geojson/master/india_states.geojson');
+            const response = await fetch('../js/data/india_states.geojson');
             if (!response.ok) throw new Error("Failed to load map data");
 
             const geoJSON = await response.json();
