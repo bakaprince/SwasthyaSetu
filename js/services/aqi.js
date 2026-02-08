@@ -213,11 +213,17 @@ const AQIService = {
         let city = 'Your Location';
         if (LocationService && LocationService.hasLocation()) {
             const location = LocationService.getLocation();
-            if (location && location.city) {
-                city = location.city;
-                // Add state if available
-                if (location.state) {
-                    city += `, ${location.state}`;
+            if (location) {
+                // If city is available and not "Unknown", use it
+                if (location.city && location.city !== 'Unknown') {
+                    city = location.city;
+                    // Add state if available
+                    if (location.state && location.state !== 'Unknown') {
+                        city += `, ${location.state}`;
+                    }
+                } else if (location.state && location.state !== 'Unknown') {
+                    // If city is Unknown but state is available, show only state
+                    city = location.state;
                 }
             }
         } else if (data.city?.name) {
@@ -253,11 +259,17 @@ const AQIService = {
         let city = 'Your Location';
         if (LocationService && LocationService.hasLocation()) {
             const location = LocationService.getLocation();
-            if (location && location.city) {
-                city = location.city;
-                // Add state if available
-                if (location.state) {
-                    city += `, ${location.state}`;
+            if (location) {
+                // If city is available and not "Unknown", use it
+                if (location.city && location.city !== 'Unknown') {
+                    city = location.city;
+                    // Add state if available
+                    if (location.state && location.state !== 'Unknown') {
+                        city += `, ${location.state}`;
+                    }
+                } else if (location.state && location.state !== 'Unknown') {
+                    // If city is Unknown but state is available, show only state
+                    city = location.state;
                 }
             }
         } else if (data.location) {
