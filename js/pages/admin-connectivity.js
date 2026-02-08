@@ -164,11 +164,110 @@ const AdminConnectivity = {
     openRequestModal() {
         const modal = document.getElementById('request-modal');
         modal.classList.remove('hidden');
+        // Reset state
+        this.selectResourceType(null);
     },
 
     closeRequestModal() {
         const modal = document.getElementById('request-modal');
         modal.classList.add('hidden');
+    },
+
+    selectResourceType(type) {
+        // Visual Reset
+        document.querySelectorAll('.resource-btn').forEach(btn => {
+            btn.classList.remove('ring-2', 'ring-offset-2', 'ring-primary', 'bg-primary/10', 'bg-red-50', 'bg-blue-50', 'bg-purple-50');
+            btn.classList.add('border-gray-200');
+        });
+
+        const input = document.getElementById('input-resourceType');
+        input.value = type || '';
+
+        const container = document.getElementById('dynamic-fields');
+        container.innerHTML = '';
+        container.classList.add('hidden');
+
+        if (!type) {
+            return;
+        }
+
+        // Active State
+        const activeBtn = document.getElementById(`btn-${type}`);
+        if (activeBtn) {
+            activeBtn.classList.remove('border-gray-200');
+            activeBtn.classList.add('ring-2', 'ring-offset-2', 'ring-primary');
+            // Add specific bg tint based on type
+            if (type === 'oxygen') activeBtn.classList.add('bg-primary/10');
+            if (type === 'blood') activeBtn.classList.add('bg-red-50');
+            if (type === 'medicine') activeBtn.classList.add('bg-blue-50');
+            if (type === 'staff') activeBtn.classList.add('bg-purple-50');
+        }
+
+        container.classList.remove('hidden');
+
+        // Dynamic Field Generation
+        let fieldsHTML = '';
+        if (type === 'oxygen') {
+            fieldsHTML = `
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Cylinders (Type D)</label>
+                        <input type="number" name="cylinders" placeholder="Count" class="w-full rounded-lg border-gray-300 focus:ring-primary focus:border-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Liquid Oxygen (L)</label>
+                        <input type="number" name="liquid" placeholder="Volume" class="w-full rounded-lg border-gray-300 focus:ring-primary focus:border-primary">
+                    </div>
+                </div>`;
+        } else if (type === 'blood') {
+            fieldsHTML = `
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Blood Group</label>
+                        <select name="bloodGroup" class="w-full rounded-lg border-gray-300 focus:ring-primary focus:border-primary">
+                            <option value="A+">A+</option><option value="A-">A-</option>
+                            <option value="B+">B+</option><option value="B-">B-</option>
+                            <option value="O+">O+</option><option value="O-">O-</option>
+                            <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Units Needed</label>
+                        <input type="number" name="units" placeholder="Units" class="w-full rounded-lg border-gray-300 focus:ring-primary focus:border-primary">
+                    </div>
+                </div>`;
+        } else if (type === 'medicine') {
+            fieldsHTML = `
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Drug Name</label>
+                        <input type="text" name="drugName" placeholder="e.g. Remdesivir" class="w-full rounded-lg border-gray-300 focus:ring-primary focus:border-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Quantity</label>
+                        <input type="number" name="quantity" placeholder="Count/Vials" class="w-full rounded-lg border-gray-300 focus:ring-primary focus:border-primary">
+                    </div>
+                </div>`;
+        } else if (type === 'staff') {
+            fieldsHTML = `
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Specialization</label>
+                        <select name="specialization" class="w-full rounded-lg border-gray-300 focus:ring-primary focus:border-primary">
+                            <option value="icu_nurse">ICU Nurse</option>
+                            <option value="anesthesiologist">Anesthesiologist</option>
+                            <option value="surgeon">Surgeon</option>
+                            <option value="paramedic">Paramedic</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Count</label>
+                        <input type="number" name="count" placeholder="Number of staff" class="w-full rounded-lg border-gray-300 focus:ring-primary focus:border-primary">
+                    </div>
+                </div>`;
+        }
+
+        container.innerHTML = fieldsHTML;
     },
 
     submitRequest() {
@@ -177,21 +276,33 @@ const AdminConnectivity = {
         const data = Object.fromEntries(formData.entries());
 
         // Validate
-        if (!data.details) {
-            Helpers.showToast("Please provide details for the request.", "error");
+        if (!data.resourceType) {
+            Helpers.showToast("Please select a resource type.", "error");
             return;
         }
 
-        Helpers.showToast("Broadcasted request to network!", "success");
+        if (!data.comments) {
+            Helpers.showToast("Please provide details/comments for the request.", "error");
+            return;
+        }
+
+        Helpers.showToast(`Request for ${data.resourceType.toUpperCase()} broadcasted to network!`, "success");
+
+        // Construct Detail String based on dynamic fields
+        let det = data.comments;
+        if (data.resourceType === 'oxygen') det = `Oxygen: ${data.cylinders || 0} Cyl, ${data.liquid || 0} L. ${det}`;
+        if (data.resourceType === 'blood') det = `Blood: ${data.units} units of ${data.bloodGroup}. ${det}`;
+        if (data.resourceType === 'medicine') det = `Medicine: ${data.quantity}x ${data.drugName}. ${det}`;
+        if (data.resourceType === 'staff') det = `Staff: ${data.count}x ${data.specialization}. ${det}`;
 
         // Add to active requests (Simulated)
         this.state.activeRequests.unshift({
             id: 'REQ-' + Math.floor(Math.random() * 10000),
             type: data.resourceType,
-            urgency: data.urgency,
-            details: data.details,
+            urgency: 'high', // Default for now
+            details: det,
             from: "You",
-            to: "active_broadcast",
+            to: "Network Broadcast",
             status: "pending",
             time: "Just now"
         });
@@ -199,6 +310,7 @@ const AdminConnectivity = {
         this.renderActiveRequests();
         this.closeRequestModal();
         form.reset();
+        this.selectResourceType(null);
     }
 };
 

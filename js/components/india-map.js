@@ -12,44 +12,82 @@ const IndiaMap = {
     activeState: null, // Track currently active/locked state
 
     // Detailed State Colors
+    // Detailed State Colors and Realistic Metadata (2024 Estimates + Rates)
+    stateData: {
+        "andaman and nicobar": { color: "#06b6d4", population: 403000, growthRate: 0.006, birthRate: 11.5, deathRate: 6.2, reviewScore: 4.2, diseases: { "Dengue": 40, "Malaria": 30, "Flu": 10, "Typhoid": 15, "Videos": 5 } },
+        "andhra pradesh": { color: "#3b82f6", population: 53156000, growthRate: 0.009, birthRate: 15.7, deathRate: 6.8, reviewScore: 4.5, diseases: { "Viral Fever": 30, "Typhoid": 25, "Dengue": 20, "Diabetes": 15, "Hypertension": 10 } },
+        "arunachal pradesh": { color: "#10b981", population: 1562000, growthRate: 0.021, birthRate: 18.0, deathRate: 6.5, reviewScore: 3.8, diseases: { "Malaria": 40, "Flu": 25, "TB": 15, "Skin Inf.": 10, "Other": 10 } },
+        "assam": { color: "#8b5cf6", population: 35713000, growthRate: 0.013, birthRate: 20.8, deathRate: 6.4, reviewScore: 3.9, diseases: { "Malaria": 35, "J. Enceph.": 20, "Flu": 20, "TB": 15, "Cholera": 10 } },
+        "bihar": { color: "#f59e0b", population: 126756000, growthRate: 0.023, birthRate: 25.4, deathRate: 5.6, reviewScore: 3.6, diseases: { "Typhoid": 30, "Malaria": 25, "Kala-azar": 15, "TB": 15, "Cholera": 15 } },
+        "chandigarh": { color: "#ec4899", population: 1231000, growthRate: 0.019, birthRate: 13.0, deathRate: 4.1, reviewScore: 4.7, diseases: { "Dengue": 30, "Hypertension": 25, "Diabetes": 20, "Flu": 15, "Other": 10 } },
+        "chhattisgarh": { color: "#6366f1", population: 30180000, growthRate: 0.016, birthRate: 22.0, deathRate: 7.3, reviewScore: 3.8, diseases: { "Malaria": 40, "Sickle Cell": 20, "TB": 15, "Typhoid": 15, "Flu": 10 } },
+        "dadra and nagar haveli": { color: "#14b8a6", population: 615000, growthRate: 0.035, birthRate: 22.8, deathRate: 4.0, reviewScore: 4.0, diseases: { "Flu": 35, "Skin Inf.": 25, "Malaria": 15, "TB": 15, "Other": 10 } },
+        "delhi": { color: "#ef4444", population: 33807000, growthRate: 0.026, birthRate: 14.8, deathRate: 5.8, reviewScore: 4.4, diseases: { "Respiratory": 40, "Dengue": 20, "Flu": 15, "Diabetes": 15, "Typhoid": 10 } },
+        "goa": { color: "#f97316", population: 1575000, growthRate: 0.009, birthRate: 12.1, deathRate: 6.6, reviewScore: 4.6, diseases: { "Diabetes": 30, "Kidney": 20, "Liver": 15, "Flu": 20, "Dengue": 15 } },
+        "gujarat": { color: "#84cc16", population: 71507000, growthRate: 0.014, birthRate: 19.3, deathRate: 5.9, reviewScore: 4.3, diseases: { "Diabetes": 25, "Heart": 20, "Typhoid": 15, "Flu": 20, "Dengue": 20 } },
+        "haryana": { color: "#06b6d4", population: 30209000, growthRate: 0.016, birthRate: 19.9, deathRate: 6.1, reviewScore: 4.2, diseases: { "Dengue": 25, "Typhoid": 20, "Flu": 20, "TB": 15, "Diabetes": 20 } },
+        "himachal pradesh": { color: "#3b82f6", population: 7468000, growthRate: 0.008, birthRate: 15.3, deathRate: 6.9, reviewScore: 4.5, diseases: { "Flu": 30, "Respiratory": 25, "Arthritis": 15, "TB": 15, "Other": 15 } },
+        "jammu and kashmir": { color: "#a855f7", population: 13603000, growthRate: 0.010, birthRate: 14.9, deathRate: 5.1, reviewScore: 4.1, diseases: { "Flu": 35, "Respiratory": 25, "TB": 15, "Hepatitis": 15, "Other": 10 } },
+        "jharkhand": { color: "#10b981", population: 39466000, growthRate: 0.015, birthRate: 21.8, deathRate: 5.6, reviewScore: 3.7, diseases: { "Malaria": 30, "TB": 25, "Typhoid": 15, "Anemia": 20, "Flu": 10 } },
+        "karnataka": { color: "#f43f5e", population: 67692000, growthRate: 0.008, birthRate: 16.5, deathRate: 6.2, reviewScore: 4.6, diseases: { "Dengue": 25, "Diabetes": 20, "Heart": 15, "Flu": 20, "Typhoid": 20 } },
+        "kerala": { color: "#0ea5e9", population: 35776000, growthRate: 0.005, birthRate: 13.6, deathRate: 7.1, reviewScore: 4.9, diseases: { "Diabetes": 30, "Hypertension": 20, "Dengue": 15, "Viral Fever": 20, "Other": 15 } },
+        "ladakh": { color: "#8b5cf6", population: 300000, growthRate: 0.012, birthRate: 14.5, deathRate: 6.0, reviewScore: 4.0, diseases: { "Respiratory": 40, "Flu": 30, "Arthritis": 15, "TB": 10, "Other": 5 } },
+        "madhya pradesh": { color: "#eab308", population: 86579000, growthRate: 0.018, birthRate: 23.9, deathRate: 6.5, reviewScore: 3.8, diseases: { "Malaria": 25, "TB": 20, "Typhoid": 20, "Flu": 20, "Cholera": 15 } },
+        "maharashtra": { color: "#f97316", population: 126385000, growthRate: 0.011, birthRate: 15.3, deathRate: 5.7, reviewScore: 4.4, diseases: { "Dengue": 20, "Malaria": 15, "COVID-19": 10, "Flu": 30, "Diabetes": 25 } },
+        "manipur": { color: "#ec4899", population: 3223000, growthRate: 0.014, birthRate: 13.9, deathRate: 4.9, reviewScore: 3.9, diseases: { "Malaria": 30, "TB": 20, "Flu": 20, "Typhoid": 15, "Other": 15 } },
+        "meghalaya": { color: "#6366f1", population: 3349000, growthRate: 0.013, birthRate: 22.8, deathRate: 6.1, reviewScore: 4.0, diseases: { "Malaria": 35, "Flu": 25, "TB": 15, "Typhoid": 15, "Skin Inf.": 10 } },
+        "mizoram": { color: "#14b8a6", population: 1238000, growthRate: 0.012, birthRate: 14.8, deathRate: 4.5, reviewScore: 4.1, diseases: { "Malaria": 30, "Cancer": 20, "Flu": 20, "TB": 15, "Other": 15 } },
+        "nagaland": { color: "#ef4444", population: 2213000, growthRate: 0.007, birthRate: 12.3, deathRate: 3.5, reviewScore: 3.8, diseases: { "Malaria": 25, "TB": 20, "Flu": 25, "Typhoid": 15, "Other": 15 } },
+        "odisha": { color: "#84cc16", population: 46276000, growthRate: 0.009, birthRate: 17.6, deathRate: 7.3, reviewScore: 4.0, diseases: { "Malaria": 30, "TB": 20, "Dengue": 15, "Typhoid": 20, "Flu": 15 } },
+        "punjab": { color: "#f59e0b", population: 30730000, growthRate: 0.010, birthRate: 14.5, deathRate: 6.6, reviewScore: 4.2, diseases: { "Cancer": 15, "Heart": 20, "Diabetes": 20, "Dengue": 15, "Hepatitis": 30 } },
+        "rajasthan": { color: "#eab308", population: 81032000, growthRate: 0.019, birthRate: 23.2, deathRate: 5.8, reviewScore: 3.9, diseases: { "Viral Fever": 25, "Typhoid": 20, "Malaria": 15, "Respiratory": 20, "TB": 20 } },
+        "sikkim": { color: "#10b981", population: 690000, growthRate: 0.011, birthRate: 15.6, deathRate: 4.8, reviewScore: 4.6, diseases: { "TB": 20, "Flu": 30, "Stomach Inf.": 20, "Skin Inf.": 15, "Other": 15 } },
+        "tamil nadu": { color: "#f43f5e", population: 76860000, growthRate: 0.006, birthRate: 13.8, deathRate: 6.7, reviewScore: 4.7, diseases: { "Diabetes": 25, "Dengue": 20, "Heart": 15, "Kidney": 15, "V. Fever": 25 } },
+        "telangana": { color: "#3b82f6", population: 38090000, growthRate: 0.011, birthRate: 16.8, deathRate: 6.2, reviewScore: 4.3, diseases: { "Dengue": 25, "Viral Fever": 25, "Diabetes": 20, "Typhoid": 15, "Flu": 15 } },
+        "tripura": { color: "#8b5cf6", population: 4147000, growthRate: 0.012, birthRate: 13.0, deathRate: 5.6, reviewScore: 4.1, diseases: { "Malaria": 30, "Flu": 25, "TB": 15, "J. Enceph.": 15, "Other": 15 } },
+        "uttar pradesh": { color: "#f97316", population: 235687000, growthRate: 0.019, birthRate: 25.1, deathRate: 6.5, reviewScore: 3.7, diseases: { "Encephalitis": 20, "Malaria": 20, "Typhoid": 20, "TB": 15, "Flu": 25 } },
+        "uttarakhand": { color: "#0ea5e9", population: 11637000, growthRate: 0.013, birthRate: 16.2, deathRate: 6.0, reviewScore: 4.2, diseases: { "Flu": 30, "TB": 20, "Respiratory": 20, "Typhoid": 15, "Other": 15 } },
+        "west bengal": { color: "#ec4899", population: 99084000, growthRate: 0.009, birthRate: 14.7, deathRate: 5.7, reviewScore: 4.0, diseases: { "Dengue": 25, "Malaria": 20, "TB": 15, "Cholera": 15, "Arsenic": 25 } }
+    },
+
+    calculateLiveStats(stateData) {
+        if (!stateData) return { population: 0, born: 0, died: 0 };
+
+        const now = new Date();
+        const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+        const info = stateData;
+        const pop = info.population || 1000000;
+
+        // Seconds since midnight
+        const secondsSinceMidnight = (now.getTime() - startOfDay) / 1000;
+        const totalSecondsInDay = 86400;
+
+        // Daily Calculation
+        // Birth Rate = (Births per 1000 per year)
+        // Daily Births = (Pop * (BirthRate/1000)) / 365
+        const dailyBirths = (pop * (info.birthRate || 18.0) / 1000) / 365;
+        const bornSoFar = Math.floor((secondsSinceMidnight / totalSecondsInDay) * dailyBirths);
+
+        // Daily Deaths
+        const dailyDeaths = (pop * (info.deathRate || 6.0) / 1000) / 365;
+        const diedSoFar = Math.floor((secondsSinceMidnight / totalSecondsInDay) * dailyDeaths);
+
+        // Live Population Projection (Base + (Born - Died) + GrowthFactor)
+        // We just extrapolate slightly for the 'ticking' effect
+        // Current Pop = Base + BornSoFar - DiedSoFar (roughly)
+        const currentPop = pop + bornSoFar - diedSoFar;
+
+        return {
+            population: currentPop,
+            born: bornSoFar,
+            died: diedSoFar
+        };
+    },
+
     stateColors: {
+        // ... (This object is now redundant if we fallback to stateData, but keeping just in case for generic logic)
         "andaman and nicobar": "#06b6d4",
-        "andhra pradesh": "#3b82f6",
-        "arunachal pradesh": "#10b981",
-        "assam": "#8b5cf6",
-        "bihar": "#f59e0b",
-        "chandigarh": "#ec4899",
-        "chhattisgarh": "#6366f1",
-        "dadra and nagar haveli": "#14b8a6",
-        "daman and diu": "#14b8a6",
-        "delhi": "#ef4444",
-        "goa": "#f97316",
-        "gujarat": "#84cc16",
-        "haryana": "#06b6d4",
-        "himachal pradesh": "#3b82f6",
-        "jammu and kashmir": "#a855f7",
-        "jharkhand": "#10b981",
-        "karnataka": "#f43f5e",
-        "kerala": "#0ea5e9",
-        "ladakh": "#8b5cf6",
-        "lakshadweep": "#06b6d4",
-        "madhya pradesh": "#eab308",
-        "maharashtra": "#f97316",
-        "manipur": "#ec4899",
-        "meghalaya": "#6366f1",
-        "mizoram": "#14b8a6",
-        "nagaland": "#ef4444",
-        "odisha": "#84cc16",
-        "puducherry": "#06b6d4",
-        "punjab": "#f59e0b",
-        "rajasthan": "#eab308",
-        "sikkim": "#10b981",
-        "tamil nadu": "#f43f5e",
-        "telangana": "#3b82f6",
-        "tripura": "#8b5cf6",
-        "uttar pradesh": "#f97316",
-        "uttarakhand": "#0ea5e9",
-        "west bengal": "#ec4899"
+        // ... Keeping map to keys if needed, but logic below will use stateData
     },
 
 
@@ -379,12 +417,16 @@ const IndiaMap = {
 
     getColor(normName) {
         // Fallback or specific logic
-        if (normName.includes('jammu')) return this.stateColors['jammu and kashmir'];
-        if (normName.includes('nicobar')) return this.stateColors['andaman and nicobar'];
-        if (normName.includes('delhi')) return this.stateColors['delhi'];
-        if (normName.includes('dadra')) return this.stateColors['dadra and nagar haveli'];
+        // Use realistic color from data if available
+        if (this.stateData[normName]) {
+            return this.stateData[normName].color;
+        }
 
-        return this.stateColors[normName] || '#94a3b8'; // Default grey
+        if (normName.includes('jammu')) return this.stateData['jammu and kashmir'].color;
+        if (normName.includes('nicobar')) return this.stateData['andaman and nicobar'].color;
+        if (normName.includes('delhi')) return this.stateData['delhi'].color;
+
+        return '#94a3b8'; // Default grey
     },
 
     // --- Interaction Handlers ---
@@ -462,19 +504,65 @@ const IndiaMap = {
         // Generate State Visual
         this.updateStateVisual(stateName);
 
+        // Get realistic data or fallback
+        const normalized = this.normalizeName(stateName);
+        const data = this.stateData[normalized] || {
+            population: 5000000,
+            growthRate: 0.01,
+            birthRate: 18.0,
+            deathRate: 6.0,
+            reviewScore: 4.0,
+            diseases: { "Viral Fever": 40, "Flu": 30, "Other": 30 }
+        };
+
+        // Deterministic Calculation
+        const liveStats = this.calculateLiveStats(data);
+
         // Animate Numbers
-        this.animateNumber('modal-population', 10000000 + Math.random() * 50000000);
-
-        // Random Review Score between 3.5 and 5.0
-        const reviewScore = (3.5 + Math.random() * 1.5).toFixed(1);
+        this.animateNumber('modal-population', liveStats.population);
+        
+        // Use Fixed Review Score
+        const reviewScore = (data.reviewScore || 4.2).toFixed(1);
         document.getElementById('modal-live-users').innerText = `${reviewScore}/5`;
+        
+        // Populate stats for animation but hide them (since we moved to chart only top)
+        // OR reuse the stats boxes for top 3 diseases? 
+        // User requested chart updates. Let's update the text above the chart.
+        const topDiseases = Object.keys(data.diseases);
+        
+        // Update stats breakdown boxes (repurposed for top 3 counts? 
+        // No, the HTML structure has 'active', 'malaria', 'covid'. 
+        // Let's dynamically update the labels and values based on the specific top 3 diseases of that state.
+        
+        const statBoxes = document.querySelectorAll('.disease-stat');
+        if(statBoxes.length >= 3) {
+             const d1 = topDiseases[0] || "Dengue";
+             const d2 = topDiseases[1] || "Malaria";
+             const d3 = topDiseases[2] || "Flu";
+             
+             // Update Labels
+             statBoxes[0].querySelector('.disease-stat-label').textContent = d1;
+             statBoxes[1].querySelector('.disease-stat-label').textContent = d2;
+             statBoxes[2].querySelector('.disease-stat-label').textContent = d3;
 
-        this.animateNumber('stats-dengue', 1000 + Math.random() * 5000);
-        this.animateNumber('stats-malaria', 800 + Math.random() * 4000);
-        this.animateNumber('stats-covid', 500 + Math.random() * 2000);
+             // Calculate Counts relative to population (mock logic)
+             const scale = liveStats.population / 10000; 
+             const v1 = Math.floor((data.diseases[d1] / 100) * scale * 0.8);
+             const v2 = Math.floor((data.diseases[d2] / 100) * scale * 0.8);
+             const v3 = Math.floor((data.diseases[d3] / 100) * scale * 0.8);
 
-        document.getElementById('modal-born').textContent = Math.floor(Math.random() * 500);
-        document.getElementById('modal-died').textContent = Math.floor(Math.random() * 200);
+             statBoxes[0].querySelector('.disease-stat-value').textContent = "0"; // Reset for anim
+             this.animateNumberElement(statBoxes[0].querySelector('.disease-stat-value'), v1);
+
+             statBoxes[1].querySelector('.disease-stat-value').textContent = "0";
+             this.animateNumberElement(statBoxes[1].querySelector('.disease-stat-value'), v2);
+             
+             statBoxes[2].querySelector('.disease-stat-value').textContent = "0";
+             this.animateNumberElement(statBoxes[2].querySelector('.disease-stat-value'), v3);
+        }
+
+        document.getElementById('modal-born').textContent = liveStats.born;
+        document.getElementById('modal-died').textContent = liveStats.died;
 
         // Reset Active State (Default: Total Population)
         const dataBoxes = this.modal.querySelectorAll('.data-box');
@@ -551,18 +639,22 @@ const IndiaMap = {
         requestAnimationFrame(update);
     },
 
-    renderDiseaseChart() {
+    renderDiseaseChart(diseaseData) {
         const ctx = document.getElementById('disease-chart').getContext('2d');
         if (this.diseaseChart) this.diseaseChart.destroy();
 
         if (typeof Chart === 'undefined') return;
 
+        // Default mock if no data provided
+        const labels = diseaseData ? Object.keys(diseaseData) : ['Dengue', 'Malaria', 'COVID-19', 'Typhoid', 'Flu'];
+        const values = diseaseData ? Object.values(diseaseData) : [25, 20, 15, 25, 15];
+
         this.diseaseChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['Dengue', 'Malaria', 'COVID-19', 'Typhoid', 'Flu'],
+                labels: labels,
                 datasets: [{
-                    data: [25, 20, 15, 25, 15], // Mock distribution
+                    data: values,
                     backgroundColor: ['#f97316', '#22c55e', '#ef4444', '#eab308', '#3b82f6'],
                     borderWidth: 0,
                     hoverOffset: 15
@@ -572,9 +664,16 @@ const IndiaMap = {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: 'bottom', labels: { color: '#94a3b8' } }
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#94a3b8',
+                            boxWidth: 12,
+                            font: { size: 10 }
+                        }
+                    }
                 },
-                layout: { padding: 20 },
+                layout: { padding: 10 },
                 animation: {
                     animateScale: true,
                     animateRotate: true
