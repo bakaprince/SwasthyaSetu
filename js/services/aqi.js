@@ -208,7 +208,21 @@ const AQIService = {
     processAQIData(data) {
         const aqi = data.aqi || 0;
         const level = this.getAQILevel(aqi);
-        const city = data.city?.name || 'Your Location';
+
+        // Get city from LocationService first, fallback to API data
+        let city = 'Your Location';
+        if (LocationService && LocationService.hasLocation()) {
+            const location = LocationService.getLocation();
+            if (location && location.city) {
+                city = location.city;
+                // Add state if available
+                if (location.state) {
+                    city += `, ${location.state}`;
+                }
+            }
+        } else if (data.city?.name) {
+            city = data.city.name;
+        }
 
         return {
             aqi: aqi,
@@ -234,7 +248,21 @@ const AQIService = {
         // Convert PM2.5 to AQI (simplified US EPA formula)
         const aqi = this.pm25ToAQI(pm25);
         const level = this.getAQILevel(aqi);
-        const city = data.location || 'Your Location';
+
+        // Get city from LocationService first, fallback to API data
+        let city = 'Your Location';
+        if (LocationService && LocationService.hasLocation()) {
+            const location = LocationService.getLocation();
+            if (location && location.city) {
+                city = location.city;
+                // Add state if available
+                if (location.state) {
+                    city += `, ${location.state}`;
+                }
+            }
+        } else if (data.location) {
+            city = data.location;
+        }
 
         return {
             aqi: Math.round(aqi),
@@ -468,6 +496,46 @@ const AQIService = {
         return this.currentAQI;
     }
 };
+
+/**
+ * Global function to refresh air quality data
+ * Called from the refresh button in the UI
+ */
+async function refreshAirQuality() {
+    console.log('Refresh button clicked - reloading AQI data');
+
+    // Check if location is available
+    if (LocationService && LocationService.hasLocation()) {
+        const location = LocationService.getLocation();
+        console.log('Reloading AQI for location:', location);
+
+        if (location && location.latitude && location.longitude) {
+            await AQIService.fetchAQI(location.latitude, location.longitude);
+        } else {
+            console.warn('Location data incomplete, requesting new location');
+            // Request fresh location
+            try {
+                const result = await LocationService.requestLocation();
+                if (result.success && result.location) {
+                    await AQIService.fetchAQI(result.location.latitude, result.location.longitude);
+                }
+            } catch (error) {
+                console.error('Failed to get location for AQI refresh:', error);
+            }
+        }
+    } else {
+        console.warn('No location available, requesting location');
+        // Request location first
+        try {
+            const result = await LocationService.requestLocation();
+            if (result.success && result.location) {
+                await AQIService.fetchAQI(result.location.latitude, result.location.longitude);
+            }
+        } catch (error) {
+            console.error('Failed to get location for AQI refresh:', error);
+        }
+    }
+}
 
 // Initialize on load
 if (typeof window !== 'undefined') {
