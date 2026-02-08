@@ -117,7 +117,6 @@ const IndiaMap = {
                     <!-- Data Connectors -->
                     <div class="data-connector top-right">
                         <div class="connector-line"></div>
-                        <div class="connector-line"></div>
                         <div class="data-box dashboard-card">
                             <div class="data-box-header"><span class="material-icons-outlined">people</span> Total Population</div>
                             <div class="data-box-value large" id="modal-population">0
