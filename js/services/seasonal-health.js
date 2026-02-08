@@ -12,33 +12,73 @@ class SeasonalHealthService {
     }
 
     /**
-     * Fetch weather data for location
+     * Fetch weather data for location using Open-Meteo API (free, no auth required)
      */
     async fetchWeatherData(lat, lon) {
         try {
-            const response = await fetch(
-                `https://api.weatherapi.com/v1/current.json?key=${this.apiKey}&q=${lat},${lon}&aqi=no`
-            );
+            // Use Open-Meteo API - completely free, no API key needed
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code&timezone=auto`;
+            console.log('Fetching weather data from Open-Meteo');
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                console.error('Weather API error:', response.status, response.statusText);
+                return null;
+            }
+
             const data = await response.json();
 
+            if (!data || !data.current) {
+                console.error('Invalid weather data structure:', data);
+                return null;
+            }
+
+            // Get location name from LocationService if available
+            let locationName = 'Your Location';
+            let regionName = '';
+
+            if (typeof LocationService !== 'undefined' && LocationService.hasLocation()) {
+                const location = LocationService.getLocation();
+                if (location) {
+                    locationName = location.city || 'Your Location';
+                    regionName = location.state || '';
+                }
+            }
+
             return {
-                temp_c: data.current.temp_c,
-                humidity: data.current.humidity,
-                condition: data.current.condition.text,
-                precip_mm: data.current.precip_mm,
-                feelslike_c: data.current.feelslike_c,
+                temp_c: data.current.temperature_2m,
+                humidity: data.current.relative_humidity_2m,
+                condition: this.getWeatherCondition(data.current.weather_code),
+                precip_mm: data.current.precipitation || 0,
+                feelslike_c: data.current.temperature_2m,
                 location: {
-                    name: data.location.name,
-                    region: data.location.region,
-                    country: data.location.country,
-                    lat: data.location.lat,
-                    lon: data.location.lon
+                    name: locationName,
+                    region: regionName,
+                    country: 'India',
+                    lat: lat,
+                    lon: lon
                 }
             };
         } catch (error) {
             console.error('Error fetching weather data:', error);
             return null;
         }
+    }
+
+    /**
+     * Convert WMO weather code to description
+     */
+    getWeatherCondition(code) {
+        const weatherCodes = {
+            0: 'Clear sky', 1: 'Mainly clear', 2: 'Partly cloudy', 3: 'Overcast',
+            45: 'Foggy', 48: 'Foggy', 51: 'Light drizzle', 53: 'Moderate drizzle',
+            55: 'Dense drizzle', 61: 'Slight rain', 63: 'Moderate rain', 65: 'Heavy rain',
+            71: 'Slight snow', 73: 'Moderate snow', 75: 'Heavy snow',
+            80: 'Slight rain showers', 81: 'Moderate rain showers', 82: 'Violent rain showers',
+            95: 'Thunderstorm', 96: 'Thunderstorm with hail', 99: 'Thunderstorm with hail'
+        };
+        return weatherCodes[code] || 'Unknown';
     }
 
     /**
