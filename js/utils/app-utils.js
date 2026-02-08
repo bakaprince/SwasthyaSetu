@@ -204,6 +204,11 @@ const Formatters = {
         const statusConfig = {
             pending: { color: 'yellow', icon: 'schedule', text: 'Pending' },
             confirmed: { color: 'blue', icon: 'event_available', text: 'Confirmed' },
+            checked_in: { color: 'indigo', icon: 'how_to_reg', text: 'Checked In' },
+            consultation_done: { color: 'purple', icon: 'medical_services', text: 'Consultation Done' },
+            lab_ordered: { color: 'orange', icon: 'science', text: 'Lab Ordered' },
+            report_ready: { color: 'teal', icon: 'assignment_turned_in', text: 'Report Ready' },
+            discharged: { color: 'green', icon: 'check_circle', text: 'Discharged' },
             cancelled: { color: 'red', icon: 'cancel', text: 'Cancelled' },
             completed: { color: 'green', icon: 'check_circle', text: 'Completed' }
         };
@@ -220,6 +225,11 @@ const Formatters = {
         const colors = {
             pending: 'yellow',
             confirmed: 'blue',
+            checked_in: 'indigo',
+            consultation_done: 'purple',
+            lab_ordered: 'orange',
+            report_ready: 'teal',
+            discharged: 'green',
             cancelled: 'red',
             completed: 'green'
         };
@@ -355,7 +365,10 @@ const Validators = {
     },
 
     validateStatus(status) {
-        const validStatuses = ['pending', 'confirmed', 'cancelled', 'completed'];
+        const validStatuses = [
+            'pending', 'confirmed', 'checked_in', 'consultation_done',
+            'lab_ordered', 'report_ready', 'discharged', 'cancelled', 'completed'
+        ];
         return validStatuses.includes(status?.toLowerCase());
     }
 };

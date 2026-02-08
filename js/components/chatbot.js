@@ -156,7 +156,7 @@ class HealthChatbot {
                         Gmail
                     </a>
                     <a href="https://compose.mail.yahoo.com/?to=swasthyasetu.helpdesk@gmail.com&subject=Support%20Request" target="_blank" class="contact-option">
-                        <img src="https://s.yimg.com/nq/storm/assets/hailstorm/2024/07/mail-icon-touch-128.png" alt="Yahoo" style="width:20px;height:20px;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Yahoo_Mail_icon.svg" alt="Yahoo" style="width:20px;height:20px;">
                         Yahoo Mail
                     </a>
                     <a href="https://outlook.live.com/mail/0/deeplink/compose?to=swasthyasetu.helpdesk@gmail.com&subject=Support%20Request" target="_blank" class="contact-option">
