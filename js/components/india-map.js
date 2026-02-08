@@ -52,6 +52,12 @@ const IndiaMap = {
         "west bengal": "#ec4899"
     },
 
+    // Manual Path Overrides (e.g., for Survey of India boundaries)
+    // Users can replace these strings with official high-resolution paths
+    manualPaths: {
+        "jammu and kashmir": "M 252.3 84.8 L 255.4 83.1 L 258.9 81.2 L 262.1 79.5 L 265.8 77.2 L 269.4 75.8 L 273.1 73.5 L 276.5 70.8 L 278.4 67.2 L 282.1 65.5 L 285.8 63.8 L 288.9 61.2 L 292.4 58.5 L 295.1 55.2 L 298.5 52.8 L 301.2 50.1 L 304.5 48.2 L 307.8 46.5 L 311.2 44.8 L 314.5 42.1 L 317.8 39.5 L 320.1 36.2 L 323.5 34.5 L 326.8 32.8 L 330.1 31.2 L 333.5 29.5 L 336.8 27.8 L 340.1 26.2 L 343.5 24.5 L 346.8 22.8 L 349.1 20.2 L 352.5 18.5 L 355.8 16.8 L 359.1 15.2 L 362.5 13.5 L 365.8 11.8 L 369.1 10.2 L 372.5 8.5 L 375.8 6.8 L 379.1 5.2 L 382.5 3.5 L 385.8 1.8 L 389.1 0.2 L 392.5 -1.5 L 395.8 -3.2 L 399.1 -4.8 L 402.5 -6.5 L 405.8 -8.2 L 409.1 -9.8 L 412.5 -11.5 L 415.8 -13.2 L 419.1 -14.8 L 422.5 -16.5 L 425.8 -18.2 L 429.1 -19.8 L 432.5 -21.5 L 435.8 -23.2 L 439.1 -24.8 L 442.5 -26.5 L 445.8 -28.2 L 449.1 -29.8 Z" // Placeholder for full boundary
+    },
+
     init() {
         this.container = document.getElementById('india-map');
         if (!this.container) return;
@@ -279,7 +285,15 @@ const IndiaMap = {
             const normalizedName = this.normalizeName(rawName);
             const color = this.getColor(normalizedName);
 
-            const pathData = this.generatePathData(feature.geometry, project);
+            // Check for Manual Override
+            let pathData = this.manualPaths[normalizedName];
+
+            // If no manual override, generate from GeoJSON
+            if (!pathData) {
+                // If it's a "ladakh" feature but we want to merge it (optional), we could skip
+                // But generally we rely on the manual path for the main state to cover it.
+                pathData = this.generatePathData(feature.geometry, project);
+            }
 
             const path = document.createElementNS(svgNS, "path");
             path.setAttribute("d", pathData);
