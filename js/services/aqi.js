@@ -343,25 +343,32 @@ const AQIService = {
     },
 
     /**
-     * Update UI with loading state
+     * Set loading state in UI
      */
     updateUILoading() {
         const aqiValueEl = document.getElementById('aqi-value');
         const aqiLevelEl = document.getElementById('aqi-level');
         const aqiRecommendationEl = document.getElementById('aqi-recommendation');
         const aqiCityEl = document.getElementById('aqi-city');
+        const aqiIconEl = document.querySelector('.aqi-advice .material-icons-outlined');
 
         if (aqiValueEl) {
             aqiValueEl.textContent = '...';
+            aqiValueEl.className = 'block text-2xl font-bold text-gray-400 aqi-value';
         }
         if (aqiLevelEl) {
             aqiLevelEl.textContent = 'Loading';
+            aqiLevelEl.className = 'text-xs font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded aqi-status';
         }
         if (aqiRecommendationEl) {
             aqiRecommendationEl.textContent = 'Fetching air quality data...';
         }
         if (aqiCityEl) {
-            aqiCityEl.textContent = '';
+            aqiCityEl.textContent = 'Updating...';
+        }
+        if (aqiIconEl) {
+            aqiIconEl.textContent = 'location_searching';
+            aqiIconEl.classList.add('animate-pulse');
         }
     },
 
@@ -377,62 +384,36 @@ const AQIService = {
         const aqiRecommendationEl = document.getElementById('aqi-recommendation');
         const aqiCityEl = document.getElementById('aqi-city');
         const aqiIndicatorEl = document.getElementById('aqi-indicator');
+        const aqiIconEl = document.querySelector('.aqi-advice .material-icons-outlined');
 
-        console.log('AQIService: DOM elements found:', {
-            aqiValueEl: !!aqiValueEl,
-            aqiLevelEl: !!aqiLevelEl,
-            aqiRecommendationEl: !!aqiRecommendationEl,
-            aqiCityEl: !!aqiCityEl,
-            aqiIndicatorEl: !!aqiIndicatorEl
-        });
-
-        // Update AQI value
         if (aqiValueEl) {
             aqiValueEl.textContent = aqiData.aqi;
-
-            // Update color based on level
-            aqiValueEl.className = `block text-2xl font-bold text-${this.getColorClass(aqiData.color)}-600`;
+            const colorClass = this.getColorClass(aqiData.color);
+            aqiValueEl.className = `block text-2xl font-bold text-${colorClass}-600 aqi-value`;
         }
 
-        // Update AQI level badge
         if (aqiLevelEl) {
             aqiLevelEl.textContent = aqiData.level;
-            aqiLevelEl.className = `text-xs font-bold bg-${this.getColorClass(aqiData.color)}-100 text-${this.getColorClass(aqiData.color)}-700 px-1.5 py-0.5 rounded`;
+            const colorClass = this.getColorClass(aqiData.color);
+            aqiLevelEl.className = `text-xs font-bold bg-${colorClass}-100 text-${colorClass}-700 px-1.5 py-0.5 rounded aqi-status`;
         }
 
-        // Update recommendation
         if (aqiRecommendationEl) {
             aqiRecommendationEl.textContent = aqiData.recommendation;
         }
 
-        // Update city name
         if (aqiCityEl) {
             aqiCityEl.textContent = aqiData.city;
         }
 
-        // Update visual indicator
+        if (aqiIconEl) {
+            aqiIconEl.textContent = 'masks';
+            aqiIconEl.classList.remove('animate-pulse');
+        }
+
         if (aqiIndicatorEl) {
             this.updateIndicator(aqiIndicatorEl, aqiData.aqi);
         }
-
-        console.log('AQIService: UI update complete');
-    },
-
-    /**
-     * Get Tailwind color class from color name
-     * @param {string} color - Color name
-     * @returns {string} Tailwind color class
-     */
-    getColorClass(color) {
-        const colorMap = {
-            'green': 'green',
-            'yellow': 'yellow',
-            'orange': 'orange',
-            'red': 'red',
-            'purple': 'purple',
-            'maroon': 'red'
-        };
-        return colorMap[color] || 'gray';
     },
 
     /**
@@ -441,10 +422,6 @@ const AQIService = {
      * @param {number} aqi - AQI value
      */
     updateIndicator(element, aqi) {
-        // Clear existing children
-        element.innerHTML = '';
-
-        // Create 5 segments
         const segments = [
             { max: 50, color: 'green', active: aqi <= 50 },
             { max: 100, color: 'yellow', active: aqi > 50 && aqi <= 100 },
@@ -453,9 +430,15 @@ const AQIService = {
             { max: 500, color: 'purple', active: aqi > 200 }
         ];
 
+        element.innerHTML = '';
         segments.forEach((segment, index) => {
             const div = document.createElement('div');
-            div.className = `bg-${segment.color}-400 ${index === 0 ? 'rounded-l-full' : ''} ${index === 4 ? 'rounded-r-full' : ''} ${segment.active ? 'transform scale-y-150 rounded-sm shadow-sm' : 'opacity-30'}`;
+            const roundedClass = index === 0 ? 'rounded-l-full' : (index === 4 ? 'rounded-r-full' : '');
+            if (segment.active) {
+                div.className = `bg-${segment.color}-400 ${roundedClass} transform scale-y-150 rounded-sm shadow-sm`;
+            } else {
+                div.className = `bg-${segment.color}-400 ${roundedClass} opacity-30`;
+            }
             element.appendChild(div);
         });
     },

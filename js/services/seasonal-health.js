@@ -135,27 +135,17 @@ class SeasonalHealthService {
      */
     async initialize() {
         try {
-            // Get user location
-            const location = await this.getUserLocation();
-
-            // Fetch both health and pollution data
-            const [healthData, pollutionData] = await Promise.all([
-                this.fetchHealthTrends(),
-                this.fetchPollutionData(location.lat, location.lon)
-            ]);
-
+            // Fetch health trends
+            const healthData = await this.fetchHealthTrends();
             this.healthData = healthData;
-            this.pollutionData = pollutionData;
 
             return {
-                health: healthData,
-                pollution: pollutionData
+                health: healthData
             };
         } catch (error) {
             console.error('Error initializing seasonal health service:', error);
             return {
-                health: this.getFallbackHealthData(),
-                pollution: this.getFallbackPollutionData()
+                health: this.getFallbackHealthData()
             };
         }
     }
@@ -201,20 +191,6 @@ class SeasonalHealthService {
             }
         };
     }
-
-    /**
-     * Fallback pollution data
-     */
-    getFallbackPollutionData() {
-        return {
-            aqi: 173,
-            status: 'Unhealthy',
-            statusClass: 'unhealthy',
-            location: 'Delhi, India',
-            advice: 'Everyone should limit prolonged outdoor activities.',
-            updated: new Date().toISOString()
-        };
-    }
 }
 
 // Initialize on page load
@@ -230,7 +206,7 @@ document.addEventListener('DOMContentLoaded', async () => {
  * Update the UI with fetched data
  */
 function updateSeasonalHealthUI(data) {
-    const { health, pollution } = data;
+    const { health } = data;
 
     // Update Dengue card description
     if (health.dengue) {
@@ -251,97 +227,5 @@ function updateSeasonalHealthUI(data) {
         if (fluRisk) {
             fluRisk.textContent = health.seasonalFlu.risk;
         }
-    }
-
-    // Update Air Quality card
-    if (pollution) {
-        // Update AQI value
-        const aqiValue = document.getElementById('aqi-value');
-        if (aqiValue) {
-            aqiValue.textContent = pollution.aqi;
-        }
-
-        // Update AQI status/level
-        const aqiLevel = document.getElementById('aqi-level');
-        if (aqiLevel) {
-            aqiLevel.textContent = pollution.status;
-            // Update color classes based on status
-            aqiLevel.className = 'text-xs font-bold px-1.5 py-0.5 rounded';
-            if (pollution.statusClass === 'healthy') {
-                aqiLevel.classList.add('text-green-700', 'bg-green-100');
-                if (aqiValue) aqiValue.className = 'block text-2xl font-bold text-green-600 aqi-value';
-            } else if (pollution.statusClass === 'moderate') {
-                aqiLevel.classList.add('text-yellow-700', 'bg-yellow-100');
-                if (aqiValue) aqiValue.className = 'block text-2xl font-bold text-yellow-600 aqi-value';
-            } else {
-                aqiLevel.classList.add('text-red-700', 'bg-red-100');
-                if (aqiValue) aqiValue.className = 'block text-2xl font-bold text-red-600 aqi-value';
-            }
-        }
-
-        // Update location - find by class name
-        const aqiLocation = document.querySelector('.aqi-location');
-        if (aqiLocation) {
-            aqiLocation.textContent = pollution.location;
-        }
-
-        // Update recommendation
-        const aqiRecommendation = document.getElementById('aqi-recommendation');
-        if (aqiRecommendation) {
-            aqiRecommendation.textContent = pollution.advice;
-        }
-
-        // Update the indicator bar
-        const aqiIndicator = document.getElementById('aqi-indicator');
-        if (aqiIndicator) {
-            // Determine which bar to highlight based on AQI value
-            const bars = aqiIndicator.querySelectorAll('div');
-            bars.forEach((bar, index) => {
-                bar.className = ''; // Reset classes
-                if (pollution.aqi <= 50 && index === 0) {
-                    bar.className = 'bg-green-400 rounded-l-full transform scale-y-150 rounded-sm shadow-sm';
-                } else if (pollution.aqi <= 100 && index === 1) {
-                    bar.className = 'bg-yellow-400 transform scale-y-150 rounded-sm shadow-sm';
-                } else if (pollution.aqi <= 150 && index === 2) {
-                    bar.className = 'bg-orange-400 transform scale-y-150 rounded-sm shadow-sm';
-                } else if (pollution.aqi <= 200 && index === 3) {
-                    bar.className = 'bg-red-400 transform scale-y-150 rounded-sm shadow-sm';
-                } else if (pollution.aqi > 200 && index === 4) {
-                    bar.className = 'bg-purple-800 rounded-r-full transform scale-y-150 rounded-sm shadow-sm';
-                } else {
-                    // Default opacity for non-active bars
-                    if (index === 0) bar.className = 'bg-green-400 rounded-l-full opacity-30';
-                    else if (index === 1) bar.className = 'bg-yellow-400 opacity-30';
-                    else if (index === 2) bar.className = 'bg-orange-400 opacity-30';
-                    else if (index === 3) bar.className = 'bg-red-400 opacity-30';
-                    else if (index === 4) bar.className = 'bg-purple-800 rounded-r-full opacity-30';
-                }
-            });
-        }
-    }
-}
-
-/**
- * Global function to refresh air quality data
- */
-async function refreshAirQuality() {
-    const seasonalHealthService = new SeasonalHealthService();
-
-    try {
-        // Get user location
-        const location = await seasonalHealthService.getUserLocation();
-
-        // Fetch pollution data
-        const pollutionData = await seasonalHealthService.fetchPollutionData(location.lat, location.lon);
-
-        // Update UI
-        updateSeasonalHealthUI({
-            health: seasonalHealthService.healthData || seasonalHealthService.getFallbackHealthData(),
-            pollution: pollutionData
-        });
-
-        console.log('Air quality data refreshed successfully');
-    } catch (error) {
-        console.error('Error refreshing air quality:', error);
     }
 }
