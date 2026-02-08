@@ -65,11 +65,14 @@
     stroke-width: 1;
     stroke-linejoin: round;
     stroke-linecap: round;
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    stroke-linecap: round;
+    transition: transform 0.3s ease, filter 0.3s ease;
     transform-origin: center;
+    transform-box: fill-box;
+    /* Key fix for SVG */
     cursor: pointer;
     /* Optimize painting */
-    will-change: transform, filter, fill;
+    will-change: transform, filter;
 }
 
 .dark .state-path {
