@@ -5,33 +5,23 @@
 
 /* Map Container */
 #india-map {
-    background:
-        radial-gradient(circle at 50% 50%, rgba(17, 56, 65, 0.08) 1px, transparent 1px),
-        linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%);
-    background-size: 30px 30px, 100% 100%;
-    border-radius: 1.5rem;
-    /* overflow: hidden; -- Removed to allow scale/lift animations to show */
+    background: transparent;
+    /* Removed gradients/borders to blend with page */
+    border-radius: 0;
     overflow: visible;
     position: relative;
-    /* Flat style - no shadow */
     box-shadow: none;
 }
 
 /* Dark Mode Map */
+/* Dark Mode Map */
 .dark #india-map {
-    background:
-        radial-gradient(circle at 50% 50%, rgba(134, 239, 172, 0.1) 1px, transparent 1px),
-        linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+    background: transparent;
     box-shadow: none;
 }
 
 /* Dark Mode Map */
-.dark #india-map {
-    background:
-        radial-gradient(circle at 50% 50%, rgba(134, 239, 172, 0.1) 1px, transparent 1px),
-        linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
-    box-shadow: none;
-}
+
 
 /* ============================================ */
 /* CUSTOM SVG MAP STYLES                       */
