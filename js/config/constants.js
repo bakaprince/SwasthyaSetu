@@ -35,10 +35,25 @@ const APPOINTMENT_STATUS = {
     /** Appointment has been confirmed */
     CONFIRMED: 'confirmed',
 
+    /** Patient has arrived and checked in */
+    CHECKED_IN: 'checked_in',
+
+    /** Consultation with doctor is complete */
+    CONSULTATION_DONE: 'consultation_done',
+
+    /** Lab tests have been ordered */
+    LAB_ORDERED: 'lab_ordered',
+
+    /** Lab reports are ready */
+    REPORT_READY: 'report_ready',
+
+    /** Patient has been discharged */
+    DISCHARGED: 'discharged',
+
     /** Appointment was cancelled */
     CANCELLED: 'cancelled',
 
-    /** Appointment has been completed */
+    /** Visit completed (legacy/generic) */
     COMPLETED: 'completed'
 };
 
