@@ -495,83 +495,101 @@ const IndiaMap = {
         this.openModal(rawName);
     },
 
-    openModal(stateName) {
-        this.modal.classList.add('visible');
+    async openModal(stateName) {
+        this.activeState = stateName;
+        const modal = document.getElementById('state-modal');
+        const modalTitle = document.getElementById('modal-state-name');
 
-        // Update Modal Content
-        document.getElementById('modal-state-name').textContent = stateName;
+        // Show Loading State
+        modal.classList.add('visible'); // Changed from 'active' to 'visible' to match existing CSS
+        modalTitle.textContent = stateName;
+        this.showModalLoader(true);
 
-        // Generate State Visual
-        this.updateStateVisual(stateName);
+        try {
+            // SIMULATE LIVE API CALL
+            const data = await this.fetchLiveStateData(stateName);
 
-        // Get realistic data or fallback
-        const normalized = this.normalizeName(stateName);
-        const data = this.stateData[normalized] || {
-            population: 5000000,
-            growthRate: 0.01,
-            birthRate: 18.0,
-            deathRate: 6.0,
-            reviewScore: 4.0,
-            diseases: { "Viral Fever": 40, "Flu": 30, "Other": 30 }
-        };
+            this.showModalLoader(false);
 
-        // Deterministic Calculation
-        const liveStats = this.calculateLiveStats(data);
+            // Update UI with Data
+            this.animateNumber('modal-population', data.population);
+            this.animateNumber('modal-born', data.born);
+            this.animateNumber('modal-died', data.died);
 
-        // Animate Numbers
-        this.animateNumber('modal-population', liveStats.population);
-        
-        // Use Fixed Review Score
-        const reviewScore = (data.reviewScore || 4.2).toFixed(1);
-        document.getElementById('modal-live-users').innerText = `${reviewScore}/5`;
-        
-        // Populate stats for animation but hide them (since we moved to chart only top)
-        // OR reuse the stats boxes for top 3 diseases? 
-        // User requested chart updates. Let's update the text above the chart.
-        const topDiseases = Object.keys(data.diseases);
-        
-        // Update stats breakdown boxes (repurposed for top 3 counts? 
-        // No, the HTML structure has 'active', 'malaria', 'covid'. 
-        // Let's dynamically update the labels and values based on the specific top 3 diseases of that state.
-        
-        const statBoxes = document.querySelectorAll('.disease-stat');
-        if(statBoxes.length >= 3) {
-             const d1 = topDiseases[0] || "Dengue";
-             const d2 = topDiseases[1] || "Malaria";
-             const d3 = topDiseases[2] || "Flu";
-             
-             // Update Labels
-             statBoxes[0].querySelector('.disease-stat-label').textContent = d1;
-             statBoxes[1].querySelector('.disease-stat-label').textContent = d2;
-             statBoxes[2].querySelector('.disease-stat-label').textContent = d3;
+            // Hospital Review Score (Fixed Color Issue)
+            const reviewBox = document.getElementById('modal-live-users');
+            reviewBox.innerText = `${data.reviewScore}/5`;
+            // Force dark color for visibility if background is light
+            reviewBox.style.color = '#113841';
+            reviewBox.parentElement.querySelector('.data-box-sub').style.color = '#334155';
 
-             // Calculate Counts relative to population (mock logic)
-             const scale = liveStats.population / 10000; 
-             const v1 = Math.floor((data.diseases[d1] / 100) * scale * 0.8);
-             const v2 = Math.floor((data.diseases[d2] / 100) * scale * 0.8);
-             const v3 = Math.floor((data.diseases[d3] / 100) * scale * 0.8);
+            // Update Disease Stats (Top 3)
+            const statBoxes = document.querySelectorAll('.disease-stat');
+            const topDiseases = Object.entries(data.diseases)
+                .sort(([, a], [, b]) => b - a)
+                .slice(0, 3);
 
-             statBoxes[0].querySelector('.disease-stat-value').textContent = "0"; // Reset for anim
-             this.animateNumberElement(statBoxes[0].querySelector('.disease-stat-value'), v1);
+            topDiseases.forEach((([disease, pct], index) => {
+                if (statBoxes[index]) {
+                    const label = statBoxes[index].querySelector('.disease-stat-label');
+                    const value = statBoxes[index].querySelector('.disease-stat-value');
 
-             statBoxes[1].querySelector('.disease-stat-value').textContent = "0";
-             this.animateNumberElement(statBoxes[1].querySelector('.disease-stat-value'), v2);
-             
-             statBoxes[2].querySelector('.disease-stat-value').textContent = "0";
-             this.animateNumberElement(statBoxes[2].querySelector('.disease-stat-value'), v3);
+                    label.textContent = disease;
+                    // Calculate estimated active cases based on population and prevalence
+                    // Using a realistic multiplier for visual impact
+                    const caseCount = Math.floor((data.population * (pct / 100) * 0.005));
+
+                    value.textContent = "0";
+                    this.animateNumberElement(value, caseCount);
+                }
+            }));
+
+            // Render Chart
+            this.renderDiseaseChart(data.diseases);
+
+        } catch (error) {
+            console.error("Failed to fetch live data:", error);
+            this.showModalLoader(false);
         }
+    },
 
-        document.getElementById('modal-born').textContent = liveStats.born;
-        document.getElementById('modal-died').textContent = liveStats.died;
+    // Simulate an API call to a government census server
+    fetchLiveStateData(stateName) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const normalized = this.normalizeName(stateName);
+                // Fallback if state not found (should not happen with full list)
+                const baseData = this.stateData[normalized] || this.stateData["delhi"];
 
-        // Reset Active State (Default: Total Population)
-        const dataBoxes = this.modal.querySelectorAll('.data-box');
-        dataBoxes.forEach(b => b.classList.remove('active'));
-        // Set first box (Population) as active by default
-        if (dataBoxes[0]) dataBoxes[0].classList.add('active');
+                const now = new Date();
+                const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+                const secondsSinceMidnight = (now.getTime() - startOfDay) / 1000;
 
-        // Start Charts
-        this.renderDiseaseChart();
+                // Deterministic "Live" Calculations
+                const dailyBirths = (baseData.population * (baseData.birthRate / 1000)) / 365;
+                const dailyDeaths = (baseData.population * (baseData.deathRate / 1000)) / 365;
+
+                // Add seconds-based ticker to make it feel "live" strictly
+                const bornSoFar = Math.floor((secondsSinceMidnight / 86400) * dailyBirths);
+                const diedSoFar = Math.floor((secondsSinceMidnight / 86400) * dailyDeaths);
+
+                resolve({
+                    ...baseData,
+                    born: bornSoFar,
+                    died: diedSoFar
+                });
+            }, 600); // 600ms simulated network latency
+        });
+    },
+
+    showModalLoader(show) {
+        // You might need to add a loader element to your HTML or toggle visibility
+        // For now, valid simple implementation:
+        const content = document.querySelector('.modal-grid');
+        if (content) {
+            content.style.opacity = show ? '0.3' : '1';
+            content.style.pointerEvents = show ? 'none' : 'auto';
+        }
     },
 
     closeModal() {
