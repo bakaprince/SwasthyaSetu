@@ -608,45 +608,58 @@
 }
 
 .stat-row.born {
-    /* Optional: keep light green tint or override with white? User asked for 0.85 white base.
-       Let's keep the tint but make it subtle on top of white if needed,
-       OR just rely on the icon/text.
-       User said ALL small stat boxes background rgba(255,255,255,0.85).
-       So I will remove separate background. */
-    background: rgba(255, 255, 255, 0.85);
+    background: #dcfce7;
+    /* Light Green */
 }
 
 .dark .stat-row.born {
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(34, 197, 94, 0.2);
 }
 
 .stat-row.born .material-icons-outlined,
 .stat-row.born .stat-number {
-    color: #22c55e;
+    color: #15803d;
+    /* Dark Green Text */
+}
+
+.dark .stat-row.born .material-icons-outlined,
+.dark .stat-row.born .stat-number {
+    color: #4ade80;
 }
 
 .stat-row.died {
-    background: #fef2f2;
+    background: #fee2e2;
+    /* Light Red */
 }
 
 .dark .stat-row.died {
-    background: rgba(239, 68, 68, 0.15);
+    background: rgba(239, 68, 68, 0.2);
 }
 
 .stat-row.died .material-icons-outlined,
 .stat-row.died .stat-number {
-    color: #ef4444;
+    color: #b91c1c;
+    /* Dark Red Text */
 }
 
-/* Population Box */
+.dark .stat-row.died .material-icons-outlined,
+.dark .stat-row.died .stat-number {
+    color: #f87171;
+}
+
+/* Population Box / Review Box */
 .live-population-box {
-    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-    border-color: #86efac;
+    background: #ecfdf5;
+    /* Solid light mint */
+    border: 1px solid #86efac;
+    backdrop-filter: none;
+    /* Remove blur/haze */
 }
 
 .dark .live-population-box {
-    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.05) 100%);
-    border-color: rgba(134, 239, 172, 0.3);
+    background: rgba(6, 78, 59, 0.4);
+    /* Darker green tint */
+    border-color: #059669;
 }
 
 /* Hospital Rating Box */
