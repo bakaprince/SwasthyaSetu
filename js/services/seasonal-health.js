@@ -82,6 +82,82 @@ class SeasonalHealthService {
     }
 
     /**
+     * Get regional health alerts based on location
+     */
+    getRegionalHealthAlert(region, city) {
+        const regionLower = (region || '').toLowerCase();
+        const cityLower = (city || '').toLowerCase();
+
+        // Regional health concerns database
+        const regionalAlerts = {
+            'madhya pradesh': {
+                name: 'Water Quality Alert',
+                description: '⚠️ Drinking Water Quality Concern in Madhya Pradesh. Recent reports indicate contamination in water sources affecting Bhopal and surrounding areas. Boil water before consumption and use water purifiers. Waterborne diseases like typhoid and cholera risk is elevated.',
+                alert: 'HIGH ALERT',
+                alertLevel: 'high',
+                type: 'water-quality',
+                symptoms: [
+                    { icon: '🤢', text: 'Diarrhea' },
+                    { icon: '🤮', text: 'Vomiting' },
+                    { icon: '🌡️', text: 'Fever' },
+                    { icon: '😰', text: 'Dehydration' }
+                ],
+                prevention: [
+                    { icon: '✅', text: 'Boil drinking water' },
+                    { icon: '✅', text: 'Use water purifiers' }
+                ],
+                isPrediction: true,
+                isRegionalAlert: true
+            },
+            'delhi': {
+                name: 'Air Pollution Alert',
+                description: '⚠️ Severe Air Pollution in Delhi NCR. PM2.5 levels frequently exceed safe limits. Respiratory issues and eye irritation are common. Vulnerable groups should minimize outdoor exposure.',
+                alert: 'HIGH ALERT',
+                alertLevel: 'high',
+                type: 'air-pollution',
+                symptoms: [
+                    { icon: '😷', text: 'Breathing Issues' },
+                    { icon: '👁️', text: 'Eye Irritation' },
+                    { icon: '😮‍💨', text: 'Coughing' },
+                    { icon: '🤧', text: 'Allergies' }
+                ],
+                prevention: [
+                    { icon: '✅', text: 'Wear N95 masks' },
+                    { icon: '✅', text: 'Stay indoors' }
+                ],
+                isPrediction: true,
+                isRegionalAlert: true
+            },
+            'kerala': {
+                name: 'Nipah Virus Alert',
+                description: 'Nipah Virus cases reported in Kerala. Avoid contact with bats and sick animals. Wash fruits thoroughly before consumption.',
+                alert: 'MODERATE ALERT',
+                alertLevel: 'moderate',
+                type: 'viral',
+                symptoms: [
+                    { icon: '🌡️', text: 'High Fever' },
+                    { icon: '🤕', text: 'Headache' },
+                    { icon: '😵', text: 'Confusion' },
+                    { icon: '🤮', text: 'Vomiting' }
+                ],
+                prevention: [
+                    { icon: '✅', text: 'Avoid sick animals' },
+                    { icon: '✅', text: 'Wash fruits well' }
+                ],
+                isPrediction: true,
+                isRegionalAlert: true
+            }
+        };
+
+        // Check for regional alerts
+        if (regionLower && regionalAlerts[regionLower]) {
+            return regionalAlerts[regionLower];
+        }
+
+        return null;
+    }
+
+    /**
      * Predict Dengue risk based on weather and geography
      */
     predictDengueRisk(weather, month) {
@@ -276,13 +352,31 @@ class SeasonalHealthService {
             // Get current month (0-11)
             const month = new Date().getMonth();
 
-            // Generate predictions
-            const dengue = this.predictDengueRisk(weather, month);
+            // Check for regional health alerts first
+            let primaryAlert = null;
+            if (weather && weather.location) {
+                const regionalAlert = this.getRegionalHealthAlert(
+                    weather.location.region,
+                    weather.location.name
+                );
+
+                if (regionalAlert) {
+                    primaryAlert = regionalAlert;
+                    console.log('Using regional health alert for:', weather.location.region);
+                }
+            }
+
+            // If no regional alert, use dengue prediction
+            if (!primaryAlert) {
+                primaryAlert = this.predictDengueRisk(weather, month);
+            }
+
+            // Always generate flu prediction
             const seasonalFlu = this.predictFluRisk(weather, month);
 
             return {
                 seasonalFlu: seasonalFlu,
-                dengue: dengue,
+                dengue: primaryAlert,
                 weather: weather
             };
         } catch (error) {
@@ -386,11 +480,25 @@ document.addEventListener('DOMContentLoaded', async () => {
 function updateSeasonalHealthUI(data) {
     const { health } = data;
 
-    // Update Dengue card description
+    // Update Dengue/Regional Alert card
     if (health.dengue) {
         const dengueDescription = document.querySelector('.dengue-description');
         if (dengueDescription) {
             dengueDescription.textContent = health.dengue.description;
+        }
+
+        // Update title if it's a regional alert
+        if (health.dengue.isRegionalAlert) {
+            const dengueTitle = document.querySelector('.dengue-card h3');
+            if (dengueTitle) {
+                dengueTitle.innerHTML = health.dengue.name.replace(' ', ' <br />');
+            }
+
+            // Update alert badge
+            const alertBadge = document.querySelector('.dengue-card .bg-red-100');
+            if (alertBadge) {
+                alertBadge.innerHTML = `<span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span> ${health.dengue.alert}`;
+            }
         }
 
         // Add prediction disclaimer if it's a prediction
