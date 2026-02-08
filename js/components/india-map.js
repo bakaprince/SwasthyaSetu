@@ -111,15 +111,53 @@ const IndiaMap = {
     renderMap(geoJSON) {
         const isDark = document.documentElement.classList.contains('dark');
 
+        // Helper to normalize names for reliable matching
+        const normalizeName = (name) => {
+            if (!name) return '';
+            return name.toLowerCase()
+                .replace(/&/g, 'and')
+                .replace(/\s+/g, ' ')
+                .trim();
+        };
+
+        // Create color map with normalized keys
+        const normalizedColors = {};
+        Object.keys(this.stateColors).forEach(key => {
+            normalizedColors[normalizeName(key)] = this.stateColors[key];
+        });
+
         // Prepare data for visual map (assigning colors)
         const data = geoJSON.features.map(feature => {
-            const name = feature.properties.NAME_1 || feature.properties.ST_NM || feature.properties.name;
+            // Try multiple property fields for name
+            const rawName = feature.properties.NAME_1 || feature.properties.ST_NM || feature.properties.name || feature.properties.NAME;
+            const normName = normalizeName(rawName);
+
+            // Find color match
+            let color = '#94a3b8'; // Default grey
+            // Direct match
+            if (normalizedColors[normName]) {
+                color = normalizedColors[normName];
+            } else {
+                // Try fuzzy match or known aliases
+                // Example: "odisha" vs "orissa", "uttaranchal" vs "uttarakhand"
+                if (normName.includes('jammu')) color = normalizedColors['jammu and kashmir'];
+                else if (normName.includes('nicobar')) color = normalizedColors['andaman and nicobar'];
+                else if (normName.includes('delhi')) color = normalizedColors['delhi'];
+                else if (normName.includes('dadra')) color = normalizedColors['dadra and nagar haveli'];
+            }
+
+            console.log(`State: ${rawName} -> Normalized: ${normName} -> Color: ${color}`);
+
             return {
-                name: name,
+                name: rawName, // Keep original name for tooltip/display
                 itemStyle: {
-                    areaColor: this.stateColors[name] || '#94a3b8',
-                    borderColor: '#fff',
-                    borderWidth: 1
+                    areaColor: color,
+                    borderColor: '#ffffff',
+                    borderWidth: 1,
+                    // Flat initially (no shadow)
+                    shadowBlur: 0,
+                    shadowOffsetX: 0,
+                    shadowOffsetY: 0
                 }
             };
         });
@@ -129,8 +167,8 @@ const IndiaMap = {
             tooltip: {
                 trigger: 'item',
                 formatter: (params) => {
-                    return `<div style="font-weight:bold; font-size:14px;">${params.name}</div>
-                            <div style="font-size:12px;">Click for details</div>`;
+                    return `<div style="font-weight:bold; font-size:14px; color: #fff;">${params.name}</div>
+                            <div style="font-size:12px; color: #ddd;">Click for details</div>`;
                 },
                 backgroundColor: 'rgba(17, 56, 65, 0.9)',
                 borderColor: '#86efac',
@@ -144,34 +182,35 @@ const IndiaMap = {
                     show: false
                 },
                 itemStyle: {
-                    // Base 3D Effect
-                    areaColor: '#e2e8f0',
+                    // Base Flat Style
+                    areaColor: '#e2e8f0', // Placeholder, overridden by series data
                     borderColor: '#ffffff',
                     borderWidth: 1,
-                    shadowColor: 'rgba(0, 0, 0, 0.4)',
-                    shadowBlur: 10,
-                    shadowOffsetX: 4,
-                    shadowOffsetY: 4
+                    shadowBlur: 0,
+                    shadowOffsetX: 0,
+                    shadowOffsetY: 0
                 },
                 emphasis: {
-                    // "Lift" Effect on Hover
+                    // "Cake Piece" Lift Effect on Hover
                     label: { show: true, color: '#fff', fontSize: 14, fontWeight: 'bold' },
                     itemStyle: {
-                        shadowBlur: 20,
-                        shadowOffsetX: 8,
-                        shadowOffsetY: 12,
-                        shadowColor: 'rgba(0,0,0,0.5)',
+                        // Strong shadow creates floating illusion
+                        shadowBlur: 25,
+                        shadowOffsetX: 10,
+                        shadowOffsetY: 15,
+                        shadowColor: 'rgba(0,0,0,0.6)',
                         borderWidth: 2,
                         borderColor: '#fff',
-                        // Slightly brighter color on hover will be handled by data itemStyle if set,
-                        // or we can set a global emphasis color here.
-                        // For individual vibrant colors, we rely on series data.
+                        // Slightly lighten the color to indicate interaction
+                        opacity: 0.9
                     }
                 },
                 select: {
                     itemStyle: {
                         areaColor: '#fbbf24', // Gold on select
-                        shadowBlur: 10
+                        shadowBlur: 15,
+                        shadowOffsetX: 5,
+                        shadowOffsetY: 8
                     },
                     label: { show: true, color: '#000' }
                 }
