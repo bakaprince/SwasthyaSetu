@@ -90,11 +90,10 @@ const IndiaMap = {
         // ... Keeping map to keys if needed, but logic below will use stateData
     },
 
-    // Manual Path Overrides (e.g., for Survey of India boundaries)
-    // Users can replace these strings with official high-resolution paths
-    manualPaths: {
-        "jammu and kashmir": "M 252.3 84.8 L 255.4 83.1 L 258.9 81.2 L 262.1 79.5 L 265.8 77.2 L 269.4 75.8 L 273.1 73.5 L 276.5 70.8 L 278.4 67.2 L 282.1 65.5 L 285.8 63.8 L 288.9 61.2 L 292.4 58.5 L 295.1 55.2 L 298.5 52.8 L 301.2 50.1 L 304.5 48.2 L 307.8 46.5 L 311.2 44.8 L 314.5 42.1 L 317.8 39.5 L 320.1 36.2 L 323.5 34.5 L 326.8 32.8 L 330.1 31.2 L 333.5 29.5 L 336.8 27.8 L 340.1 26.2 L 343.5 24.5 L 346.8 22.8 L 349.1 20.2 L 352.5 18.5 L 355.8 16.8 L 359.1 15.2 L 362.5 13.5 L 365.8 11.8 L 369.1 10.2 L 372.5 8.5 L 375.8 6.8 L 379.1 5.2 L 382.5 3.5 L 385.8 1.8 L 389.1 0.2 L 392.5 -1.5 L 395.8 -3.2 L 399.1 -4.8 L 402.5 -6.5 L 405.8 -8.2 L 409.1 -9.8 L 412.5 -11.5 L 415.8 -13.2 L 419.1 -14.8 L 422.5 -16.5 L 425.8 -18.2 L 429.1 -19.8 L 432.5 -21.5 L 435.8 -23.2 L 439.1 -24.8 L 442.5 -26.5 L 445.8 -28.2 L 449.1 -29.8 Z" // Placeholder for full boundary
-    },
+
+    // Manual Path Overrides removed - all states now use GeoJSON geometry
+    // This ensures consistent projection and proper MultiPolygon support
+    manualPaths: {},
 
     init() {
         this.container = document.getElementById('india-map');
@@ -105,12 +104,6 @@ const IndiaMap = {
 
         // Load and Render Logic
         this.loadMapData();
-
-        // Handle Resize
-        window.addEventListener('resize', () => {
-            // SVG is responsive by default, but we might need re-calculations if container changes aspect ratio drastically
-            // For now, viewBox handles scaling.
-        });
     },
 
     initModals() {
@@ -248,22 +241,11 @@ const IndiaMap = {
 
     async loadMapData() {
         try {
-            // Show custom loader
-            this.container.innerHTML = `
-                <div class="map-loader">
-                    <div class="spinner"></div>
-                    <div class="loading-text">Building Map...</div>
-                </div>
-            `;
-
+            this.container.innerHTML = `<div class="map-loader"><div class="spinner"></div><div class="loading-text">Building Map...</div></div>`;
             const response = await fetch('../js/data/india_states.geojson');
             const data = await response.json();
-
-            // Clear loader
             this.container.innerHTML = '';
-
             this.renderSVG(data);
-
         } catch (error) {
             console.error('Error loading map data:', error);
             this.container.innerHTML = `<div style="color:red;text-align:center;padding:2rem;">Failed to load map data.</div>`;
@@ -272,66 +254,41 @@ const IndiaMap = {
 
     // --- Core SVG Rendering Logic ---
     renderSVG(geoJSON) {
-        // 1. Calculate Bounds
         const bounds = this.getBounds(geoJSON);
-
-        // 2. SVG Configuration
         const width = 800;
         const height = 900;
         const padding = 20;
 
-        // 3. Create Projection Function
-        // Map geo coordinates (lon, lat) to SVG coordinates (x, y)
-        // Simple linear interpolation fitting the bounding box to viewbox
         const project = (lon, lat) => {
             const x = ((lon - bounds.minLon) / (bounds.maxLon - bounds.minLon)) * (width - 2 * padding) + padding;
-            // Latitude Y is inverted in SVG
             const y = height - (((lat - bounds.minLat) / (bounds.maxLat - bounds.minLat)) * (height - 2 * padding) + padding);
             return { x, y };
         };
 
-        // 4. Build SVG Structure
         const svgNS = "http://www.w3.org/2000/svg";
         const svg = document.createElementNS(svgNS, "svg");
         svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
         svg.setAttribute("class", "india-svg-map");
         svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
 
-        // Filter for Glow Effect
         const defs = document.createElementNS(svgNS, "defs");
-        defs.innerHTML = `
-            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                <feMerge>
-                    <feMergeNode in="coloredBlur"/>
-                    <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-            </filter>
-            <filter id="lift-shadow" x="-50%" y="-50%" width="200%" height="200%">
-               <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="rgba(0,0,0,0.3)"/>
-            </filter>
-        `;
+        defs.innerHTML = `<filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="lift-shadow" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="rgba(0,0,0,0.3)"/></filter>`;
         svg.appendChild(defs);
 
         const mapGroup = document.createElementNS(svgNS, "g");
         mapGroup.setAttribute("class", "map-group");
         svg.appendChild(mapGroup);
 
-        // 5. Generate Paths for Features
         geoJSON.features.forEach((feature, index) => {
             const rawName = feature.properties.NAME_1 || feature.properties.ST_NM || feature.properties.name || "Unknown";
             const normalizedName = this.normalizeName(rawName);
+
             const color = this.getColor(normalizedName);
 
-            // Check for Manual Override
-            let pathData = this.manualPaths[normalizedName];
+            // Generate path data from GeoJSON geometry
+            const pathData = this.generatePathData(feature.geometry, project);
 
-            // If no manual override, generate from GeoJSON
-            if (!pathData) {
-                // If it's a "ladakh" feature but we want to merge it (optional), we could skip
-                // But generally we rely on the manual path for the main state to cover it.
-                pathData = this.generatePathData(feature.geometry, project);
-            }
+            if (!pathData || pathData.length < 10) return; // Skip broken geometries
 
             const path = document.createElementNS(svgNS, "path");
             path.setAttribute("d", pathData);
@@ -340,35 +297,33 @@ const IndiaMap = {
             path.setAttribute("data-name", rawName);
             path.setAttribute("id", `state-${index}`);
 
-            // Interaction Events
             path.addEventListener('mouseenter', (e) => this.onStateHover(e, path));
             path.addEventListener('mouseleave', (e) => this.onStateLeave(e, path));
             path.addEventListener('click', (e) => {
-                e.stopPropagation(); // Prevent map click
+                e.stopPropagation();
                 this.onStateClick(feature);
             });
 
-            // Tooltip Logic
             this.addTooltip(path, rawName);
-
             mapGroup.appendChild(path);
         });
 
-        // Click outside to deselect
-        this.container.addEventListener('click', () => {
-            this.clearActiveState();
-        });
-
+        this.container.addEventListener('click', () => this.clearActiveState());
         this.container.appendChild(svg);
     },
 
-    // Calculate Bounding Box of GeoJSON
+    // Calculate Bounding Box from GeoJSON FeatureCollection
     getBounds(geoJSON) {
         let minLon = Infinity, minLat = Infinity, maxLon = -Infinity, maxLat = -Infinity;
 
         const processRing = (ring) => {
+            if (!Array.isArray(ring)) return;
             ring.forEach(coord => {
+                if (!Array.isArray(coord) || coord.length < 2) return;
                 const [lon, lat] = coord;
+                if (typeof lon !== 'number' || typeof lat !== 'number') return;
+                if (isNaN(lon) || isNaN(lat)) return;
+
                 if (lon < minLon) minLon = lon;
                 if (lat < minLat) minLat = lat;
                 if (lon > maxLon) maxLon = lon;
@@ -376,8 +331,11 @@ const IndiaMap = {
             });
         };
 
+        // Process all GeoJSON features to find bounds
         geoJSON.features.forEach(feature => {
+            if (!feature.geometry) return;
             const geom = feature.geometry;
+
             if (geom.type === 'Polygon') {
                 geom.coordinates.forEach(ring => processRing(ring));
             } else if (geom.type === 'MultiPolygon') {
@@ -387,26 +345,66 @@ const IndiaMap = {
             }
         });
 
+        // Safety fallback for India's approximate bounds
+        if (minLon === Infinity || maxLon === -Infinity || minLat === Infinity || maxLat === -Infinity) {
+            return { minLon: 68, minLat: 6, maxLon: 98, maxLat: 38 };
+        }
+
         return { minLon, minLat, maxLon, maxLat };
     },
 
-    // Convert Geometry to SVG Path String
+    // Convert Geometry to SVG Path String with proper MultiPolygon support
     generatePathData(geometry, project) {
+        if (!geometry || !geometry.type) return '';
+
         const processRing = (ring) => {
-            return ring.map((coord, i) => {
+            // Filter out invalid rings: must have at least 3 coordinates
+            // and coordinates must be valid numbers
+            if (!Array.isArray(ring) || ring.length < 3) return '';
+
+            // Validate that coordinates are valid
+            const validCoords = ring.filter(coord =>
+                Array.isArray(coord) &&
+                coord.length >= 2 &&
+                typeof coord[0] === 'number' &&
+                typeof coord[1] === 'number' &&
+                !isNaN(coord[0]) &&
+                !isNaN(coord[1])
+            );
+
+            if (validCoords.length < 3) return '';
+
+            // Project all coordinates and build path
+            const pathCommands = validCoords.map((coord, i) => {
                 const p = project(coord[0], coord[1]);
                 return `${i === 0 ? 'M' : 'L'}${p.x.toFixed(2)},${p.y.toFixed(2)}`;
-            }).join(' ') + 'Z';
+            });
+
+            return pathCommands.join(' ') + 'Z';
         };
 
+        let paths = [];
+
         if (geometry.type === 'Polygon') {
-            return geometry.coordinates.map(processRing).join(' ');
+            // Process all rings in the polygon (exterior + holes)
+            geometry.coordinates.forEach(ring => {
+                const ringPath = processRing(ring);
+                if (ringPath) paths.push(ringPath);
+            });
         } else if (geometry.type === 'MultiPolygon') {
-            return geometry.coordinates.map(polygon =>
-                polygon.map(processRing).join(' ')
-            ).join(' ');
+            // Process each polygon in the MultiPolygon
+            geometry.coordinates.forEach(polygon => {
+                // Each polygon can have multiple rings (exterior + holes)
+                polygon.forEach(ring => {
+                    const ringPath = processRing(ring);
+                    if (ringPath) paths.push(ringPath);
+                });
+            });
         }
-        return '';
+
+        // Join all valid paths into a single SVG path string
+        // This creates one continuous path that can include multiple disconnected regions
+        return paths.filter(p => p.length > 5).join(' ');
     },
 
     normalizeName(name) {
