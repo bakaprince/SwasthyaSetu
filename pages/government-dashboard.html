@@ -265,11 +265,7 @@
         </div>
 
         <!-- Dark Mode Toggle (Fixed) -->
-        <button id="dark-mode-toggle" onclick="toggleDarkMode()"
-            class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-secondary dark:bg-gray-700 text-white rounded-full shadow-lg hover:scale-110 transition-transform flex items-center justify-center">
-            <span class="material-icons-outlined dark:hidden">dark_mode</span>
-            <span class="material-icons-outlined hidden dark:block">light_mode</span>
-        </button>
+        <!-- Dark Mode Toggle Removed -->
 
         <!-- Three Column Layout: Stats LEFT, Map CENTER, Info RIGHT -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[700px]">
@@ -373,46 +369,6 @@
         </div>
 
         <!-- Real-time Audit Logs -->
-        <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
-            <h3 class="text-xl font-bold text-secondary dark:text-white font-display mb-8">Audit logs (Interop)</h3>
-
-            <div class="space-y-6">
-                <div class="flex gap-4">
-                    <div class="w-2 h-12 bg-green-500 rounded-full flex-shrink-0"></div>
-                    <div>
-                        <p class="text-sm font-bold text-gray-900 dark:text-white">Record Linkage Success</p>
-                        <p class="text-xs text-gray-500 mt-1">Patient 'Rahul S.' (ABHA id: ....34) successfully
-                            linked from Apollo to AIIMS.</p>
-                        <p class="text-[10px] text-primary font-bold mt-2 uppercase">10:45 AM • SUCCESS</p>
-                    </div>
-                </div>
-
-                <div class="flex gap-4">
-                    <div class="w-2 h-12 bg-blue-500 rounded-full flex-shrink-0"></div>
-                    <div>
-                        <p class="text-sm font-bold text-gray-900 dark:text-white">Encrypted Request Received</p>
-                        <p class="text-xs text-gray-500 mt-1">Central Drug Repository queried for Vaccination
-                            verification (State: MH).</p>
-                        <p class="text-[10px] text-blue-500 font-bold mt-2 uppercase">10:42 AM • AUTH_VERIFIED</p>
-                    </div>
-                </div>
-
-                <div class="flex gap-4">
-                    <div class="w-2 h-12 bg-health-orange rounded-full flex-shrink-0"></div>
-                    <div>
-                        <p class="text-sm font-bold text-gray-900 dark:text-white">Protocol Update</p>
-                        <p class="text-xs text-gray-500 mt-1">System policy updated to V3.2 (Enhanced
-                            HIPAA-Compliance Layer).</p>
-                        <p class="text-[10px] text-health-orange font-bold mt-2 uppercase">09:15 AM • SYSTEM_EVENT
-                        </p>
-                    </div>
-                </div>
-
-                <button
-                    class="w-full mt-4 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white rounded-xl text-sm font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-                    View Full Activity Logs
-                </button>
-            </div>
         </div>
         </div>
     </main>
@@ -477,17 +433,7 @@
             });
         });
 
-        // Dark Mode Toggle Function
-        function toggleDarkMode() {
-            document.documentElement.classList.toggle('dark');
-            const isDark = document.documentElement.classList.contains('dark');
-            localStorage.setItem('darkMode', isDark ? 'true' : 'false');
-        }
-
-        // Initialize dark mode from localStorage
-        if (localStorage.getItem('darkMode') === 'true') {
-            document.documentElement.classList.add('dark');
-        }
+        // Dark Mode Logic Removed
     </script>
 </body>
 
