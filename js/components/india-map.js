@@ -340,32 +340,10 @@ const IndiaMap = {
             path.addEventListener('click', (e) => this.onStateClick(e, stateName, pathData, stateColor));
 
             statesGroup.appendChild(path);
-
-            // Add label
-            const coords = this.getAllCoords(feature.geometry);
-            if (coords.length > 0) {
-                let sumX = 0, sumY = 0;
-                coords.forEach(([lon, lat]) => {
-                    sumX += scaleX(lon);
-                    sumY += scaleY(lat);
-                });
-                const centerX = sumX / coords.length;
-                const centerY = sumY / coords.length;
-
-                const shortName = this.stateShortNames[stateName] || stateName.substring(0, 2).toUpperCase();
-                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                label.setAttribute('x', centerX);
-                label.setAttribute('y', centerY);
-                label.setAttribute('class', 'state-label');
-                label.setAttribute('text-anchor', 'middle');
-                label.setAttribute('dominant-baseline', 'middle');
-                label.textContent = shortName;
-                labelGroup.appendChild(label);
-            }
         });
 
         svg.appendChild(statesGroup);
-        svg.appendChild(labelGroup);
+        // svg.appendChild(labelGroup); // Labels removed per request
 
         this.container.innerHTML = '';
         this.container.appendChild(svg);
