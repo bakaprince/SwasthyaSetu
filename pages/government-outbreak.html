@@ -277,12 +277,14 @@
                         <span class="material-icons-outlined text-primary">groups</span>
                         Cases by Age Group
                     </h3>
-                    <select
+                    <select id="diseaseSelector"
                         class="px-3 py-1.5 text-xs bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg">
-                        <option>All Diseases</option>
-                        <option>COVID-19</option>
-                        <option>Dengue</option>
-                        <option>Influenza</option>
+                        <option value="all">All Diseases</option>
+                        <option value="covid">COVID-19</option>
+                        <option value="dengue">Dengue</option>
+                        <option value="influenza">Influenza</option>
+                        <option value="malaria">Malaria</option>
+                        <option value="jaundice">Jaundice</option>
                     </select>
                 </div>
                 <div class="h-80">
@@ -335,7 +337,8 @@
                     Top Affected States
                 </h3>
                 <div class="space-y-4">
-                    <div class="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                    <div class="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 rounded-lg cursor-pointer hover:shadow-md transition-all duration-200 hover:scale-[1.02] state-card"
+                        data-state="Madhya Pradesh" data-disease="Jaundice" data-cases="456" data-severity="critical">
                         <div class="flex items-center gap-3">
                             <span
                                 class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</span>
@@ -344,9 +347,14 @@
                                 <p class="text-xs text-gray-500">Jaundice outbreak</p>
                             </div>
                         </div>
-                        <span class="text-red-600 dark:text-red-400 font-bold">456</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-red-600 dark:text-red-400 font-bold">456</span>
+                            <span class="material-icons-outlined text-gray-400 text-sm">chevron_right</span>
+                        </div>
                     </div>
-                    <div class="flex items-center justify-between p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+                    <div class="flex items-center justify-between p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg cursor-pointer hover:shadow-md transition-all duration-200 hover:scale-[1.02] state-card"
+                        data-state="Delhi NCR" data-disease="Respiratory Infections" data-cases="1234"
+                        data-severity="high">
                         <div class="flex items-center gap-3">
                             <span
                                 class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</span>
@@ -355,9 +363,13 @@
                                 <p class="text-xs text-gray-500">Respiratory infections</p>
                             </div>
                         </div>
-                        <span class="text-orange-600 dark:text-orange-400 font-bold">1,234</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-orange-600 dark:text-orange-400 font-bold">1,234</span>
+                            <span class="material-icons-outlined text-gray-400 text-sm">chevron_right</span>
+                        </div>
                     </div>
-                    <div class="flex items-center justify-between p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                    <div class="flex items-center justify-between p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg cursor-pointer hover:shadow-md transition-all duration-200 hover:scale-[1.02] state-card"
+                        data-state="Maharashtra" data-disease="Seasonal Flu" data-cases="987" data-severity="medium">
                         <div class="flex items-center gap-3">
                             <span
                                 class="w-8 h-8 bg-yellow-500 text-white rounded-full flex items-center justify-center text-sm font-bold">3</span>
@@ -366,9 +378,14 @@
                                 <p class="text-xs text-gray-500">Seasonal flu</p>
                             </div>
                         </div>
-                        <span class="text-yellow-600 dark:text-yellow-400 font-bold">987</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-yellow-600 dark:text-yellow-400 font-bold">987</span>
+                            <span class="material-icons-outlined text-gray-400 text-sm">chevron_right</span>
+                        </div>
                     </div>
-                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg cursor-pointer hover:shadow-md transition-all duration-200 hover:scale-[1.02] state-card"
+                        data-state="West Bengal" data-disease="Waterborne Diseases" data-cases="654"
+                        data-severity="medium">
                         <div class="flex items-center gap-3">
                             <span
                                 class="w-8 h-8 bg-gray-500 text-white rounded-full flex items-center justify-center text-sm font-bold">4</span>
@@ -377,7 +394,10 @@
                                 <p class="text-xs text-gray-500">Waterborne diseases</p>
                             </div>
                         </div>
-                        <span class="text-gray-600 dark:text-gray-400 font-bold">654</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-gray-600 dark:text-gray-400 font-bold">654</span>
+                            <span class="material-icons-outlined text-gray-400 text-sm">chevron_right</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -470,6 +490,109 @@
 
     </main>
 
+    <!-- Detailed Report Modal -->
+    <div id="detailModal"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <!-- Modal Header -->
+            <div
+                class="sticky top-0 bg-gradient-to-r from-secondary to-secondary-light text-white p-6 rounded-t-3xl z-10">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h2 id="modalTitle" class="text-2xl font-bold mb-2">State Outbreak Report</h2>
+                        <p id="modalSubtitle" class="text-sm opacity-90">Detailed analysis and response measures</p>
+                    </div>
+                    <button onclick="closeModal()"
+                        class="text-white hover:bg-white/20 rounded-full p-2 transition-colors">
+                        <span class="material-icons-outlined">close</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="p-6 space-y-6">
+                <!-- Key Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-red-50 dark:bg-red-900/20 p-4 rounded-xl">
+                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">Total Cases</p>
+                        <p id="statCases" class="text-2xl font-bold text-red-600 dark:text-red-400">0</p>
+                    </div>
+                    <div class="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-xl">
+                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">Active</p>
+                        <p id="statActive" class="text-2xl font-bold text-orange-600 dark:text-orange-400">0</p>
+                    </div>
+                    <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-xl">
+                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">Recovered</p>
+                        <p id="statRecovered" class="text-2xl font-bold text-green-600 dark:text-green-400">0</p>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-xl">
+                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">Fatality Rate</p>
+                        <p id="statFatality" class="text-2xl font-bold text-gray-600 dark:text-gray-400">0%</p>
+                    </div>
+                </div>
+
+                <!-- Timeline -->
+                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6">
+                    <h3 class="font-bold text-lg text-secondary dark:text-white mb-4 flex items-center gap-2">
+                        <span class="material-icons-outlined text-primary">timeline</span>
+                        Outbreak Timeline
+                    </h3>
+                    <div class="space-y-3" id="timelineContent">
+                        <!-- Timeline items will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Affected Districts -->
+                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6">
+                    <h3 class="font-bold text-lg text-secondary dark:text-white mb-4 flex items-center gap-2">
+                        <span class="material-icons-outlined text-primary">location_city</span>
+                        Most Affected Districts
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="districtsContent">
+                        <!-- District items will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Demographics -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6">
+                        <h3 class="font-bold text-lg text-secondary dark:text-white mb-4 flex items-center gap-2">
+                            <span class="material-icons-outlined text-primary">groups</span>
+                            Age Distribution
+                        </h3>
+                        <div class="space-y-2" id="ageDistribution">
+                            <!-- Age distribution will be inserted here -->
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6">
+                        <h3 class="font-bold text-lg text-secondary dark:text-white mb-4 flex items-center gap-2">
+                            <span class="material-icons-outlined text-primary">medical_services</span>
+                            Response Measures
+                        </h3>
+                        <div class="space-y-2" id="responseMeasures">
+                            <!-- Response measures will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-3 pt-4">
+                    <button
+                        class="flex-1 bg-primary text-secondary font-bold py-3 px-6 rounded-xl hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
+                        <span class="material-icons-outlined">download</span>
+                        Download Full Report
+                    </button>
+                    <button
+                        class="flex-1 bg-secondary text-white font-bold py-3 px-6 rounded-xl hover:bg-secondary-light transition-colors flex items-center justify-center gap-2">
+                        <span class="material-icons-outlined">share</span>
+                        Share Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript -->
     <script src="../js/config/app-config.js"></script>
     <script src="../js/utils/helpers.js"></script>
@@ -511,7 +634,7 @@
                         datasets: [
                             {
                                 label: 'Dengue',
-                                data: [12, 15, 18, 25, 42, 89, 156, 234, 198, 134, 67, 28],
+                                data: [8, 12, 18, 28, 45, 98, 178, 234, 198, 145, 89, 34],
                                 borderColor: '#ef4444',
                                 backgroundColor: 'rgba(239, 68, 68, 0.1)',
                                 tension: 0.4,
@@ -519,7 +642,7 @@
                             },
                             {
                                 label: 'Influenza',
-                                data: [312, 289, 245, 198, 156, 98, 67, 54, 89, 145, 234, 298],
+                                data: [312, 298, 245, 198, 156, 98, 67, 54, 89, 145, 234, 289],
                                 borderColor: '#3b82f6',
                                 backgroundColor: 'rgba(59, 130, 246, 0.1)',
                                 tension: 0.4,
@@ -527,7 +650,7 @@
                             },
                             {
                                 label: 'Malaria',
-                                data: [23, 28, 34, 45, 67, 112, 156, 189, 167, 123, 78, 45],
+                                data: [18, 23, 28, 38, 56, 89, 134, 189, 167, 123, 78, 34],
                                 borderColor: '#f59e0b',
                                 backgroundColor: 'rgba(245, 158, 11, 0.1)',
                                 tension: 0.4,
@@ -535,7 +658,7 @@
                             },
                             {
                                 label: 'Jaundice',
-                                data: [34, 38, 42, 48, 56, 67, 78, 89, 98, 112, 89, 67],
+                                data: [28, 34, 38, 42, 48, 58, 72, 89, 98, 112, 89, 56],
                                 borderColor: '#eab308',
                                 backgroundColor: 'rgba(234, 179, 8, 0.1)',
                                 tension: 0.4,
@@ -568,22 +691,58 @@
                 });
             }
 
-            // Age Group Distribution Chart
+            // Age Group Distribution Chart - Dynamic
             const ageGroupCtx = document.getElementById('ageGroupChart');
-            if (ageGroupCtx) {
-                new Chart(ageGroupCtx, {
+            let ageGroupChart = null;
+
+            // Disease-specific age distribution data based on real patterns
+            const ageGroupData = {
+                all: {
+                    male: [234, 456, 389, 678, 892, 756, 634],
+                    female: [198, 423, 367, 645, 834, 712, 598]
+                },
+                covid: {
+                    male: [89, 134, 178, 312, 456, 589, 712],
+                    female: [76, 112, 156, 289, 423, 534, 678]
+                },
+                dengue: {
+                    male: [156, 234, 289, 345, 398, 312, 234],
+                    female: [134, 212, 267, 323, 378, 289, 198]
+                },
+                influenza: {
+                    male: [312, 389, 234, 198, 267, 345, 423],
+                    female: [289, 356, 212, 178, 234, 312, 389]
+                },
+                malaria: {
+                    male: [198, 267, 189, 156, 134, 112, 89],
+                    female: [178, 234, 167, 134, 112, 98, 76]
+                },
+                jaundice: {
+                    male: [89, 123, 167, 234, 198, 145, 112],
+                    female: [76, 112, 145, 212, 178, 134, 98]
+                }
+            };
+
+            function createAgeGroupChart(disease = 'all') {
+                const data = ageGroupData[disease];
+
+                if (ageGroupChart) {
+                    ageGroupChart.destroy();
+                }
+
+                ageGroupChart = new Chart(ageGroupCtx, {
                     type: 'bar',
                     data: {
                         labels: ['0-5', '6-12', '13-18', '19-30', '31-45', '46-60', '60+'],
                         datasets: [
                             {
                                 label: 'Male',
-                                data: [234, 456, 389, 678, 892, 756, 634],
+                                data: data.male,
                                 backgroundColor: 'rgba(59, 130, 246, 0.8)',
                             },
                             {
                                 label: 'Female',
-                                data: [198, 423, 367, 645, 834, 712, 598],
+                                data: data.female,
                                 backgroundColor: 'rgba(236, 72, 153, 0.8)',
                             }
                         ]
@@ -613,6 +772,18 @@
                         }
                     }
                 });
+            }
+
+            if (ageGroupCtx) {
+                createAgeGroupChart('all');
+
+                // Add event listener to disease selector
+                const diseaseSelector = document.getElementById('diseaseSelector');
+                if (diseaseSelector) {
+                    diseaseSelector.addEventListener('change', function () {
+                        createAgeGroupChart(this.value);
+                    });
+                }
             }
 
             // Outbreak Prediction Chart
@@ -753,6 +924,230 @@
                         }
                     }
                 });
+            }
+        });
+
+        // Modal handling functions
+        function closeModal() {
+            const modal = document.getElementById('detailModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function openModal(state, disease, cases, severity) {
+            const modal = document.getElementById('detailModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            // Update modal title
+            document.getElementById('modalTitle').textContent = `${state} - ${disease} Outbreak`;
+            document.getElementById('modalSubtitle').textContent = `Detailed Report | Last Updated: ${new Date().toLocaleDateString('en-IN')}`;
+
+            // Get detailed data based on state
+            const detailData = getStateDetails(state, disease, cases, severity);
+
+            // Update stats
+            document.getElementById('statCases').textContent = detailData.totalCases;
+            document.getElementById('statActive').textContent = detailData.active;
+            document.getElementById('statRecovered').textContent = detailData.recovered;
+            document.getElementById('statFatality').textContent = detailData.fatality + '%';
+
+            // Update timeline
+            const timelineContent = document.getElementById('timelineContent');
+            timelineContent.innerHTML = detailData.timeline.map(item => `
+                <div class="flex gap-3">
+                    <div class="w-2 h-2 rounded-full ${item.color} mt-2"></div>
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-gray-900 dark:text-white">${item.date}</p>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">${item.event}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            // Update districts
+            const districtsContent = document.getElementById('districtsContent');
+            districtsContent.innerHTML = detailData.districts.map(district => `
+                <div class="flex justify-between items-center p-3 bg-white dark:bg-gray-800 rounded-lg">
+                    <span class="text-sm font-semibold text-gray-900 dark:text-white">${district.name}</span>
+                    <span class="text-sm font-bold text-red-600 dark:text-red-400">${district.cases}</span>
+                </div>
+            `).join('');
+
+            // Update age distribution
+            const ageDistribution = document.getElementById('ageDistribution');
+            ageDistribution.innerHTML = detailData.ageGroups.map(group => `
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="text-gray-700 dark:text-gray-300">${group.range}</span>
+                        <span class="font-bold text-gray-900 dark:text-white">${group.percentage}%</span>
+                    </div>
+                    <div class="h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
+                        <div class="h-full bg-primary rounded-full" style="width: ${group.percentage}%"></div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Update response measures
+            const responseMeasures = document.getElementById('responseMeasures');
+            responseMeasures.innerHTML = detailData.responses.map(response => `
+                <div class="flex items-start gap-2">
+                    <span class="material-icons-outlined text-primary text-sm mt-0.5">check_circle</span>
+                    <p class="text-sm text-gray-700 dark:text-gray-300">${response}</p>
+                </div>
+            `).join('');
+        }
+
+        function getStateDetails(state, disease, cases, severity) {
+            // Mock data - in production, this would fetch from API
+            const dataMap = {
+                'Madhya Pradesh': {
+                    totalCases: '456',
+                    active: '342',
+                    recovered: '98',
+                    fatality: '3.5',
+                    timeline: [
+                        { date: 'Feb 5, 2026', event: 'First cluster identified in Bhopal district', color: 'bg-red-500' },
+                        { date: 'Feb 3, 2026', event: 'Contaminated water source detected in 3 villages', color: 'bg-orange-500' },
+                        { date: 'Jan 28, 2026', event: 'Initial cases reported in rural areas', color: 'bg-yellow-500' },
+                        { date: 'Jan 25, 2026', event: 'Surveillance teams deployed', color: 'bg-blue-500' }
+                    ],
+                    districts: [
+                        { name: 'Bhopal', cases: 156 },
+                        { name: 'Indore', cases: 98 },
+                        { name: 'Jabalpur', cases: 87 },
+                        { name: 'Gwalior', cases: 65 },
+                        { name: 'Ujjain', cases: 50 }
+                    ],
+                    ageGroups: [
+                        { range: '0-18 years', percentage: 28 },
+                        { range: '19-35 years', percentage: 35 },
+                        { range: '36-50 years', percentage: 22 },
+                        { range: '51+ years', percentage: 15 }
+                    ],
+                    responses: [
+                        'Water quality testing in all affected areas',
+                        'Distribution of water purification tablets',
+                        'Mobile medical units deployed to rural regions',
+                        'Public awareness campaigns launched',
+                        'Isolation wards set up in 12 district hospitals'
+                    ]
+                },
+                'Delhi NCR': {
+                    totalCases: '1,234',
+                    active: '892',
+                    recovered: '328',
+                    fatality: '1.1',
+                    timeline: [
+                        { date: 'Feb 7, 2026', event: 'Peak winter pollution levels recorded', color: 'bg-red-500' },
+                        { date: 'Feb 1, 2026', event: 'Surge in hospital admissions begins', color: 'bg-orange-500' },
+                        { date: 'Jan 20, 2026', event: 'Cold wave intensifies respiratory cases', color: 'bg-yellow-500' },
+                        { date: 'Jan 15, 2026', event: 'Seasonal monitoring initiated', color: 'bg-blue-500' }
+                    ],
+                    districts: [
+                        { name: 'Central Delhi', cases: 345 },
+                        { name: 'East Delhi', cases: 289 },
+                        { name: 'Gurgaon', cases: 234 },
+                        { name: 'Noida', cases: 198 },
+                        { name: 'Faridabad', cases: 168 }
+                    ],
+                    ageGroups: [
+                        { range: '0-18 years', percentage: 32 },
+                        { range: '19-35 years', percentage: 25 },
+                        { range: '36-50 years', percentage: 23 },
+                        { range: '51+ years', percentage: 20 }
+                    ],
+                    responses: [
+                        'Free masks distributed at public places',
+                        'Air purifiers installed in schools',
+                        'Telemedicine consultations expanded',
+                        'Emergency respiratory care units activated',
+                        'Public advisories on pollution protection'
+                    ]
+                },
+                'Maharashtra': {
+                    totalCases: '987',
+                    active: '654',
+                    recovered: '320',
+                    fatality: '1.3',
+                    timeline: [
+                        { date: 'Feb 6, 2026', event: 'Seasonal flu vaccination drive launched', color: 'bg-yellow-500' },
+                        { date: 'Jan 30, 2026', event: 'Cases spike in Mumbai metropolitan region', color: 'bg-orange-500' },
+                        { date: 'Jan 22, 2026', event: 'First wave of seasonal flu detected', color: 'bg-yellow-500' },
+                        { date: 'Jan 18, 2026', event: 'Enhanced surveillance activated', color: 'bg-blue-500' }
+                    ],
+                    districts: [
+                        { name: 'Mumbai', cases: 345 },
+                        { name: 'Pune', cases: 234 },
+                        { name: 'Nagpur', cases: 156 },
+                        { name: 'Thane', cases: 134 },
+                        { name: 'Nashik', cases: 118 }
+                    ],
+                    ageGroups: [
+                        { range: '0-18 years', percentage: 30 },
+                        { range: '19-35 years', percentage: 28 },
+                        { range: '36-50 years', percentage: 24 },
+                        { range: '51+ years', percentage: 18 }
+                    ],
+                    responses: [
+                        'Free flu vaccination for vulnerable groups',
+                        'School health screening programs',
+                        'Antiviral medication stockpiled',
+                        'Public health advisories issued',
+                        'Hospital preparedness enhanced'
+                    ]
+                },
+                'West Bengal': {
+                    totalCases: '654',
+                    active: '423',
+                    recovered: '218',
+                    fatality: '2.0',
+                    timeline: [
+                        { date: 'Feb 4, 2026', event: 'Water contamination confirmed in Kolkata suburbs', color: 'bg-red-500' },
+                        { date: 'Jan 29, 2026', event: 'Cholera and typhoid cases increase', color: 'bg-orange-500' },
+                        { date: 'Jan 24, 2026', event: 'Heavy rainfall causes sanitation issues', color: 'bg-yellow-500' },
+                        { date: 'Jan 20, 2026', event: 'Preventive measures initiated', color: 'bg-blue-500' }
+                    ],
+                    districts: [
+                        { name: 'Kolkata', cases: 234 },
+                        { name: 'Howrah', cases: 156 },
+                        { name: 'North 24 Parganas', cases: 112 },
+                        { name: 'South 24 Parganas', cases: 89 },
+                        { name: 'Hooghly', cases: 63 }
+                    ],
+                    ageGroups: [
+                        { range: '0-18 years', percentage: 35 },
+                        { range: '19-35 years', percentage: 30 },
+                        { range: '36-50 years', percentage: 20 },
+                        { range: '51+ years', percentage: 15 }
+                    ],
+                    responses: [
+                        'Emergency water purification systems deployed',
+                        'Chlorination of water sources',
+                        'ORS distribution in affected areas',
+                        'Sanitation drives in urban slums',
+                        'Medical camps in vulnerable communities'
+                    ]
+                }
+            };
+
+            return dataMap[state] || dataMap['Madhya Pradesh'];
+        }
+
+        // Add click listeners to state cards
+        document.querySelectorAll('.state-card').forEach(card => {
+            card.addEventListener('click', function () {
+                const state = this.dataset.state;
+                const disease = this.dataset.disease;
+                const cases = this.dataset.cases;
+                const severity = this.dataset.severity;
+                openModal(state, disease, cases, severity);
+            });
+        });
+
+        // Close modal on backdrop click
+        document.getElementById('detailModal')?.addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeModal();
             }
         });
     </script>
