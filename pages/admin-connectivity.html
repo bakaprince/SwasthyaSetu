@@ -163,10 +163,38 @@
             </div>
         </div>
 
-        <!-- Grid Layout -->
+        <!-- Top Section: Hospital Discovery (Full Width) -->
+        <div
+            class="mb-8 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col h-[500px]">
+            <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                <h3 class="font-bold text-secondary dark:text-white flex items-center gap-2">
+                    <span class="material-icons-outlined text-green-500">share_location</span>
+                    Nearby Network Hospitals
+                </h3>
+                <div class="flex gap-2">
+                    <select id="resource-filter"
+                        class="text-sm border-gray-300 rounded-lg focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="all">All Resources</option>
+                        <option value="icu_beds">ICU Beds</option>
+                        <option value="ventilators">Ventilators</option>
+                        <option value="blood_o_neg">Blood (O-)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex-1 flex overflow-hidden">
+                <!-- Grid of Hospitals -->
+                <div class="w-full overflow-y-auto bg-gray-50/50 dark:bg-gray-900 p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                    id="hospital-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Grid: Status & Requests -->
         <div class="grid grid-cols-12 gap-8">
 
-            <!-- Left Column: Discovery & Status (8 columns) -->
+            <!-- Left Column: Active Requests (8 columns) -->
             <div class="col-span-12 lg:col-span-8 flex flex-col gap-8">
 
                 <!-- Active Requests (Incoming/Outgoing) -->
@@ -188,35 +216,6 @@
                         <div class="p-8 text-center text-gray-500">Loading active requests...</div>
                     </div>
                 </div>
-
-                <!-- Hospital Discovery Map/List -->
-                <div
-                    class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col h-[600px]">
-                    <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                        <h3 class="font-bold text-secondary dark:text-white flex items-center gap-2">
-                            <span class="material-icons-outlined text-green-500">share_location</span>
-                            Nearby Network Hospitals
-                        </h3>
-                        <div class="flex gap-2">
-                            <select id="resource-filter"
-                                class="text-sm border-gray-300 rounded-lg focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                <option value="all">All Resources</option>
-                                <option value="icu_beds">ICU Beds</option>
-                                <option value="ventilators">Ventilators</option>
-                                <option value="blood_o_neg">Blood (O-)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="flex-1 flex overflow-hidden">
-                        <!-- Sidebar List (Full Width, Grid) -->
-                        <div class="w-full overflow-y-auto bg-gray-50/50 dark:bg-gray-900 p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
-                            id="hospital-list">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-                </div>
-
             </div>
 
             <!-- Right Column: Logs & Quick Stats (4 columns) -->

@@ -25,6 +25,9 @@ const AdminConnectivity = {
             { id: 103, name: "Indraprastha Apollo", distance: "12.5 km", type: "Private", beds: { icu: 18, gen: 60 }, oxygen: "High", blood: { "O+": "High", "A-": "High" }, connectivity: 92, online: true },
             { id: 104, name: "Sir Ganga Ram Hospital", distance: "14.1 km", type: "Private", beds: { icu: 0, gen: 8 }, oxygen: "Critical", blood: { "Any": "Critical" }, connectivity: 88, online: false },
             { id: 105, name: "RML Hospital", distance: "6.5 km", type: "Government", beds: { icu: 4, gen: 20 }, oxygen: "Stable", blood: { "B+": "High" }, connectivity: 90, online: true },
+            { id: 106, name: "AIIMS Trauma Center", distance: "1.2 km", type: "Government", beds: { icu: 2, gen: 15 }, oxygen: "Stable", blood: { "O-": "High" }, connectivity: 99, online: true },
+            { id: 107, name: "Lok Nayak Hospital (LNJP)", distance: "9.5 km", type: "Government", beds: { icu: 8, gen: 30 }, oxygen: "Stable", blood: { "B-": "Low" }, connectivity: 85, online: true },
+            { id: 108, name: "Fortis Escorts Heart Inst.", distance: "11.0 km", type: "Private", beds: { icu: 6, gen: 22 }, oxygen: "High", blood: { "AB+": "High" }, connectivity: 93, online: true },
         ];
 
         // Mock Active Requests
