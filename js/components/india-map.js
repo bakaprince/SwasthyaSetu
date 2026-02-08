@@ -27,11 +27,8 @@ const IndiaMap = {
         "gujarat": { color: "#84cc16", population: 71507000, growthRate: 0.014, birthRate: 19.3, deathRate: 5.9, reviewScore: 4.3, diseases: { "Diabetes": 25, "Heart": 20, "Typhoid": 15, "Flu": 20, "Dengue": 20 } },
         "haryana": { color: "#06b6d4", population: 30209000, growthRate: 0.016, birthRate: 19.9, deathRate: 6.1, reviewScore: 4.2, diseases: { "Dengue": 25, "Typhoid": 20, "Flu": 20, "TB": 15, "Diabetes": 20 } },
         "himachal pradesh": { color: "#3b82f6", population: 7468000, growthRate: 0.008, birthRate: 15.3, deathRate: 6.9, reviewScore: 4.5, diseases: { "Flu": 30, "Respiratory": 25, "Arthritis": 15, "TB": 15, "Other": 15 } },
-        "jammu and kashmir": { color: "#a855f7", population: 13603000, growthRate: 0.010, birthRate: 14.9, deathRate: 5.1, reviewScore: 4.1, diseases: { "Flu": 35, "Respiratory": 25, "TB": 15, "Hepatitis": 15, "Other": 10 } },
+        "jammu and kashmir": { color: "#a855f7", population: 13903000, growthRate: 0.010, birthRate: 14.9, deathRate: 5.1, reviewScore: 4.1, diseases: { "Flu": 35, "Respiratory": 25, "TB": 15, "Hepatitis": 15, "Other": 10 } },
         "jharkhand": { color: "#10b981", population: 39466000, growthRate: 0.015, birthRate: 21.8, deathRate: 5.6, reviewScore: 3.7, diseases: { "Malaria": 30, "TB": 25, "Typhoid": 15, "Anemia": 20, "Flu": 10 } },
-        "karnataka": { color: "#f43f5e", population: 67692000, growthRate: 0.008, birthRate: 16.5, deathRate: 6.2, reviewScore: 4.6, diseases: { "Dengue": 25, "Diabetes": 20, "Heart": 15, "Flu": 20, "Typhoid": 20 } },
-        "kerala": { color: "#0ea5e9", population: 35776000, growthRate: 0.005, birthRate: 13.6, deathRate: 7.1, reviewScore: 4.9, diseases: { "Diabetes": 30, "Hypertension": 20, "Dengue": 15, "Viral Fever": 20, "Other": 15 } },
-        "ladakh": { color: "#8b5cf6", population: 300000, growthRate: 0.012, birthRate: 14.5, deathRate: 6.0, reviewScore: 4.0, diseases: { "Respiratory": 40, "Flu": 30, "Arthritis": 15, "TB": 10, "Other": 5 } },
         "madhya pradesh": { color: "#eab308", population: 86579000, growthRate: 0.018, birthRate: 23.9, deathRate: 6.5, reviewScore: 3.8, diseases: { "Malaria": 25, "TB": 20, "Typhoid": 20, "Flu": 20, "Cholera": 15 } },
         "maharashtra": { color: "#f97316", population: 126385000, growthRate: 0.011, birthRate: 15.3, deathRate: 5.7, reviewScore: 4.4, diseases: { "Dengue": 20, "Malaria": 15, "COVID-19": 10, "Flu": 30, "Diabetes": 25 } },
         "manipur": { color: "#ec4899", population: 3223000, growthRate: 0.014, birthRate: 13.9, deathRate: 4.9, reviewScore: 3.9, diseases: { "Malaria": 30, "TB": 20, "Flu": 20, "Typhoid": 15, "Other": 15 } },
@@ -242,7 +239,43 @@ const IndiaMap = {
         try {
             this.container.innerHTML = `<div class="map-loader"><div class="spinner"></div><div class="loading-text">Building Map...</div></div>`;
             const response = await fetch('../js/data/india_states.geojson');
-            const data = await response.json();
+            let data = await response.json();
+
+            // --- Merge J&K and Ladakh logic ---
+            // Find J&K and Ladakh features
+            const jkIndex = data.features.findIndex(f => {
+                const name = (f.properties.NAME_1 || f.properties.ST_NM || f.properties.name || "").toLowerCase();
+                return name.includes('jammu');
+            });
+            const ladakhIndex = data.features.findIndex(f => {
+                const name = (f.properties.NAME_1 || f.properties.ST_NM || f.properties.name || "").toLowerCase();
+                return name.includes('ladakh');
+            });
+
+            if (jkIndex !== -1 && ladakhIndex !== -1) {
+                const jkFeature = data.features[jkIndex];
+                const ladakhFeature = data.features[ladakhIndex];
+
+                // Merge Geometries
+                // Assuming MultiPolygon structure: [ [ [x,y],... ], ... ]
+                // If one is Polygon, convert to MultiPolygon format first
+                let jkCoords = jkFeature.geometry.type === 'Polygon' ? [jkFeature.geometry.coordinates] : jkFeature.geometry.coordinates;
+                let ladakhCoords = ladakhFeature.geometry.type === 'Polygon' ? [ladakhFeature.geometry.coordinates] : ladakhFeature.geometry.coordinates;
+
+                // Combine
+                const mergedCoords = [...jkCoords, ...ladakhCoords];
+
+                // Update J&K Feature
+                jkFeature.geometry.type = 'MultiPolygon';
+                jkFeature.geometry.coordinates = mergedCoords;
+                jkFeature.properties.NAME_1 = "Jammu and Kashmir"; // Ensure standard name
+
+                // Remove Ladakh Feature
+                data.features.splice(ladakhIndex, 1);
+            }
+
+            // --- End Merge Logic ---
+
             this.container.innerHTML = '';
             this.renderSVG(data);
         } catch (error) {
