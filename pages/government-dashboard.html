@@ -20,6 +20,8 @@
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 
     <!-- India Map Component CSS -->
     <link rel="stylesheet" href="../css/components/india-map.css">
@@ -322,10 +324,9 @@
                     statistics</p>
             </div>
 
+
             <!-- RIGHT PANEL: Disease Alerts & Top States -->
             <div class="lg:col-span-2 space-y-4">
-
-
                 <div class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
                     <h4 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">Top
                         States by Cases</h4>
@@ -367,6 +368,23 @@
                 </div>
             </div>
         </div>
+
+        <!-- NEW: Analytics Section (Hidden by default or below fold) to prevent JS Errors and provide value -->
+        <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-bold text-secondary dark:text-white mb-4">National Disease Outcome</h3>
+                <div class="h-64">
+                    <canvas id="outcomeChart"></canvas>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-bold text-secondary dark:text-white mb-4">Hospital Performance</h3>
+                <div class="h-64">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+
 
         <!-- Real-time Audit Logs -->
         </div>
