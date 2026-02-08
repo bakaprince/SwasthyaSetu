@@ -98,26 +98,7 @@
             </div>
         </div>
 
-        <style>
-            @keyframes ecg-scroll {
-                0% {
-                    transform: translateX(0);
-                }
 
-                100% {
-                    transform: translateX(-600px);
-                }
-            }
-
-            .heartbeat-wrapper {
-                animation: ecg-scroll 15s linear infinite;
-            }
-
-            .ecg-container {
-                mask-image: linear-gradient(to right, transparent, black 80px, black calc(100% - 80px), transparent);
-                -webkit-mask-image: linear-gradient(to right, transparent, black 80px, black calc(100% - 80px), transparent);
-            }
-        </style>
 
         <!-- Mobile Menu Button -->
         <button id="mobile-menu-btn" class="md:hidden text-white hover:text-primary transition-colors">
@@ -653,39 +634,7 @@
         </div>
 
         <div class="w-full overflow-hidden">
-            <style>
-                @keyframes slideLoop {
-                    0% {
-                        transform: translateX(0);
-                    }
 
-                    100% {
-                        transform: translateX(-100%);
-                    }
-                }
-
-                .faq-container {
-                    display: flex;
-                    animation: slideLoop 60s linear infinite;
-                    gap: 2rem;
-                }
-
-                .faq-container:hover {
-                    animation-play-state: paused;
-                }
-
-                .faq-box {
-                    min-width: 320px;
-                    width: 320px;
-                    height: 240px;
-                    flex-shrink: 0;
-                    border-radius: 30px;
-                    background: #fffefc;
-                    box-shadow: 15px 15px 30px #d9d8d6, -15px -15px 30px #ffffff;
-                    border: none;
-                    outline: none;
-                }
-            </style>
 
             <div class="relative">
                 <div class="flex overflow-hidden overflow-y-hidden">

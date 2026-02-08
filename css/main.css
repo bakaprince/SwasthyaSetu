@@ -17,6 +17,7 @@
 @import 'components/modal.css';
 @import 'components/chatbot.css';
 @import 'components/map-markers.css';
+@import 'components/animations.css';
 
 
 /* Note: Tailwind CSS is loaded via CDN in the HTML file */
