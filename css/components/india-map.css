@@ -12,7 +12,8 @@
     border-radius: 1.5rem;
     overflow: hidden;
     position: relative;
-    box-shadow: 0 8px 30px rgba(17, 56, 65, 0.1);
+    /* Flat style - no shadow */
+    box-shadow: none;
 }
 
 /* Dark Mode Map */
@@ -20,10 +21,133 @@
     background:
         radial-gradient(circle at 50% 50%, rgba(134, 239, 172, 0.1) 1px, transparent 1px),
         linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: none;
 }
 
-/* SVG Map Styles Removed (Replaced by ECharts) */
+/* Dark Mode Map */
+.dark #india-map {
+    background:
+        radial-gradient(circle at 50% 50%, rgba(134, 239, 172, 0.1) 1px, transparent 1px),
+        linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+    box-shadow: none;
+}
+
+/* ============================================ */
+/* CUSTOM SVG MAP STYLES                       */
+/* ============================================ */
+
+/* SVG Container */
+.india-svg-map {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
+    /* Initial appear animation */
+    animation: map-enter 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes map-enter {
+    from {
+        transform: scale(0.9) translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+
+
+/* Base State Path Style */
+.state-path {
+    stroke: #ffffff;
+    stroke-width: 1;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-origin: center;
+    cursor: pointer;
+    /* Optimize painting */
+    will-change: transform, filter, fill;
+}
+
+.dark .state-path {
+    stroke: #334155;
+    stroke-width: 0.5;
+}
+
+/* ============================================ */
+/* THE "CAKE SLICE LIFT" HOVER EFFECT          */
+/* ============================================ */
+
+.state-path:hover,
+.state-path.active {
+    /* Lift Up */
+    transform: translateY(-8px) scale(1.04);
+
+    /* Soft Drop Shadow for Depth */
+    filter:
+        drop-shadow(0 15px 15px rgba(0, 0, 0, 0.3)) brightness(1.1);
+
+    /* Elevate Z-Index Visual via Paint Order (SVG specific trick doesn't apply to z-index)
+       Note: JS handles re-appending to bring to front for true z-index
+    */
+    stroke: #ffffff;
+    stroke-width: 2;
+    z-index: 100;
+    /* Only works if positioned, but SVG element order matters more */
+}
+
+.state-path.active {
+    filter:
+        drop-shadow(0 10px 25px rgba(17, 56, 65, 0.5)) brightness(1.1);
+    stroke: #fbbf24;
+    /* Gold border for active */
+    stroke-width: 3;
+}
+
+.dark .state-path:hover,
+.dark .state-path.active {
+    filter:
+        drop-shadow(0 15px 25px rgba(0, 0, 0, 0.6)) brightness(1.15);
+    stroke: #86efac;
+}
+
+/* Loader Styles */
+.map-loader {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #113841;
+}
+
+.dark .map-loader {
+    color: #86efac;
+}
+
+/* Tooltip */
+.map-tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(4px);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    white-space: nowrap;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transform: translate(-50%, -120%);
+    /* Center above cursor */
+    display: none;
+}
 
 /* ============================================ */
 /* ANIMATED POPOUT MODAL                       */
