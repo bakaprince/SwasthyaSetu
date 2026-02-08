@@ -151,140 +151,14 @@
                 <h1 class="text-3xl font-bold text-secondary dark:text-white mb-1 font-display">Staff Management</h1>
                 <p class="text-gray-600 dark:text-gray-400">Manage hospital staff, schedules, and assignments.</p>
             </div>
-            <div class="flex gap-3">
-                <button
-                    class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2">
-                    <span class="material-icons-outlined text-lg">filter_list</span>
-                    Filter
-                </button>
-                <button
-                    class="px-4 py-2 bg-primary text-secondary rounded-lg text-sm font-semibold hover:bg-green-400 flex items-center gap-2">
-                    <span class="material-icons-outlined text-lg">person_add</span>
-                    Add Staff
-                </button>
-            </div>
+
         </div>
 
         <!-- Stats Cards -->
-        <div class="grid grid-cols-4 gap-6 mb-8">
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                <div class="flex items-start justify-between mb-4">
-                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                        <span class="material-icons-outlined text-blue-600 dark:text-blue-400">group</span>
-                    </div>
-                </div>
-                <div>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1">Total Staff</p>
-                    <p class="text-3xl font-bold text-secondary dark:text-white">487</p>
-                    <p class="text-xs text-gray-500 mt-1">Active employees</p>
-                </div>
-            </div>
 
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                <div class="flex items-start justify-between mb-4">
-                    <div
-                        class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
-                        <span class="material-icons-outlined text-green-600 dark:text-green-400">medical_services</span>
-                    </div>
-                </div>
-                <div>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1">Doctors</p>
-                    <p class="text-3xl font-bold text-secondary dark:text-white">145</p>
-                    <p class="text-xs text-green-600 mt-1">+5 this month</p>
-                </div>
-            </div>
-
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                <div class="flex items-start justify-between mb-4">
-                    <div
-                        class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
-                        <span class="material-icons-outlined text-purple-600 dark:text-purple-400">local_hospital</span>
-                    </div>
-                </div>
-                <div>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1">Nurses</p>
-                    <p class="text-3xl font-bold text-secondary dark:text-white">234</p>
-                    <p class="text-xs text-gray-500 mt-1">All departments</p>
-                </div>
-            </div>
-
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                <div class="flex items-start justify-between mb-4">
-                    <div
-                        class="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
-                        <span class="material-icons-outlined text-orange-600 dark:text-orange-400">schedule</span>
-                    </div>
-                </div>
-                <div>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1">On Duty</p>
-                    <p class="text-3xl font-bold text-secondary dark:text-white">312</p>
-                    <p class="text-xs text-gray-500 mt-1">Current shift</p>
-                </div>
-            </div>
-        </div>
 
         <!-- Department Overview -->
-        <div class="grid grid-cols-3 gap-6 mb-8">
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-bold text-secondary dark:text-white mb-4">Emergency Department</h3>
-                <div class="space-y-3">
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">Doctors</span>
-                        <span class="text-sm font-semibold text-secondary dark:text-white">12 / 15</span>
-                    </div>
-                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                        <div class="bg-blue-500 h-2 rounded-full" style="width: 80%"></div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">Nurses</span>
-                        <span class="text-sm font-semibold text-secondary dark:text-white">25 / 30</span>
-                    </div>
-                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                        <div class="bg-purple-500 h-2 rounded-full" style="width: 83%"></div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-bold text-secondary dark:text-white mb-4">ICU & Critical Care</h3>
-                <div class="space-y-3">
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">Doctors</span>
-                        <span class="text-sm font-semibold text-secondary dark:text-white">18 / 20</span>
-                    </div>
-                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                        <div class="bg-blue-500 h-2 rounded-full" style="width: 90%"></div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">Nurses</span>
-                        <span class="text-sm font-semibold text-secondary dark:text-white">40 / 45</span>
-                    </div>
-                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                        <div class="bg-purple-500 h-2 rounded-full" style="width: 89%"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-bold text-secondary dark:text-white mb-4">General Ward</h3>
-                <div class="space-y-3">
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">Doctors</span>
-                        <span class="text-sm font-semibold text-secondary dark:text-white">35 / 40</span>
-                    </div>
-                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                        <div class="bg-blue-500 h-2 rounded-full" style="width: 87.5%"></div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">Nurses</span>
-                        <span class="text-sm font-semibold text-secondary dark:text-white">80 / 90</span>
-                    </div>
-                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                        <div class="bg-purple-500 h-2 rounded-full" style="width: 89%"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Staff List -->
         <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
@@ -338,7 +212,8 @@
                                     Duty</span>
                             </td>
                             <td class="px-6 py-4">
-                                <button class="text-primary hover:text-green-400 text-sm font-medium">View
+                                <button onclick="openStaffProfile(this)"
+                                    class="text-primary hover:text-green-400 text-sm font-medium">View
                                     Profile</button>
                             </td>
                         </tr>
@@ -360,7 +235,8 @@
                                     Duty</span>
                             </td>
                             <td class="px-6 py-4">
-                                <button class="text-primary hover:text-green-400 text-sm font-medium">View
+                                <button onclick="openStaffProfile(this)"
+                                    class="text-primary hover:text-green-400 text-sm font-medium">View
                                     Profile</button>
                             </td>
                         </tr>
@@ -382,7 +258,8 @@
                                     Duty</span>
                             </td>
                             <td class="px-6 py-4">
-                                <button class="text-primary hover:text-green-400 text-sm font-medium">View
+                                <button onclick="openStaffProfile(this)"
+                                    class="text-primary hover:text-green-400 text-sm font-medium">View
                                     Profile</button>
                             </td>
                         </tr>
@@ -404,7 +281,8 @@
                                     Duty</span>
                             </td>
                             <td class="px-6 py-4">
-                                <button class="text-primary hover:text-green-400 text-sm font-medium">View
+                                <button onclick="openStaffProfile(this)"
+                                    class="text-primary hover:text-green-400 text-sm font-medium">View
                                     Profile</button>
                             </td>
                         </tr>
@@ -426,7 +304,8 @@
                                     Duty</span>
                             </td>
                             <td class="px-6 py-4">
-                                <button class="text-primary hover:text-green-400 text-sm font-medium">View
+                                <button onclick="openStaffProfile(this)"
+                                    class="text-primary hover:text-green-400 text-sm font-medium">View
                                     Profile</button>
                             </td>
                         </tr>
@@ -451,6 +330,85 @@
         </div>
 
     </main>
+
+    <!-- Staff Profile Modal -->
+    <div id="staff-profile-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-gray-900/75 bg-opacity-75 transition-opacity backdrop-blur-sm"
+            onclick="closeStaffProfile()"></div>
+
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div
+                    class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-gray-200 dark:border-gray-700">
+
+                    <!-- Close Button -->
+                    <button onclick="closeStaffProfile()"
+                        class="absolute top-4 right-4 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+                        <span class="material-icons-outlined">close</span>
+                    </button>
+
+                    <div class="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+                                <h3 class="text-xl font-bold leading-6 text-secondary dark:text-white mb-6 font-display"
+                                    id="modal-title">
+                                    Staff Profile</h3>
+
+                                <div class="flex flex-col items-center mb-6">
+                                    <img id="modal-staff-img" src="" alt="Staff Avatar"
+                                        class="w-24 h-24 rounded-full mb-3 border-4 border-gray-100 dark:border-gray-700 shadow-lg">
+                                    <h4 id="modal-staff-name" class="text-lg font-bold text-gray-900 dark:text-white">
+                                    </h4>
+                                    <p id="modal-staff-role" class="text-sm text-primary font-medium"></p>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Staff ID</p>
+                                        <p id="modal-staff-id" class="font-semibold text-gray-900 dark:text-white"></p>
+                                    </div>
+                                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Department</p>
+                                        <p id="modal-staff-dept" class="font-semibold text-gray-900 dark:text-white">
+                                        </p>
+                                    </div>
+                                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Shift</p>
+                                        <p id="modal-staff-shift" class="font-semibold text-gray-900 dark:text-white">
+                                        </p>
+                                    </div>
+                                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Status</p>
+                                        <div id="modal-staff-status"></div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-6 pt-6 border-t border-gray-100 dark:border-gray-700 space-y-3">
+                                    <div class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
+                                        <span class="material-icons-outlined text-gray-400">email</span>
+                                        <span id="modal-staff-email">email@example.com</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
+                                        <span class="material-icons-outlined text-gray-400">phone</span>
+                                        <span>+91 98765 43210</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700/30 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                        <button type="button" onclick="closeStaffProfile()"
+                            class="mt-3 inline-flex w-full justify-center rounded-md bg-white dark:bg-gray-800 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 sm:mt-0 sm:w-auto">Close</button>
+                        <button type="button"
+                            class="inline-flex w-full justify-center rounded-md bg-secondary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-secondary-light sm:ml-3 sm:w-auto">Edit
+                            Profile</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- JavaScript -->
     <script src="../js/config/app-config.js"></script>
@@ -480,6 +438,49 @@
                 }, 1000);
             });
         });
+
+        function openStaffProfile(btn) {
+            const row = btn.closest('tr');
+            if (!row) return;
+
+            const cells = row.querySelectorAll('td');
+
+            // Extract data
+            const id = cells[0].textContent.trim();
+            const img = cells[1].querySelector('img').src;
+            const name = cells[1].querySelector('span').textContent.trim();
+            const role = cells[2].textContent.trim();
+            const dept = cells[3].textContent.trim();
+            const shift = cells[4].textContent.trim();
+            const statusHtml = cells[5].innerHTML;
+
+            // Populate Modal
+            document.getElementById('modal-staff-img').src = img;
+            document.getElementById('modal-staff-name').textContent = name;
+            document.getElementById('modal-staff-role').textContent = role;
+            document.getElementById('modal-staff-id').textContent = id;
+            document.getElementById('modal-staff-dept').textContent = dept;
+            document.getElementById('modal-staff-shift').textContent = shift;
+            document.getElementById('modal-staff-status').innerHTML = statusHtml;
+
+            // Generate mock email
+            const email = name.toLowerCase().replace(/^(dr\.?|mr\.?|mrs\.?|ms\.?)\s+/i, '').replace(/\s+/g, '.') + '@swasthya.gov.in';
+            document.getElementById('modal-staff-email').textContent = email;
+
+            // Show Modal
+            const modal = document.getElementById('staff-profile-modal');
+            modal.classList.remove('hidden');
+
+            // Animation
+            const modalContent = modal.querySelector('.transform');
+            modalContent.classList.remove('opacity-0', 'translate-y-4', 'sm:translate-y-0', 'sm:scale-95');
+            modalContent.classList.add('opacity-100', 'translate-y-0', 'sm:scale-100');
+        }
+
+        function closeStaffProfile() {
+            const modal = document.getElementById('staff-profile-modal');
+            modal.classList.add('hidden');
+        }
     </script>
 </body>
 
