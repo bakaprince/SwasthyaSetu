@@ -219,10 +219,10 @@
                 <span class="material-icons-outlined text-lg">inventory_2</span>
                 Resource Allocation
             </a>
-            <a href="government-compliance.html"
+            <a href="government-outbreak.html"
                 class="nav-link flex items-center gap-2 px-4 py-4 text-sm font-medium text-gray-300">
-                <span class="material-icons-outlined text-lg">policy</span>
-                Compliance Monitor
+                <span class="material-icons-outlined text-lg">coronavirus</span>
+                Outbreak Predictions
             </a>
         </div>
     </nav>
@@ -339,7 +339,7 @@
                 <div class="flex items-center gap-4">
                     <div class="text-right mr-4 border-r border-white/20 pr-6 hidden xl:block">
                         <p class="text-xs text-gray-400 uppercase tracking-widest mb-1">Medical Superintendent</p>
-                        <p class="font-bold">Dr. R. K. Gupta</p>
+                        <p class="font-bold" id="header-doc-name">Dr. R. K. Gupta</p>
                     </div>
                     <button
                         class="px-5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/10 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors">
@@ -548,7 +548,8 @@
                                     <img src="https://ui-avatars.com/api/?name=Medical+Director&background=random"
                                         class="w-8 h-8 rounded-full">
                                     <div>
-                                        <p class="text-sm font-bold text-gray-900 dark:text-white">Dr. R. K. Gupta</p>
+                                        <p class="text-sm font-bold text-gray-900 dark:text-white"
+                                            id="contact-doc-name">Dr. R. K. Gupta</p>
                                         <p class="text-xs text-gray-500">Medical Director</p>
                                     </div>
                                     <button class="ml-auto text-gray-400 hover:text-secondary"><span
@@ -558,7 +559,8 @@
                                     <img src="https://ui-avatars.com/api/?name=IT+Head&background=random"
                                         class="w-8 h-8 rounded-full">
                                     <div>
-                                        <p class="text-sm font-bold text-gray-900 dark:text-white">Mr. Amit Singh</p>
+                                        <p class="text-sm font-bold text-gray-900 dark:text-white" id="contact-it-name">
+                                            Mr. Amit Singh</p>
                                         <p class="text-xs text-gray-500">IT Administrator</p>
                                     </div>
                                     <button class="ml-auto text-gray-400 hover:text-secondary"><span
@@ -882,6 +884,28 @@
             document.getElementById('detail-name').textContent = hospital.name;
             const id = hospital._id || 'HOSP-' + (Math.floor(Math.random() * 9000) + 1000);
             document.getElementById('detail-id').textContent = id;
+
+            // Random Name Generation for Contacts
+            const firstNames = ["Rajesh", "Amit", "Suresh", "Priya", "Anjali", "Vikram", "Neha", "Rohan", "Sanjay", "Kavita", "Arjun", "Deepak", "Anita", "Sunita", "Rahul"];
+            const lastNames = ["Sharma", "Verma", "Gupta", "Singh", "Patel", "Kumar", "Das", "Nair", "Reddy", "Yadav", "Mishra", "Desai", "Joshi", "Mehta"];
+
+            function getRandomName(prefix = "") {
+                const first = firstNames[Math.floor(Math.random() * firstNames.length)];
+                const last = lastNames[Math.floor(Math.random() * lastNames.length)];
+                return `${prefix}${first} ${last}`;
+            }
+
+            const docName = getRandomName("Dr. ");
+            const itName = getRandomName("Mr. ");
+
+            // Update Name Elements
+            const headerDocEl = document.getElementById('header-doc-name');
+            const contactDocEl = document.getElementById('contact-doc-name');
+            const contactItEl = document.getElementById('contact-it-name');
+
+            if (headerDocEl) headerDocEl.textContent = docName;
+            if (contactDocEl) contactDocEl.textContent = docName;
+            if (contactItEl) contactItEl.textContent = itName;
 
             // Detailed Address Generation
             const area = `Sector ${Math.floor(Math.random() * 20) + 1}`;
