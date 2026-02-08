@@ -495,7 +495,8 @@ const IndiaMap = {
         this.openModal(rawName);
     },
 
-    openModal(stateName) {
+    async openModal(stateName) {
+        // Show the modal
         this.modal.classList.add('visible');
 
         // Update Modal Content
@@ -525,14 +526,8 @@ const IndiaMap = {
         const reviewScore = (data.reviewScore || 4.2).toFixed(1);
         document.getElementById('modal-live-users').innerText = `${reviewScore}/5`;
 
-        // Populate stats for animation but hide them (since we moved to chart only top)
-        // OR reuse the stats boxes for top 3 diseases? 
-        // User requested chart updates. Let's update the text above the chart.
+        // Update stats breakdown boxes with top 3 diseases
         const topDiseases = Object.keys(data.diseases);
-
-        // Update stats breakdown boxes (repurposed for top 3 counts? 
-        // No, the HTML structure has 'active', 'malaria', 'covid'. 
-        // Let's dynamically update the labels and values based on the specific top 3 diseases of that state.
 
         const statBoxes = document.querySelectorAll('.disease-stat');
         if (statBoxes.length >= 3) {
@@ -545,13 +540,13 @@ const IndiaMap = {
             statBoxes[1].querySelector('.disease-stat-label').textContent = d2;
             statBoxes[2].querySelector('.disease-stat-label').textContent = d3;
 
-            // Calculate Counts relative to population (mock logic)
+            // Calculate Counts relative to population
             const scale = liveStats.population / 10000;
             const v1 = Math.floor((data.diseases[d1] / 100) * scale * 0.8);
             const v2 = Math.floor((data.diseases[d2] / 100) * scale * 0.8);
             const v3 = Math.floor((data.diseases[d3] / 100) * scale * 0.8);
 
-            statBoxes[0].querySelector('.disease-stat-value').textContent = "0"; // Reset for anim
+            statBoxes[0].querySelector('.disease-stat-value').textContent = "0"; // Reset for animation
             this.animateNumberElement(statBoxes[0].querySelector('.disease-stat-value'), v1);
 
             statBoxes[1].querySelector('.disease-stat-value').textContent = "0";

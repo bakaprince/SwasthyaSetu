@@ -524,8 +524,8 @@
 .data-box-value {
     font-size: 1.75rem;
     font-weight: 700;
-    color: #ffffff;
-    /* FORCE WHITE for all cards */
+    color: #113841;
+    /* Dark Teal for visibility on light background */
     display: flex;
     align-items: center;
     gap: 0.75rem;
