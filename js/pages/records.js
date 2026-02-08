@@ -120,7 +120,7 @@ const Records = {
                     </div>
                 </div>
             </div>
-            
+
             ${app.notes ? `
             <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mt-2">
                 <p class="text-sm text-gray-700 dark:text-gray-300"><strong>Notes:</strong> ${app.notes}</p>
@@ -158,7 +158,7 @@ const Records = {
 
         // Handle URL
         // If relative path from backend (starts with /uploads), prepend API URL
-        // BUT wait, if we are in frontend, the API URL might be different. 
+        // BUT wait, if we are in frontend, the API URL might be different.
         // We need a helper to resolve the full URL.
         const fullUrl = this.resolveFileUrl(doc.url);
 
@@ -195,9 +195,11 @@ const Records = {
         // Use the same logic as APIService to find base URL
         const hostname = window.location.hostname;
         const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+        // Remove '/api' from the base URL for static file access
+        const productionBase = API_CONFIG.PRODUCTION_API_URL.replace('/api', '');
         const apiBaseUrl = isLocal
             ? 'http://localhost:5000' // No /api for static files usually if mapped at root or /uploads
-            : 'https://swasthyasetu-9y5l.onrender.com';
+            : productionBase;
 
         // Our server.js maps /uploads -> /uploads
         // So http://localhost:5000/uploads/reports/file.pdf

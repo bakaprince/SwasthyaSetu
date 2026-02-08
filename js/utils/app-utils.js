@@ -392,3 +392,10 @@ document.addEventListener('DOMContentLoaded', () => {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { Helpers, Formatters, Validators };
 }
+
+// Ensure global availability for browser environment
+if (typeof window !== 'undefined') {
+    window.Helpers = Helpers;
+    window.Formatters = Formatters;
+    window.Validators = Validators;
+}

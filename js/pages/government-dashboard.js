@@ -4,9 +4,8 @@
  */
 
 const GovAnalytics = {
-    map: null,
-    heatLayer: null,
     charts: {},
+    apiBaseUrl: 'https://swasthya-setu-drcode.vercel.app/api', // Define API Base URL
 
     async init() {
         console.log('Initializing Gov Analytics...');
@@ -366,7 +365,7 @@ const GovAnalytics = {
                         <button onclick="GovAnalytics.closeStateModal()" class="text-white/80 hover:text-white text-3xl leading-none self-start">&times;</button>
                     </div>
                 </div>
-                
+
                 <!-- State Data -->
                 <div class="p-5 space-y-4">
                     <!-- Population -->
@@ -443,12 +442,12 @@ const GovAnalytics = {
 
                 <!-- Footer Actions -->
                 <div class="bg-gray-50 px-5 py-4 flex gap-3">
-                    <a href="hospitals.html?state=${encodeURIComponent(stateName)}" 
+                    <a href="hospitals.html?state=${encodeURIComponent(stateName)}"
                        class="flex-1 bg-secondary text-white py-3 px-4 rounded-xl text-center font-semibold hover:bg-secondary-light transition flex items-center justify-center gap-2">
                         <span class="material-icons-outlined">local_hospital</span>
                         View All Hospitals
                     </a>
-                    <button onclick="GovAnalytics.closeStateModal()" 
+                    <button onclick="GovAnalytics.closeStateModal()"
                             class="flex-1 bg-gray-200 text-gray-700 py-3 px-4 rounded-xl font-semibold hover:bg-gray-300 transition">
                         Close
                     </button>
@@ -725,7 +724,7 @@ const GovAnalytics = {
                     <button onclick="GovAnalytics.closeStatePanel()" class="text-white hover:text-gray-300 text-2xl leading-none">&times;</button>
                 </div>
             </div>
-            
+
             <div class="p-4 space-y-4">
                 <!-- Population -->
                 <div class="bg-blue-50 rounded-xl p-3">
@@ -781,17 +780,17 @@ const GovAnalytics = {
 
                 <!-- Quick Actions -->
                 <div class="flex gap-2 pt-2">
-                    <button onclick="GovAnalytics.viewStateHospitals('${stateName}')" 
+                    <button onclick="GovAnalytics.viewStateHospitals('${stateName}')"
                             class="flex-1 bg-primary text-secondary py-2 px-3 rounded-lg text-sm font-medium hover:bg-primary/80 transition">
                         View Hospitals
                     </button>
-                    <button onclick="GovAnalytics.resetMapView()" 
+                    <button onclick="GovAnalytics.resetMapView()"
                             class="flex-1 bg-gray-100 text-gray-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-gray-200 transition">
                         Back to Map
                     </button>
                 </div>
             </div>
-            
+
             <div class="bg-gray-50 px-4 py-2 text-xs text-gray-400 text-center">
                 Data sources: disease.sh (COVID) | Census 2024 Est.
             </div>
@@ -846,47 +845,6 @@ const GovAnalytics = {
                         deaths: stateData.deaths || 0,
                         cases: stateData.cases || 0
                     };
-
-                    // Add RED GLOWING MARKERS
-                    const latLng = this.stateCoordinates[stateData.state];
-                    if (latLng) {
-                        const activeCases = stateData.active;
-                        const size = activeCases > 5000 ? 20 : (activeCases > 500 ? 14 : 10);
-                        const glowSize = size + 6;
-
-                        const pulseIcon = L.divIcon({
-                            className: 'custom-div-icon',
-                            html: `
-                                <div style="position: relative; width: ${glowSize}px; height: ${glowSize}px;">
-                                    <div style="
-                                        position: absolute;
-                                        top: 50%; left: 50%;
-                                        transform: translate(-50%, -50%);
-                                        width: ${glowSize}px; height: ${glowSize}px;
-                                        background: radial-gradient(circle, rgba(255,0,0,0.5) 0%, transparent 70%);
-                                        border-radius: 50%;
-                                        animation: pulse-glow 1.5s ease-in-out infinite;
-                                    "></div>
-                                    <div style="
-                                        position: absolute;
-                                        top: 50%; left: 50%;
-                                        transform: translate(-50%, -50%);
-                                        width: ${size}px; height: ${size}px;
-                                        background: radial-gradient(circle at 30% 30%, #ff4444, #cc0000, #990000);
-                                        border-radius: 50%;
-                                        box-shadow: 0 0 ${size / 2}px rgba(255,0,0,0.8), 0 0 ${size}px rgba(255,0,0,0.4);
-                                        border: 1px solid rgba(255,255,255,0.3);
-                                    "></div>
-                                </div>
-                            `,
-                            iconSize: [glowSize, glowSize],
-                            iconAnchor: [glowSize / 2, glowSize / 2]
-                        });
-
-                        L.marker(latLng, { icon: pulseIcon })
-                            .bindPopup(`<b>${stateData.state}</b><br>Active: ${activeCases.toLocaleString()}`)
-                            .addTo(this.map);
-                    }
                 });
 
                 // Update charts

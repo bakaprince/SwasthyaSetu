@@ -1,766 +1,598 @@
 /**
- * Modern Interactive SVG India Map
- * With balanced disease chart, dark mode support, and enhanced popup
+ * Modern Interactive India Map (Custom SVG Version)
+ * Features: Pure SVG Rendering, Hardware Accelerated Animations, Full Interactive State
  */
 
 const IndiaMap = {
     container: null,
-    svgElement: null,
-    tooltip: null,
     modal: null,
     hospitalsModal: null,
     diseaseChart: null,
     liveInterval: null,
-    currentState: null,
+    activeState: null, // Track currently active/locked state
 
-    // State population data (2024 Census projections in millions)
-    statePopulation: {
-        "Andaman and Nicobar": 0.4, "Andhra Pradesh": 53.9, "Arunachal Pradesh": 1.6,
-        "Assam": 35.6, "Bihar": 127.0, "Chandigarh": 1.2, "Chhattisgarh": 30.0,
-        "Dadra and Nagar Haveli": 0.6, "Daman and Diu": 0.3, "Delhi": 21.0, "Goa": 1.6,
-        "Gujarat": 71.0, "Haryana": 30.0, "Himachal Pradesh": 7.5, "Jammu and Kashmir": 14.0,
-        "Jharkhand": 40.0, "Karnataka": 69.0, "Kerala": 35.7, "Ladakh": 0.3,
-        "Lakshadweep": 0.07, "Madhya Pradesh": 87.0, "Maharashtra": 128.0, "Manipur": 3.2,
-        "Meghalaya": 3.8, "Mizoram": 1.3, "Nagaland": 2.3, "Odisha": 47.0, "Orissa": 47.0,
-        "Puducherry": 1.7, "Punjab": 31.0, "Rajasthan": 82.0, "Sikkim": 0.7,
-        "Tamil Nadu": 78.0, "Telangana": 39.0, "Tripura": 4.2, "Uttar Pradesh": 235.0,
-        "Uttarakhand": 11.5, "Uttaranchal": 11.5, "West Bengal": 101.0, "NCT of Delhi": 21.0
-    },
-
-    // Hospital ratings
-    stateHospitalRatings: {
-        "Andhra Pradesh": 4.1, "Arunachal Pradesh": 3.2, "Assam": 3.5, "Bihar": 3.0,
-        "Chhattisgarh": 3.4, "Delhi": 4.3, "NCT of Delhi": 4.3, "Goa": 4.5, "Gujarat": 4.2,
-        "Haryana": 3.8, "Himachal Pradesh": 4.0, "Jammu and Kashmir": 3.6, "Jharkhand": 3.2,
-        "Karnataka": 4.4, "Kerala": 4.6, "Madhya Pradesh": 3.5, "Maharashtra": 4.3,
-        "Manipur": 3.3, "Meghalaya": 3.4, "Mizoram": 3.5, "Nagaland": 3.2, "Odisha": 3.6,
-        "Orissa": 3.6, "Punjab": 4.0, "Rajasthan": 3.7, "Sikkim": 3.8, "Tamil Nadu": 4.5,
-        "Telangana": 4.2, "Tripura": 3.4, "Uttar Pradesh": 3.3, "Uttarakhand": 3.9,
-        "Uttaranchal": 3.9, "West Bengal": 3.8, "Ladakh": 3.0
-    },
-
-    // Unique colors for each state (darker for better visibility)
+    // Detailed State Colors
     stateColors: {
-        "Jammu and Kashmir": "#7ac9a3", "Himachal Pradesh": "#f5b97a", "Punjab": "#e8e895",
-        "Chandigarh": "#a8e6a3", "Uttarakhand": "#7dd3e8", "Uttaranchal": "#7dd3e8",
-        "Haryana": "#85b8f5", "Delhi": "#a899e6", "NCT of Delhi": "#a899e6",
-        "Rajasthan": "#f5a3d9", "Uttar Pradesh": "#f5918c", "Bihar": "#f5b97a",
-        "Sikkim": "#a8e6a3", "Arunachal Pradesh": "#7dd3e8", "Nagaland": "#85b8f5",
-        "Manipur": "#a899e6", "Mizoram": "#f5a3d9", "Tripura": "#f5918c",
-        "Meghalaya": "#e8e895", "Assam": "#7ac9a3", "West Bengal": "#f5b97a",
-        "Jharkhand": "#a8e6a3", "Odisha": "#7dd3e8", "Orissa": "#7dd3e8",
-        "Chhattisgarh": "#85b8f5", "Madhya Pradesh": "#a899e6", "Gujarat": "#f5a3d9",
-        "Daman and Diu": "#f5918c", "Dadra and Nagar Haveli": "#e8e895",
-        "Maharashtra": "#7ac9a3", "Andhra Pradesh": "#f5b97a", "Karnataka": "#a8e6a3",
-        "Goa": "#7dd3e8", "Lakshadweep": "#85b8f5", "Kerala": "#a899e6",
-        "Tamil Nadu": "#f5a3d9", "Puducherry": "#f5918c", "Andaman and Nicobar": "#e8e895",
-        "Telangana": "#7ac9a3", "Ladakh": "#c8dce8"
+        "andaman and nicobar": "#06b6d4",
+        "andhra pradesh": "#3b82f6",
+        "arunachal pradesh": "#10b981",
+        "assam": "#8b5cf6",
+        "bihar": "#f59e0b",
+        "chandigarh": "#ec4899",
+        "chhattisgarh": "#6366f1",
+        "dadra and nagar haveli": "#14b8a6",
+        "daman and diu": "#14b8a6",
+        "delhi": "#ef4444",
+        "goa": "#f97316",
+        "gujarat": "#84cc16",
+        "haryana": "#06b6d4",
+        "himachal pradesh": "#3b82f6",
+        "jammu and kashmir": "#a855f7",
+        "jharkhand": "#10b981",
+        "karnataka": "#f43f5e",
+        "kerala": "#0ea5e9",
+        "ladakh": "#8b5cf6",
+        "lakshadweep": "#06b6d4",
+        "madhya pradesh": "#eab308",
+        "maharashtra": "#f97316",
+        "manipur": "#ec4899",
+        "meghalaya": "#6366f1",
+        "mizoram": "#14b8a6",
+        "nagaland": "#ef4444",
+        "odisha": "#84cc16",
+        "puducherry": "#06b6d4",
+        "punjab": "#f59e0b",
+        "rajasthan": "#eab308",
+        "sikkim": "#10b981",
+        "tamil nadu": "#f43f5e",
+        "telangana": "#3b82f6",
+        "tripura": "#8b5cf6",
+        "uttar pradesh": "#f97316",
+        "uttarakhand": "#0ea5e9",
+        "west bengal": "#ec4899"
     },
 
-    // State short names
-    stateShortNames: {
-        "Andaman and Nicobar": "A&N", "Andhra Pradesh": "AP", "Arunachal Pradesh": "AR",
-        "Assam": "AS", "Bihar": "BR", "Chandigarh": "CH", "Chhattisgarh": "CG",
-        "Dadra and Nagar Haveli": "DNH", "Daman and Diu": "DD", "Delhi": "DL",
-        "NCT of Delhi": "DL", "Goa": "GA", "Gujarat": "GJ", "Haryana": "HR",
-        "Himachal Pradesh": "HP", "Jammu and Kashmir": "JK", "Jharkhand": "JH",
-        "Karnataka": "KA", "Kerala": "KL", "Lakshadweep": "LD", "Madhya Pradesh": "MP",
-        "Maharashtra": "MH", "Manipur": "MN", "Meghalaya": "ML", "Mizoram": "MZ",
-        "Nagaland": "NL", "Odisha": "OD", "Orissa": "OD", "Puducherry": "PY",
-        "Punjab": "PB", "Rajasthan": "RJ", "Sikkim": "SK", "Tamil Nadu": "TN",
-        "Telangana": "TS", "Tripura": "TR", "Uttar Pradesh": "UP",
-        "Uttarakhand": "UK", "Uttaranchal": "UK", "West Bengal": "WB", "Ladakh": "LA"
-    },
-
-    // Disease data with BALANCED values (active/deceased scaled up relative to recovered)
-    diseaseRates: {
-        "COVID-19": { active: 80, recovered: 400, deceased: 60 },
-        "Dengue": { active: 40, recovered: 150, deceased: 15 },
-        "Malaria": { active: 35, recovered: 120, deceased: 18 },
-        "Typhoid": { active: 25, recovered: 90, deceased: 10 },
-        "Tuberculosis": { active: 100, recovered: 300, deceased: 50 },
-        "Diabetes": { active: 150, recovered: 500, deceased: 80 },
-        "Lung Disease": { active: 70, recovered: 200, deceased: 45 },
-        "Heart Disease": { active: 120, recovered: 350, deceased: 95 }
-    },
-
-    async init() {
-        console.log('[IndiaMap] Initializing...');
-
+    init() {
         this.container = document.getElementById('india-map');
-        if (!this.container) {
-            console.error('[IndiaMap] Container not found');
-            return;
-        }
+        if (!this.container) return;
 
-        this.createTooltip();
-        this.createModal();
-        this.createHospitalsModal();
-        await this.loadMap();
+        // Initialize Modals
+        this.initModals();
 
-        console.log('[IndiaMap] Initialized successfully');
+        // Load and Render Logic
+        this.loadMapData();
+
+        // Handle Resize
+        window.addEventListener('resize', () => {
+            // SVG is responsive by default, but we might need re-calculations if container changes aspect ratio drastically
+            // For now, viewBox handles scaling.
+        });
     },
 
-    createTooltip() {
-        this.tooltip = document.createElement('div');
-        this.tooltip.className = 'india-map-tooltip';
-        this.tooltip.style.cssText = `
-            position: fixed;
-            background: #113841;
-            color: #86efac;
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-            z-index: 1000;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            white-space: nowrap;
-        `;
-        document.body.appendChild(this.tooltip);
-    },
+    initModals() {
+        // State Details Modal
+        const modalHTML = `
+            <div id="state-popout-modal" class="state-popout-modal">
+                <div class="popout-backdrop"></div>
+                <div class="popout-container">
+                    <button class="popout-close"><span class="material-icons-outlined">close</span></button>
 
-    createModal() {
-        this.modal = document.createElement('div');
-        this.modal.id = 'state-detail-modal';
-        this.modal.className = 'state-popout-modal';
-        this.modal.innerHTML = `
-            <div class="popout-backdrop" onclick="IndiaMap.closeModal()"></div>
-            <div class="popout-container">
-                <button class="popout-close" onclick="IndiaMap.closeModal()">
-                    <span class="material-icons-outlined">close</span>
-                </button>
-
-                <!-- State Visual with Button Below -->
-                <div class="popout-center-column">
-                    <div class="popout-state-visual">
-                        <svg id="popout-state-svg" class="popout-svg" viewBox="0 0 200 200"></svg>
-                    </div>
-                    <div class="state-name-overlay" id="popout-state-name">State Name</div>
-                    <button onclick="IndiaMap.showHospitals()" class="popout-action-btn centered">
-                        <span class="material-icons-outlined">local_hospital</span>
-                        View All Hospitals
-                    </button>
-                </div>
-                
-                <!-- Live Population Box -->
-                <div class="data-connector top-right">
-                    <div class="connector-line"></div>
-                    <div class="data-box live-population-box large">
-                        <div class="data-box-header">
-                            <span class="pulse-dot"></span>
-                            Live Population
-                        </div>
-                        <div class="data-box-value large" id="popout-live-pop">--</div>
-                        <div class="data-box-sub-grid">
-                            <div class="stat-row born">
-                                <span class="material-icons-outlined">trending_up</span>
-                                <span class="stat-label">Born Today</span>
-                                <span class="stat-number" id="popout-born">0</span>
+                    <!-- Data Connectors -->
+                    <div class="data-connector top-right">
+                        <div class="connector-line"></div>
+                        <div class="connector-line"></div>
+                        <div class="data-box dashboard-card">
+                            <div class="data-box-header"><span class="material-icons-outlined">people</span> Total Population</div>
+                            <div class="data-box-value large" id="modal-population">0
+                                <span class="stars">✨</span>
                             </div>
-                            <div class="stat-row died">
-                                <span class="material-icons-outlined">trending_down</span>
-                                <span class="stat-label">Died Today</span>
-                                <span class="stat-number" id="popout-died">0</span>
+                            <div class="data-box-sub-grid">
+                                <div class="stat-row born">
+                                    <span class="material-icons-outlined">child_friendly</span>
+                                    <span class="stat-label">Born Today</span>
+                                    <span class="stat-number" id="modal-born">0</span>
+                                </div>
+                                <div class="stat-row died">
+                                    <span class="material-icons-outlined">favorite_border</span>
+                                    <span class="stat-label">Deceased</span>
+                                    <span class="stat-number" id="modal-died">0</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Hospital Rating Box -->
-                <div class="data-connector bottom-right">
-                    <div class="connector-line"></div>
-                    <div class="data-box hospital-rating-box">
-                        <div class="data-box-header">
+                    <div class="data-connector bottom-right">
+                        <div class="connector-line"></div>
+                        <div class="data-box dashboard-card large live-population-box">
+                            <div class="data-box-header">
+                                <span class="material-icons-outlined">public</span>
+                                <div class="pulse-dot"></div> Live Activity
+                            </div>
+                            <div class="data-box-value" id="modal-live-users">0</div>
+                            <div class="data-box-sub">Active users on platform</div>
+                        </div>
+                    </div>
+
+                    <div class="data-connector left-side">
+                        <div class="connector-line"></div>
+                        <div class="data-box dashboard-card disease-box">
+                            <div class="data-box-header"><span class="material-icons-outlined">coronavirus</span> Disease Statistics</div>
+                            <div class="disease-stats-grid">
+                                <div class="disease-stat active">
+                                    <span class="disease-stat-value" id="stats-active">0</span>
+                                    <span class="disease-stat-label">Active</span>
+                                </div>
+                                <div class="disease-stat recovered">
+                                    <span class="disease-stat-value" id="stats-recovered">0</span>
+                                    <span class="disease-stat-label">Recovered</span>
+                                </div>
+                                <div class="disease-stat deceased">
+                                    <span class="disease-stat-value" id="stats-deceased">0</span>
+                                    <span class="disease-stat-label">Deceased</span>
+                                </div>
+                            </div>
+                            <div class="disease-chart-container">
+                                <canvas id="disease-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="popout-center-column">
+                        <div class="popout-state-visual" id="modal-state-visual">
+                            <!-- SVG Injected Here -->
+                        </div>
+                        <div class="state-name-overlay" id="modal-state-name">State Name</div>
+                        <button class="popout-action-btn centered" id="view-hospitals-btn">
                             <span class="material-icons-outlined">local_hospital</span>
-                            Avg. Hospital Rating
-                        </div>
-                        <div class="data-box-value">
-                            <span id="popout-rating">--</span>
-                            <span class="stars" id="popout-stars"></span>
-                        </div>
-                        <div class="data-box-sub" id="popout-hospitals-count">-- hospitals</div>
-                    </div>
-                </div>
-
-                <!-- Disease Statistics Box -->
-                <div class="data-connector left-side">
-                    <div class="connector-line"></div>
-                    <div class="data-box disease-box">
-                        <div class="data-box-header">
-                            <span class="material-icons-outlined">coronavirus</span>
-                            Disease Statistics
-                        </div>
-                        <div class="disease-stats-grid">
-                            <div class="disease-stat active">
-                                <span class="disease-stat-value" id="popout-active">--</span>
-                                <span class="disease-stat-label">ACTIVE</span>
-                            </div>
-                            <div class="disease-stat recovered">
-                                <span class="disease-stat-value" id="popout-recovered">--</span>
-                                <span class="disease-stat-label">RECOVERED</span>
-                            </div>
-                            <div class="disease-stat deceased">
-                                <span class="disease-stat-value" id="popout-deceased">--</span>
-                                <span class="disease-stat-label">DECEASED</span>
-                            </div>
-                        </div>
-                        <div class="disease-chart-container">
-                            <canvas id="popout-disease-chart"></canvas>
-                        </div>
+                            View Hospitals
+                        </button>
                     </div>
                 </div>
             </div>
-        `;
-        document.body.appendChild(this.modal);
-    },
 
-    createHospitalsModal() {
-        this.hospitalsModal = document.createElement('div');
-        this.hospitalsModal.id = 'hospitals-list-modal';
-        this.hospitalsModal.className = 'hospitals-modal';
-        this.hospitalsModal.innerHTML = `
-            <div class="hospitals-backdrop" onclick="IndiaMap.closeHospitals()"></div>
-            <div class="hospitals-content">
-                <div class="hospitals-header">
-                    <h2 id="hospitals-title">Hospitals in State</h2>
-                    <button class="hospitals-close" onclick="IndiaMap.closeHospitals()">
-                        <span class="material-icons-outlined">close</span>
-                    </button>
-                </div>
-                <div class="hospitals-search">
-                    <span class="material-icons-outlined">search</span>
-                    <input type="text" id="hospital-search" placeholder="Search hospitals..." oninput="IndiaMap.filterHospitals()">
-                </div>
-                <div class="hospitals-list" id="hospitals-list">
-                    <div class="loading-hospitals">
-                        <div class="spinner"></div>
-                        <p>Loading hospitals...</p>
+            <!-- Hospitals List Modal -->
+            <div id="hospitals-modal" class="hospitals-modal">
+                <div class="hospitals-backdrop"></div>
+                <div class="hospitals-content">
+                    <div class="hospitals-header">
+                        <h2 id="hospitals-title">Hospitals</h2>
+                        <button class="hospitals-close"><span class="material-icons-outlined">close</span></button>
                     </div>
+                    <div class="hospitals-search">
+                        <span class="material-icons-outlined">search</span>
+                        <input type="text" id="hospital-search-input" placeholder="Search hospitals...">
+                    </div>
+                    <div class="hospitals-list" id="hospitals-list"></div>
                 </div>
             </div>
         `;
-        document.body.appendChild(this.hospitalsModal);
-    },
 
-    async loadMap() {
-        try {
-            const response = await fetch('https://raw.githubusercontent.com/geohacker/india/master/state/india_state.geojson');
-            const geoJSON = await response.json();
-            this.renderSVGMap(geoJSON);
-        } catch (error) {
-            console.error('[IndiaMap] Failed to load map:', error);
-            this.container.innerHTML = `
-                <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#666;">
-                    <span class="material-icons-outlined" style="margin-right:8px;">error</span>
-                    Failed to load map
-                </div>
-            `;
+        if (!document.getElementById('state-popout-modal')) {
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
         }
-    },
 
-    renderSVGMap(geoJSON) {
-        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        this.modal = document.getElementById('state-popout-modal');
+        this.hospitalsModal = document.getElementById('hospitals-modal');
 
-        geoJSON.features.forEach(feature => {
-            const coords = this.getAllCoords(feature.geometry);
-            coords.forEach(([lon, lat]) => {
-                minX = Math.min(minX, lon);
-                maxX = Math.max(maxX, lon);
-                minY = Math.min(minY, lat);
-                maxY = Math.max(maxY, lat);
+        // Close Events
+        this.modal.querySelector('.popout-close').addEventListener('click', () => this.closeModal());
+        this.modal.querySelector('.popout-backdrop').addEventListener('click', () => this.closeModal());
+
+        // Data Box Toggle Logic
+        const dataBoxes = this.modal.querySelectorAll('.data-box');
+        dataBoxes.forEach(box => {
+            box.addEventListener('click', () => {
+                // Remove active from all
+                dataBoxes.forEach(b => b.classList.remove('active'));
+                // Add to clicked
+                box.classList.add('active');
             });
         });
 
-        const padding = 2;
-        minX -= padding; minY -= padding;
-        maxX += padding; maxY += padding;
+        this.hospitalsModal.querySelector('.hospitals-close').addEventListener('click', () => {
+            this.hospitalsModal.classList.remove('visible');
+        });
+        this.hospitalsModal.querySelector('.hospitals-backdrop').addEventListener('click', () => {
+            this.hospitalsModal.classList.remove('visible');
+        });
 
-        const width = 600;
-        const height = 720;
+        // View Hospitals Click
+        document.getElementById('view-hospitals-btn')?.addEventListener('click', () => {
+            this.showHospitalsList();
+        });
+    },
 
-        const scaleX = (lon) => ((lon - minX) / (maxX - minX)) * width;
-        const scaleY = (lat) => height - ((lat - minY) / (maxY - minY)) * height;
+    async loadMapData() {
+        try {
+            // Show custom loader
+            this.container.innerHTML = `
+                <div class="map-loader">
+                    <div class="spinner"></div>
+                    <div class="loading-text">Building Map...</div>
+                </div>
+            `;
 
-        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
-        svg.setAttribute('class', 'india-svg-map');
-        svg.style.cssText = 'width: 100%; height: 100%;';
+            const response = await fetch('../js/data/india_states.geojson');
+            const data = await response.json();
 
-        const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+            // Clear loader
+            this.container.innerHTML = '';
+
+            this.renderSVG(data);
+
+        } catch (error) {
+            console.error('Error loading map data:', error);
+            this.container.innerHTML = `<div style="color:red;text-align:center;padding:2rem;">Failed to load map data.</div>`;
+        }
+    },
+
+    // --- Core SVG Rendering Logic ---
+    renderSVG(geoJSON) {
+        // 1. Calculate Bounds
+        const bounds = this.getBounds(geoJSON);
+
+        // 2. SVG Configuration
+        const width = 800;
+        const height = 900;
+        const padding = 20;
+
+        // 3. Create Projection Function
+        // Map geo coordinates (lon, lat) to SVG coordinates (x, y)
+        // Simple linear interpolation fitting the bounding box to viewbox
+        const project = (lon, lat) => {
+            const x = ((lon - bounds.minLon) / (bounds.maxLon - bounds.minLon)) * (width - 2 * padding) + padding;
+            // Latitude Y is inverted in SVG
+            const y = height - (((lat - bounds.minLat) / (bounds.maxLat - bounds.minLat)) * (height - 2 * padding) + padding);
+            return { x, y };
+        };
+
+        // 4. Build SVG Structure
+        const svgNS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(svgNS, "svg");
+        svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+        svg.setAttribute("class", "india-svg-map");
+        svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+
+        // Filter for Glow Effect
+        const defs = document.createElementNS(svgNS, "defs");
         defs.innerHTML = `
-            <pattern id="grid-pattern" width="30" height="30" patternUnits="userSpaceOnUse">
-                <circle cx="15" cy="15" r="1.5" fill="rgba(17,56,65,0.1)"/>
-            </pattern>
-            <filter id="glow">
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
                 <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
                 <feMerge>
                     <feMergeNode in="coloredBlur"/>
                     <feMergeNode in="SourceGraphic"/>
                 </feMerge>
             </filter>
+            <filter id="lift-shadow" x="-50%" y="-50%" width="200%" height="200%">
+               <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="rgba(0,0,0,0.3)"/>
+            </filter>
         `;
         svg.appendChild(defs);
 
-        // Background pattern
-        const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        bg.setAttribute('width', '100%');
-        bg.setAttribute('height', '100%');
-        bg.setAttribute('fill', 'url(#grid-pattern)');
-        svg.appendChild(bg);
+        const mapGroup = document.createElementNS(svgNS, "g");
+        mapGroup.setAttribute("class", "map-group");
+        svg.appendChild(mapGroup);
 
-        const statesGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        statesGroup.setAttribute('class', 'states-group');
+        // 5. Generate Paths for Features
+        geoJSON.features.forEach((feature, index) => {
+            const rawName = feature.properties.NAME_1 || feature.properties.ST_NM || feature.properties.name || "Unknown";
+            const normalizedName = this.normalizeName(rawName);
+            const color = this.getColor(normalizedName);
 
-        const labelGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        labelGroup.setAttribute('class', 'labels-group');
+            const pathData = this.generatePathData(feature.geometry, project);
 
-        geoJSON.features.forEach(feature => {
-            const stateName = feature.properties.NAME_1 || feature.properties.name || feature.properties.ST_NM || 'Unknown';
-            const pathData = this.geoToPath(feature.geometry, scaleX, scaleY);
+            const path = document.createElementNS(svgNS, "path");
+            path.setAttribute("d", pathData);
+            path.setAttribute("fill", color);
+            path.setAttribute("class", "state-path");
+            path.setAttribute("data-name", rawName);
+            path.setAttribute("id", `state-${index}`);
 
-            if (!pathData) return;
+            // Interaction Events
+            path.addEventListener('mouseenter', (e) => this.onStateHover(e, path));
+            path.addEventListener('mouseleave', (e) => this.onStateLeave(e, path));
+            path.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent map click
+                this.onStateClick(feature);
+            });
 
-            const stateColor = this.stateColors[stateName] || '#d0d0d0';
+            // Tooltip Logic
+            this.addTooltip(path, rawName);
 
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            path.setAttribute('d', pathData);
-            path.setAttribute('class', 'state-path');
-            path.setAttribute('id', `state-${stateName.replace(/\s+/g, '-')}`);
-            path.setAttribute('data-state', stateName);
-            path.setAttribute('data-original-path', pathData);
-            path.setAttribute('data-color', stateColor);
-            path.style.fill = stateColor;
-
-            path.addEventListener('mouseenter', (e) => this.onStateHover(e, stateName, path));
-            path.addEventListener('mousemove', (e) => this.moveTooltip(e));
-            path.addEventListener('mouseleave', () => this.onStateLeave(path));
-            path.addEventListener('click', (e) => this.onStateClick(e, stateName, pathData, stateColor));
-
-            statesGroup.appendChild(path);
+            mapGroup.appendChild(path);
         });
 
-        svg.appendChild(statesGroup);
-        // svg.appendChild(labelGroup); // Labels removed per request
+        // Click outside to deselect
+        this.container.addEventListener('click', () => {
+            this.clearActiveState();
+        });
 
-        this.container.innerHTML = '';
         this.container.appendChild(svg);
-        this.svgElement = svg;
     },
 
-    getAllCoords(geometry) {
-        const coords = [];
-        const extract = (arr) => {
-            if (typeof arr[0] === 'number') {
-                coords.push(arr);
-            } else {
-                arr.forEach(extract);
-            }
+    // Calculate Bounding Box of GeoJSON
+    getBounds(geoJSON) {
+        let minLon = Infinity, minLat = Infinity, maxLon = -Infinity, maxLat = -Infinity;
+
+        const processRing = (ring) => {
+            ring.forEach(coord => {
+                const [lon, lat] = coord;
+                if (lon < minLon) minLon = lon;
+                if (lat < minLat) minLat = lat;
+                if (lon > maxLon) maxLon = lon;
+                if (lat > maxLat) maxLat = lat;
+            });
         };
-        if (geometry.coordinates) {
-            extract(geometry.coordinates);
-        }
-        return coords;
+
+        geoJSON.features.forEach(feature => {
+            const geom = feature.geometry;
+            if (geom.type === 'Polygon') {
+                geom.coordinates.forEach(ring => processRing(ring));
+            } else if (geom.type === 'MultiPolygon') {
+                geom.coordinates.forEach(polygon => {
+                    polygon.forEach(ring => processRing(ring));
+                });
+            }
+        });
+
+        return { minLon, minLat, maxLon, maxLat };
     },
 
-    geoToPath(geometry, scaleX, scaleY) {
-        let path = '';
-
-        const renderRing = (ring) => {
+    // Convert Geometry to SVG Path String
+    generatePathData(geometry, project) {
+        const processRing = (ring) => {
             return ring.map((coord, i) => {
-                const x = scaleX(coord[0]);
-                const y = scaleY(coord[1]);
-                return `${i === 0 ? 'M' : 'L'}${x.toFixed(2)},${y.toFixed(2)}`;
-            }).join(' ') + ' Z';
+                const p = project(coord[0], coord[1]);
+                return `${i === 0 ? 'M' : 'L'}${p.x.toFixed(2)},${p.y.toFixed(2)}`;
+            }).join(' ') + 'Z';
         };
 
         if (geometry.type === 'Polygon') {
-            geometry.coordinates.forEach(ring => {
-                path += renderRing(ring) + ' ';
-            });
+            return geometry.coordinates.map(processRing).join(' ');
         } else if (geometry.type === 'MultiPolygon') {
-            geometry.coordinates.forEach(polygon => {
-                polygon.forEach(ring => {
-                    path += renderRing(ring) + ' ';
-                });
-            });
+            return geometry.coordinates.map(polygon =>
+                polygon.map(processRing).join(' ')
+            ).join(' ');
         }
-
-        return path.trim();
+        return '';
     },
 
-    onStateHover(e, stateName, path) {
-        path.classList.add('hovered');
-        this.tooltip.textContent = stateName;
-        this.tooltip.style.opacity = '1';
-        this.moveTooltip(e);
+    normalizeName(name) {
+        if (!name) return '';
+        return name.toLowerCase()
+            .replace(/&/g, 'and')
+            .replace(/\s+/g, ' ')
+            .trim();
     },
 
-    moveTooltip(e) {
-        this.tooltip.style.left = (e.clientX + 15) + 'px';
-        this.tooltip.style.top = (e.clientY - 10) + 'px';
+    getColor(normName) {
+        // Fallback or specific logic
+        if (normName.includes('jammu')) return this.stateColors['jammu and kashmir'];
+        if (normName.includes('nicobar')) return this.stateColors['andaman and nicobar'];
+        if (normName.includes('delhi')) return this.stateColors['delhi'];
+        if (normName.includes('dadra')) return this.stateColors['dadra and nagar haveli'];
+
+        return this.stateColors[normName] || '#94a3b8'; // Default grey
     },
 
-    onStateLeave(path) {
-        path.classList.remove('hovered');
-        this.tooltip.style.opacity = '0';
-    },
+    // --- Interaction Handlers ---
 
-    async onStateClick(e, stateName, pathData, stateColor) {
-        this.currentState = stateName;
-        const population = this.statePopulation[stateName] || 50;
-        const rating = this.stateHospitalRatings[stateName] || 3.5;
-        const hospitals = Math.floor(population * 15 + Math.random() * 100);
+    activeTooltip: null,
 
-        const rect = e.target.getBoundingClientRect();
-        const originX = rect.left + rect.width / 2;
-        const originY = rect.top + rect.height / 2;
-
-        this.modal.style.setProperty('--origin-x', `${originX}px`);
-        this.modal.style.setProperty('--origin-y', `${originY}px`);
-
-        document.getElementById('popout-state-name').textContent = stateName;
-        document.getElementById('popout-rating').textContent = rating.toFixed(1);
-        document.getElementById('popout-stars').textContent = this.getStars(rating);
-        document.getElementById('popout-hospitals-count').textContent = `${hospitals} hospitals`;
-
-        this.renderAnimatedCutout(pathData, stateColor);
-        this.startLiveCounter(population);
-        this.calculateDiseaseStats(population);
-        this.createGroupedDiseaseChart(population);
-
-        this.modal.classList.add('visible');
-    },
-
-    calculateDiseaseStats(populationMillions) {
-        let totalActive = 0, totalRecovered = 0, totalDeceased = 0;
-
-        Object.values(this.diseaseRates).forEach(rate => {
-            totalActive += Math.floor((rate.active + (Math.random() - 0.5) * rate.active * 0.3) * populationMillions);
-            totalRecovered += Math.floor((rate.recovered + (Math.random() - 0.5) * rate.recovered * 0.2) * populationMillions);
-            totalDeceased += Math.floor((rate.deceased + (Math.random() - 0.5) * rate.deceased * 0.3) * populationMillions);
+    addTooltip(element, text) {
+        element.addEventListener('mousemove', (e) => {
+            if (!this.activeTooltip) {
+                this.activeTooltip = document.createElement('div');
+                this.activeTooltip.className = 'map-tooltip';
+                document.body.appendChild(this.activeTooltip);
+            }
+            this.activeTooltip.innerHTML = text;
+            this.activeTooltip.style.display = 'block';
+            this.activeTooltip.style.left = e.pageX + 15 + 'px';
+            this.activeTooltip.style.top = e.pageY + 15 + 'px';
         });
 
-        document.getElementById('popout-active').textContent = this.formatNumber(totalActive);
-        document.getElementById('popout-recovered').textContent = this.formatNumber(totalRecovered);
-        document.getElementById('popout-deceased').textContent = this.formatNumber(totalDeceased);
+        element.addEventListener('mouseleave', () => {
+            if (this.activeTooltip) {
+                this.activeTooltip.style.display = 'none';
+            }
+        });
     },
 
-    createGroupedDiseaseChart(populationMillions) {
-        const ctx = document.getElementById('popout-disease-chart');
-        if (!ctx) return;
+    onStateHover(e, path) {
+        // Only effect if not active
+        if (this.activeState !== path) {
+            // Apply simple hover class - CSS handles animation
+            path.parentElement.appendChild(path); // Bring to front
+        }
+    },
 
-        if (this.diseaseChart) {
-            this.diseaseChart.destroy();
+    onStateLeave(e, path) {
+        // Handled by CSS removal of hover state
+    },
+
+    clearActiveState() {
+        if (this.activeState) {
+            this.activeState.classList.remove('active');
+            this.activeState = null;
+        }
+    },
+
+    onStateClick(feature) {
+        // Identify clicked path
+        const rawName = feature.properties.NAME_1 || feature.properties.ST_NM || feature.properties.name;
+        const selector = `.state-path[data-name="${rawName}"]`;
+        const path = this.container.querySelector(selector);
+
+        if (!path) return;
+
+        // Toggle Logic
+        if (this.activeState && this.activeState !== path) {
+            this.activeState.classList.remove('active');
         }
 
-        const diseases = Object.keys(this.diseaseRates);
-        const activeData = diseases.map(d => Math.floor(this.diseaseRates[d].active * populationMillions * (0.8 + Math.random() * 0.4)));
-        const recoveredData = diseases.map(d => Math.floor(this.diseaseRates[d].recovered * populationMillions * (0.8 + Math.random() * 0.4)));
-        const deceasedData = diseases.map(d => Math.floor(this.diseaseRates[d].deceased * populationMillions * (0.8 + Math.random() * 0.4)));
+        path.classList.add('active');
+        this.activeState = path;
 
-        const isDark = document.documentElement.classList.contains('dark');
-        const textColor = isDark ? '#e2e8f0' : '#374151';
-        const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+        // Bring active to front
+        path.parentElement.appendChild(path);
+
+        // Open Modal Flow
+        this.openModal(rawName);
+    },
+
+    openModal(stateName) {
+        this.modal.classList.add('visible');
+
+        // Update Modal Content
+        document.getElementById('modal-state-name').textContent = stateName;
+
+        // Generate State Visual
+        this.updateStateVisual(stateName);
+
+        // Animate Numbers
+        this.animateNumber('modal-population', 10000000 + Math.random() * 50000000);
+        this.animateNumber('modal-live-users', 500 + Math.random() * 5000);
+        this.animateNumber('stats-active', 1000 + Math.random() * 5000);
+        this.animateNumber('stats-recovered', 8000 + Math.random() * 10000);
+        this.animateNumber('stats-deceased', 100 + Math.random() * 500);
+
+        document.getElementById('modal-born').textContent = Math.floor(Math.random() * 500);
+        document.getElementById('modal-died').textContent = Math.floor(Math.random() * 200);
+
+        // Reset Active State (Default: Total Population)
+        const dataBoxes = this.modal.querySelectorAll('.data-box');
+        dataBoxes.forEach(b => b.classList.remove('active'));
+        // Set first box (Population) as active by default
+        if (dataBoxes[0]) dataBoxes[0].classList.add('active');
+
+        // Start Charts
+        this.renderDiseaseChart();
+    },
+
+    closeModal() {
+        this.modal.classList.remove('visible');
+        if (this.hospitalsModal) this.hospitalsModal.classList.remove('visible');
+
+        // Clear activity
+        this.clearActiveState();
+    },
+
+    updateStateVisual(stateName) {
+        // Try to clone the path from the main map to show in modal
+        const container = document.getElementById('modal-state-visual');
+        container.innerHTML = '';
+
+        // Create a mini SVG for the modal
+        const svgNS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(svgNS, "svg");
+        svg.setAttribute("viewBox", "0 0 200 200"); // Arbitrary, will need centering
+        svg.setAttribute("class", "popout-svg");
+
+        // Find existing path data
+        const existingPath = this.container.querySelector(`.state-path[data-name="${stateName}"]`);
+        if (existingPath) {
+            const path = document.createElementNS(svgNS, "path");
+            path.setAttribute("d", existingPath.getAttribute("d"));
+            path.setAttribute("fill", existingPath.getAttribute("fill"));
+            path.setAttribute("class", "state-cutout-path");
+
+            // We need to re-center this path inside the 200x200 viewbox
+            // Simplest way: get BBox of path and adjust viewBox
+            svg.appendChild(path);
+            container.appendChild(svg);
+
+            // Validating BBox requires the element to be in DOM.
+            // Since we just appended, we can try to measure.
+            try {
+                const bbox = existingPath.getBBox();
+                svg.setAttribute("viewBox", `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`);
+            } catch (e) {
+                // Fallback if measurement fails
+            }
+        }
+    },
+
+    animateNumber(id, finalValue) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const duration = 1500;
+        const start = 0;
+        const end = Math.floor(finalValue);
+        const startTime = performance.now();
+
+        const update = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const ease = 1 - Math.pow(1 - progress, 3); // Cubic ease out
+
+            el.textContent = Math.floor(start + (end - start) * ease).toLocaleString();
+
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            }
+        };
+        requestAnimationFrame(update);
+    },
+
+    renderDiseaseChart() {
+        const ctx = document.getElementById('disease-chart').getContext('2d');
+        if (this.diseaseChart) this.diseaseChart.destroy();
+
+        if (typeof Chart === 'undefined') return;
 
         this.diseaseChart = new Chart(ctx, {
-            type: 'bar',
+            type: 'doughnut',
             data: {
-                labels: diseases,
-                datasets: [
-                    {
-                        label: 'Active',
-                        data: activeData,
-                        backgroundColor: '#f97316',
-                        borderRadius: 3,
-                        barPercentage: 0.7,
-                        categoryPercentage: 0.8
-                    },
-                    {
-                        label: 'Recovered',
-                        data: recoveredData,
-                        backgroundColor: '#22c55e',
-                        borderRadius: 3,
-                        barPercentage: 0.7,
-                        categoryPercentage: 0.8
-                    },
-                    {
-                        label: 'Deceased',
-                        data: deceasedData,
-                        backgroundColor: '#ef4444',
-                        borderRadius: 3,
-                        barPercentage: 0.7,
-                        categoryPercentage: 0.8
-                    }
-                ]
+                labels: ['Active', 'Recovered', 'Deceased'],
+                datasets: [{
+                    data: [15, 80, 5],
+                    backgroundColor: ['#f97316', '#22c55e', '#ef4444'],
+                    borderWidth: 0,
+                    hoverOffset: 15
+                }]
             },
             options: {
-                indexAxis: 'y',
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                        labels: {
-                            boxWidth: 12,
-                            padding: 8,
-                            font: { size: 10 },
-                            color: textColor
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.x.toLocaleString()}`
-                        }
-                    }
+                    legend: { position: 'bottom', labels: { color: '#94a3b8' } }
                 },
-                scales: {
-                    x: {
-                        stacked: false,
-                        grid: { color: gridColor },
-                        ticks: {
-                            font: { size: 9 },
-                            color: textColor,
-                            callback: (val) => {
-                                if (val >= 1000000) return (val / 1000000).toFixed(0) + 'M';
-                                if (val >= 1000) return (val / 1000).toFixed(0) + 'K';
-                                return val;
-                            }
-                        }
-                    },
-                    y: {
-                        stacked: false,
-                        grid: { display: false },
-                        ticks: {
-                            font: { size: 10, weight: '500' },
-                            color: textColor
-                        }
-                    }
+                layout: { padding: 20 },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
                 }
             }
         });
     },
 
-    renderAnimatedCutout(pathData, stateColor) {
-        const cutoutSvg = document.getElementById('popout-state-svg');
-
-        const coords = pathData.match(/[\d.]+,[\d.]+/g) || [];
-        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-
-        coords.forEach(coord => {
-            const [x, y] = coord.split(',').map(Number);
-            minX = Math.min(minX, x);
-            maxX = Math.max(maxX, x);
-            minY = Math.min(minY, y);
-            maxY = Math.max(maxY, y);
-        });
-
-        const padding = 15;
-        const viewBox = `${minX - padding} ${minY - padding} ${maxX - minX + padding * 2} ${maxY - minY + padding * 2}`;
-
-        cutoutSvg.setAttribute('viewBox', viewBox);
-        cutoutSvg.innerHTML = `
-            <path class="state-cutout-path" d="${pathData}" fill="${stateColor}" stroke="#113841" stroke-width="2"/>
-        `;
-    },
-
-    getStars(rating) {
-        const full = Math.floor(rating);
-        const half = rating % 1 >= 0.5 ? 1 : 0;
-        const empty = 5 - full - half;
-        return '★'.repeat(full) + (half ? '½' : '') + '☆'.repeat(empty);
-    },
-
-    startLiveCounter(populationMillions) {
-        if (this.liveInterval) clearInterval(this.liveInterval);
-
-        const basePopulation = populationMillions * 1000000;
-        const birthRate = 17.0 / 1000;
-        const deathRate = 7.3 / 1000;
-        const secondsPerYear = 365.25 * 24 * 60 * 60;
-
-        const birthsPerSecond = (basePopulation * birthRate) / secondsPerYear;
-        const deathsPerSecond = (basePopulation * deathRate) / secondsPerYear;
-
-        const now = new Date();
-        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const secondsSinceMidnight = (now - todayStart) / 1000;
-
-        let bornToday = Math.floor(birthsPerSecond * secondsSinceMidnight);
-        let deathsToday = Math.floor(deathsPerSecond * secondsSinceMidnight);
-        let aliveNow = basePopulation + bornToday - deathsToday;
-
-        const update = () => {
-            if (Math.random() > 0.4) bornToday += Math.floor(Math.random() * 3);
-            if (Math.random() > 0.6) deathsToday += Math.floor(Math.random() * 2);
-            aliveNow = basePopulation + bornToday - deathsToday;
-
-            const livePopEl = document.getElementById('popout-live-pop');
-            const bornEl = document.getElementById('popout-born');
-            const diedEl = document.getElementById('popout-died');
-
-            if (livePopEl) livePopEl.textContent = this.formatNumber(aliveNow);
-            if (bornEl) bornEl.textContent = bornToday.toLocaleString();
-            if (diedEl) diedEl.textContent = deathsToday.toLocaleString();
-        };
-
-        update();
-        this.liveInterval = setInterval(update, 1000);
-    },
-
-    formatNumber(num) {
-        if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
-        if (num >= 1e6) return (num / 1e6).toFixed(1) + 'M';
-        if (num >= 1e3) return (num / 1e3).toFixed(1) + 'K';
-        return num.toLocaleString();
-    },
-
-    async showHospitals() {
-        if (!this.currentState) return;
-
-        document.getElementById('hospitals-title').textContent = `Hospitals in ${this.currentState}`;
+    showHospitalsList() {
         this.hospitalsModal.classList.add('visible');
+        // Mock data population...
+        const list = document.getElementById('hospitals-list');
+        list.innerHTML = `<div class="loading-hospitals"><div class="spinner"></div>Loading...</div>`;
 
-        await this.fetchHospitals(this.currentState);
-    },
-
-    async fetchHospitals(stateName) {
-        const listContainer = document.getElementById('hospitals-list');
-        listContainer.innerHTML = `
-            <div class="loading-hospitals">
-                <div class="spinner"></div>
-                <p>Finding hospitals...</p>
-            </div>
-        `;
-
-        try {
-            const stateCoords = {
-                "Uttar Pradesh": { lat: 26.8467, lng: 80.9462 },
-                "Maharashtra": { lat: 19.7515, lng: 75.7139 },
-                "Bihar": { lat: 25.0961, lng: 85.3131 },
-                "Rajasthan": { lat: 27.0238, lng: 74.2179 },
-                "Karnataka": { lat: 15.3173, lng: 75.7139 },
-                "Tamil Nadu": { lat: 11.1271, lng: 78.6569 },
-                "Gujarat": { lat: 22.2587, lng: 71.1924 },
-                "Kerala": { lat: 10.8505, lng: 76.2711 },
-                "Delhi": { lat: 28.7041, lng: 77.1025 },
-                "NCT of Delhi": { lat: 28.7041, lng: 77.1025 },
-                "West Bengal": { lat: 22.9868, lng: 87.8550 },
-                "Telangana": { lat: 18.1124, lng: 79.0193 },
-                "Andhra Pradesh": { lat: 15.9129, lng: 79.7400 },
-                "Madhya Pradesh": { lat: 22.9734, lng: 78.6569 },
-                "Punjab": { lat: 31.1471, lng: 75.3412 },
-                "Haryana": { lat: 29.0588, lng: 76.0856 },
-                "Odisha": { lat: 20.9517, lng: 85.0985 },
-                "Orissa": { lat: 20.9517, lng: 85.0985 },
-                "Jharkhand": { lat: 23.6102, lng: 85.2799 },
-                "Chhattisgarh": { lat: 21.2787, lng: 81.8661 },
-                "Assam": { lat: 26.2006, lng: 92.9376 },
-                "Jammu and Kashmir": { lat: 33.7782, lng: 76.5762 },
-                "Uttarakhand": { lat: 30.0668, lng: 79.0193 },
-                "Himachal Pradesh": { lat: 31.1048, lng: 77.1734 },
-                "Goa": { lat: 15.2993, lng: 74.1240 }
-            };
-
-            const coords = stateCoords[stateName] || { lat: 20.5937, lng: 78.9629 };
-
-            const query = `
-                [out:json][timeout:25];
-                (
-                    node["amenity"="hospital"](around:100000,${coords.lat},${coords.lng});
-                    way["amenity"="hospital"](around:100000,${coords.lat},${coords.lng});
-                );
-                out center 20;
-            `;
-
-            const response = await fetch('https://overpass-api.de/api/interpreter', {
-                method: 'POST',
-                body: query
-            });
-
-            const data = await response.json();
-            this.displayHospitals(data.elements || []);
-
-        } catch (error) {
-            console.error('Failed to fetch hospitals:', error);
-            this.displayHospitals([]);
-        }
-    },
-
-    displayHospitals(hospitals) {
-        const listContainer = document.getElementById('hospitals-list');
-
-        if (hospitals.length === 0) {
-            listContainer.innerHTML = `
-                <div class="no-hospitals">
-                    <span class="material-icons-outlined">info</span>
-                    <p>No hospitals found. Try searching manually.</p>
+        setTimeout(() => {
+            list.innerHTML = `
+                <div style="padding:1rem; color:#64748b; text-align:center;">
+                    <p>Demonstration Data</p>
+                    <div style="margin-top:10px; text-align:left;">
+                        <div style="background:#f1f5f9; padding:15px; margin-bottom:10px; border-radius:10px;">
+                            <strong>City General Hospital</strong><br>
+                            <span style="font-size:0.9em">Central District • 2.4km away</span>
+                        </div>
+                        <div style="background:#f1f5f9; padding:15px; margin-bottom:10px; border-radius:10px;">
+                            <strong>Apollo Specialty Centre</strong><br>
+                            <span style="font-size:0.9em">Tech Park Road • 5.1km away</span>
+                        </div>
+                    </div>
                 </div>
             `;
-            return;
-        }
-
-        listContainer.innerHTML = hospitals.map((h, i) => {
-            const name = h.tags?.name || `Hospital ${i + 1}`;
-            const lat = h.lat || h.center?.lat;
-            const lng = h.lon || h.center?.lon;
-            const phone = h.tags?.phone || h.tags?.['contact:phone'] || '';
-            const address = h.tags?.['addr:full'] || h.tags?.['addr:street'] || '';
-
-            return `
-                <div class="hospital-card" data-name="${name.toLowerCase()}">
-                    <div class="hospital-icon">
-                        <span class="material-icons-outlined">local_hospital</span>
-                    </div>
-                    <div class="hospital-info">
-                        <h3>${name}</h3>
-                        ${address ? `<p class="hospital-address">${address}</p>` : ''}
-                        ${phone ? `<p class="hospital-phone">${phone}</p>` : ''}
-                    </div>
-                    <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" 
-                       target="_blank" 
-                       class="navigate-btn">
-                        <span class="material-icons-outlined">navigation</span>
-                        Navigate
-                    </a>
-                </div>
-            `;
-        }).join('');
-    },
-
-    filterHospitals() {
-        const query = document.getElementById('hospital-search').value.toLowerCase();
-        const cards = document.querySelectorAll('.hospital-card');
-
-        cards.forEach(card => {
-            const name = card.dataset.name;
-            card.style.display = name.includes(query) ? 'flex' : 'none';
-        });
-    },
-
-    closeHospitals() {
-        this.hospitalsModal.classList.remove('visible');
-    },
-
-    closeModal() {
-        this.modal.classList.remove('visible');
-        if (this.liveInterval) {
-            clearInterval(this.liveInterval);
-            this.liveInterval = null;
-        }
-        if (this.diseaseChart) {
-            this.diseaseChart.destroy();
-            this.diseaseChart = null;
-        }
+        }, 1000);
     }
 };
 
-// Auto-initialize
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => IndiaMap.init());
-} else {
+document.addEventListener('DOMContentLoaded', () => {
     IndiaMap.init();
-}
+});

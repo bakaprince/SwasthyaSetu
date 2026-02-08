@@ -5,70 +5,142 @@
 
 /* Map Container */
 #india-map {
-    background:
-        radial-gradient(circle at 50% 50%, rgba(17, 56, 65, 0.08) 1px, transparent 1px),
-        linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%);
-    background-size: 30px 30px, 100% 100%;
-    border-radius: 1.5rem;
-    overflow: hidden;
+    background: transparent;
+    /* Removed gradients/borders to blend with page */
+    border-radius: 0;
+    overflow: visible;
     position: relative;
-    box-shadow: 0 8px 30px rgba(17, 56, 65, 0.1);
+    box-shadow: none;
 }
 
 /* Dark Mode Map */
+/* Dark Mode Map */
 .dark #india-map {
-    background:
-        radial-gradient(circle at 50% 50%, rgba(134, 239, 172, 0.1) 1px, transparent 1px),
-        linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    background: transparent;
+    box-shadow: none;
 }
 
-/* SVG Map */
+/* Dark Mode Map */
+
+
+/* ============================================ */
+/* CUSTOM SVG MAP STYLES                       */
+/* ============================================ */
+
+/* SVG Container */
 .india-svg-map {
-    filter: drop-shadow(0 4px 25px rgba(17, 56, 65, 0.12));
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
+    /* Initial appear animation */
+    animation: map-enter 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-.dark .india-svg-map {
-    filter: drop-shadow(0 4px 25px rgba(0, 0, 0, 0.3));
+@keyframes map-enter {
+    from {
+        transform: scale(0.9) translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
 }
 
-/* State Paths */
+
+
+/* Base State Path Style */
 .state-path {
-    stroke: #113841;
+    stroke: #ffffff;
     stroke-width: 1;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    stroke-linecap: round;
+    transition: transform 0.3s ease, filter 0.3s ease;
+    transform-origin: center;
+    transform-box: fill-box;
+    /* Key fix for SVG */
     cursor: pointer;
-    transition: all 0.3s ease;
+    /* Optimize painting */
+    will-change: transform, filter;
 }
 
 .dark .state-path {
     stroke: #334155;
-    stroke-width: 0.8;
+    stroke-width: 0.5;
 }
 
+/* ============================================ */
+/* THE "CAKE SLICE LIFT" HOVER EFFECT          */
+/* ============================================ */
+
 .state-path:hover,
-.state-path.hovered {
-    stroke: #113841;
+.state-path.active {
+    /* Lift Up */
+    transform: translateY(-8px) scale(1.04);
+
+    /* Soft Drop Shadow for Depth */
+    filter:
+        drop-shadow(0 15px 15px rgba(0, 0, 0, 0.3)) brightness(1.1);
+
+    /* Elevate Z-Index Visual via Paint Order (SVG specific trick doesn't apply to z-index)
+       Note: JS handles re-appending to bring to front for true z-index
+    */
+    stroke: #ffffff;
     stroke-width: 2;
-    filter: brightness(0.92) drop-shadow(0 0 15px rgba(17, 56, 65, 0.5));
-    transform: scale(1.01);
+    z-index: 100;
+    /* Only works if positioned, but SVG element order matters more */
+}
+
+.state-path.active {
+    filter:
+        drop-shadow(0 10px 25px rgba(17, 56, 65, 0.5)) brightness(1.1);
+    stroke: #fbbf24;
+    /* Gold border for active */
+    stroke-width: 3;
 }
 
 .dark .state-path:hover,
-.dark .state-path.hovered {
+.dark .state-path.active {
+    filter:
+        drop-shadow(0 15px 25px rgba(0, 0, 0, 0.6)) brightness(1.15);
     stroke: #86efac;
-    filter: brightness(1.1) drop-shadow(0 0 20px rgba(134, 239, 172, 0.4));
 }
 
-/* State Labels */
-.state-label {
-    font-size: 11px;
-    font-weight: 700;
-    fill: #113841;
+/* Loader Styles */
+.map-loader {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #113841;
+}
+
+.dark .map-loader {
+    color: #86efac;
+}
+
+/* Tooltip */
+.map-tooltip {
+    position: absolute;
     pointer-events: none;
-}
-
-.dark .state-label {
-    fill: #e2e8f0;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(4px);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    white-space: nowrap;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transform: translate(-50%, -120%);
+    /* Center above cursor */
+    display: none;
 }
 
 /* ============================================ */
@@ -114,32 +186,52 @@
     justify-content: center;
 }
 
-/* Center Column with State, Name, and Button */
+/* Live Population Box - LARGE */
+.live-population-box {
+    /* Inherit default .data-box styles (dark glass) */
+}
+
+/* Center Column & Visuals */
 .popout-center-column {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0;
+    justify-content: center;
+    z-index: 20;
+    margin-top: -40px;
+    /* Slight visual overlap */
 }
 
-/* Central State Visual */
 .popout-state-visual {
-    position: relative;
-    width: 300px;
-    height: 300px;
-    background: linear-gradient(145deg, #113841 0%, #1d525e 100%);
+    width: 280px;
+    height: 280px;
+    background: #ffffff;
+    /* White background as requested */
     border-radius: 2rem;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow:
-        0 30px 60px -15px rgba(0, 0, 0, 0.5),
-        0 0 0 1px rgba(134, 239, 172, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        0 20px 50px rgba(0, 0, 0, 0.2),
+        inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+    /* Subtle border */
+    position: relative;
+    margin-bottom: 1.5rem;
+    overflow: visible;
+    /* Allow SVG to pop if needed */
     animation: popout-enter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 .dark .popout-state-visual {
+    background: #1e293b;
+    /* Dark mode fallback or keep white? User said "white". */
+    /* If user specifically asked for white, likely for contrast with the map.
+       But keeping it white in dark mode might be too bright.
+       However, strict request "centre the box background should be white".
+       I will keep it white for now to strictly follow instruction,
+       or maybe separate dark mode if sensible.
+       Let's stick to white for base, maybe dark can have text adjustment.
+       Actually, the SVG inside is colored. White bg is fine. */
     background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
     box-shadow:
         0 30px 60px -15px rgba(0, 0, 0, 0.7),
@@ -322,19 +414,62 @@
 }
 
 /* Data Boxes */
-.data-box {
-    background: white;
+/* Data Boxes / Dashboard Cards */
+.data-box,
+.dashboard-card {
+    /* Inactive State (Default) */
+    background: rgba(255, 255, 255, 0.08);
+    /* Transparent dark */
+    backdrop-filter: blur(12px);
     border-radius: 1.25rem;
     padding: 1.25rem 1.5rem;
     min-width: 220px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(17, 56, 65, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    /* White text for inactive */
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+/* Active State */
+/* Active State - Matches Disease Stats background but with stronger depth */
+.data-box.active {
+    background: rgba(255, 255, 255, 0.08);
+    /* Same as inactive */
+    backdrop-filter: blur(12px);
+    color: #ffffff;
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    /* Stronger border for active */
+    transform: translateY(-5px);
 }
 
 .dark .data-box {
-    background: #1e293b;
-    border-color: rgba(134, 239, 172, 0.2);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    background: rgba(15, 23, 42, 0.6);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark .data-box.active {
+    background: rgba(15, 23, 42, 0.8);
+    /* Slightly darker */
+    color: #ffffff;
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(134, 239, 172, 0.5);
+}
+
+/* Adjust child colors based on active state */
+/* Ensure white text for all states */
+.data-box .data-box-header,
+.data-box .data-box-value,
+.data-box .data-box-sub,
+.data-box .stat-label {
+    color: #ffffff !important;
+}
+
+.data-box .material-icons-outlined {
+    color: rgba(255, 255, 255, 0.9) !important;
 }
 
 /* Live Population Box - LARGE */
@@ -391,7 +526,8 @@
 .data-box-value {
     font-size: 1.75rem;
     font-weight: 700;
-    color: #113841;
+    color: #ffffff;
+    /* FORCE WHITE for all cards */
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -434,26 +570,36 @@
     gap: 0.5rem;
     padding: 0.5rem 0.75rem;
     border-radius: 0.5rem;
-    background: #f8fafc;
+    background: rgba(255, 255, 255, 0.85);
+    /* High Contrast */
+    color: #111;
+    font-weight: 600;
+    margin-bottom: 4px;
+    /* separation */
 }
 
 .dark .stat-row {
-    background: #334155;
+    background: rgba(255, 255, 255, 0.85);
+    /* Keep high contrast in dark mode too */
+    color: #111;
 }
 
 .stat-row .material-icons-outlined {
     font-size: 20px;
+    color: #111;
+    /* Dark icon */
 }
 
 .stat-row .stat-label {
     flex: 1;
     font-size: 0.85rem;
-    font-weight: 500;
-    color: #64748b;
+    font-weight: 600;
+    color: #334155;
+    /* Dark slate for readability */
 }
 
 .dark .stat-row .stat-label {
-    color: #94a3b8;
+    color: #1e293b;
 }
 
 .stat-row .stat-number {
@@ -462,11 +608,16 @@
 }
 
 .stat-row.born {
-    background: #ecfdf5;
+    /* Optional: keep light green tint or override with white? User asked for 0.85 white base.
+       Let's keep the tint but make it subtle on top of white if needed,
+       OR just rely on the icon/text.
+       User said ALL small stat boxes background rgba(255,255,255,0.85).
+       So I will remove separate background. */
+    background: rgba(255, 255, 255, 0.85);
 }
 
 .dark .stat-row.born {
-    background: rgba(34, 197, 94, 0.15);
+    background: rgba(255, 255, 255, 0.85);
 }
 
 .stat-row.born .material-icons-outlined,
