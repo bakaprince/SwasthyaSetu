@@ -395,18 +395,55 @@
 
 /* Data Boxes */
 .data-box {
-    background: white;
+    /* Inactive State (Default) */
+    background: rgba(255, 255, 255, 0.08);
+    /* Transparent dark */
+    backdrop-filter: blur(12px);
     border-radius: 1.25rem;
     padding: 1.25rem 1.5rem;
     min-width: 220px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(17, 56, 65, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    /* White text for inactive */
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+/* Active State */
+.data-box.active {
+    background: #ffffff;
+    color: #111111;
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+    border-color: transparent;
+    transform: translateY(-5px);
 }
 
 .dark .data-box {
+    background: rgba(15, 23, 42, 0.6);
+    /* Slightly darker for dark mode inactive */
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark .data-box.active {
     background: #1e293b;
-    border-color: rgba(134, 239, 172, 0.2);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    /* Dark card for dark mode active */
+    color: #ffffff;
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(134, 239, 172, 0.3);
+}
+
+/* Adjust child colors based on active state */
+.data-box:not(.active) .data-box-header,
+.data-box:not(.active) .data-box-value,
+.data-box:not(.active) .data-box-sub,
+.data-box:not(.active) .stat-label {
+    color: #ffffff !important;
+}
+
+.data-box:not(.active) .material-icons-outlined {
+    color: rgba(255, 255, 255, 0.7) !important;
 }
 
 /* Live Population Box - LARGE */
