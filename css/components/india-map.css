@@ -10,7 +10,8 @@
         linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%);
     background-size: 30px 30px, 100% 100%;
     border-radius: 1.5rem;
-    overflow: hidden;
+    /* overflow: hidden; -- Removed to allow scale/lift animations to show */
+    overflow: visible;
     position: relative;
     /* Flat style - no shadow */
     box-shadow: none;
