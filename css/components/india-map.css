@@ -647,11 +647,12 @@
 
 /* Population Box / Review Box */
 .live-population-box {
-    background: #ecfdf5;
-    /* Solid light mint */
-    border: 1px solid #86efac;
-    backdrop-filter: none;
-    /* Remove blur/haze */
+    background: rgba(255, 255, 255, 0.08);
+    /* Transparent like other boxes */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    /* Match default border or keep green? User screenshot shows thin border. Let's match default data-box */
+    backdrop-filter: blur(12px);
+    /* Restore blur */
 }
 
 .dark .live-population-box {
