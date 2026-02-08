@@ -80,7 +80,8 @@ const IndiaMap = {
                     <!-- Data Connectors -->
                     <div class="data-connector top-right">
                         <div class="connector-line"></div>
-                        <div class="data-box">
+                        <div class="connector-line"></div>
+                        <div class="data-box dashboard-card">
                             <div class="data-box-header"><span class="material-icons-outlined">people</span> Total Population</div>
                             <div class="data-box-value large" id="modal-population">0
                                 <span class="stars">✨</span>
@@ -102,7 +103,7 @@ const IndiaMap = {
 
                     <div class="data-connector bottom-right">
                         <div class="connector-line"></div>
-                        <div class="data-box large live-population-box">
+                        <div class="data-box dashboard-card large live-population-box">
                             <div class="data-box-header">
                                 <span class="material-icons-outlined">public</span>
                                 <div class="pulse-dot"></div> Live Activity
@@ -114,7 +115,7 @@ const IndiaMap = {
 
                     <div class="data-connector left-side">
                         <div class="connector-line"></div>
-                        <div class="data-box disease-box">
+                        <div class="data-box dashboard-card disease-box">
                             <div class="data-box-header"><span class="material-icons-outlined">coronavirus</span> Disease Statistics</div>
                             <div class="disease-stats-grid">
                                 <div class="disease-stat active">
