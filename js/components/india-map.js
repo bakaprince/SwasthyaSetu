@@ -111,30 +111,30 @@ const IndiaMap = {
                         <div class="connector-line"></div>
                         <div class="data-box dashboard-card large live-population-box">
                             <div class="data-box-header">
-                                <span class="material-icons-outlined">public</span>
-                                <div class="pulse-dot"></div> Live Activity
+                                <span class="material-icons-outlined">star</span>
+                                <div class="pulse-dot"></div> Average Hospital Review
                             </div>
-                            <div class="data-box-value" id="modal-live-users">0</div>
-                            <div class="data-box-sub">Active users on platform</div>
+                            <div class="data-box-value" id="modal-live-users">4.5/5</div>
+                            <div class="data-box-sub">Based on patient feedback</div>
                         </div>
                     </div>
 
                     <div class="data-connector left-side">
                         <div class="connector-line"></div>
                         <div class="data-box dashboard-card disease-box">
-                            <div class="data-box-header"><span class="material-icons-outlined">coronavirus</span> Disease Statistics</div>
+                            <div class="data-box-header"><span class="material-icons-outlined">coronavirus</span> Top 5 Diseases</div>
                             <div class="disease-stats-grid">
                                 <div class="disease-stat active">
-                                    <span class="disease-stat-value" id="stats-active">0</span>
-                                    <span class="disease-stat-label">Active</span>
+                                    <span class="disease-stat-value" id="stats-dengue">0</span>
+                                    <span class="disease-stat-label">Dengue</span>
                                 </div>
                                 <div class="disease-stat recovered">
-                                    <span class="disease-stat-value" id="stats-recovered">0</span>
-                                    <span class="disease-stat-label">Recovered</span>
+                                    <span class="disease-stat-value" id="stats-malaria">0</span>
+                                    <span class="disease-stat-label">Malaria</span>
                                 </div>
                                 <div class="disease-stat deceased">
-                                    <span class="disease-stat-value" id="stats-deceased">0</span>
-                                    <span class="disease-stat-label">Deceased</span>
+                                    <span class="disease-stat-value" id="stats-covid">0</span>
+                                    <span class="disease-stat-label">COVID-19</span>
                                 </div>
                             </div>
                             <div class="disease-chart-container">
@@ -466,10 +466,14 @@ const IndiaMap = {
 
         // Animate Numbers
         this.animateNumber('modal-population', 10000000 + Math.random() * 50000000);
-        this.animateNumber('modal-live-users', 500 + Math.random() * 5000);
-        this.animateNumber('stats-active', 1000 + Math.random() * 5000);
-        this.animateNumber('stats-recovered', 8000 + Math.random() * 10000);
-        this.animateNumber('stats-deceased', 100 + Math.random() * 500);
+
+        // Random Review Score between 3.5 and 5.0
+        const reviewScore = (3.5 + Math.random() * 1.5).toFixed(1);
+        document.getElementById('modal-live-users').innerText = `${reviewScore}/5`;
+
+        this.animateNumber('stats-dengue', 1000 + Math.random() * 5000);
+        this.animateNumber('stats-malaria', 800 + Math.random() * 4000);
+        this.animateNumber('stats-covid', 500 + Math.random() * 2000);
 
         document.getElementById('modal-born').textContent = Math.floor(Math.random() * 500);
         document.getElementById('modal-died').textContent = Math.floor(Math.random() * 200);
@@ -558,10 +562,10 @@ const IndiaMap = {
         this.diseaseChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['Active', 'Recovered', 'Deceased'],
+                labels: ['Dengue', 'Malaria', 'COVID-19', 'Typhoid', 'Flu'],
                 datasets: [{
-                    data: [15, 80, 5],
-                    backgroundColor: ['#f97316', '#22c55e', '#ef4444'],
+                    data: [25, 20, 15, 25, 15], // Mock distribution
+                    backgroundColor: ['#f97316', '#22c55e', '#ef4444', '#eab308', '#3b82f6'],
                     borderWidth: 0,
                     hoverOffset: 15
                 }]
