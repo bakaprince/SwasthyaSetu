@@ -287,7 +287,7 @@ const SUCCESS_MESSAGES = {
 /**
  * Get API base URL based on environment
  * Automatically detects if running locally or in production
- * 
+ *
  * @returns {string} API base URL
  */
 function getApiBaseUrl() {

@@ -37,7 +37,7 @@ const AuthService = {
             const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
             const apiBaseUrl = isLocal
                 ? 'http://localhost:5000/api'
-                : 'https://swasthyasetu-9y5l.onrender.com/api';
+                : API_CONFIG.PRODUCTION_API_URL;
 
             console.log('🔐 Login attempt');
             console.log('   Hostname:', hostname);
