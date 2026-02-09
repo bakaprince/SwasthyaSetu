@@ -140,8 +140,8 @@ const GovAnalytics = {
 
     async loadStatesGeoJSON() {
         try {
-            // Fetch India states GeoJSON
-            const response = await fetch('https://raw.githubusercontent.com/geohacker/india/master/state/india_state.geojson');
+            // Fetch India states GeoJSON (Local source)
+            const response = await fetch('../js/data/india_states.geojson');
             const statesGeoJSON = await response.json();
 
             // Fetch COVID data first

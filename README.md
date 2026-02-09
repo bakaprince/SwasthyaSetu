@@ -1,81 +1,42 @@
-# SwasthyaSetu - Unified Healthcare Access Platform
+# SwasthyaSetu - Unified Digital Health Platform
 
-> **"Connecting 500+ hospitals across India, enabling citizens to access their digital health records via ABHA ID, book appointments, and receive real-time health alerts."**
-
-SwasthyaSetu is a comprehensive government health portal designed to solve the critical problem of fragmented healthcare data and improve inter-hospital coordination. It provides a unified interface for Patients, Hospital Administrators, and Government Officials.
+SwasthyaSetu is a comprehensive digital health platform designed to connect patients, hospitals, and government health departments. It provides seamless access to medical records, appointment booking, hospital resource management, and real-time health analytics.
 
 ## 🚀 Key Features
 
-### 🏥 Patient Portal
-- **ABHA Integration**: Secure login and record access using Ayushman Bharat Health Account.
-- **Unified Dashboard**: View appointments, medical history, and prescriptions from multiple hospitals in one place.
-- **Telemedicine**: Book and attend video consultations.
-- **Health Alerts**: Real-time notifications about disease outbreaks and air quality in your area.
+*   **For Patients:**
+    *   **Unified Health Interface:** Access medical records, prescriptions, and lab reports in one place.
+    *   **Appointment Booking:** Easy online booking with doctors and hospitals.
+    *   **Telemedicine:** Integrated video consultation feature.
+    *   **Health Alerts:** Real-time updates on local health outbreaks and AQI.
+    *   **ABHA Integration:** Direct link to create Ayushman Bharat Health Account.
 
-### 🏢 Hospital Network
-- **Resource Tracking**: Real-time visibility of beds, oxygen, ventilators, and ambulances.
-- **Inter-Hospital Coordination**: Streamlined patient transfer requests.
-- **Directory**: Searchable list of 500+ government and private hospitals.
+*   **For Hospitals:**
+    *   **Resource Management:** Track bed availability, oxygen, and ICU capacity.
+    *   **Appointment Management:** Streamlined dashboard for managing patient visits.
+    *   **Analytics:** Date-wise patient trends and disease reporting.
 
-### 🏛️ Government Dashboard
-- **National Monitoring**: Real-time overview of health infrastructure and disease outbreaks.
-- **Compliance Tracking**: Monitor hospital connectivity and data standards adherence.
-- **Outbreak Management**: Heatmaps and alert systems for rapid response.
+*   **For Government:**
+    *   **National Health Dashboard:** Real-time visualization of health data across states.
+    *   **Crisis Management:** Monitor disease outbreaks and resource allocation.
+    *   **Interactive Map:** Detailed state-wise health metrics visualization.
 
-## 🛠️ Tech Stack
+## 🛠️ Technology Stack
 
-- **Frontend**: Vanilla JavaScript, Tailwind CSS (No framework lock-in for maximum performance)
-- **Backend**: Node.js, Express.js
-- **Database**: MongoDB Atlas
-- **Security**: JWT Authentication, Role-Based Access Control (RBAC)
+*   **Frontend:**
+    *   **Core:** Vanilla HTML5, CSS3, JavaScript (ES6+)
+    *   **Styling:** Tailwind CSS (via CDN)
+    *   **Maps:** Custom SVG Map & Leaflet.js
+    *   **Icons:** Material Icons & Google Fonts
+    *   **Charts:** Chart.js
 
-## 📂 Documentation
+*   **Backend:**
+    *   **Runtime:** Node.js & Express.js
+    *   **Database:** MongoDB
+    *   **Authentication:** JWT (JSON Web Tokens)
+    *   **Security:** Helmet, CORS, bcryptjs
 
-- [**Government Portal Documentation**](docs/GOVERNMENT_PORTAL.md) - Detailed guide for the government dashboard and analytics.
-- [**Deployment Guide**](docs/DEPLOYMENT.md) - Instructions for deploying to Render and Vercel.
-- [**Database Structure**](docs/DATABASE.md) - Schema details for Users, Appointments, and Hospitals.
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js (v14+)
-- MongoDB Connection String
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/SwasthyaSetu.git
-   cd SwasthyaSetu
-   ```
-
-2. **Setup Backend**
-   ```bash
-   cd backend
-   npm install
-   # Create .env file with MONGODB_URI, JWT_SECRET, PORT=5000
-   npm run seed  # Seeds the database with mock data
-   npm start
-   ```
-
-3. **Run Frontend**
-   ```bash
-   # Open a new terminal in project root
-   npx http-server -p 3000
-   ```
-
-4. **Access the App**
-   Open `http://localhost:3000` in your browser.
-
-## 🔐 Demo Credentials
-
-| Role | Username / ID | Password |
-|------|--------------|----------|
-| **Patient** | `12-3456-7890-1234` | `patient123` |
-| **Hospital Admin** | `admin@aiims.gov.in` | `admin123` |
-| **Government** | *(Access via Govt Login tab)* | `admin123` |
-
-## 📦 Project Structure
+## 📂 Project Structure
 
 ```
 SwasthyaSetu/

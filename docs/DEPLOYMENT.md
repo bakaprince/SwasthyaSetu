@@ -180,27 +180,54 @@ Ensure MongoDB Atlas allows connections:
 2. Verify `0.0.0.0/0` is in IP whitelist
 3. This allows Render to connect
 
-### CORS Configuration
+# Deployment Guide
 
-Your backend already has CORS configured to allow all origins in production. No changes needed!
+SwasthyaSetu consists of two parts:
+1. **Frontend:** A static HTML/CSS/JS site.
+2. **Backend:** A Node.js/Express API.
 
----
+## Frontend Deployment (Vercel)
 
-## Troubleshooting
+The frontend is completely static and can be deployed easily on Vercel or Netlify.
 
-### Backend won't start
+### Steps:
+1.  Push your code to GitHub.
+2.  Login to [Vercel](https://vercel.com).
+3.  Click **"Add New"** > **"Project"**.
+4.  Import your repository.
+5.  **Build Settings:**
+    *   **Framework Preset:** Other
+    *   **Build Command:** (None)
+    *   **Output Directory:** `.` (Root directory)
+6.  Click **Deploy**.
 
-**Check logs:**
-1. Go to Render dashboard
-2. Click your service
-3. Click "Logs" tab
-4. Look for errors
+## Backend Deployment (Render)
 
-**Common issues:**
-- Missing environment variables
-- Wrong MongoDB connection string
-- Port configuration (should be 5000)
+The backend is a Node.js application that connects to MongoDB.
 
+### Steps:
+1.  Login to [Render](https://render.com).
+2.  Click **"New"** > **"Web Service"**.
+3.  Connect your GitHub repository.
+4.  Scrol down to **Roots Directory** and set it to `backend`.
+5.  **Build Command:** `npm install`
+6.  **Start Command:** `npm start`
+7.  **Environment Variables:**
+    Add the following variables in the "Environment" tab:
+    *   `MONGO_URI`: Your MongoDB Connection String.
+    *   `JWT_SECRET`: A secure random string.
+    *   `NODE_ENV`: `production`
+
+8.  Click **Create Web Service**.
+
+## Connecting Frontend to Backend
+
+Once deployed, update the API base URL in your frontend code (e.g., in `js/config/api.js` or wherever API calls are made) to point to your Render backend URL.
+
+Example:
+```javascript
+const API_BASE_URL = 'https://swasthya-setu-backend.onrender.com/api';
+```
 ### Frontend can't connect to backend
 
 **Check:**
