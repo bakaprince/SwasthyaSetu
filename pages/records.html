@@ -29,6 +29,7 @@
                         secondary: "#113841",
                         "secondary-light": "#1d525e",
                         "background-dark": "#0d2b32",
+                        "background-light": "#fffefc", // Light cream background
                         "accent-purple": "#e0defc",
                         "accent-green": "#e6f0c2",
                         "accent-blue": "#d0e8f2",
@@ -54,7 +55,9 @@
 </head>
 
 <body
-    class="bg-background-light dark:bg-background-dark font-sans antialiased text-gray-800 dark:text-gray-100 min-h-screen">
+    class="bg-background-light dark:bg-background-dark font-sans antialiased text-gray-800 dark:text-gray-100 min-h-screen relative">
+    <!-- Global Dot Pattern Overlay -->
+    <div class="fixed inset-0 w-full h-full dot-pattern pointer-events-none z-0"></div>
 
     <!-- Navigation -->
     <nav
@@ -86,7 +89,7 @@
     </section>
 
     <!-- Patient Info -->
-    <section class="py-8 bg-white dark:bg-gray-900">
+    <section class="py-8 bg-transparent dark:bg-gray-900 relative z-10">
         <div class="max-w-7xl mx-auto px-6">
             <div class="bg-accent-green rounded-2xl p-6 mb-8">
                 <div class="flex items-center justify-between">
@@ -134,7 +137,7 @@
     </section>
 
     <!-- Records Timeline -->
-    <section class="py-8 bg-gray-50 dark:bg-gray-800">
+    <section class="py-8 bg-transparent dark:bg-gray-800 relative z-10">
         <div class="max-w-7xl mx-auto px-6">
             <div class="flex items-center justify-between mb-8">
                 <h2 class="font-display text-3xl font-bold text-secondary dark:text-white">Medical Timeline</h2>
@@ -171,7 +174,7 @@
     <script src="../js/pages/records.js"></script>
 
     <!-- Health Summary -->
-    <section class="py-16 bg-white dark:bg-gray-900">
+    <section class="py-16 bg-transparent dark:bg-gray-900 relative z-10">
         <div class="max-w-7xl mx-auto px-6">
             <h2 class="font-display text-4xl font-bold text-center mb-12 text-secondary dark:text-white">Health Summary
             </h2>

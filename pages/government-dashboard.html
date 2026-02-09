@@ -37,6 +37,7 @@
                         secondary: "#113841",
                         "secondary-light": "#1d525e",
                         "background-dark": "#0d2b32",
+                        "background-light": "#fffefc", // Light cream background
                         "accent-purple": "#e0defc",
                         "accent-green": "#e6f0c2",
                         "accent-blue": "#d0e8f2",
@@ -98,9 +99,9 @@
 
         /* Modern SVG India Map Container */
         #india-map {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            background: transparent;
             border-radius: 1rem;
-            overflow: hidden;
+            overflow: visible;
         }
 
         /* State detail panel animation */
@@ -163,7 +164,9 @@
     </style>
 </head>
 
-<body class="bg-gray-50 dark:bg-background-dark font-sans antialiased">
+<body class="bg-background-light dark:bg-background-dark font-sans antialiased relative">
+    <!-- Global Dot Pattern Overlay -->
+    <div class="fixed inset-0 w-full h-full dot-pattern pointer-events-none z-0"></div>
 
     <!-- Top Navigation -->
     <nav class="bg-secondary dark:bg-secondary text-white border-b border-white/10">
@@ -227,7 +230,7 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="p-8 hero-pattern min-h-screen">
+    <main class="p-8 min-h-screen relative z-10">
 
         <!-- Page Header -->
         <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
