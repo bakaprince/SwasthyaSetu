@@ -615,16 +615,14 @@
 }
 
 .stat-row.born .material-icons-outlined,
-.stat-row.born .stat-number,
-.stat-row.born .stat-label {
-    color: #15803d !important;
+.stat-row.born .stat-number {
+    color: #15803d;
     /* Dark Green Text */
 }
 
 .dark .stat-row.born .material-icons-outlined,
-.dark .stat-row.born .stat-number,
-.dark .stat-row.born .stat-label {
-    color: #15803d !important;
+.dark .stat-row.born .stat-number {
+    color: #4ade80;
 }
 
 .stat-row.died {
@@ -637,26 +635,23 @@
 }
 
 .stat-row.died .material-icons-outlined,
-.stat-row.died .stat-number,
-.stat-row.died .stat-label {
-    color: #b91c1c !important;
+.stat-row.died .stat-number {
+    color: #b91c1c;
     /* Dark Red Text */
 }
 
 .dark .stat-row.died .material-icons-outlined,
-.dark .stat-row.died .stat-number,
-.dark .stat-row.died .stat-label {
-    color: #b91c1c !important;
+.dark .stat-row.died .stat-number {
+    color: #f87171;
 }
 
 /* Population Box / Review Box */
 .live-population-box {
-    background: rgba(255, 255, 255, 0.08);
-    /* Transparent like other boxes */
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    /* Match default border or keep green? User screenshot shows thin border. Let's match default data-box */
-    backdrop-filter: blur(12px);
-    /* Restore blur */
+    background: #ecfdf5;
+    /* Solid light mint */
+    border: 1px solid #86efac;
+    backdrop-filter: none;
+    /* Remove blur/haze */
 }
 
 .dark .live-population-box {

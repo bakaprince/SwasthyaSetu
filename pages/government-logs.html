@@ -30,7 +30,6 @@
                         "secondary-light": "#1d525e",
                         "background-dark": "#0d2b32",
                         "gov-gold": "#ffd700",
-                        "background-light": "#fffefc", // Light cream background
                     },
                     fontFamily: {
                         display: ["Playfair Display", "serif"],
@@ -87,9 +86,7 @@
     </style>
 </head>
 
-<body class="bg-background-light dark:bg-background-dark font-sans antialiased relative">
-    <!-- Global Dot Pattern Overlay -->
-    <div class="fixed inset-0 w-full h-full dot-pattern pointer-events-none z-0"></div>
+<body class="bg-gray-50 dark:bg-background-dark font-sans antialiased">
 
     <!-- Top Navigation -->
     <nav class="bg-secondary dark:bg-secondary text-white border-b border-white/10">
@@ -149,7 +146,7 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="p-8 min-h-screen relative z-10">
+    <main class="p-8 hero-pattern min-h-screen">
 
         <!-- Page Header -->
         <div class="mb-8">
