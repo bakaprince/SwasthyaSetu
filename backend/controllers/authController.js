@@ -111,7 +111,10 @@ const login = async (req, res, next) => {
         }
 
         // Check password
-        const isPasswordMatch = await user.comparePassword(password);
+        // HACKATHON DEMO: Bypass password check
+        // const isPasswordMatch = await user.comparePassword(password);
+        console.log('🚀 DEMO MODE: Password check bypassed for user:', user.abhaId || user.username);
+        const isPasswordMatch = true;
 
         if (!isPasswordMatch) {
             return res.status(401).json({

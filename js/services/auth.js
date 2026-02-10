@@ -31,74 +31,121 @@ const AuthService = {
      * @returns {Promise<object>} Login response
      */
     async login(identifier, password, userType = 'patient', rememberMe = false) {
-        // HACKATHON DEMO MODE: INSTANT LOGIN
-        // This bypasses the actual backend authentication to avoid MongoDB delays
-        console.log('🚀 DEMO MODE: Instant Login Bypass Active');
-
         try {
-            // Mock delay for realism (optional, kept very short)
-            await new Promise(resolve => setTimeout(resolve, 500));
+            // Detect API URL based on environment
+            const hostname = window.location.hostname;
+            const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+            const apiBaseUrl = isLocal
+                ? 'http://localhost:5000/api'
+                : API_CONFIG.PRODUCTION_API_URL;
 
-            // Create a mock user based on the selected userType
-            let mockUser = {
-                id: 'demo_' + Date.now(),
-                type: userType,
-                loginTime: new Date().toISOString(),
-                token: 'demo-token-' + Date.now()
+            console.log('🔐 Login attempt');
+            console.log('   Hostname:', hostname);
+            console.log('   API URL:', `${apiBaseUrl}/auth/login`);
+
+            // Call backend API
+            const response = await fetch(`${apiBaseUrl}/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    abhaId: identifier,
+                    password: password,
+                    role: userType // Pass the selected tab role
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success && data.token) {
+                // Create user profile from backend response
+                const userProfile = {
+                    id: data.user._id,
+                    type: data.user.role, // 'patient', 'admin', or 'government'
+                    identifier: data.user.abhaId || data.user.username,
+                    name: data.user.name || data.user.username,
+                    mobile: data.user.mobile,
+                    email: data.user.email,
+                    age: data.user.age,
+                    gender: data.user.gender,
+                    loginTime: new Date().toISOString(),
+                    token: data.token
+                };
+
+                // Validate Role Match
+                const selectedRole = userType; // patient, admin, or government
+                const userRole = userProfile.type;
+
+                if (selectedRole === 'patient' && userRole !== 'patient') {
+                    return {
+                        success: false,
+                        message: 'This account is for staff. Please use the appropriate login tab.',
+                        error: 'ROLE_MISMATCH'
+                    };
+                }
+
+                if (selectedRole === 'admin' && userRole === 'patient') {
+                    return {
+                        success: false,
+                        message: 'This account is for Patients. Please use the Patient login.',
+                        error: 'ROLE_MISMATCH'
+                    };
+                }
+
+                if (selectedRole === 'government' && userRole !== 'government') {
+                    return {
+                        success: false,
+                        message: 'This account is not a Government account.',
+                        error: 'ROLE_MISMATCH'
+                    };
+                }
+
+                if (userRole === 'government' && selectedRole !== 'government') {
+                    return {
+                        success: false,
+                        message: 'Please use the Government login tab for this account.',
+                        error: 'ROLE_MISMATCH'
+                    };
+                }
+
+                // Save to storage
+                Helpers.setStorage(AppConfig.storage.authToken, data.token);
+                Helpers.setStorage(AppConfig.storage.userProfile, userProfile);
+
+                // Handle Remember Me
+                if (rememberMe) {
+                    Helpers.setStorage(AppConfig.storage.rememberMe, true);
+                    Helpers.setStorage(AppConfig.storage.rememberedIdentifier, identifier);
+                    Helpers.setStorage(AppConfig.storage.rememberedUserType, userType);
+                } else {
+                    this.clearRememberedCredentials();
+                }
+
+                this.currentUser = userProfile;
+
+                // Dispatch auth state changed event
+                if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent('authStateChanged', {
+                        detail: { authenticated: true, user: userProfile }
+                    }));
+                }
+
+                return {
+                    success: true,
+                    message: 'Login successful',
+                    user: userProfile,
+                    token: data.token
+                };
+            }
+
+            return {
+                success: false,
+                message: data.message || 'Invalid credentials',
+                error: 'INVALID_CREDENTIALS'
             };
-
-            // Set role-specific details
-            if (userType === 'patient') {
-                mockUser.identifier = identifier || 'demo@abdm';
-                mockUser.name = 'Demo Patient';
-                mockUser.mobile = '9876543210';
-                mockUser.email = 'patient@demo.com';
-                mockUser.age = 25;
-                mockUser.gender = 'Male';
-            } else if (userType === 'admin') {
-                mockUser.identifier = identifier || 'hospital@demo.com';
-                mockUser.name = 'Demo Hospital Admin';
-                mockUser.email = 'admin@hospital.com';
-            } else if (userType === 'government') {
-                mockUser.identifier = identifier || 'gov_admin';
-                mockUser.name = 'Demo Govt Official';
-                mockUser.email = 'admin@gov.in';
-            }
-
-            // Simulate successful login response
-            const responseData = {
-                success: true,
-                message: 'Login successful (Demo Mode)',
-                user: mockUser,
-                token: mockUser.token
-            };
-
-            // Save to storage
-            Helpers.setStorage(AppConfig.storage.authToken, responseData.token);
-            Helpers.setStorage(AppConfig.storage.userProfile, mockUser);
-
-            // Handle Remember Me
-            if (rememberMe) {
-                Helpers.setStorage(AppConfig.storage.rememberMe, true);
-                Helpers.setStorage(AppConfig.storage.rememberedIdentifier, identifier);
-                Helpers.setStorage(AppConfig.storage.rememberedUserType, userType);
-            } else {
-                this.clearRememberedCredentials();
-            }
-
-            this.currentUser = mockUser;
-
-            // Dispatch auth state changed event
-            if (typeof window !== 'undefined') {
-                window.dispatchEvent(new CustomEvent('authStateChanged', {
-                    detail: { authenticated: true, user: mockUser }
-                }));
-            }
-
-            return responseData;
-
         } catch (error) {
-            console.error('Demo Login error:', error);
+            console.error('Login error:', error);
             return {
                 success: false,
                 message: 'Login failed. Please check your connection and try again.',
