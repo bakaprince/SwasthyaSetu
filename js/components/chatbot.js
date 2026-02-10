@@ -1,7 +1,7 @@
 /**
  * @fileoverview Swasthya Saathi Chatbot Component
  * Interactive chatbot with FAQs, symptom checker, and doctor connect features.
- * 
+ *
  * @module components/chatbot
  * @author SwasthyaSetu Team
  * @version 2.0.0
@@ -14,7 +14,7 @@
 /**
  * Swasthya Saathi - Health Assistant Chatbot
  * Provides FAQ answers, symptom checking, and doctor connection.
- * 
+ *
  * @class
  */
 class HealthChatbot {
@@ -195,9 +195,9 @@ class HealthChatbot {
 
                 <!-- Input Area (for chat mode) -->
                 <div class="chatbot-input-area" id="chatbot-input-area" style="display: none;">
-                    <input type="text" id="chatbot-input" placeholder="Type your symptoms..." 
+                    <input type="text" id="chatbot-input" placeholder="Type your symptoms..."
                         style="flex: 1; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; font-size: 0.9rem;">
-                    <button id="chatbot-send-btn" 
+                    <button id="chatbot-send-btn"
                         style="padding: 0.75rem 1rem; background: #86efac; border: none; border-radius: 0.5rem; cursor: pointer;">
                         <span class="material-icons-outlined" style="font-size: 20px;">send</span>
                     </button>
