@@ -1,6 +1,6 @@
 # 🏗 System Architecture: SwasthyaSetu
 
-![SwasthyaSetu Architecture](swasthyasetu/assets/images/system-architecture.png)
+<img width="1615" height="900" alt="system-architecture" src="https://github.com/user-attachments/assets/638fdb30-9891-4af2-9e14-83cab4394f67" />
 
 ---
 
