@@ -108,13 +108,7 @@ See: `docs/SYSTEM_ARCHITECTURE.md`
 
 ## 🏗 Project Architecture
 
-Frontend (Vanilla JS)
-   │
-   ├── Prefetch Layer
-   ├── Location Service
-   ├── Dashboard Pages
-   └── Analytics Modules
-        │
+Frontend ├── Prefetch Layer ├── Location Service ├── Dashboard Pages └── Analytics Modules
 Backend (Express API)
    ├── Controllers
    ├── Middleware
