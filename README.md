@@ -20,13 +20,6 @@ It enables secure health record access, real-time hospital resource tracking, in
 - Deliver a smooth, optimized, and scalable user experience
 
 ---
-## 🏗 System Architecture
-
-For detailed technical architecture, data flow diagrams, and scalability considerations:
-
-See: `docs/SYSTEM_ARCHITECTURE.md`
-
----
 
 ## 👥 User Roles & Capabilities
 
@@ -108,7 +101,11 @@ See: `docs/SYSTEM_ARCHITECTURE.md`
 
 ## 🏗 Project Architecture
 
-Frontend ├── Prefetch Layer ├── Location Service ├── Dashboard Pages └── Analytics Modules
+Frontend 
+   ├── Prefetch Layer 
+   ├── Location Service 
+   ├── Dashboard Pages 
+   └── Analytics Modules
 Backend (Express API)
    ├── Controllers
    ├── Middleware
