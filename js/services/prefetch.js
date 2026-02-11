@@ -33,25 +33,27 @@ const PrefetchService = {
         const startTime = Date.now();
 
         try {
-            // Prefetch all data in parallel using Promise.all()
-            const [appointments, hospitals, profile] = await Promise.all([
+            // Prefetch all data in parallel using Promise.allSettled()
+            // This allows partial success - if one API fails, others still cache
+            const results = await Promise.allSettled([
                 this.prefetchAppointments(),
                 this.prefetchHospitals(),
                 this.prefetchProfile()
             ]);
 
-            // Store in cache
+            // Store in cache (including partial successes)
             this.cache = {
-                appointments,
-                hospitals,
-                profile,
+                appointments: results[0].status === 'fulfilled' ? results[0].value : null,
+                hospitals: results[1].status === 'fulfilled' ? results[1].value : null,
+                profile: results[2].status === 'fulfilled' ? results[2].value : null,
                 timestamp: Date.now()
             };
 
             const duration = Date.now() - startTime;
-            console.log(`[PrefetchService] Prefetch complete in ${duration}ms`);
+            const successCount = results.filter(r => r.status === 'fulfilled').length;
+            console.log(`[PrefetchService] Prefetch complete in ${duration}ms (${successCount}/3 succeeded)`);
 
-            return true;
+            return successCount > 0; // Return true if at least one succeeded
         } catch (error) {
             console.error('[PrefetchService] Prefetch failed:', error);
             // Don't throw - allow normal page load to fetch data

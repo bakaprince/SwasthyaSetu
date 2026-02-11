@@ -134,7 +134,8 @@ const AuthService = {
                 // PERFORMANCE: Prefetch critical data in background (non-blocking)
                 // This loads appointments, hospitals, and profile data in parallel
                 // so the dashboard renders instantly when user navigates
-                if (typeof PrefetchService !== 'undefined') {
+                if (typeof PrefetchService !== 'undefined' &&
+                    typeof PrefetchService.prefetchAll === 'function') {
                     PrefetchService.prefetchAll().catch(err => {
                         console.warn('[Auth] Prefetch failed (non-critical):', err);
                     });
@@ -287,7 +288,8 @@ const AuthService = {
         this.currentUser = null;
 
         // Clear prefetch cache
-        if (typeof PrefetchService !== 'undefined') {
+        if (typeof PrefetchService !== 'undefined' &&
+            typeof PrefetchService.clearCache === 'function') {
             PrefetchService.clearCache();
         }
 

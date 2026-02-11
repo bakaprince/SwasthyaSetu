@@ -692,8 +692,15 @@ const GovAnalytics = {
                 const age = Date.now() - parseInt(cachedTimestamp);
                 if (age < CACHE_DURATION) {
                     console.log('[GovAnalytics] Using cached COVID data (age: ' + Math.round(age / 1000 / 60) + ' mins)');
-                    this.covidData = JSON.parse(cachedData);
-                    return;
+                    try {
+                        this.covidData = JSON.parse(cachedData);
+                        return;
+                    } catch (parseError) {
+                        console.warn('[GovAnalytics] Cache corrupted, clearing:', parseError);
+                        localStorage.removeItem('covid_data_cache');
+                        localStorage.removeItem('covid_data_timestamp');
+                        // Fall through to fetch fresh data
+                    }
                 }
             }
 
@@ -713,17 +720,33 @@ const GovAnalytics = {
                 });
 
                 // Cache the data
-                localStorage.setItem(CACHE_KEY, JSON.stringify(this.covidData));
-                localStorage.setItem(CACHE_TIMESTAMP_KEY, Date.now().toString());
-                console.log('[GovAnalytics] COVID data cached successfully');
+                try {
+                    localStorage.setItem(CACHE_KEY, JSON.stringify(this.covidData));
+                    localStorage.setItem(CACHE_TIMESTAMP_KEY, Date.now().toString());
+                    console.log('[GovAnalytics] COVID data cached successfully');
+                } catch (storageError) {
+                    if (storageError.name === 'QuotaExceededError') {
+                        console.warn('[GovAnalytics] localStorage full, clearing old cache');
+                        localStorage.removeItem('covid_data_cache');
+                        localStorage.removeItem('covid_data_timestamp');
+                    } else {
+                        console.error('[GovAnalytics] Failed to cache:', storageError);
+                    }
+                }
             }
         } catch (error) {
             console.warn('Could not fetch COVID data:', error);
             // Use cached data even if expired, as fallback
             const cachedData = localStorage.getItem('covid_data_cache');
             if (cachedData) {
-                console.log('[GovAnalytics] Using stale cache as fallback');
-                this.covidData = JSON.parse(cachedData);
+                try {
+                    console.log('[GovAnalytics] Using stale cache as fallback');
+                    this.covidData = JSON.parse(cachedData);
+                } catch (parseError) {
+                    console.error('[GovAnalytics] Stale cache also corrupted:', parseError);
+                    localStorage.removeItem('covid_data_cache');
+                    localStorage.removeItem('covid_data_timestamp');
+                }
             }
         }
     },
