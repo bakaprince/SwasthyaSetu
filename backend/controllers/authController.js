@@ -85,22 +85,24 @@ const login = async (req, res, next) => {
         let user;
         if (role === 'government') {
             // Find in Government collection
+            // PERFORMANCE: .lean() skips Mongoose hydration, 20-30% faster
             user = await GovernmentUser.findOne({
                 $or: [
                     { username: abhaId },
                     { email: abhaId }
                 ]
-            }).select('+password');
+            }).select('+password').lean();
         } else {
             // Find user (include password for comparison)
             // Checks abhaId, mobile, OR email (since frontend might send email in abhaId field)
+            // PERFORMANCE: .lean() skips Mongoose hydration, 20-30% faster
             user = await User.findOne({
                 $or: [
                     { abhaId: abhaId },
                     { mobile: mobile || abhaId }, // Handle case where mobile is passed in abhaId
                     { email: abhaId } // Allow login with email
                 ]
-            }).select('+password');
+            }).select('+password').lean();
         }
 
         if (!user) {
@@ -145,6 +147,7 @@ const login = async (req, res, next) => {
         next(error);
     }
 };
+
 
 /**
  * @desc    Get current user
