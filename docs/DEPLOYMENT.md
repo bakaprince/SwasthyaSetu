@@ -1,117 +1,133 @@
-# Deploying SwasthyaSetu to Render.com
+# 🚀 SwasthyaSetu Deployment Guide
 
-## Why Render?
+SwasthyaSetu consists of:
 
-✅ **Perfect for Express.js + MongoDB backends**
-✅ **Free tier available**
-✅ **Always-on server (not serverless)**
-✅ **Easy GitHub integration**
-✅ **No code changes needed**
+1. **Frontend** – Static HTML/CSS/JS (Hosted on Vercel)
+2. **Backend** – Node.js + Express API (Hosted on Render)
+3. **Database** – MongoDB Atlas (Cloud)
 
 ---
 
-## Step-by-Step Deployment Guide
+# 🧠 Deployment Architecture
 
-### Part 1: Deploy Backend to Render
+User → Vercel (Frontend) → Render (Backend API) → MongoDB Atlas (Database)
 
-#### 1. Create Render Account
+---
 
+# 🌐 Backend Deployment (Render)
+
+## Step 1: Create Account
 1. Go to https://render.com
-2. Click **"Get Started for Free"**
-3. Sign up with GitHub (recommended) or email
-4. Verify your email
+2. Sign up with GitHub
+3. Verify email
 
-#### 2. Create New Web Service
+---
 
-1. Click **"New +"** → **"Web Service"**
-2. Click **"Connect account"** to link GitHub
-3. Select your **SwasthyaSetu** repository
-4. Click **"Connect"**
+## Step 2: Create Web Service
+1. Click **New → Web Service**
+2. Connect GitHub repository
+3. Select `SwasthyaSetu`
+4. Choose branch: `main`
 
-#### 3. Configure Service
+---
 
-Fill in the following settings:
+## Step 3: Configure Service
 
-**Basic Settings:**
+### Basic Settings
 - **Name:** `swasthyasetu-backend`
-- **Region:** Singapore (or closest to you)
-- **Branch:** `main`
-- **Root Directory:** Leave blank
-- **Runtime:** `Node`
+- **Region:** Singapore (or nearest)
+- **Runtime:** Node
+- **Root Directory:** `backend`
 
-**Build & Deploy:**
+### Build & Start Commands
 - **Build Command:** `cd backend && npm install`
 - **Start Command:** `cd backend && npm start`
 
-**Instance Type:**
-- Select **"Free"** (0.1 CPU, 512 MB RAM)
+### Instance Type
+Select **Free Tier**
 
-#### 4. Add Environment Variables
+---
 
-Click **"Advanced"** → **"Add Environment Variable"**
+## Step 4: Add Environment Variables
 
+In Render → Environment tab:
 Add these variables:
 
 ```
-MONGODB_URI = mongodb+srv://swasthyasetu_db_user:YOUR_PASSWORD@cluster0.iv0i7uk.mongodb.net/swasthyasetu?retryWrites=true&w=majority&appName=Cluster0
+MONGODB_URI = your_mongodb_connection_string
 
-JWT_SECRET = swasthya_setu_jwt_secret_2026_secure
+JWT_SECRET = your_secure_random_secret
 
 NODE_ENV = production
 
 PORT = 5000
 
-FRONTEND_URL = https://swasthya-setu-ebon.vercel.app
+FRONTEND_URL = https://your-frontend-url
 ```
+⚠️ Never commit secrets to GitHub.
 
-> **Important:** Replace `YOUR_PASSWORD` with your actual MongoDB password!
+---
 
-#### 5. Deploy!
+## Step 5: Deploy
 
-1. Click **"Create Web Service"**
-2. Wait 3-5 minutes for deployment
-3. You'll get a URL like: `https://swasthyasetu-backend.onrender.com`
+Click **Create Web Service**
 
-#### 6. Test Backend
+Deployment takes ~3–5 minutes.
 
-Once deployed, test the API:
+Backend URL: https://swasthyasetu-backend.onrender.com/
 
-1. Visit: `https://swasthyasetu-backend.onrender.com/api/health-check`
-2. Should see: `{"success":true,"message":"Server is running"}`
+---
+
+## Step 6: Verify Backend
+
+Open: https://swasthyasetu-backend.onrender.com/api/health-check
+
+Expected response:
+```json
+{
+  "success": true,
+  "message": "Server is running"
+}
+```
 
 ✅ **Backend is live!**
 
 ---
 
-### Part 2: Update Frontend to Use Render Backend
+# 🎨 Frontend Deployment (Vercel)
 
-#### 1. Update API Service
-
-The frontend is already configured to auto-detect the backend URL. No changes needed!
-
-When deployed on Vercel, it will use `/api` (which we'll configure).
-
-#### 2. Update Vercel Configuration
-
-Your `vercel.json` is already set up. Just need to add a rewrite rule to point to Render backend.
-
-#### 3. Redeploy Frontend
-
-```bash
-git add .
-git commit -m "Update for Render backend deployment"
-git push
-```
-
-Vercel will auto-deploy the frontend.
+The frontend of SwasthyaSetu is a fully static HTML/CSS/JavaScript application and does not require a build step.
 
 ---
 
-### Part 3: Connect Frontend to Backend
+## Step 1: Deploy to Vercel
 
-#### Option A: Use Vercel Rewrites (Recommended)
+1. Go to https://vercel.com
+2. Click **Add New → Project**
+3. Import your GitHub repository
 
-Update `vercel.json` to proxy API requests to Render:
+### Configuration Settings
+
+- **Framework Preset:** Other
+- **Build Command:** (Leave empty)
+- **Output Directory:** `.`
+- **Install Command:** (Leave empty)
+
+Click **Deploy**.
+
+Vercel will automatically host your frontend and provide a public URL.
+
+---
+
+## Step 2: Connect Frontend to Backend
+
+After deploying the backend on Render, connect the frontend using one of the following methods:
+
+---
+
+### Option A (Recommended): Use Vercel Rewrites
+
+Create or update a file named `vercel.json` in the root directory:
 
 ```json
 {
@@ -123,8 +139,7 @@ Update `vercel.json` to proxy API requests to Render:
   ]
 }
 ```
-
-#### Option B: Direct Backend URL
+### Option B : Direct Backend URL
 
 Update `js/services/api.js` and `js/services/auth.js` to use Render URL directly:
 
@@ -132,13 +147,20 @@ Update `js/services/api.js` and `js/services/auth.js` to use Render URL directly
 const apiBaseUrl = 'https://swasthyasetu-backend.onrender.com/api';
 ```
 
+## Step 3: Redeploy Frontend
+
+```bash
+git add .
+git commit -m "Update for Render backend deployment"
+git push
+```
+
+Vercel will auto-deploy the frontend.
+
 ---
+## Step 4: Verify Frontend Deployment
 
-## Testing the Deployment
-
-### 1. Test Backend API
-
-Visit: `https://swasthyasetu-backend.onrender.com/api/health-check`
+Open: https://swasthyasetu.vercel.app
 
 Expected response:
 ```json
@@ -148,159 +170,252 @@ Expected response:
 }
 ```
 
-### 2. Test Frontend
-
-Visit: `https://swasthyasetu.vercel.app`
-
-Try logging in:
-- **ABHA ID:** `12-3456-7890-1234`
-- **Password:** `patient123`
-
-Should redirect to dashboard!
+✅ **Frontend is live!**
 
 ---
 
-## Important Notes
+# 🗄 MongoDB Atlas Setup
 
-### Free Tier Limitations
+SwasthyaSetu uses **MongoDB Atlas** as its cloud database provider.
 
-⚠️ **Render Free Tier:**
-- Server sleeps after 15 minutes of inactivity
-- First request after sleep takes 30-60 seconds to wake up
-- 750 hours/month free (enough for one service)
+---
 
-**Solution:** Keep backend active with a ping service (optional):
-- Use https://uptimerobot.com (free)
-- Ping your backend every 10 minutes
+## Step 1: Create MongoDB Atlas Account
 
-### MongoDB Atlas
+1. Go to https://www.mongodb.com/atlas
+2. Click **Try Free**
+3. Sign up using Google or email
+4. Create a new project (e.g., `SwasthyaSetu`)
 
-Ensure MongoDB Atlas allows connections:
-1. Go to MongoDB Atlas → Network Access
-2. Verify `0.0.0.0/0` is in IP whitelist
-3. This allows Render to connect
+---
 
-# Deployment Guide
+## Step 2: Create a Free Cluster
 
-SwasthyaSetu consists of two parts:
-1. **Frontend:** A static HTML/CSS/JS site.
-2. **Backend:** A Node.js/Express API.
+1. Click **Build a Database**
+2. Select **M0 Free Tier**
+3. Choose your preferred region (closest to your backend region)
+4. Click **Create Cluster**
 
-## Frontend Deployment (Vercel)
+Cluster creation may take 2–5 minutes.
 
-The frontend is completely static and can be deployed easily on Vercel or Netlify.
+---
 
-### Steps:
-1.  Push your code to GitHub.
-2.  Login to [Vercel](https://vercel.com).
-3.  Click **"Add New"** > **"Project"**.
-4.  Import your repository.
-5.  **Build Settings:**
-    *   **Framework Preset:** Other
-    *   **Build Command:** (None)
-    *   **Output Directory:** `.` (Root directory)
-6.  Click **Deploy**.
+## Step 3: Create Database User
 
-## Backend Deployment (Render)
+1. Go to **Database Access**
+2. Click **Add New Database User**
+3. Choose **Password Authentication**
+4. Enter:
+   - Username (e.g., `swasthyasetu_user`)
+   - Strong password
+5. Set Role:
+   - `Read and write to any database`
+6. Click **Add User**
 
-The backend is a Node.js application that connects to MongoDB.
+---
 
-### Steps:
-1.  Login to [Render](https://render.com).
-2.  Click **"New"** > **"Web Service"**.
-3.  Connect your GitHub repository.
-4.  Scrol down to **Roots Directory** and set it to `backend`.
-5.  **Build Command:** `npm install`
-6.  **Start Command:** `npm start`
-7.  **Environment Variables:**
-    Add the following variables in the "Environment" tab:
-    *   `MONGO_URI`: Your MongoDB Connection String.
-    *   `JWT_SECRET`: A secure random string.
-    *   `NODE_ENV`: `production`
+## Step 4: Configure Network Access
 
-8.  Click **Create Web Service**.
+1. Go to **Network Access**
+2. Click **Add IP Address**
+3. Select: Allow Access from Anywhere (0.0.0.0/0)
 
-## Connecting Frontend to Backend
+This is required for Render to connect to MongoDB.
 
-Once deployed, update the API base URL in your frontend code (e.g., in `js/config/api.js` or wherever API calls are made) to point to your Render backend URL.
+Click **Confirm**.
 
-Example:
-```javascript
-const API_BASE_URL = 'https://swasthya-setu-backend.onrender.com/api';
+---
+
+## Step 5: Get Connection String
+
+1. Go to **Database**
+2. Click **Connect**
+3. Select **Connect your application**
+4. Copy the provided connection string
+
+It will look like:
+
 ```
-### Frontend can't connect to backend
+mongodb+srv://<username>:<password>@cluster0.mongodb.net/swasthyasetu?retryWrites=true&w=majority
+```
+---
 
-**Check:**
-1. Backend health check works
-2. CORS headers are set
-3. API URL is correct in frontend
-4. No typos in Render URL
+## Step 6: Replace Credentials
 
-### MongoDB connection fails
+Replace:
 
-**Fix:**
-1. Check MongoDB Atlas IP whitelist
-2. Verify connection string is correct
-3. Ensure password doesn't have special characters (or URL-encode them)
+- `USERNAME` → your database username
+- `PASSWORD` → your database password
+
+Also specify your database name:
+
+```
+mongodb+srv://<username>:<password>@cluster0.mongodb.net/<database_name>?retryWrites=true&w=majority
+```
+---
+
+## Step 7: Add to Render Environment Variables
+
+In Render → Backend Service → **Environment Variables**
+
+Add:
+
+```
+MONGODB_URI = mongodb+srv://<username>:<password>@cluster0.mongodb.net/<database_name>?retryWrites=true&w=majority
+```
+Do NOT commit this string to GitHub.
 
 ---
 
-## Updating Your Deployment
+## Step 8: Verify Connection
 
-### Backend Updates
+After backend deployment:
 
-Just push to GitHub:
+1. Open Render dashboard
+2. Check logs
+3. Ensure no MongoDB connection errors appear
+
+You should see:
+
+```
+Mongoose connected to MongoDB
+```
+---
+
+## Optional: Create Initial Database
+
+MongoDB Atlas automatically creates the database when your backend first inserts data.
+
+No manual database creation is required.
+
+---
+
+## Security Best Practices
+
+- Use a strong password
+- Do not expose connection string publicly
+- Rotate JWT_SECRET periodically
+- Restrict IP access in production (avoid 0.0.0.0/0 outside hackathon/demo)
+
+---
+
+## Free Tier Limits
+
+- 512 MB storage
+- Shared cluster resources
+- Suitable for demo and development
+
+---
+
+Your MongoDB database is now connected and ready for use with SwasthyaSetu.
+
+---
+
+# ⚠️ Free Tier Notes
+
+SwasthyaSetu is deployed entirely using free-tier services. While cost-effective, free tiers come with certain limitations.
+
+---
+
+## Render Free Tier
+
+- Server sleeps after **15 minutes** of inactivity
+- First request after sleep may take **30–60 seconds** (cold start)
+- 750 free hours per month
+- Limited CPU and RAM
+
+### Recommendation (Optional)
+
+Use a free uptime monitoring service like UptimeRobot to ping:
+
+```
+https://swasthyasetu-backend.onrender.com/api/health-check
+```
+
+every 10 minutes to prevent cold starts during demo periods.
+
+---
+
+## Vercel Free Tier
+
+- Ideal for static frontend hosting
+- Automatic deployments on Git push
+- Bandwidth limits apply (sufficient for hackathon/demo use)
+
+---
+
+## MongoDB Atlas Free Tier
+
+- 512 MB storage
+- Shared cluster performance
+- Suitable for development and demo environments
+
+---
+
+# 🧪 Post-Deployment Checklist
+
+After deployment, verify the following:
+
+## Backend Verification
+
+- Open health endpoint:
+
+```
+https://swasthyasetu-backend.onrender.com/api/health-check
+```
+
+Expected response:
+```json
+{
+  "success": true,
+  "message": "Server is running"
+}
+```
+# 🔄 Updating Deployment
+
+## Backend Updates
+
+Whenever backend changes are made:
+
 ```bash
 git add .
-git commit -m "Update backend"
+git commit -m "Backend update"
 git push
 ```
+# 💰 Cost Breakdown
 
-Render auto-deploys on every push to `main` branch!
+SwasthyaSetu is deployed entirely using free-tier services.
 
-### Frontend Updates
-
-Same process - push to GitHub, Vercel auto-deploys!
-
----
-
-## URLs Summary
-
-After deployment, you'll have:
-
-- **Backend API:** `https://swasthyasetu-backend.onrender.com`
-- **Frontend:** `https://swasthyasetu.vercel.app`
-- **API Health:** `https://swasthyasetu-backend.onrender.com/api/health-check`
-
-Share these URLs with your team!
+| Service        | Plan        | Monthly Cost |
+|---------------|------------|--------------|
+| Render        | Free Tier  | $0           |
+| Vercel        | Free Tier  | $0           |
+| MongoDB Atlas | Free Tier  | $0           |
 
 ---
 
-## Cost
+## Total Monthly Cost
 
-- **Render Free Tier:** $0/month
-- **Vercel Free Tier:** $0/month
-- **MongoDB Atlas Free Tier:** $0/month
+**$0 / month**
 
-**Total: FREE!** 🎉
+The entire platform runs free under development and hackathon-level usage limits.
 
 ---
 
-## Need Help?
+# 🌍 Final URLs
 
-1. Check Render logs for backend errors
-2. Check browser console (F12) for frontend errors
-3. Verify environment variables are set correctly
-4. Test backend health check endpoint
+After deployment, your application will be accessible at:
+
+## 🔹 Backend API
+https://swasthyasetu-backend.onrender.com
+
+## 🔹 Frontend
+https://your-frontend.vercel.app
+
+## 🔹 API Health Check
+https://swasthyasetu-backend.onrender.com/api/health-check
 
 ---
 
-## Next Steps After Deployment
-
-1. ✅ Test all features (login, hospitals, appointments)
-2. ✅ Share URLs with team members
-3. ✅ Set up uptime monitoring (optional)
-4. ✅ Configure custom domain (optional)
-5. ✅ Set up automatic database backups
-
-**Your app is now live and accessible to everyone!** 🚀
+Share the frontend URL for demos.
+Use the health-check endpoint to verify backend availability.

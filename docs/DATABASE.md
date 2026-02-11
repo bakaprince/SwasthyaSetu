@@ -1,109 +1,219 @@
-# MongoDB Database Structure - SwasthyaSetu
+# 🗄 SwasthyaSetu – MongoDB Database Architecture
 
-## Overview
-The database consists of **5 Core Collections**:
-1.  **Users** (`users`): Authentication and profiles for Patients, Doctors, and Admins.
-2.  **Appointments** (`appointments`): Booking data and status tracking.
-3.  **Hospitals** (`hospitals`): Internal directory of managed hospitals.
-4.  **MedicalRecords** (`medicalrecords`): Patient health history and reports.
-5.  **HealthAlerts** (`healthalerts`): Public announcements and warnings.
+## 📌 Overview
+
+SwasthyaSetu uses a MongoDB document-based architecture designed for:
+
+- Role-based user management
+- Efficient appointment lifecycle tracking
+- Hospital resource monitoring
+- Secure medical record storage
+- Real-time public health alerts
+
+The system consists of **5 Core Collections**:
+
+1. `users`
+2. `appointments`
+3. `hospitals`
+4. `medicalrecords`
+5. `healthalerts`
+
+All relationships are maintained using ObjectId references where required.
 
 ---
 
-## 1. Users Collection (`users`)
-**Purpose:** Stores specific profile data based on the user's role.
-**Key Indexes:** `abhaId` (Unique), `mobile` (Unique)
+# 1️⃣ Users Collection (`users`)
+
+### 🎯 Purpose
+Stores authentication credentials and profile data for:
+
+- Patients
+- Doctors
+- Admin staff
+
+### 🔐 Key Indexes
+- `{ abhaId: 1 }` → Unique
+- `{ mobile: 1 }` → Unique
+
+---
+
+## Schema Structure
 
 | Field | Type | Required | Description |
-| :--- | :--- | :--- | :--- |
-| `_id` | ObjectId | Yes | Unique Database ID |
-| `abhaId` | String | **Yes** | Unique ABHA Number (National Health ID) |
-| `name` | String | **Yes** | Full Name |
-| `mobile` | String | **Yes** | Unique Mobile Number |
-| `email` | String | No | Optional Email Address |
-| `password` | String | **Yes** | Hashed Password (bcrypt) |
-| `dateOfBirth`| Date | **Yes** | Used to calculate `age` |
-| `age` | Number | No | Auto-calculated on save |
-| `gender` | String | **Yes** | `Male`, `Female`, `Other` |
-| `bloodGroup` | String | No | Enum: `A+`, `O+`, `B+`, etc. |
+|-------|------|----------|------------|
+| `_id` | ObjectId | Yes | MongoDB unique identifier |
+| `abhaId` | String | Yes | National Health ID (Unique) |
+| `name` | String | Yes | Full name |
+| `mobile` | String | Yes | Unique mobile number |
+| `email` | String | No | Optional email |
+| `password` | String | Yes | Hashed using bcrypt |
+| `dateOfBirth` | Date | Yes | Used to calculate age |
+| `age` | Number | No | Auto-calculated |
+| `gender` | String | Yes | `Male`, `Female`, `Other` |
+| `bloodGroup` | String | No | Enum: A+, B+, O+, etc. |
 | `role` | String | No | `patient` (default), `doctor`, `admin` |
-| `location` | Object | No | `{ latitude, longitude, city, state, country }` |
-| `hospitalId` | ObjectId | No | Ref: `Hospital` (Only for staff roles) |
+| `hospitalId` | ObjectId | No | Ref → `hospitals` (for staff) |
+| `location` | Object | No | `{ latitude, longitude, city, state }` |
 | `emergencyContact` | Object | No | `{ name, relation, mobile }` |
 
 ---
 
-## 2. Appointments Collection (`appointments`)
-**Purpose:** Handles the entire lifecycle of a booking request.
-**Key Indexes:** `{ userId: 1, date: -1 }` (User History), `{ hospitalId: 1, status: 1 }` (Hospital Dashboard)
+# 2️⃣ Appointments Collection (`appointments`)
+
+### 🎯 Purpose
+Handles complete booking lifecycle between patients and hospitals.
+
+### ⚡ Optimized For
+- User appointment history
+- Hospital dashboard filtering
+- Status tracking
+
+### 🔍 Key Indexes
+- `{ userId: 1, date: -1 }`
+- `{ hospitalId: 1, status: 1 }`
+
+---
+
+## Schema Structure
 
 | Field | Type | Required | Description |
-| :--- | :--- | :--- | :--- |
+|-------|------|----------|------------|
 | `_id` | ObjectId | Yes | Appointment ID |
-| `userId` | ObjectId | **Yes** | Ref: `User` (The patient) |
-| `hospitalId` | String | **Yes** | ID of the hospital (Supports DB ID or API ID) |
-| `hospital` | String | **Yes** | Name of the hospital (Snapshot) |
-| `hospitalAddress` | String | No | Address snapshot for external hospitals |
-| `doctor` | String | **Yes** | Name of the doctor |
-| `specialty` | String | **Yes** | Department (e.g., Cardiology) |
-| `date` | Date | **Yes** | Date of appointment |
-| `time` | String | **Yes** | Time slot (e.g., "10:00 AM") |
-| `type` | String | **Yes** | `In-person`, `Telemedicine` |
-| `status` | String | No | `pending` (default), `confirmed`, `completed`, `cancelled` |
-| `reason` | String | **Yes** | Reason for visit |
+| `userId` | ObjectId | Yes | Ref → `users` (Patient) |
+| `hospitalId` | ObjectId / String | Yes | Ref → `hospitals` (Internal or External ID) |
+| `hospital` | String | Yes | Hospital name snapshot |
+| `hospitalAddress` | String | No | Address snapshot |
+| `doctor` | String | Yes | Doctor name |
+| `specialty` | String | Yes | Department |
+| `date` | Date | Yes | Appointment date |
+| `time` | String | Yes | Time slot |
+| `type` | String | Yes | `In-person`, `Telemedicine` |
+| `status` | String | No | `pending`, `confirmed`, `completed`, `cancelled` |
+| `reason` | String | Yes | Reason for visit |
 | `notes` | String | No | Admin internal notes |
-| `confirmedBy` | ObjectId | No | Ref: `User` (Admin who approved it) |
+| `confirmedBy` | ObjectId | No | Ref → `users` (Admin) |
 
 ---
 
-## 3. Hospitals Collection (`hospitals`)
-**Purpose:** Internal directory for hospitals managed directly by the platform logic.
-**Key Indexes:** Location-based `{ 'location.latitude': 1, 'location.longitude': 1 }`
+# 3️⃣ Hospitals Collection (`hospitals`)
+
+### 🎯 Purpose
+Internal directory for hospitals managed within the system.
+
+Supports:
+
+- Resource tracking
+- Department listings
+- Location-based filtering
+
+### 📍 Geospatial Index
+- `{ location.latitude: 1, location.longitude: 1 }`
+
+---
+
+## Schema Structure
 
 | Field | Type | Required | Description |
-| :--- | :--- | :--- | :--- |
-| `name` | String | **Yes** | Hospital Name |
-| `city` | String | **Yes** | City Name |
-| `type` | String | **Yes** | `Government`, `Private`, `Trust` |
-| `address` | String | **Yes** | Full Address |
-| `contact` | Object | **Yes** | `{ phone, email, emergency: '108' }` |
+|-------|------|----------|------------|
+| `_id` | ObjectId | Yes | Hospital ID |
+| `name` | String | Yes | Hospital name |
+| `city` | String | Yes | City |
+| `type` | String | Yes | `Government`, `Private`, `Trust` |
+| `address` | String | Yes | Full address |
+| `contact` | Object | Yes | `{ phone, email, emergency }` |
 | `beds` | Object | No | `{ total, available, icu, icuAvailable }` |
-| `resources` | Object | No | `{ oxygen: bool, ventilators: bool, bloodBank: bool }` |
+| `resources` | Object | No | `{ oxygen, ventilators, bloodBank }` |
 | `location` | Object | No | `{ latitude, longitude }` |
-| `rating` | Number | No | 0-5 Star Rating |
-| `departments` | Array | No | List of departments and doctors within them |
+| `rating` | Number | No | 0–5 rating |
+| `departments` | Array | No | List of department objects |
 
 ---
 
-## 4. MedicalRecords Collection (`medicalrecords`)
-**Purpose:** Stores digital health history and uploaded reports.
-**Key Indexes:** `{ userId: 1, date: -1 }` (Sorted by newest first)
+# 4️⃣ Medical Records Collection (`medicalrecords`)
+
+### 🎯 Purpose
+Stores structured patient medical history.
+
+Optimized for chronological retrieval.
+
+### 🔍 Key Index
+- `{ userId: 1, date: -1 }`
+
+---
+
+## Schema Structure
 
 | Field | Type | Required | Description |
-| :--- | :--- | :--- | :--- |
-| `userId` | ObjectId | **Yes** | Ref: `User` |
-| `date` | Date | **Yes** | Date of record |
-| `hospital` | String | **Yes** | Hospital Name |
-| `doctor` | String | **Yes** | Doctor Name |
-| `diagnosis` | String | **Yes** | Main diagnosis text |
-| `prescriptions`| Array | No | List of medicine strings |
+|-------|------|----------|------------|
+| `_id` | ObjectId | Yes | Record ID |
+| `userId` | ObjectId | Yes | Ref → `users` |
+| `date` | Date | Yes | Record date |
+| `hospital` | String | Yes | Hospital name |
+| `doctor` | String | Yes | Doctor name |
+| `diagnosis` | String | Yes | Primary diagnosis |
+| `prescriptions` | Array | No | List of medicines |
 | `documents` | Array | No | URLs to uploaded reports |
-| `notes` | String | No | Additional observations |
+| `notes` | String | No | Additional notes |
 
 ---
 
-## 5. HealthAlerts Collection (`healthalerts`)
-**Purpose:** Broadcast system for public warnings (e.g., "High Dengue Risk").
-**Key Indexes:** `{ isActive: 1, severity: -1 }`
+# 5️⃣ Health Alerts Collection (`healthalerts`)
+
+### 🎯 Purpose
+Broadcast system for public health notifications.
+
+Used for:
+
+- Disease outbreaks
+- Weather alerts
+- Pollution warnings
+
+### 🔍 Key Index
+- `{ isActive: 1, severity: -1 }`
+
+---
+
+## Schema Structure
 
 | Field | Type | Required | Description |
-| :--- | :--- | :--- | :--- |
-| `title` | String | **Yes** | Headline |
-| `severity` | String | **Yes** | `high`, `moderate`, `low` |
-| `type` | String | **Yes** | `disease`, `weather`, `pollution` |
-| `isActive` | Boolean | No | Default: `true` |
-| `description` | String | **Yes** | Detailed info |
-| `symptoms` | Array | No | List of symptoms |
-| `prevention` | Array | No | List of prevention tips |
-| `affectedAreas`| Array | No | List of city names |
-| `riskLevel` | Number | No | 0-100 Percentage |
+|-------|------|----------|------------|
+| `_id` | ObjectId | Yes | Alert ID |
+| `title` | String | Yes | Alert headline |
+| `severity` | String | Yes | `high`, `moderate`, `low` |
+| `type` | String | Yes | `disease`, `weather`, `pollution` |
+| `isActive` | Boolean | No | Default: true |
+| `description` | String | Yes | Detailed information |
+| `symptoms` | Array | No | Symptom list |
+| `prevention` | Array | No | Prevention steps |
+| `affectedAreas` | Array | No | City names |
+| `riskLevel` | Number | No | 0–100 scale |
+
+---
+
+# 🔐 Security Considerations
+
+- Passwords hashed using bcrypt
+- JWT-based authentication
+- Role-based access control
+- Sensitive endpoints protected via middleware
+
+---
+
+# 📈 Performance Considerations
+
+- Indexed frequent query fields
+- `.lean()` queries for read-only endpoints
+- Parallel population of references
+- Optimized filtering for dashboard views
+
+---
+
+# 📊 Design Philosophy
+
+The database design prioritizes:
+
+- Read performance for dashboards
+- Scalable appointment tracking
+- Clear separation of roles
+- Minimal duplication of relational data
+- Flexible document structure for future extensions
