@@ -1,14 +1,14 @@
 /**
  * @fileoverview Appointment Controller
  * Handles all appointment-related API endpoints for the SwasthyaSetu healthcare platform.
- * 
+ *
  * This controller manages:
  * - Patient appointment booking and retrieval
  * - Hospital admin appointment management
  * - Document uploads (prescriptions, reports, x-rays)
  * - Appointment status updates and cancellations
  * - Inter-hospital transfer requests
- * 
+ *
  * @module controllers/appointmentController
  * @author SwasthyaSetu Team
  * @version 2.0.0
@@ -80,23 +80,23 @@ const FALLBACK_HOSPITAL_ID = '507f1f77bcf86cd799439011';
 
 /**
  * Find an existing hospital or auto-create a new one.
- * 
+ *
  * This helper centralizes hospital lookup logic used during appointment creation.
  * It attempts to find a hospital by:
  *   1. MongoDB ObjectId (if valid)
  *   2. Hospital name (case-sensitive match)
  *   3. Auto-creates new hospital if not found
- * 
+ *
  * @async
  * @param {string} hospitalId - MongoDB ObjectId or fallback ID
  * @param {string} hospitalName - Hospital name from user input
  * @param {string} hospitalAddress - Hospital address from user input
  * @returns {Promise<Object|null>} Hospital document or null if creation fails
- * 
+ *
  * @example
  * // Find existing hospital
  * const hospital = await findOrCreateHospital('60d5ec49f1b2c8b1f8c1e1a1', 'AIIMS Delhi', 'New Delhi');
- * 
+ *
  * // Auto-create new hospital
  * const newHospital = await findOrCreateHospital(null, 'City Hospital', 'Mumbai, Maharashtra');
  */
@@ -166,16 +166,16 @@ async function findOrCreateHospital(hospitalId, hospitalName, hospitalAddress) {
 /**
  * Build standardized success response object.
  * Ensures consistent API response format across all endpoints.
- * 
+ *
  * @param {string} message - Human-readable success message
  * @param {Object|Array} data - Response payload (single object or array)
  * @param {Object} [extras={}] - Additional fields to include (e.g., count, pagination)
  * @returns {Object} Formatted response object
- * 
+ *
  * @example
  * // Simple response
  * res.json(buildSuccessResponse('Appointment created', appointment));
- * 
+ *
  * // With extras
  * res.json(buildSuccessResponse('Appointments retrieved', appointments, { count: 10 }));
  */
@@ -191,11 +191,11 @@ function buildSuccessResponse(message, data, extras = {}) {
 /**
  * Build standardized error response object.
  * Ensures consistent error format for client-side handling.
- * 
+ *
  * @param {string} message - Human-readable error message
  * @param {string} [code=null] - Optional error code for programmatic handling
  * @returns {Object} Formatted error response object
- * 
+ *
  * @example
  * res.status(404).json(buildErrorResponse('Appointment not found', 'NOT_FOUND'));
  */
@@ -219,10 +219,10 @@ function buildErrorResponse(message, code = null) {
 
 /**
  * Cancel an existing appointment.
- * 
+ *
  * Allows both patients (their own appointments) and hospital admins to cancel.
  * Sets status to 'cancelled' but preserves the record for history.
- * 
+ *
  * @async
  * @function cancelAppointment
  * @param {Object} req - Express request object
@@ -232,15 +232,15 @@ function buildErrorResponse(message, code = null) {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  * @returns {Promise<void>} Sends JSON response
- * 
+ *
  * @route DELETE /api/appointments/:id
  * @access Private (Patient owner or Admin)
- * 
+ *
  * @example
  * // Request
  * DELETE /api/appointments/60d5ec49f1b2c8b1f8c1e1a1
  * Authorization: Bearer <token>
- * 
+ *
  * // Response
  * {
  *   "success": true,
@@ -287,12 +287,12 @@ const cancelAppointment = async (req, res, next) => {
 
 /**
  * Create a new appointment request.
- * 
+ *
  * Patients use this endpoint to book appointments. The system will:
  *   1. Find or auto-create the hospital record
  *   2. Create appointment with 'pending' status
  *   3. Return the created appointment with hospital details
- * 
+ *
  * @async
  * @function createAppointment
  * @param {Object} req - Express request object
@@ -310,10 +310,10 @@ const cancelAppointment = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  * @returns {Promise<void>} Sends JSON response with created appointment
- * 
+ *
  * @route POST /api/appointments
  * @access Private (Patient)
- * 
+ *
  * @example
  * // Request
  * POST /api/appointments
@@ -402,10 +402,10 @@ const createAppointment = async (req, res, next) => {
 
 /**
  * Delete a document from an appointment.
- * 
+ *
  * Removes a document at the specified index from the appointment's documents array.
  * Only hospital admins from the same hospital can delete documents.
- * 
+ *
  * @async
  * @function deleteDocument
  * @param {Object} req - Express request object
@@ -416,10 +416,10 @@ const createAppointment = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  * @returns {Promise<void>} Sends JSON response with updated documents array
- * 
+ *
  * @route DELETE /api/appointments/:id/documents/:docIndex
  * @access Private (Admin only)
- * 
+ *
  * @example
  * // Request - Delete first document (index 0)
  * DELETE /api/appointments/60d5ec49f1b2c8b1f8c1e1a1/documents/0
@@ -478,10 +478,10 @@ const deleteDocument = async (req, res, next) => {
 
 /**
  * Get all appointments for the authenticated patient.
- * 
+ *
  * Returns all appointments belonging to the logged-in user, sorted by date (newest first).
  * Each appointment includes populated hospital details.
- * 
+ *
  * @async
  * @function getAppointments
  * @param {Object} req - Express request object
@@ -490,15 +490,15 @@ const deleteDocument = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  * @returns {Promise<void>} Sends JSON response with appointments array
- * 
+ *
  * @route GET /api/appointments
  * @access Private (Patient)
- * 
+ *
  * @example
  * // Request
  * GET /api/appointments
  * Authorization: Bearer <patient-token>
- * 
+ *
  * // Response
  * {
  *   "success": true,
@@ -511,9 +511,11 @@ const getAppointments = async (req, res, next) => {
         // Query appointments for the authenticated user
         // populate() joins the hospitalId reference to get hospital details
         // sort({ date: -1 }) orders by date descending (newest first)
+        // .lean() returns plain JS objects (20-30% faster for read-only data)
         const appointments = await Appointment.find({ userId: req.user.id })
             .populate('hospitalId', 'name city address contact')
-            .sort({ date: -1 });
+            .sort({ date: -1 })
+            .lean();
 
         // Send response with count for client convenience
         res.json(buildSuccessResponse(
@@ -529,10 +531,10 @@ const getAppointments = async (req, res, next) => {
 
 /**
  * Get all appointments for a hospital (admin view).
- * 
+ *
  * Returns all appointments at the admin's hospital. Supports optional status filtering.
  * Each appointment includes populated patient details.
- * 
+ *
  * @async
  * @function getHospitalAppointments
  * @param {Object} req - Express request object
@@ -543,14 +545,14 @@ const getAppointments = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  * @returns {Promise<void>} Sends JSON response with appointments array
- * 
+ *
  * @route GET /api/appointments/hospital
  * @access Private (Admin only)
- * 
+ *
  * @example
  * // Get all appointments
  * GET /api/appointments/hospital
- * 
+ *
  * // Get only pending appointments
  * GET /api/appointments/hospital?status=pending
  */
@@ -569,9 +571,11 @@ const getHospitalAppointments = async (req, res, next) => {
 
         // Execute query with patient details populated
         // Sort by date (newest first), then by creation time for same-day appointments
+        // .lean() for faster read-only queries
         const appointments = await Appointment.find(query)
             .populate('userId', 'name abhaId mobile age gender')
-            .sort({ date: -1, createdAt: -1 });
+            .sort({ date: -1, createdAt: -1 })
+            .lean();
 
         // Send response
         res.json(buildSuccessResponse(
@@ -587,10 +591,10 @@ const getHospitalAppointments = async (req, res, next) => {
 
 /**
  * Handle inter-hospital transfer request (approve/reject).
- * 
+ *
  * Hospital admins can approve or reject transfer requests for patients
  * being referred from other hospitals.
- * 
+ *
  * @async
  * @function handleTransfer
  * @param {Object} req - Express request object
@@ -601,10 +605,10 @@ const getHospitalAppointments = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  * @returns {Promise<void>} Sends JSON response
- * 
+ *
  * @route PUT /api/appointments/:id/transfer
  * @access Private (Admin only)
- * 
+ *
  * @example
  * // Approve transfer
  * PUT /api/appointments/60d5ec49f1b2c8b1f8c1e1a1/transfer
@@ -657,10 +661,10 @@ const handleTransfer = async (req, res, next) => {
 
 /**
  * Update an existing appointment.
- * 
+ *
  * Hospital admins use this to update appointment status, add notes, or handle cancellations.
  * Automatically tracks confirmation and cancellation metadata.
- * 
+ *
  * @async
  * @function updateAppointment
  * @param {Object} req - Express request object
@@ -675,15 +679,15 @@ const handleTransfer = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  * @returns {Promise<void>} Sends JSON response with updated appointment
- * 
+ *
  * @route PUT /api/appointments/:id
  * @access Private (Admin only)
- * 
+ *
  * @example
  * // Confirm appointment
  * PUT /api/appointments/60d5ec49f1b2c8b1f8c1e1a1
  * { "status": "confirmed" }
- * 
+ *
  * // Cancel with reason
  * PUT /api/appointments/60d5ec49f1b2c8b1f8c1e1a1
  * { "status": "cancelled", "cancelReason": "Doctor unavailable" }
@@ -750,10 +754,12 @@ const updateAppointment = async (req, res, next) => {
         // Save all changes to database
         await appointment.save();
 
-        // Populate references for response
+        // Populate references for response (OPTIMIZED: parallel execution)
         // This gives the client full details without additional API calls
-        await appointment.populate('userId', 'name abhaId mobile age gender');
-        await appointment.populate('hospitalId', 'name city');
+        await appointment.populate([
+            { path: 'userId', select: 'name abhaId mobile age gender' },
+            { path: 'hospitalId', select: 'name city' }
+        ]);
 
         // Send success response
         res.json(buildSuccessResponse('Appointment updated successfully', appointment));
@@ -765,10 +771,10 @@ const updateAppointment = async (req, res, next) => {
 
 /**
  * Upload a document to an appointment.
- * 
+ *
  * Allows hospital admins to attach prescriptions, reports, x-rays, etc. to appointments.
  * Supports both file uploads (via multer) and direct URL references.
- * 
+ *
  * @async
  * @function uploadDocument
  * @param {Object} req - Express request object
@@ -783,17 +789,17 @@ const updateAppointment = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  * @returns {Promise<void>} Sends JSON response with updated documents array
- * 
+ *
  * @route POST /api/appointments/:id/documents
  * @access Private (Admin only)
- * 
+ *
  * @example
  * // Upload file (multipart form data)
  * POST /api/appointments/60d5ec49f1b2c8b1f8c1e1a1/documents
  * Content-Type: multipart/form-data
  * type: prescription
  * file: <binary>
- * 
+ *
  * // Upload via URL
  * POST /api/appointments/60d5ec49f1b2c8b1f8c1e1a1/documents
  * { "type": "report", "url": "https://example.com/report.pdf" }

@@ -131,6 +131,15 @@ const AuthService = {
                     }));
                 }
 
+                // PERFORMANCE: Prefetch critical data in background (non-blocking)
+                // This loads appointments, hospitals, and profile data in parallel
+                // so the dashboard renders instantly when user navigates
+                if (typeof PrefetchService !== 'undefined') {
+                    PrefetchService.prefetchAll().catch(err => {
+                        console.warn('[Auth] Prefetch failed (non-critical):', err);
+                    });
+                }
+
                 return {
                     success: true,
                     message: 'Login successful',
@@ -276,6 +285,11 @@ const AuthService = {
         this.clearRememberedCredentials();
 
         this.currentUser = null;
+
+        // Clear prefetch cache
+        if (typeof PrefetchService !== 'undefined') {
+            PrefetchService.clearCache();
+        }
 
         // Dispatch auth state changed event
         if (typeof window !== 'undefined') {

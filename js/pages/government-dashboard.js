@@ -680,8 +680,28 @@ const GovAnalytics = {
 
     async fetchCovidData() {
         try {
+            // PERFORMANCE: Check cache first (6-hour expiry)
+            const CACHE_KEY = 'covid_data_cache';
+            const CACHE_TIMESTAMP_KEY = 'covid_data_timestamp';
+            const CACHE_DURATION = 6 * 60 * 60 * 1000; // 6 hours in milliseconds
+
+            const cachedData = localStorage.getItem(CACHE_KEY);
+            const cachedTimestamp = localStorage.getItem(CACHE_TIMESTAMP_KEY);
+
+            if (cachedData && cachedTimestamp) {
+                const age = Date.now() - parseInt(cachedTimestamp);
+                if (age < CACHE_DURATION) {
+                    console.log('[GovAnalytics] Using cached COVID data (age: ' + Math.round(age / 1000 / 60) + ' mins)');
+                    this.covidData = JSON.parse(cachedData);
+                    return;
+                }
+            }
+
+            // Fetch fresh data from API
+            console.log('[GovAnalytics] Fetching fresh COVID data...');
             const response = await fetch('https://disease.sh/v3/covid-19/gov/India');
             const data = await response.json();
+
             if (data && data.states) {
                 data.states.forEach(state => {
                     this.covidData[state.state] = {
@@ -691,10 +711,20 @@ const GovAnalytics = {
                         cases: state.cases || 0
                     };
                 });
+
+                // Cache the data
+                localStorage.setItem(CACHE_KEY, JSON.stringify(this.covidData));
+                localStorage.setItem(CACHE_TIMESTAMP_KEY, Date.now().toString());
+                console.log('[GovAnalytics] COVID data cached successfully');
             }
-            console.log('COVID data fetched successfully');
         } catch (error) {
             console.warn('Could not fetch COVID data:', error);
+            // Use cached data even if expired, as fallback
+            const cachedData = localStorage.getItem('covid_data_cache');
+            if (cachedData) {
+                console.log('[GovAnalytics] Using stale cache as fallback');
+                this.covidData = JSON.parse(cachedData);
+            }
         }
     },
 
