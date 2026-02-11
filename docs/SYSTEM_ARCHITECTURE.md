@@ -1,6 +1,6 @@
 # 🏗 System Architecture: SwasthyaSetu
 
-![SwasthyaSetu Architecture](assets/images/system-architecture.png)
+![SwasthyaSetu Architecture](swasthyasetu/assets/images/system-architecture.png)
 
 ---
 
