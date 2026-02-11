@@ -94,11 +94,18 @@ function showLocationModal() {
                 try {
                     const result = await LocationService.requestLocation();
                     if (result.success) {
-                        Helpers.showToast('Location access granted!', 'success');
+                        if (result.fallback) {
+                            // Fallback location used
+                            Helpers.showToast(`Using default location: ${result.location.city}`, 'info');
+                        } else {
+                            // Actual location obtained
+                            Helpers.showToast('Location access granted!', 'success');
+                        }
                         localStorage.setItem('swasthyasetu_location_handled', 'true');
                         hideLocationModal();
                     }
                 } catch (error) {
+                    // This should not happen now since we always resolve with fallback
                     Helpers.showToast(error.message || 'Failed to get location', 'error');
                     allowBtn.disabled = false;
                     allowBtn.innerHTML = '<span class="material-icons-outlined">my_location</span><span>Allow Location Access</span>';

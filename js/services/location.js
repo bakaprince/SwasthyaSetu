@@ -97,16 +97,44 @@ const LocationService = {
                             break;
                     }
 
-                    reject({
-                        success: false,
-                        message: errorMessage,
-                        error: errorCode
+                    // HACKATHON: Graceful fallback to Madhya Pradesh coordinates
+                    console.warn('Geolocation error:', errorMessage, '- Using fallback location');
+
+                    const fallbackLocation = {
+                        latitude: 23.2599,
+                        longitude: 77.4126,
+                        city: 'Bhopal',
+                        state: 'Madhya Pradesh',
+                        country: 'India',
+                        address: 'Bhopal, Madhya Pradesh, India',
+                        accuracy: 0,
+                        timestamp: new Date().toISOString(),
+                        isFallback: true
+                    };
+
+                    // Save fallback location
+                    this.currentLocation = fallbackLocation;
+                    Helpers.setStorage(AppConfig.storage.userLocation, fallbackLocation);
+
+                    // Dispatch event with fallback location
+                    window.dispatchEvent(new CustomEvent('locationUpdated', {
+                        detail: fallbackLocation
+                    }));
+
+                    // Resolve with fallback instead of rejecting
+                    resolve({
+                        success: true,
+                        message: `Using default location: ${fallbackLocation.city}`,
+                        location: fallbackLocation,
+                        fallback: true,
+                        originalError: errorCode
                     });
                 },
                 {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
+                    // HACKATHON OPTIMIZATION: Fast, non-blocking geolocation
+                    enableHighAccuracy: false,  // Was: true (saves 3-5 seconds)
+                    timeout: 3000,              // Was: 10000 (faster failure)
+                    maximumAge: 60000           // Was: 0 (cache for 60 seconds)
                 }
             );
         });
